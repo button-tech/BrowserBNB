@@ -21,3 +21,5 @@ MetaMask like widget for Binance Chain ❤️
 - [ ] Set encrypted Mnemonic to local storage
 - [ ] Set encrypted keystore to local storage
 - [ ] Set encrypted Private Key to local storage
+
+![Navigation](https://raw.githubusercontent.com/button-tech/BrowserBNB/master/utils/img/CreateOrImport.png)
