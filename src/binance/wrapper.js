@@ -2,8 +2,14 @@ const TESTNET_ENDPOINT_ASIA = "https://testnet-dex-asiapacific.binance.org";
 const TESTNET_ENDPOINT_DEFAULT = "https://testnet-dex.binance.org";
 const MAINNET_ENDPOINT_DEFAULT = "https://dex.binance.org";
 
+let CURRENT_ACCOUNT = 0;
+let CURRENT_KEY = "";
+let CURRENT_ADDRESS = "";
+let CURRENT_CLIENT;
+let isActive = false;
+
 // Returns a client of BNB
-function getBaseClient() {
+async function getBaseClient() {
     return new BNB.BNB(MAINNET_ENDPOINT_DEFAULT);
 }
 
@@ -33,19 +39,68 @@ function setKeystoreToLS(index, keystore) {
 // mnemonic - mnemonic
 // password - password
 function lockMnemonic(mnemonic, password) {
-    const pvtKey = crypto.getPrivateKeyFromMnemonic(mnemonic);
-    const index = getAccountIndex();
-    setKeystoreToLS(index, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
+    const pvtKey = BNB.BNB.crypto.getPrivateKeyFromMnemonic(mnemonic);
+    setKeystoreToLS(CURRENT_ACCOUNT, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
 }
 
 // locks private key into keysotore
 // mnemonic - mnemonic
 // password - password
 function lockPrivateKey(pvtKey, password) {
-    const index = getAccountIndex();
-    setKeystoreToLS(index, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
+    setKeystoreToLS(CURRENT_ACCOUNT, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
 }
 
-function getAccountIndex() {
-    return localStorage.getItem("account_index");
+// Unlocks private key from keystore
+// password - password
+function unlockPrivateKey(password) {
+    let keystore = localStorage.getItem(CURRENT_ACCOUNT);
+    const pvtKey = BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password)
+}
+
+// Return  address from private key
+// pvtKey - private key
+function getAddressFromPrivateKey(pvtKey) {
+    const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+}
+
+function getAddressFromMnemonic(mnemonic) {
+    const pvtKey = BNB.BNB.crypto.getPrivateKeyFromMnemonic(mnemonic);
+    const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+
+}
+
+function getAddressFromKeystore(keystore, password) {
+    const pvtKey = BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
+    const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+}
+
+async function getBalanceOfAddress(address) {
+    if (isActive) {
+
+
+        let res;
+        try {
+            res = await client.getBalance(address);
+        }
+        catch (e) {
+            res = 0;
+        }
+    }  else {
+
+    }
+}
+
+async function initSession(password, account = 0) {
+     CURRENT_ACCOUNT = account;
+     CURRENT_KEY = unlockPrivateKey(password);
+     CURRENT_ADDRESS = getAddressFromPrivateKey(CURRENT_KEY);
+     CURRENT_CLIENT = await getBaseClient();
+     await CURRENT_CLIENT.setPrivateKey(CURRENT_KEY);
+     CURRENT_CLIENT.useDefaultSigningDelegate();
+     CURRENT_CLIENT.useDefaultBroadcastDelegate();
+     await CURRENT_CLIENT.initChain();
+     isActive = true;
 }
