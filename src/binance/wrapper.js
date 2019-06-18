@@ -34,5 +34,18 @@ function setKeystoreToLS(index, keystore) {
 // password - password
 function lockMnemonic(mnemonic, password) {
     const pvtKey = crypto.getPrivateKeyFromMnemonic(mnemonic);
-    return BNB.BNB.crypto.generateKeyStore(pvtKey, password);
+    const index = getAccountIndex();
+    setKeystoreToLS(index, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
+}
+
+// locks private key into keysotore
+// mnemonic - mnemonic
+// password - password
+function lockPrivateKey(pvtKey, password) {
+    const index = getAccountIndex();
+    setKeystoreToLS(index, BNB.BNB.crypto.generateKeyStore(pvtKey, password));
+}
+
+function getAccountIndex() {
+    return localStorage.getItem("account_index");
 }
