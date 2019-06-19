@@ -26,13 +26,13 @@ function createPriavteKey() {
 // Return a keystore
 // pvtKey - private key
 // password - password
-function createKeystore(pvtKey = BNB.BNB.crypto.generatePrivateKey(), password) {
+function createKeystore(password, pvtKey = BNB.BNB.crypto.generatePrivateKey()) {
     return BNB.BNB.crypto.generateKeyStore(pvtKey, password)
 }
 
 // Sets keystore to localstorage
 function setKeystoreToLS(index, keystore) {
-    localStorage.setItem(index, keystore);
+    localStorage.setItem(index, JSON.stringify(keystore));
 }
 
 // locks mnemonic into keysotore
@@ -53,49 +53,51 @@ function lockPrivateKey(pvtKey, password) {
 // Unlocks private key from keystore
 // password - password
 function unlockPrivateKey(password) {
-    let keystore = localStorage.getItem(CURRENT_ACCOUNT);
-    const pvtKey = BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password)
+    const keystoreSt = localStorage.getItem(CURRENT_ACCOUNT);
+    const keystore = JSON.parse(keystoreSt);
+    return BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
+
 }
 
 // Return  address from private key
 // pvtKey - private key
 function getAddressFromPrivateKey(pvtKey) {
     const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
-    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey, "bnb");
 }
 
 function getAddressFromMnemonic(mnemonic) {
     const pvtKey = BNB.BNB.crypto.getPrivateKeyFromMnemonic(mnemonic);
     const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
-    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey, "bnb");
 
 }
 
 function getAddressFromKeystore(keystore, password) {
     const pvtKey = BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
     const publicKey = BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
-    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey);
+    return BNB.BNB.crypto.getAddressFromPublicKey(publicKey, "bnb");
 }
 
 async function getBalanceOfAddress(address) {
+    const client = await getBaseClient();
+    await client.chooseNetwork("mainnet");
     let res;
-    if (isActive) {
-        try {
-            res = await client.getBalance(address);
-        }
-        catch (e) {
-            res = 0;
-        }
-    } else {
-        await initSession(askForPassword())
+    try {
+        res = await client.getBalance(address);
     }
+    catch (e) {
+        res = 0;
+    }
+    return res;
 }
 
-async function initSession(password, account = 0) {
+async function initSession(password, account = "0") {
     CURRENT_ACCOUNT = account;
     CURRENT_KEY = unlockPrivateKey(password);
     CURRENT_ADDRESS = getAddressFromPrivateKey(CURRENT_KEY);
     CURRENT_CLIENT = await getBaseClient();
+    await CURRENT_CLIENT.chooseNetwork("mainnet");
     await CURRENT_CLIENT.setPrivateKey(CURRENT_KEY);
     CURRENT_CLIENT.useDefaultSigningDelegate();
     CURRENT_CLIENT.useDefaultBroadcastDelegate();
@@ -103,7 +105,15 @@ async function initSession(password, account = 0) {
     isActive = true;
 }
 
+function closeSession() {
+    CURRENT_CLIENT = null;
+    CURRENT_KEY = null;
+    CURRENT_ADDRESS = null;
+    CURRENT_ACCOUNT = null;
+    isActive = false;
+}
+
 async function askForPassword() {
-    let password = "";
+    let password = "test";
     return password;
 }
