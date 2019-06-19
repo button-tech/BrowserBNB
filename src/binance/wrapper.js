@@ -78,29 +78,32 @@ function getAddressFromKeystore(keystore, password) {
 }
 
 async function getBalanceOfAddress(address) {
+    let res;
     if (isActive) {
-
-
-        let res;
         try {
             res = await client.getBalance(address);
         }
         catch (e) {
             res = 0;
         }
-    }  else {
-
+    } else {
+        await initSession(askForPassword())
     }
 }
 
 async function initSession(password, account = 0) {
-     CURRENT_ACCOUNT = account;
-     CURRENT_KEY = unlockPrivateKey(password);
-     CURRENT_ADDRESS = getAddressFromPrivateKey(CURRENT_KEY);
-     CURRENT_CLIENT = await getBaseClient();
-     await CURRENT_CLIENT.setPrivateKey(CURRENT_KEY);
-     CURRENT_CLIENT.useDefaultSigningDelegate();
-     CURRENT_CLIENT.useDefaultBroadcastDelegate();
-     await CURRENT_CLIENT.initChain();
-     isActive = true;
+    CURRENT_ACCOUNT = account;
+    CURRENT_KEY = unlockPrivateKey(password);
+    CURRENT_ADDRESS = getAddressFromPrivateKey(CURRENT_KEY);
+    CURRENT_CLIENT = await getBaseClient();
+    await CURRENT_CLIENT.setPrivateKey(CURRENT_KEY);
+    CURRENT_CLIENT.useDefaultSigningDelegate();
+    CURRENT_CLIENT.useDefaultBroadcastDelegate();
+    await CURRENT_CLIENT.initChain();
+    isActive = true;
+}
+
+async function askForPassword() {
+    let password = "";
+    return password;
 }

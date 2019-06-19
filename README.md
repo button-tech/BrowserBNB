@@ -22,6 +22,6 @@ MetaMask like widget for Binance Chain ❤️
 - [x] Set encrypted Private Key to local storage
 - [x] Get balance from Account
 - [x] Multiple accounts support
-- [ ] Storing private key during active session
+- [x] Storing private key during active session
 
 ![Navigation](https://raw.githubusercontent.com/button-tech/BrowserBNB/master/utils/img/CreateOrImport.png)
