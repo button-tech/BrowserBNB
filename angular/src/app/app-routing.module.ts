@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {GreeterComponent} from "./greeter/greeter.component";
-import {CreateComponent} from "./create/create.component";
-import {PasswordCreationComponent} from "./password-creation/password-creation.component";
+import {GreeterComponent} from "./first-page/greeter.component";
+import {CreateComponent} from "./register-mnemonic/create.component";
+import {PasswordCreationComponent} from "./register-password/password-creation.component";
 import {MainComponent} from "./main/main.component";
 
 const routes: Routes = [

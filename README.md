@@ -12,14 +12,14 @@ MetaMask like widget for Binance Chain ❤️
 - [x] Address from Mnemonic
 - [x] Address from Private Key
 - [x] Address from Keystore
-- [ ] Lock Mnemnonic with password
-- [ ] Lock Keystore with password
-- [ ] Lock Private Key with password
-- [ ] Unlock Keystore with password
-- [ ] Unlock Private Key with password
-- [ ] Set encrypted Mnemonic to local storage
-- [ ] Set encrypted keystore to local storage
-- [ ] Set encrypted Private Key to local storage
+- [x] Lock Mnemnonic with password
+- [x] Lock Keystore with password
+- [x] Lock Private Key with password
+- [x] Unlock Keystore with password
+- [x] Unlock Private Key with password
+- [x] Set encrypted Mnemonic to local storage
+- [x] Set encrypted keystore to local storage
+- [x] Set encrypted Private Key to local storage
 - [x] Get balance from Account
 - [x] Multiple accounts support
 - [ ] Storing private key during active session
