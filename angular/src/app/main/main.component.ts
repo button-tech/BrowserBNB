@@ -8,12 +8,14 @@ import {MemoryService} from "../services/memory.service";
 })
 export class MainComponent implements OnInit {
     address: string;
+    shortAddress: string;
 
     constructor(private memory: MemoryService) {
     }
 
     ngOnInit() {
         this.memory.currentAddress.subscribe(address => this.address = address)
+        this.shortAddress = this.address.substring(0, 5) + '...' + this.address.substring(this.address.length - 6, this.address.length);
     }
 
 }
