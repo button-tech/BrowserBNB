@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {MemoryService} from "../services/memory.service";
 
 @Component({
     selector: 'app-password-creation',
@@ -8,13 +7,13 @@ import {MemoryService} from "../services/memory.service";
 })
 export class PasswordCreationComponent implements OnInit {
 
-    address: string;
 
-    constructor(private memory: MemoryService) {
+
+    constructor() {
     }
 
     ngOnInit() {
-        this.memory.currentAddress.subscribe(address => this.address = address)
+
     }
 
 }
