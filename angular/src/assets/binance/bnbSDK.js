@@ -77246,6 +77246,10 @@ export async function getBalanceOfAddress(address) {
     return await client.getBalance(address);
 }
 
+export function sha3(tmp) {
+    return BNB.BNB.utils.sha3(BNB.BNB.utils.str2hexstring(tmp))
+}
+
 export async function initSession(password, account = "0") {
     CURRENT_ACCOUNT = account;
     CURRENT_KEY = unlockPrivateKey(password);

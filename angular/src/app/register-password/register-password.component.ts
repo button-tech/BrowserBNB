@@ -8,9 +8,7 @@ import * as Binance from '../../assets/binance/bnbSDK.js'
     styleUrls: ['./register-password.component.css']
 })
 export class RegisterPasswordComponent implements OnInit {
-
-    private keystore;
-
+    
     constructor(private memory: MemoryService) {
     }
 
@@ -21,11 +19,9 @@ export class RegisterPasswordComponent implements OnInit {
     setKeystore() {
         let password = (<HTMLInputElement>document.getElementById('password')).value;
         let key = this.memory.getCurrentKey();
-        this.keystore = JSON.stringify(Binance.createKeystore(password, key));
-    }
-
-    saveKeystoreToMemory() {
-        this.memory.setCurrentKeystore(this.keystore)
+        let keystore = JSON.stringify(Binance.createKeystore(password, key));
+        this.memory.setCurrentKeystore(keystore);
+        this.memory.setPasswordHash(Binance.sha3(password));
     }
 
 }

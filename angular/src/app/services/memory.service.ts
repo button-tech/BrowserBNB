@@ -11,6 +11,7 @@ export class MemoryService {
     private address = new BehaviorSubject('default address');
     currentAddress = this.address.asObservable();
     private account = new BehaviorSubject('default account');
+    private passwordHash = new BehaviorSubject('default password hash');
 
     constructor() {
     }
@@ -27,6 +28,11 @@ export class MemoryService {
         this.keystore.next(keystore);
     }
 
+
+    setPasswordHash(passwordHash: string) {
+        this.passwordHash.next(passwordHash);
+    }
+
     getCurrentAddress(): string {
         return this.address.value;
     }
@@ -37,4 +43,8 @@ export class MemoryService {
     getCurrentKeystore(): string {
         return this.keystore.value;
     }
+    getCurrentPasswordHash(): string {
+        return this.passwordHash.value;
+    }
+
 }

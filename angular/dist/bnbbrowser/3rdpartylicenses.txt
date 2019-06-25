@@ -327,6 +327,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
+@angular/animations
+MIT
+
+ng6-toastr-notifications
+
 zone.js
 MIT
 The MIT License
