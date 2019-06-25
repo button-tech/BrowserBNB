@@ -1,71 +1,81 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {MemoryService} from "../services/memory.service";
-import * as Binance from '../../assets/binance/bnbSDK.js'
-import {BehaviorSubject, interval} from "rxjs";
+import {Component} from '@angular/core';
+import {MemoryService} from '../services/memory.service';
+import * as Binance from '../../assets/binance/bnbSDK.js';
+import {combineLatest, from, Observable, timer} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {map, shareReplay, switchMap} from 'rxjs/operators';
 
 @Component({
     selector: 'app-main',
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
-    address: string;
-    shortAddress: string;
-    balanceSubject = new BehaviorSubject('pending');
-    balance: string = 'pending';
-    $b = interval(4000).subscribe(x => this.getBalance());
+export class MainComponent {
 
-    constructor(private memory: MemoryService) {
+    bnb$: Observable<string>;
+    fiat$: Observable<string>;
+    shortAddress$: Observable<string>;
+
+    constructor(private memory: MemoryService, private http: HttpClient) {
+
+        const getBnbBalance = (resp: any) => {
+            const bnb = resp.find((x) => x.symbol === 'BNB');
+            return bnb ? bnb.free : 0;
+        };
+
+        const bnbRaw$ = timer(0, 4000).pipe(
+            switchMap(() => {
+                const address = this.memory.getCurrentAddress();
+                const binanceRequest$ = Binance.getBalanceOfAddress(address);
+                return from(binanceRequest$);
+            }),
+            map((resp: any) => !resp.length ? 0 : getBnbBalance(resp)),
+            shareReplay(1)
+        );
+
+        this.bnb$ = bnbRaw$.pipe(
+            map((bnb) => `${bnb} BNB`)
+        );
+
+
+        const bnb2usdRate$ = timer(0, 60000).pipe(
+            switchMap(() => {
+                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
+            }),
+            map((resp: any) => resp.USD)
+        );
+
+        this.fiat$ = combineLatest(bnbRaw$, bnb2usdRate$).pipe(
+            map((arr: any[]) => {
+                const [bnb, rate] = arr;
+                const fiat = (bnb * rate);
+                const truncated = (Math.floor(fiat * 100) / 100).toFixed(2);
+                return `$ ${truncated} USD`;
+            }),
+            shareReplay(1)
+        );
+
+        this.shortAddress$ = this.memory.currentAddress.pipe(
+            map((address) => {
+                const start = address.substring(0, 5);
+                const end = address.substring(address.length - 6, address.length);
+                return `${start}...${end}`;
+            })
+        );
     }
 
-    async getExchangeRate() {
-        
-    }
-
-    async getBalance() {
-        Binance.getBalanceOfAddress(this.memory.getCurrentAddress()).then(x => {
-            console.log(x)
-            if (x.length == 0) {
-                this.balanceSubject.next('0');
-            } else {
-                this.balanceSubject.next(this.findBNB(x));
-            }
-        }).catch(x => console.log(x));
-    }
-
-
-    ngOnInit() {
-        this.memory.currentAddress.subscribe(address => this.address = address)
-        this.shortAddress = this.address.substring(0, 5) + '...' + this.address.substring(this.address.length - 6, this.address.length);
-        this.balanceSubject.asObservable().subscribe(balance => this.balance = balance);
-        this.getBalance();
-    }
-
-    ngOnDestroy() {
-        this.$b.unsubscribe();
-        this.balanceSubject.unsubscribe();
-    }
-
-    copyObj(val: string) {
-        let obj = document.createElement('textarea');
+    copyAddress() {
+        const obj = document.createElement('textarea');
         obj.style.position = 'fixed';
         obj.style.left = '0';
         obj.style.top = '0';
         obj.style.opacity = '0';
-        obj.value = val;
+        obj.value = this.memory.getCurrentAddress();
         document.body.appendChild(obj);
         obj.focus();
         obj.select();
         document.execCommand('copy');
         document.body.removeChild(obj);
-    }
-
-    findBNB(list: any): string {
-        for (let x of list) {
-            if (x.symbol == "BNB") {
-                return x.free;
-            }
-        }
     }
 
 }

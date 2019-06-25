@@ -14,6 +14,7 @@ import {MemoryService} from "./services/memory.service";
 import { RegisterRepeatPasswordComponent } from './register-repeat-password/register-repeat-password.component';
 import { FormsModule } from '@angular/forms';
 import { ImportMnemonicComponent } from './import-mnemonic/import-mnemonic.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -30,7 +31,8 @@ import { ImportMnemonicComponent } from './import-mnemonic/import-mnemonic.compo
         AppRoutingModule,
         AngularFontAwesomeModule,
         BrowserAnimationsModule,
-        ToastrModule.forRoot() ,
+        ToastrModule.forRoot(),
+        HttpClientModule,
         FormsModule
     ],
     providers: [MemoryService],

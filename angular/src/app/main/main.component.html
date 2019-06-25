@@ -25,10 +25,10 @@
         <div class="col-12">
             <h5 style="font-weight: bold; white-space: nowrap; color: #434343; font-size: 15px !important; margin-top: 0.1em">
                 First account</h5>
-            <button id="addressButton" (click)="this.copyObj(this.address)"
+            <button id="addressButton" (click)="this.copyAddress()"
                     style="font-weight: bold; margin-top: -3em; color: grey;  font-size: 11px !important"
                     class="btn btn-sm btn-link">
-                {{this.shortAddress}}
+                {{this.shortAddress$ | async}}
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
         </div>
@@ -36,9 +36,10 @@
         <div class="col-12">
             <img style="margin-top: 1em;   -webkit-user-drag: none; -khtml-user-drag: none;  -moz-user-drag: none;-o-user-drag: none; user-drag: none;  -webkit-user-select: none;  -khtml-user-select: none; -moz-user-select: none;  -o-user-select: none;  user-select: none;"
                  draggable="false" width="48" src="../../assets/icons/icon128.png">
-            <h3 style="font-weight: bold;">{{this.balance}} BNB</h3>
+            <h3 style="font-weight: bold;">{{(bnb$ | async) || 'pending'}}</h3>
             <h4 style="font-weight: bold; margin-top: -1em;margin-bottom: 0px; color: grey; font-size:16px !important">
-                $0.00 USD</h4>
+                {{(fiat$ | async) || 'pending'}}
+            </h4>
             <a style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">More
                 balances</a>
         </div>
