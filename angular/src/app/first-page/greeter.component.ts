@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MemoryService} from "../services/memory.service";
+import {MemoryService} from '../services/memory.service';
 
 @Component({
     selector: 'app-greeter',
@@ -8,11 +8,9 @@ import {MemoryService} from "../services/memory.service";
 })
 export class GreeterComponent implements OnInit {
 
-    constructor(private memory: MemoryService) {
+    constructor() {
     }
 
     ngOnInit() {
     }
-
-
 }
