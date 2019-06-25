@@ -18,10 +18,13 @@ export class MainComponent implements OnInit {
     constructor(private memory: MemoryService) {
     }
 
+    async getExchangeRate() {
+        
+    }
+
     async getBalance() {
-
         Binance.getBalanceOfAddress(this.memory.getCurrentAddress()).then(x => {
-
+            console.log(x)
             if (x.length == 0) {
                 this.balanceSubject.next('0');
             } else {

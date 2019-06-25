@@ -77217,6 +77217,7 @@ export function unlockPrivateKey(password) {
     const keystoreSt = localStorage.getItem(CURRENT_ACCOUNT);
     const keystore = JSON.parse(keystoreSt);
     return BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
+
 }
 
 // Return  address from private key
