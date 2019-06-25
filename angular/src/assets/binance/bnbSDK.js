@@ -77165,10 +77165,6 @@ let CURRENT_ADDRESS = "";
 let CURRENT_CLIENT;
 let isActive = false;
 
-export function hello() {
-    return "hello"
-}
-
 // Returns a client of BNB
 export async function getBaseClient() {
     return new BNB.BNB(MAINNET_ENDPOINT_DEFAULT);
@@ -77247,14 +77243,7 @@ export function getAddressFromKeystore(keystore, password) {
 export async function getBalanceOfAddress(address) {
     const client = await getBaseClient();
     await client.chooseNetwork("mainnet");
-    let res;
-    try {
-        res = await client.getBalance(address);
-    }
-    catch (e) {
-        res = 0;
-    }
-    return res;
+    return await client.getBalance(address);
 }
 
 export async function initSession(password, account = "0") {

@@ -4,10 +4,10 @@ import * as Binance from '../../assets/binance/bnbSDK.js'
 
 @Component({
     selector: 'app-password-creation',
-    templateUrl: './password-creation.component.html',
-    styleUrls: ['./password-creation.component.css']
+    templateUrl: './register-password.component.html',
+    styleUrls: ['./register-password.component.css']
 })
-export class PasswordCreationComponent implements OnInit {
+export class RegisterPasswordComponent implements OnInit {
 
     private keystore;
 
@@ -19,7 +19,7 @@ export class PasswordCreationComponent implements OnInit {
     }
 
     setKeystore() {
-        let password = document.getElementById("password").value;
+        let password = (<HTMLInputElement>document.getElementById('password')).value;
         let key = this.memory.getCurrentKey();
         this.keystore = JSON.stringify(Binance.createKeystore(password, key));
     }

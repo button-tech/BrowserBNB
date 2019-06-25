@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {chrome} from 'chrome';
+// import {chrome} from '@types/chrome';
 
 @Injectable({
     providedIn: 'root'
@@ -9,13 +9,13 @@ export class StorageService {
     constructor() {
     }
 
-    // setKeystore(key: string, rawKeystore: string) {
+    // async setKeystore(key: string, rawKeystore: string) {
     //     chrome.storage.local.set({key, rawKeystore});
     // }
-    //
-    // async getKeystore(key: string): Observable<string> {
+
+    // async getKeystore(key: string): string {
     //     await chrome.storage.local.get(key, (x) => {
-    //         return x
-    //     })
+    //        return x;
+    //     });
     // }
 }

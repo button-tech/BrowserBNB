@@ -23,8 +23,8 @@ export class MemoryService {
         this.address.next(address);
     }
 
-    setCurrentKeystore(address: string) {
-        this.keystore.next(address);
+    setCurrentKeystore(keystore: string) {
+        this.keystore.next(keystore);
     }
 
     getCurrentAddress(): string {

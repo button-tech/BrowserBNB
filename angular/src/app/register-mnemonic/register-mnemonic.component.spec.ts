@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PasswordCreationComponent } from './password-creation.component';
+import { RegisterMnemonicComponent } from './register-mnemonic.component';
 
-describe('PasswordCreationComponent', () => {
-  let component: PasswordCreationComponent;
-  let fixture: ComponentFixture<PasswordCreationComponent>;
+describe('CreateComponent', () => {
+  let component: RegisterMnemonicComponent;
+  let fixture: ComponentFixture<RegisterMnemonicComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PasswordCreationComponent ]
+      declarations: [ RegisterMnemonicComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PasswordCreationComponent);
+    fixture = TestBed.createComponent(RegisterMnemonicComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

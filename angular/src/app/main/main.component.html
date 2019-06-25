@@ -1,21 +1,46 @@
 <div class="container">
-  <div style="background: #eaeaea" class="row text-center">
-    <div class="col"></div>
-    <div class="col"><h5 style="font-weight: bold; white-space: nowrap; color: #434343">First account</h5>
-      <p style="font-weight: bold; margin-top: -1.5em; color: grey;  font-size: 14px">{{this.shortAddress}}</p>
+    <div style="background: #f8f8f8" class="row text-center">
+        <div class="col" align="left">
+            <button class="btn btn-link btn-just-icon btn-lg"
+                    style="color: #434343; margin-right:-2em;  font-size: 10px !important" href="/main">
+                <fa name="users" size="sm"></fa>
+            </button>
+        </div>
+        <div class="col">
+            <button class="btn btn-link btn-outline  btn-sm"
+                    style="color: #434343; margin-top: 1.85em; border-radius: 15px; background: white; border: 1.47px solid black; max-width: 300px !important; line-height: 1 !important;"
+                    href="/main">
+                <strong>Network:</strong> Mainnet
+                <fa style="font-weight: 900 !important; " name="caret-down" size="sm"></fa>
+            </button>
+        </div>
+        <div align="right" class="col">
+            <button class="btn btn-link btn-just-icon btn-lg" style="color: #434343; margin-right: -0.5em" href="/main">
+                <fa name="cog" size="sm"></fa>
+            </button>
+        </div>
     </div>
-    <div align="right" class="col">
-      <button  data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" class="btn btn-link btn-just-icon btn-lg" style="color: #434343; margin-right: -0.5em" href="/main"><fa style="font-size: 23px" name="cog" size="lg"></fa> </button>
+
+    <div class="row text-center">
+        <div class="col-12">
+            <h5 style="font-weight: bold; white-space: nowrap; color: #434343; font-size: 15px !important; margin-top: 0.1em">
+                First account</h5>
+            <button id="addressButton" (click)="this.copyObj(this.address)"
+                    style="font-weight: bold; margin-top: -3em; color: grey;  font-size: 11px !important"
+                    class="btn btn-sm btn-link">
+                {{this.shortAddress}}
+                <fa id="copyButton" name="copy" size="sm"></fa>
+            </button>
+        </div>
+        <hr style="width: 100%; margin-top: -1em; border: 0.75px solid #c5c5c5">
+        <div class="col-12">
+            <img style="margin-top: 1em;   -webkit-user-drag: none; -khtml-user-drag: none;  -moz-user-drag: none;-o-user-drag: none; user-drag: none;  -webkit-user-select: none;  -khtml-user-select: none; -moz-user-select: none;  -o-user-select: none;  user-select: none;"
+                 draggable="false" width="48" src="../../assets/icons/icon128.png">
+            <h3 style="font-weight: bold;">{{this.balance}} BNB</h3>
+            <h4 style="font-weight: bold; margin-top: -1em;margin-bottom: 0px; color: grey; font-size:16px !important">
+                $0.00 USD</h4>
+            <a style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">More
+                balances</a>
+        </div>
     </div>
-  </div>
-  
-  <div class="row text-center">
-    <div class="col-12">
-      <img style="margin-top: 2em" width="48" src="../../assets/icons/icon128.png">
-      <h3 style="font-weight: bold;">0.01235 BNB</h3>
-      <h4 style="font-weight: bold; margin-top: -1em;margin-bottom: 0px; color: grey">15 $</h4>
-      <a style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">More
-        balances</a>
-    </div>
-  </div>
 </div>

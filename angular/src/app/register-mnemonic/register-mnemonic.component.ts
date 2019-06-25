@@ -4,10 +4,10 @@ import {MemoryService} from "../services/memory.service";
 
 @Component({
     selector: 'app-create',
-    templateUrl: './create.component.html',
-    styleUrls: ['./create.component.css']
+    templateUrl: './register-mnemonic.component.html',
+    styleUrls: ['./register-mnemonic.component.css']
 })
-export class CreateComponent implements OnInit {
+export class RegisterMnemonicComponent implements OnInit {
 
     mnemonic: string;
 

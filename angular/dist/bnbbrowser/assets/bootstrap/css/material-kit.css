@@ -10818,7 +10818,7 @@ fieldset[disabled][disabled] .btn-group-raised .btn,
 .btn-group-lg>.btn.btn-just-icon .material-icons,
 .btn.btn-just-icon.btn-lg .fa,
 .btn-group-lg>.btn.btn-just-icon .fa {
-  font-size: 32px;
+  /*font-size: 32px;*/
   line-height: 56px;
 }
 
@@ -10834,7 +10834,7 @@ fieldset[disabled][disabled] .btn-group-raised .btn,
   top: 0;
   height: 100%;
   line-height: 41px;
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .btn-just-icon.btn-lg,
@@ -10856,7 +10856,7 @@ fieldset[disabled][disabled] .btn-group-raised .btn,
   top: 0;
   margin-top: -1em;
   margin-bottom: -1em;
-  font-size: 1.1rem;
+  /*font-size: 1.1rem;*/
   vertical-align: middle;
 }
 

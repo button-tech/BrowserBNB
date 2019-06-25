@@ -31,7 +31,6 @@
             ],
             "scripts": [
               "src/assets/bootstrap/js/bootstrap-material-design.min.js",
-              "src/assets/bootstrap/js/jquery.min.js",
               "src/assets/bootstrap/js/popper.min.js",
               "src/assets/binance/bnbSDK.js"
             ]
