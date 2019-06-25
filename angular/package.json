@@ -24,7 +24,6 @@
     "angular-font-awesome": "^3.1.2",
     "bindings": "^1.5.0",
     "browserify-sign": "^4.0.4",
-    "chrome": "^0.1.0",
     "cipher-base": "^1.0.4",
     "core-js": "^2.5.4",
     "file-uri-to-path": "^1.0.0",
