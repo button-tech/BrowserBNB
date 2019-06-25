@@ -19,7 +19,6 @@ export class RegisterRepeatPasswordComponent implements OnInit {
 
     showError() {
         this.toastr.errorToastr("Passwords don't match", 'Error', {position: 'top-full-width', maxShown: 1, showCloseButton: true, toastTimeout: 5000});
-        (<HTMLInputElement>document.getElementById('backButton')).style.display = 'inline-block';
     }
 
     checkPassword() {

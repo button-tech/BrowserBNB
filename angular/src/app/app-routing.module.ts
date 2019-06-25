@@ -5,6 +5,7 @@ import {RegisterMnemonicComponent} from "./register-mnemonic/register-mnemonic.c
 import {RegisterPasswordComponent} from "./register-password/register-password.component";
 import {MainComponent} from "./main/main.component";
 import {RegisterRepeatPasswordComponent} from "./register-repeat-password/register-repeat-password.component";
+import {ImportMnemonicComponent} from "./import-mnemonic/import-mnemonic.component";
 
 const routes: Routes = [
     {
@@ -27,6 +28,10 @@ const routes: Routes = [
     {
         path: 'repeat',
         component: RegisterRepeatPasswordComponent,
+    },
+    {
+        path: 'import',
+        component: ImportMnemonicComponent,
     },
     {
         path: 'main',

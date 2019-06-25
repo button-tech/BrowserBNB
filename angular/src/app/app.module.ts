@@ -12,6 +12,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import {MemoryService} from "./services/memory.service";
 import { RegisterRepeatPasswordComponent } from './register-repeat-password/register-repeat-password.component';
+import { FormsModule } from '@angular/forms';
+import { ImportMnemonicComponent } from './import-mnemonic/import-mnemonic.component';
 
 @NgModule({
     declarations: [
@@ -20,14 +22,16 @@ import { RegisterRepeatPasswordComponent } from './register-repeat-password/regi
         RegisterMnemonicComponent,
         RegisterPasswordComponent,
         MainComponent,
-        RegisterRepeatPasswordComponent
+        RegisterRepeatPasswordComponent,
+        ImportMnemonicComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         AngularFontAwesomeModule,
         BrowserAnimationsModule,
-        ToastrModule.forRoot()
+        ToastrModule.forRoot() ,
+        FormsModule
     ],
     providers: [MemoryService],
     bootstrap: [AppComponent]

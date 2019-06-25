@@ -77246,6 +77246,9 @@ export async function getBalanceOfAddress(address) {
     return await client.getBalance(address);
 }
 
+export function valMnemonic(mnemonic){
+    return BNB.BNB.crypto.validateMnemonic(mnemonic)
+}
 export function sha3(tmp) {
     return BNB.BNB.utils.sha3(BNB.BNB.utils.str2hexstring(tmp))
 }

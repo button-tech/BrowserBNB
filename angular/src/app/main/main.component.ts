@@ -2,7 +2,6 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {MemoryService} from "../services/memory.service";
 import * as Binance from '../../assets/binance/bnbSDK.js'
 import {BehaviorSubject, interval} from "rxjs";
-import {forEach} from "@angular/router/src/utils/collection";
 
 @Component({
     selector: 'app-main',

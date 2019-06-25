@@ -12,12 +12,17 @@ export class MemoryService {
     currentAddress = this.address.asObservable();
     private account = new BehaviorSubject('default account');
     private passwordHash = new BehaviorSubject('default password hash');
+    private mnemonic = new BehaviorSubject('default mnemonic');
 
     constructor() {
     }
 
     setCurrentKey(key: string) {
         this.currentKey.next(key);
+    }
+
+    setCurrenMnemonic(mnemonic: string) {
+        this.mnemonic.next(mnemonic);
     }
 
     setCurrentAddress(address: string) {
@@ -35,6 +40,9 @@ export class MemoryService {
 
     getCurrentAddress(): string {
         return this.address.value;
+    }
+    getCurrentMnemonic(): string {
+        return this.mnemonic.value;
     }
 
     getCurrentKey(): string {

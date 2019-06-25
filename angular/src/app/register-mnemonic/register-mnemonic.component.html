@@ -1,7 +1,12 @@
 <div class="container">
     <div class="row text-center">
+        <div style="margin-top: 3em; margin-left: 1em;" align="left" class="col-12">
+            <button routerLink="/greeter" class="btn btn-just-icon btn-default btn-round">
+                <fa name="arrow-left" size="sm"></fa>
+            </button>
+        </div>
         <div class="col-12">
-            <h3 style="font-family: 'Montserrat', sans-serif !important; font-weight: 600; color: black; margin-top: 5.5em"
+            <h3 style="font-family: 'Montserrat', sans-serif !important; font-weight: 600; color: black; margin-top: 2.5em"
                 class="card-title">
                 Save your mnemonic</h3>
             <p style="margin: 1em; font-size: 12px; font-weight: bold; color: grey">{{this.mnemonic}}</p>
@@ -9,17 +14,17 @@
         </div>
         <div style="margin-top: 1.5em" class="col-12">
             <div class="form-check">
-                <label style="color: black !important; font-weight: 500; font-size: 15px" class="form-check-label">
-                    <input  class="form-check-input" type="checkbox" value="">
+                <label  style="color: black !important; font-weight: 500; font-size: 15px" class="form-check-label">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="theCheckbox"  data-md-icheck (change)="toggleVisibility($event)">
                     I have copied mnemonic to SAFE place
-                    <span class="form-check-sign">
-              <span class="check"></span>
+                    <span  id="confirm" class="form-check-sign">
+              <span  class="check"></span>
           </span>
                 </label>
             </div>
         </div>
         <div style="margin-top: 1.5em" class="col-12">
-            <button [routerLink]="'/password'" class="btn btn-binance btn-lg">Continue</button>
+            <button (click)="check()" class="btn btn-binance btn-lg">Continue</button>
             <br>
             <br>
         </div>
