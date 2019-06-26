@@ -15,6 +15,7 @@ import { RegisterRepeatPasswordComponent } from './register-repeat-password/regi
 import { FormsModule } from '@angular/forms';
 import { ImportMnemonicComponent } from './import-mnemonic/import-mnemonic.component';
 import {HttpClientModule} from '@angular/common/http';
+import { HistoryComponentComponent } from './history-component/history-component.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import {HttpClientModule} from '@angular/common/http';
         RegisterPasswordComponent,
         MainComponent,
         RegisterRepeatPasswordComponent,
-        ImportMnemonicComponent
+        ImportMnemonicComponent,
+        HistoryComponentComponent
     ],
     imports: [
         BrowserModule,
