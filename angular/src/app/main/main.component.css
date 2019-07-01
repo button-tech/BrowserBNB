@@ -3,8 +3,13 @@
 }
 
 #editButton {
-    font-weight: bold; white-space: nowrap; color: #434343; font-size: 15px !important; margin-top: 0.3em
+    font-weight: bold;
+    white-space: nowrap;
+    color: #434343;
+    font-size: 15px !important;
+    margin-top: 0.3em
 }
+
 #editButton:hover {
     font-size: 17px !important;
 }
@@ -18,4 +23,15 @@
 
 #addressButton:hover {
     font-size: 14px !important;
+}
+
+#cog {
+    transition: all 1800ms ease-in-out;
+    color: #434343;
+    margin-right: -0.5em;
+}
+
+#cog:hover {
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
 }
