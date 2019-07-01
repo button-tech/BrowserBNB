@@ -1,24 +1,24 @@
 <div class="container">
   <div class="row text-center">
-    <div style="margin-top: 5.5em;" align="center" class="col-12 text-center">
+    <div style="margin-top: 7em;" align="center" class="col-12 text-center">
       <img width="72" src="../../assets/icons/icon128.png">
     </div>
     <div class="col-12">
       <h3 style="font-family: 'Montserrat', sans-serif !important; font-weight: 600; color: black; margin-top: 2.5em"
           class="card-title">Welcome back!</h3>
-      <p style="font-weight: bold; color: #b2b2b2">Enter your password to continue</p>
+      <p style="font-weight: bold; color: #828282">Enter your password to continue</p>
     </div>
-    <div style="margin-top: 1em;" class="col-10 offset-1 text-center">
+    <div style="margin-top: 2em;" class="col-10 offset-1 text-center">
       <div class="form-group">
         <input type="password" class="form-control" id="password" placeholder="Password">
       </div>
     </div>
-    <div style="margin-top: 1em;" class="col-12 text-center">
+    <div style="margin-top: 1.5em;" class="col-12 text-center">
       <button [routerLink]="'/repeat'" (click)="unlock();"
               class="btn btn-binance btn-lg">Continue
       </button>
       <br>
-      <a (click)="reset()" style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">Reset all</a>
+      <button class="btn btn-sm btn-link" (click)="reset()" style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">Reset all</button>
     </div>
   </div>
 </div>

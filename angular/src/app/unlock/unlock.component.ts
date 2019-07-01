@@ -31,6 +31,7 @@ export class UnlockComponent implements OnInit {
         }
         catch (e) {
             this.showError();
+            this.router.navigate(['/unlock']);
             console.log(e);
         }
 
