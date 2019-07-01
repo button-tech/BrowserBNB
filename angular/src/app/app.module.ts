@@ -8,7 +8,7 @@ import {RegisterMnemonicComponent} from './register-mnemonic/register-mnemonic.c
 import {RegisterPasswordComponent} from './register-password/register-password.component';
 import {MainComponent} from './main/main.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { SatPopoverModule } from '@ncstate/sat-popover';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import {MemoryService} from "./services/memory.service";
 import { RegisterRepeatPasswordComponent } from './register-repeat-password/register-repeat-password.component';
@@ -38,7 +38,8 @@ import { UnlockComponent } from './unlock/unlock.component';
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
         HttpClientModule,
-        FormsModule
+        FormsModule,
+        SatPopoverModule
     ],
     providers: [MemoryService, StorageService],
     bootstrap: [AppComponent]
