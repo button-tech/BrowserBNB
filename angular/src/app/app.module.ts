@@ -16,6 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { ImportMnemonicComponent } from './import-mnemonic/import-mnemonic.component';
 import {HttpClientModule} from '@angular/common/http';
 import { HistoryComponentComponent } from './history-component/history-component.component';
+import {StorageService} from "./services/storage.service";
+import { UnlockComponent } from './unlock/unlock.component';
 
 @NgModule({
     declarations: [
@@ -26,7 +28,8 @@ import { HistoryComponentComponent } from './history-component/history-component
         MainComponent,
         RegisterRepeatPasswordComponent,
         ImportMnemonicComponent,
-        HistoryComponentComponent
+        HistoryComponentComponent,
+        UnlockComponent
     ],
     imports: [
         BrowserModule,
@@ -37,7 +40,7 @@ import { HistoryComponentComponent } from './history-component/history-component
         HttpClientModule,
         FormsModule
     ],
-    providers: [MemoryService],
+    providers: [MemoryService, StorageService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

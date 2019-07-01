@@ -4,6 +4,7 @@ import * as Binance from '../../assets/binance/bnbSDK.js';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {StorageService} from "../services/storage.service";
 
 @Component({
     selector: 'app-main',
@@ -77,5 +78,6 @@ export class MainComponent {
         document.execCommand('copy');
         document.body.removeChild(obj);
     }
+
 
 }

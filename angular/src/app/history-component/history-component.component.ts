@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, timer} from "rxjs";
-import {map, switchMap} from "rxjs/operators";
+import {map, shareReplay, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 
 @Component({
@@ -10,7 +10,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class HistoryComponentComponent implements OnInit {
 
-    hist$ : Observable<any>;
+    hist$: Observable<any>;
 
     constructor(private http: HttpClient) {
         const f = timer(0, 60000).pipe(
@@ -20,13 +20,57 @@ export class HistoryComponentComponent implements OnInit {
         );
 
         this.hist$ = f.pipe(
-            map((resp:any) => {
+            map((resp: any) => {
                 let group = [];
-                (resp.tx).forEach((x)=> {
-                    group.push({"sum": x.value, "coin":x.txAsset, "address":x.toAddr, "type": x.txType});
+                console.log(resp);
+                (resp.tx).forEach((x) => {
+                    group.push(
+                        {"sum": x.value, "coin": x.txAsset, "address": x.toAddr, "type": x.txType}
+                    );
                 });
                 return group;
-            })
+            }),
+            map((resp: any) => {
+                let group = [];
+                (resp).forEach((x) => {
+                    let sum, coin, address, type: string;
+                    if (x.sum === null) {
+                        sum = '';
+                        x.sum = ''
+                    } else {
+                        sum = 'sum '
+                    }
+                    if (x.coin === null) {
+                        coin = '';
+                        x.coin = ''
+                    } else {
+                        coin = 'coin '
+                    }
+                    if (x.address === null) {
+                        address = '';
+                        x.address = ''
+                    }
+                    {
+                        address = 'address '
+                    }
+                    if (x.type === null) {
+                        type = '';
+                        x.type = ''
+                    }
+                    {
+                        type = 'type '
+                    }
+                    group.push(
+                        {
+                            "sum": sum + x.sum,
+                            "coin": coin + x.coin,
+                            "address": address + x.address,
+                            "type": type + x.type
+                        }
+                    );
+                });
+                return group;
+            }), shareReplay(1)
         )
     }
 

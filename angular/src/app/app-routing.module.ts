@@ -6,6 +6,7 @@ import {RegisterPasswordComponent} from "./register-password/register-password.c
 import {MainComponent} from "./main/main.component";
 import {RegisterRepeatPasswordComponent} from "./register-repeat-password/register-repeat-password.component";
 import {ImportMnemonicComponent} from "./import-mnemonic/import-mnemonic.component";
+import {UnlockComponent} from "./unlock/unlock.component";
 
 const routes: Routes = [
     {
@@ -36,7 +37,10 @@ const routes: Routes = [
     {
         path: 'main',
         component: MainComponent,
-    },
+    }, {
+        path: 'unlock',
+        component: UnlockComponent,
+    }
 ];
 
 @NgModule({

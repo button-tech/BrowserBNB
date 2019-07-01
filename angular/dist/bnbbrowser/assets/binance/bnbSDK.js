@@ -77213,11 +77213,8 @@ export function lockPrivateKey(pvtKey, password) {
 
 // Unlocks private key from keystore
 // password - password
-export function unlockPrivateKey(password) {
-    const keystoreSt = localStorage.getItem(CURRENT_ACCOUNT);
-    const keystore = JSON.parse(keystoreSt);
+export function unlockPrivateKey(keystore,password) {
     return BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
-
 }
 
 // Return  address from private key

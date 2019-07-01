@@ -1,21 +1,69 @@
+/// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
-// import {chrome} from '@types/chrome';
+import {Container} from "../models/container.model";
+import {MemoryService} from "./memory.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class StorageService {
 
-    constructor() {
+    val: Container;
+
+    constructor(private memory: MemoryService) {
+        this.val = {
+            accountName: "First",
+            privateKeystore: ""
+        };
     }
 
-    // async setKeystore(key: string, rawKeystore: string) {
-    //     chrome.storage.local.set({key, rawKeystore});
-    // }
+    set() {
 
-    // async getKeystore(key: string): string {
-    //     await chrome.storage.local.get(key, (x) => {
-    //        return x;
-    //     });
-    // }
+        const wrappedKeystore = JSON.stringify(this.memory.getCurrentKeystore());
+
+        this.val = {
+            accountName: "First",
+            privateKeystore: wrappedKeystore
+        };
+
+        const wrappedVal = JSON.stringify(this.val);
+
+        chrome.storage.local.set({all: wrappedVal},
+            () => {
+                console.log('Value is set to ' + wrappedVal);
+            }
+        );
+    }
+
+    async get() {
+        await chrome.storage.local.get(["all"],
+            (result) => {
+                console.log('36 log ' + result.all);
+                this.kostyl(result.all)
+            }
+        );
+    }
+
+    // todo: refactor!
+    kostyl(val2: any) {
+        console.log("45");
+        let res;
+        try {
+            res = JSON.parse(val2);
+        }
+        catch (e) {
+            console.log(e)
+        }
+        this.val = res;
+        if (res) {
+            this.memory.setCurrentKeystore(this.val.privateKeystore);
+        }
+    }
+
+    reset() {
+        chrome.storage.local.remove(["all"],
+            () => {
+            }
+        );
+    }
 }
