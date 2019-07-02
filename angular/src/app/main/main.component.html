@@ -1,34 +1,29 @@
 <div class="container">
-    <div style="background:rgb(33, 40, 51); border-bottom-left-radius: 2px;z-index: 9999 !important; border-bottom-right-radius: 2px"
+    <div id="top-account-col"
          class="row text-center">
         <div class="col" align="left">
             <button [satPopoverAnchor]="menuUsers" (click)="updateUsersList(); menuUsers.toggle()"
-                    class="btn btn-link btn-just-icon btn-lg"
-                    style="color: rgb(132, 142, 156);; margin-right:-2em;  font-size: 10px !important" href="/main">
+                    class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
                 <fa name="users" size="sm"></fa>
             </button>
             <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center">
-                <div style="z-index: 300" class="menu-wrapper-users" tabIndex="0">
+                <div class="menu-wrapper-users" tabIndex="0">
                     <div class="container">
-                        <div style="margin-top: 2em; margin-left: 0.2em; margin-right: 1.2em" class="row">
-                            <div style="font-weight: bold; color: white;  white-space: nowrap; margin-top: 1.2em"
-                                 align="left"
-                                 class="col-8">
+                        <div id="users-wrapper" class="row">
+                            <div id="AccountsHeader" align="left" class="col-8">
                                 My Accounts
                             </div>
-                            <div style="margin-top: 0.5em !important" align="right" class="col-4">
-                                <button style="margin-left: -10px" class="btn btn-binance-outline btn-sm">Log out
+                            <div id="logOut" align="right" class="col-4">
+                                <button id="logOutBtn" class="btn btn-binance-outline btn-sm">Log out
                                 </button>
                             </div>
                         </div>
-                        <hr style="border: 1px solid white">
+                        <hr class="pop-hr">
                     </div>
-                    <div style="height: 200px !important; position:fixed;
-    overflow-y:scroll;" class="container">
+                    <div id="scrollableUsers" class="container">
                         <div class="row">
                             <div class="col-12">
-                                <button *ngFor="let item of usersMenu"
-                                        class="menu-item-users"
+                                <button *ngFor="let item of usersMenu" class="menu-item-users"
                                         (click)="selectUser(item.val); menuUsers.toggle()">
                                     <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
                                     {{ item.val }}
@@ -36,10 +31,10 @@
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top: 13em" class="container">
+                    <div id="bottom-users" class="container">
                         <div class="row">
                             <div class="col-12">
-                                <hr style="border: 1px solid white">
+                                <hr class="pop-hr">
                                 <button class="menu-item-users">
                                     <fa name="plus" size="sm"></fa>
                                     Create Account
@@ -57,10 +52,9 @@
         <div class="col">
             <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
                     class="btn btn-link btn-outline  btn-sm"
-                    style="color: white; width: 155px !important; margin-top: 1.85em; border-radius: 15px; background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important; border: 1.47px solid rgb(240, 185, 11); max-width: 155px !important; line-height: 1 !important; font-weight: bold"
-                    href="/main">
-                <strong style="color:rgb(33, 40, 51);">Network:</strong> {{ this.selectedNetwork }}
-                <fa style="font-weight: 900 !important;" name="caret-down" size="sm"></fa>
+                    href="/main" id="networkBtn">
+                <strong id="NetworkWord">Network:</strong> {{ this.selectedNetwork }}
+                <fa name="caret-down" size="sm"></fa>
             </button>
             <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center">
                 <div class="menu-wrapper" tabIndex="0">
@@ -82,7 +76,7 @@
         <div class="col-12">
             <button [satPopoverAnchor]="name" (click)="name.open()" class="btn btn-sm btn-link" id="editButton">
                 {{this.accountName}}
-                <fa style="font-size: 12px !important" id="editIcon" name="edit" size="sm"></fa>
+                <fa id="editIcon" name="edit" size="sm"></fa>
             </button>
             <br>
             <button [satPopoverAnchor]="p"
@@ -105,35 +99,33 @@
         <sat-popover #name hasBackdrop forceAlignment>
             <app-edit-form (update)="this.accountName = $event"></app-edit-form>
         </sat-popover>
-        <hr style="width: 100%; margin-top: -0.65em; border: 1px solid #c5c5c5; border-radius: 15px; margin-right: 2em; margin-left: 2em">
+        <hr id="unusualHr">
         <div class="col-12">
-            <img style="margin-top: 1.5em;   -webkit-user-drag: none; -khtml-user-drag: none;  -moz-user-drag: none;-o-user-drag: none; user-drag: none;  -webkit-user-select: none;  -khtml-user-select: none; -moz-user-select: none;  -o-user-select: none;  user-select: none;"
+            <img id="imageBNB"
                  draggable="false" width="48" src="../../assets/icons/icon128.png">
-            <h3 style="font-weight: bold;">{{(bnb$ | async) || 'pending'}}</h3>
-            <h4 style="font-weight: bold; margin-top: -1em;margin-bottom: 0px; color: grey; font-size:16px !important">
+            <h3 class="bold">{{(bnb$ | async) || 'pending'}}</h3>
+            <h4 id="fiat">
                 {{(fiat$ | async) || 'pending'}}
             </h4>
-            <a style="font-weight: bold; color: grey; margin-top: 0em; text-decoration: underline; font-size: 13px">More
+            <a id="more">More
                 balances</a>
         </div>
-        <div style="margin-top: 1.5em" class="col-12">
-            <button style="width: 9.5em !important; margin-right: 0.25em;" class="btn btn-binance-outline btn-lg">
+        <div id="buttonsDiv" class="col-12">
+            <button class="btn btn-binance-outline btn-lg main-btn">
                 RECEIVE
             </button>
-            <button style="width: 9.5em !important; margin-left: 0.25em;" class="btn btn-binance-outline btn-lg">SEND
+            <button class="btn btn-binance-outline btn-lg main-btn">SEND
             </button>
         </div>
-
     </div>
-
     <div class="row">
-        <div style="margin-top: 1.5em" align="center" class="col-12">
-            <p style="margin-bottom: 0; font-weight: bold; color: #5a5a5a; font-size: 16px">History</p>
+        <div id="historyDiv" align="center" class="col-12">
+            <p id="historyP">History</p>
         </div>
-        <hr style="width: 100% !important;  border: 1px solid #c5c5c5; margin-left: 3em !important; margin-right: 3em; margin-top: 0.5em;">
+        <hr id="unusualHrSecond">
     </div>
     <div class="row">
-        <div style="margin: 0 !important; padding: 0 !important" class="col-12">
+        <div id="col-hist" class="col-12">
             <app-history-component></app-history-component>
         </div>
     </div>

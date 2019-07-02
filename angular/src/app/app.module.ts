@@ -19,7 +19,7 @@ import { HistoryComponentComponent } from './history-component/history-component
 import {StorageService} from "./services/storage.service";
 import { UnlockComponent } from './unlock/unlock.component';
 import { EditFormComponent } from './edit-form/edit-form.component';
-import { UsersListComponent } from './users-list/users-list.component';
+
 
 @NgModule({
     declarations: [
@@ -32,8 +32,7 @@ import { UsersListComponent } from './users-list/users-list.component';
         ImportMnemonicComponent,
         HistoryComponentComponent,
         UnlockComponent,
-        EditFormComponent,
-        UsersListComponent
+        EditFormComponent
     ],
     imports: [
         BrowserModule,
