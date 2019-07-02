@@ -88,15 +88,10 @@ export class MainComponent {
     updateUsersList() {
         this.usersMenu = [
             {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
-            {val: this.accountName},
+            {val: 'Job'},
+            {val: 'Personal'},
+            {val: 'Team'},
+            {val: 'DeFi'},
         ]
     }
 
