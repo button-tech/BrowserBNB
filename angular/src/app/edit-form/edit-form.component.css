@@ -1,0 +1,15 @@
+:host {
+    display: block;
+    background: white;
+    border-radius: 15px;
+}
+input {
+    line-height: 26px;
+    font-size: 15px;
+    padding: 0 5px;
+    border-radius: 15px;
+    border: 1px solid rgb(33, 40, 51);
+}
+input:focus {
+    outline: none;
+}

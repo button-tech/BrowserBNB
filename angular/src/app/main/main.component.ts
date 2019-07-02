@@ -1,10 +1,10 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {MemoryService} from '../services/memory.service';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, shareReplay, switchMap} from 'rxjs/operators';
-import {StorageService} from "../services/storage.service";
+
 
 @Component({
     selector: 'app-main',
@@ -13,9 +13,14 @@ import {StorageService} from "../services/storage.service";
 })
 export class MainComponent {
 
+
+
+    @Input() accountName = 'First account';
+    
     bnb$: Observable<string>;
     fiat$: Observable<string>;
     shortAddress$: Observable<string>;
+    copyMessage = 'Copy to clipboard';
 
     constructor(private memory: MemoryService, private http: HttpClient) {
 
@@ -65,7 +70,12 @@ export class MainComponent {
         );
     }
 
+    // resetCopy() {
+    //     this.copyMessage='Copy to clipboard';
+    // }
+
     copyAddress() {
+        this.copyMessage = 'Copied';
         const obj = document.createElement('textarea');
         obj.style.position = 'fixed';
         obj.style.left = '0';
@@ -78,6 +88,4 @@ export class MainComponent {
         document.execCommand('copy');
         document.body.removeChild(obj);
     }
-
-
 }
