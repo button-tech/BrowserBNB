@@ -1,24 +1,72 @@
 <div class="container">
-    <div style="background:rgb(33, 40, 51); border-bottom-left-radius: 2px; border-bottom-right-radius: 2px"
+    <div style="background:rgb(33, 40, 51); border-bottom-left-radius: 2px;z-index: 9999 !important; border-bottom-right-radius: 2px"
          class="row text-center">
         <div class="col" align="left">
-            <button class="btn btn-link btn-just-icon btn-lg"
+            <button [satPopoverAnchor]="menuUsers" (click)="updateUsersList(); menuUsers.toggle()"
+                    class="btn btn-link btn-just-icon btn-lg"
                     style="color: rgb(132, 142, 156);; margin-right:-2em;  font-size: 10px !important" href="/main">
                 <fa name="users" size="sm"></fa>
             </button>
+            <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center">
+                <div style="z-index: 300" class="menu-wrapper-users" tabIndex="0">
+                    <div class="container">
+                        <div style="margin-top: 2em; margin-left: 0.2em; margin-right: 1.2em" class="row">
+                            <div style="font-weight: bold; color: white;  white-space: nowrap; margin-top: 1.2em"
+                                 align="left"
+                                 class="col-8">
+                                My Accounts
+                            </div>
+                            <div style="margin-top: 0.5em !important" align="right" class="col-4">
+                                <button style="margin-left: -10px" class="btn btn-binance-outline btn-sm">Log out
+                                </button>
+                            </div>
+                        </div>
+                        <hr style="border: 1px solid white">
+                    </div>
+                    <div style="height: 200px !important; position:fixed;
+    overflow-y:scroll;" class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <button *ngFor="let item of usersMenu"
+                                        class="menu-item-users"
+                                        (click)="selectUser(item.val); menuUsers.toggle()">
+                                    <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
+                                    {{ item.val }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 13em" class="container">
+                        <div class="row">
+                            <div class="col-12">
+                                <hr style="border: 1px solid white">
+                                <button class="menu-item-users">
+                                    <fa name="plus" size="sm"></fa>
+                                    Create Account
+                                </button>
+                                <button class="menu-item-users">
+                                    <fa name="arrow-right" size="sm"></fa>
+                                    Import Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </sat-popover>
         </div>
         <div class="col">
-            <button [satPopoverAnchor]="menu" (click)="menu.toggle()" class="btn btn-link btn-outline  btn-sm"
+            <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
+                    class="btn btn-link btn-outline  btn-sm"
                     style="color: white; width: 155px !important; margin-top: 1.85em; border-radius: 15px; background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important; border: 1.47px solid rgb(240, 185, 11); max-width: 155px !important; line-height: 1 !important; font-weight: bold"
                     href="/main">
                 <strong style="color:rgb(33, 40, 51);">Network:</strong> {{ this.selectedNetwork }}
-                <fa style="font-weight: 900 !important; " name="caret-down" size="sm"></fa>
+                <fa style="font-weight: 900 !important;" name="caret-down" size="sm"></fa>
             </button>
-            <sat-popover #menu horizontalAlign="center" verticalAlign="center">
+            <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center">
                 <div class="menu-wrapper" tabIndex="0">
-                    <button *ngFor="let item of menuItems"
+                    <button *ngFor="let item of networkMenu"
                             class="menu-item"
-                            (click)="select([item.val]); menu.toggle()">
+                            (click)="selectNetwork(item.val); menuNetwork.toggle()">
                         {{ item.val }}
                     </button>
                 </div>
@@ -54,11 +102,9 @@
             <div class="arrow">
             </div>
         </sat-popover>
-
         <sat-popover #name hasBackdrop forceAlignment>
             <app-edit-form (update)="this.accountName = $event"></app-edit-form>
         </sat-popover>
-
         <hr style="width: 100%; margin-top: -0.65em; border: 1px solid #c5c5c5; border-radius: 15px; margin-right: 2em; margin-left: 2em">
         <div class="col-12">
             <img style="margin-top: 1.5em;   -webkit-user-drag: none; -khtml-user-drag: none;  -moz-user-drag: none;-o-user-drag: none; user-drag: none;  -webkit-user-select: none;  -khtml-user-select: none; -moz-user-select: none;  -o-user-select: none;  user-select: none;"

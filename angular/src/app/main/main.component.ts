@@ -26,11 +26,12 @@ export class MainComponent {
     copyMessage = 'Copy to clipboard';
     selectedNetwork: string;
 
-    /** For a simplified (ahem, lazy) demo, the menu has max depth of 1. */
-    menuItems: MenuItem[] = [
+    networkMenu: MenuItem[] = [
         {val: 'TESTNET'},
         {val: 'MAINNET'},
     ];
+
+    usersMenu: MenuItem[] = [];
 
 
     constructor(private memory: MemoryService, private http: HttpClient) {
@@ -41,6 +42,7 @@ export class MainComponent {
             const bnb = resp.find((x) => x.symbol === 'BNB');
             return bnb ? bnb.free : 0;
         };
+
 
         const bnbRaw$ = timer(0, 4000).pipe(
             switchMap(() => {
@@ -83,8 +85,27 @@ export class MainComponent {
         );
     }
 
-    select(values: string) {
-        this.selectedNetwork = values;
+    updateUsersList() {
+        this.usersMenu = [
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+            {val: this.accountName},
+        ]
+    }
+
+    selectNetwork(value: string) {
+        this.selectedNetwork = value;
+    }
+
+    selectUser(value: string) {
+        this.accountName = value;
     }
 
     copyAddress() {
