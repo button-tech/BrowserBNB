@@ -1,5 +1,6 @@
 <div class="container">
-    <div style="background:rgb(33, 40, 51); border-bottom-left-radius: 2px; border-bottom-right-radius: 2px" class="row text-center">
+    <div style="background:rgb(33, 40, 51); border-bottom-left-radius: 2px; border-bottom-right-radius: 2px"
+         class="row text-center">
         <div class="col" align="left">
             <button class="btn btn-link btn-just-icon btn-lg"
                     style="color: rgb(132, 142, 156);; margin-right:-2em;  font-size: 10px !important" href="/main">
@@ -7,12 +8,21 @@
             </button>
         </div>
         <div class="col">
-            <button class="btn btn-link btn-outline  btn-sm"
-                    style="color: white ; margin-top: 1.85em; border-radius: 15px; background: rgb(132, 142, 156);; border: 1.47px solid rgb(240, 185, 11);; max-width: 300px !important; line-height: 1 !important;"
+            <button [satPopoverAnchor]="menu" (click)="menu.toggle()" class="btn btn-link btn-outline  btn-sm"
+                    style="color: white; width: 155px !important; margin-top: 1.85em; border-radius: 15px; background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important; border: 1.47px solid rgb(240, 185, 11); max-width: 155px !important; line-height: 1 !important; font-weight: bold"
                     href="/main">
-                <strong>Network:</strong> Mainnet
+                <strong style="color:rgb(33, 40, 51);">Network:</strong> {{ this.selectedNetwork }}
                 <fa style="font-weight: 900 !important; " name="caret-down" size="sm"></fa>
             </button>
+            <sat-popover #menu horizontalAlign="center" verticalAlign="center">
+                <div class="menu-wrapper" tabIndex="0">
+                    <button *ngFor="let item of menuItems"
+                            class="menu-item"
+                            (click)="select([item.val]); menu.toggle()">
+                        {{ item.val }}
+                    </button>
+                </div>
+            </sat-popover>
         </div>
         <div align="right" class="col">
             <button id="cog" class="btn btn-link btn-just-icon btn-lg" href="/main">
@@ -30,7 +40,7 @@
             <button [satPopoverAnchor]="p"
                     (mouseenter)="p.open()"
                     (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
-                    (click)="this.copyAddress(); p.close(10000)"
+                    (click)="this.copyAddress();"
                     class="btn btn-sm btn-link hover-anchor">
                 {{this.shortAddress$ | async}}
                 <fa id="copyButton" name="copy" size="sm"></fa>

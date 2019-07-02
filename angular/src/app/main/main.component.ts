@@ -6,6 +6,10 @@ import {HttpClient} from '@angular/common/http';
 import {map, shareReplay, switchMap} from 'rxjs/operators';
 
 
+interface MenuItem {
+    val: string;
+}
+
 @Component({
     selector: 'app-main',
     templateUrl: './main.component.html',
@@ -14,15 +18,24 @@ import {map, shareReplay, switchMap} from 'rxjs/operators';
 export class MainComponent {
 
 
-
     @Input() accountName = 'First account';
-    
+
     bnb$: Observable<string>;
     fiat$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
+    selectedNetwork: string;
+
+    /** For a simplified (ahem, lazy) demo, the menu has max depth of 1. */
+    menuItems: MenuItem[] = [
+        {val: 'TESTNET'},
+        {val: 'MAINNET'},
+    ];
+
 
     constructor(private memory: MemoryService, private http: HttpClient) {
+
+        this.selectedNetwork = 'MAINNET';
 
         const getBnbBalance = (resp: any) => {
             const bnb = resp.find((x) => x.symbol === 'BNB');
@@ -70,9 +83,9 @@ export class MainComponent {
         );
     }
 
-    // resetCopy() {
-    //     this.copyMessage='Copy to clipboard';
-    // }
+    select(values: string) {
+        this.selectedNetwork = values;
+    }
 
     copyAddress() {
         this.copyMessage = 'Copied';
