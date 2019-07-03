@@ -1,0 +1,21 @@
+.btn-binance {
+    background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+body {
+    font-family: 'Montserrat', sans-serif !important;
+    background: white !important;
+    background-color: white !important;
+}
+
+.btn-binance-outline {
+    border: solid rgb(240, 185, 11) 1px !important;
+    color: rgb(240, 185, 11) !important;
+    background: none !important;
+    font-weight: bold !important;
+}
+.btn-binance-outline:hover {
+    color: rgb(255, 255, 255) !important;
+    background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
+}
