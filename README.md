@@ -3,6 +3,8 @@ MetaMask like widget for Binance Chain ❤️
 
 ![DEMO](https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif)
 
+[![Build Status](https://travis-ci.org/button-tech/BrowserBNB.svg?branch=master)](https://travis-ci.org/button-tech/BrowserBNB)
+
 ## Step 1 (Registration or Import) 
 
 - [x] Mnemonic Creation
