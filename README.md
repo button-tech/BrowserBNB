@@ -1,6 +1,8 @@
 # BrowserBNB 
 MetaMask like widget for Binance Chain ❤️ 
 
+![DEMO](https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif)
+
 ## Step 1 (Registration or Import) 
 
 - [x] Mnemonic Creation
@@ -25,7 +27,7 @@ MetaMask like widget for Binance Chain ❤️
 - [x] Storing private key during active session
 
 Navigation 
-![Navigation](https://raw.githubusercontent.com/button-tech/BrowserBNB/master/utils/img/CreateOrImport.png)
+![Navigation](https://raw.githubusercontent.com/button-tech/BrowserBNB/master/docs/img/CreateOrImport.png)
 
 ## Step 2 (Infrastructure)
  - [ ] Add background.js and sessions support
