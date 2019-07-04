@@ -11,8 +11,15 @@ cache:
 addons:
   chrome: stable
 
+compiler:
+  - clang
+  - gcc
+
+install: make get-deps
+
 script:
 - cd app/view
+- npm i
 - npm run build --prod --aot
 - cd ../background
 - npm i
