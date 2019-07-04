@@ -8,9 +8,6 @@ cache:
   directories:
   - node_modules
 
-addons:
-  chrome: stable
-
 compiler:
   - clang
   - gcc
