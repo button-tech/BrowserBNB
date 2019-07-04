@@ -1,69 +1,98 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
-import {Container} from "../models/container.model";
-import {MemoryService} from "./memory.service";
+import {MemoryService} from './memory.service';
+import {BehaviorSubject, from, fromEvent, Observable, Subject} from 'rxjs';
+import {ɵBrowserAnimationBuilder} from '@angular/platform-browser/animations';
+
+export interface IWrappedKeystore {
+    accountName: string;
+    privateKeystore: any; // TODO: sepcify interface from typings
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class StorageService {
 
-    val: Container;
+    // TODO: remove
+    val: IWrappedKeystore = {accountName: 'First', privateKeystore: ''};
 
-    constructor(private memory: MemoryService) {
-        this.val = {
-            accountName: "First",
-            privateKeystore: ""
-        };
+    // TODO: test this
+    // private storageSubject: Subject<any> = new Subject();
+    // storage$: Observable<any> = this.storageSubject;
+
+    constructor() {
+        // TODO: test this
+        // chrome.storage.onChanged.addListener(function (changes, namespace) {
+        //     // debugger
+        //     const storageChange = changes['all'];
+        //     if (storageChange) {
+        //         this.storageSubject.next(storageChange.newValue);
+        //     }
+        //
+        //     // if(changes[key])
+        //     // for (var key in changes) {
+        //     //     var storageChange = changes[key];
+        //     //     console.log('Storage key "%s" in namespace "%s" changed. ' +
+        //     //         'Old value was "%s", new value is "%s".',
+        //     //         key,
+        //     //         namespace,
+        //     //         storageChange.oldValue,
+        //     //         storageChange.newValue);
+        //     // }
+        // });
     }
 
-    set() {
 
-        const wrappedKeystore = JSON.stringify(this.memory.getCurrentKeystore());
-
-        this.val = {
-            accountName: "First",
-            privateKeystore: wrappedKeystore
-        };
-
-        const wrappedVal = JSON.stringify(this.val);
-
-        chrome.storage.local.set({all: wrappedVal},
-            () => {
-                console.log('Value is set to ' + wrappedVal);
-            }
-        );
+    // the actual async value that will be returned is 'saved'
+    async set(value: any): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const jsonText = JSON.stringify(value);
+            chrome.storage.local.set({all: jsonText}, () => resolve('saved'));
+        });
     }
 
-    async get() {
-        await chrome.storage.local.get(["all"],
-            (result) => {
-                console.log('36 log ' + result.all);
-                this.kostyl(result.all)
-            }
-        );
+    // Rx wrapper on promise
+    set$(value: any): Observable<string> {
+        const promise = this.set(value);
+        return from(promise);
     }
 
-    // todo: refactor!
-    kostyl(val2: any) {
-        console.log("45");
-        let res;
-        try {
-            res = JSON.parse(val2);
-        }
-        catch (e) {
-            console.log(e)
-        }
-        this.val = res;
-        if (res) {
-            this.memory.setCurrentKeystore(this.val.privateKeystore);
-        }
+    async get(): Promise<any> {
+        const promise = new Promise((resolve, reject) => {
+            chrome.storage.local.get(['all'], (result) => {
+
+                try {
+                    const value = JSON.parse(result.all);
+                    resolve(value);
+                } catch {
+                    // DO nothing
+                }
+
+                if (!result.all) {
+                    resolve(result.all); // value from storage as it is
+                }
+            });
+        });
+
+        return promise;
     }
 
-    reset() {
-        chrome.storage.local.remove(["all"],
-            () => {
-            }
-        );
+    // Rx wrapper on promise
+    get$(value: any): Observable<string> {
+        return from(this.get());
+    }
+
+    async reset() {
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.remove(['all'], () => {
+                resolve();
+            });
+        });
+    }
+
+    // returns observable that fires one undefined valuer I guess, todo check
+    reset$(value: any): Observable<any> {
+        return from(this.reset());
     }
 }
