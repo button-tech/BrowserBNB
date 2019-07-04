@@ -15,8 +15,6 @@ compiler:
   - clang
   - gcc
 
-install: make get-deps
-
 script:
 - cd app/view
 - npm i
