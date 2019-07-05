@@ -77275,3 +77275,7 @@ export async function askForPassword() {
     let password = "test";
     return password;
 }
+
+export function initBNB() {
+    return BNB.BNB;
+}
