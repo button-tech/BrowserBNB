@@ -14,6 +14,7 @@ export class RegisterMnemonicComponent implements OnInit {
     mnemonic: string;
     marked = false;
     theCheckbox = false;
+    copyMessage = 'Copy mnemonic';
 
     constructor(private memory: MemoryService, private alert: AlertsService, private router: Router) {
         let fromMemory = this.memory.getCurrentMnemonic();
@@ -55,6 +56,7 @@ export class RegisterMnemonicComponent implements OnInit {
         obj.focus();
         obj.select();
         document.execCommand('copy');
+        this.copyMessage = 'Copied';
         document.body.removeChild(obj);
     }
 

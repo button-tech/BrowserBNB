@@ -33,7 +33,6 @@ export class MainComponent {
 
     usersMenu: MenuItem[] = [];
 
-
     constructor(private memory: MemoryService, private http: HttpClient) {
 
         this.selectedNetwork = 'MAINNET';
