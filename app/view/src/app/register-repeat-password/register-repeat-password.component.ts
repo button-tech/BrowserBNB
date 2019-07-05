@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MemoryService} from "../services/memory.service";
-import * as Binance from '../../assets/binance/bnbSDK.js'
+import {BinanceCrypto} from '../services/binance.service';
 import {ToastrManager} from 'ng6-toastr-notifications';
 import {Router} from "@angular/router";
 import {StorageService} from "../services/storage.service";
@@ -30,7 +30,7 @@ export class RegisterRepeatPasswordComponent implements OnInit {
 
     checkPassword() {
         let password = (<HTMLInputElement>document.getElementById('password')).value;
-        let newHash = Binance.sha3(password);
+        let newHash = BinanceCrypto.returnSHA3hashSum(password);
         if (newHash === this.memory.getCurrentPasswordHash()) {
             this.storage.set$(JSON.stringify(this.memory.getCurrentKeystore()));
             this.router.navigate(['/main']);

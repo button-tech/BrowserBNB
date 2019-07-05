@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {StorageService} from "../services/storage.service";
 import {MemoryService} from "../services/memory.service";
-import * as Binance from '../../assets/binance/bnbSDK.js'
+import {BinanceCrypto} from '../services/binance.service';
 import {ToastrManager} from "ng6-toastr-notifications";
 
 @Component({
@@ -24,9 +24,9 @@ export class UnlockComponent implements OnInit {
         const password = (document.getElementById('password') as HTMLInputElement).value;
 
         try {
-            const privateKey = Binance.unlockPrivateKey(this.keystore, password);
+            const privateKey = BinanceCrypto.returnPrivateKeyFromKeystore(this.keystore, password);
             this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(Binance.getAddressFromPrivateKey(privateKey));
+            this.memory.setCurrentAddress(BinanceCrypto.returnAddressFromPrivateKey(privateKey));
             this.router.navigate(['/main'])
         }
         catch (e) {

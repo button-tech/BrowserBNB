@@ -5,10 +5,10 @@ import {StorageService} from "../services/storage.service";
 
 @Component({
     selector: 'app-greeter',
-    templateUrl: './greeter.component.html',
-    styleUrls: ['./greeter.component.css']
+    templateUrl: './frist-page.component.html',
+    styleUrls: ['./first-page.component.css']
 })
-export class GreeterComponent implements OnInit {
+export class FirstPageComponent implements OnInit {
 
     constructor(private router: Router, public storage: StorageService, private memory: MemoryService) {
 

@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 
+
 @Injectable({
     providedIn: 'root'
 })
 export class BinanceService {
 
     constructor() {
-
     }
 }
 

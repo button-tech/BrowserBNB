@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import * as Binance from '../../assets/binance/bnbSDK.js'
+
 import {MemoryService} from "../services/memory.service";
 import {ToastrManager} from "ng6-toastr-notifications";
 import {Router} from "@angular/router";
+import {BinanceCrypto} from "../services/binance.service";
 
 @Component({
     selector: 'app-create',
@@ -17,13 +18,13 @@ export class RegisterMnemonicComponent implements OnInit {
 
     constructor(private memory: MemoryService, public toastr: ToastrManager, private router: Router) {
         let fromMemory = this.memory.getCurrentMnemonic();
-        if (fromMemory !== 'default' && Binance.valMnemonic(fromMemory)) {
+        if (fromMemory !== 'default' && BinanceCrypto.validateMnemonic(fromMemory)) {
             this.mnemonic = fromMemory;
         } else {
-            this.mnemonic = Binance.createMnemonic();
-            let privateKey = Binance.getPvtKeyFromMnemonic(this.mnemonic);
+            this.mnemonic = BinanceCrypto.createMnemonic();
+            let privateKey = BinanceCrypto.returnPrivateKeyFromMnemonic(this.mnemonic);
             this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(Binance.getAddressFromPrivateKey(privateKey));
+            this.memory.setCurrentAddress(BinanceCrypto.returnAddressFromPrivateKey(privateKey));
             this.memory.setCurrenMnemonic(this.mnemonic)
         }
     }

@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import * as Binance from '../../assets/binance/bnbSDK.js'
 import {MemoryService} from "../services/memory.service";
 import {Router} from "@angular/router";
 import {Toastr, ToastrManager} from "ng6-toastr-notifications";
+import {BinanceService, BinanceCrypto} from "../services/binance.service";
 
 @Component({
     selector: 'app-import-mnemonic',
@@ -11,7 +11,7 @@ import {Toastr, ToastrManager} from "ng6-toastr-notifications";
 })
 export class ImportMnemonicComponent implements OnInit {
 
-    constructor(private memory: MemoryService, private router: Router, public toastr: ToastrManager) {
+    constructor(private memory: MemoryService, private router: Router, public toastr: ToastrManager, private binance: BinanceService) {
     }
 
     ngOnInit() {
@@ -19,10 +19,10 @@ export class ImportMnemonicComponent implements OnInit {
 
     validate() {
         let mnemonic = (<HTMLInputElement>document.getElementById('mnemonic')).value;
-        if (Binance.valMnemonic(mnemonic)) {
-            let privateKey = Binance.getPvtKeyFromMnemonic(mnemonic);
+        if (BinanceCrypto.validateMnemonic(mnemonic)) {
+            let privateKey = BinanceCrypto.returnPrivateKeyFromMnemonic(mnemonic);
             this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(Binance.getAddressFromPrivateKey(privateKey));
+            this.memory.setCurrentAddress(BinanceCrypto.returnAddressFromPrivateKey(privateKey));
             // this.router.navigate(['/password']);
             this.router.navigate(['/password', {imported: true}]);
         }

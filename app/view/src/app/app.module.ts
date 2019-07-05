@@ -3,7 +3,7 @@ import {NgModule} from '@angular/core';
 import { ToastrModule } from 'ng6-toastr-notifications';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {GreeterComponent} from './first-page/greeter.component';
+import {FirstPageComponent} from './first-page/first-page.component';
 import {RegisterMnemonicComponent} from './register-mnemonic/register-mnemonic.component';
 import {RegisterPasswordComponent} from './register-password/register-password.component';
 import {MainComponent} from './main/main.component';
@@ -25,7 +25,7 @@ import {BinanceService} from "./services/binance.service";
 @NgModule({
     declarations: [
         AppComponent,
-        GreeterComponent,
+        FirstPageComponent,
         RegisterMnemonicComponent,
         RegisterPasswordComponent,
         MainComponent,

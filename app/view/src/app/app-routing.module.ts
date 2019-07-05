@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {GreeterComponent} from "./first-page/greeter.component";
+import {FirstPageComponent} from "./first-page/first-page.component";
 import {RegisterMnemonicComponent} from "./register-mnemonic/register-mnemonic.component";
 import {RegisterPasswordComponent} from "./register-password/register-password.component";
 import {MainComponent} from "./main/main.component";
@@ -16,7 +16,7 @@ const routes: Routes = [
     },
     {
         path: 'greeter',
-        component: GreeterComponent,
+        component: FirstPageComponent,
     },
     {
         path: 'create',
