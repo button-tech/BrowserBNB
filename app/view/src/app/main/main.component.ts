@@ -17,7 +17,6 @@ interface MenuItem {
 })
 export class MainComponent {
 
-
     @Input() accountName = 'First account';
 
     bnb$: Observable<string>;

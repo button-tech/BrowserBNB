@@ -12,7 +12,6 @@ import {AlertsService} from "../services/alerts.service";
 })
 export class ImportMnemonicComponent implements OnInit {
 
-
     constructor(private memory: MemoryService, private router: Router, private alert: AlertsService) {
     }
 
