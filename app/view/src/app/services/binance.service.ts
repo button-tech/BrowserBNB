@@ -71,31 +71,120 @@ export class BinanceCrypto {
         }
     };
 
-    public static returnKeystoreFromPrivateKey() {
-
-    };
-
-    public static returnPrivateKeyFromKeystore() {
-    };
-
-    public static returnSHA3hashSum() {
-    };
-
-    public static returnAddressFromKeystore() {
+    public static returnKeystoreFromPrivateKey(pvtKey: string, password: string) {
+        let keystore;
+        try {
+            keystore = Binance.BNB.BNB.crypto.generateKeyStore(pvtKey, password);
+        }
+        catch (e) {
+            console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromPrivateKey() ${e}`);
+            return '';
+        }
+        return keystore;
     }
 
-    public static returnAddressFromPrivateKey() {
+
+    public static returnPrivateKeyFromKeystore(keystore: any, password: string): string {
+        let pvtKey;
+        try {
+            pvtKey = Binance.BNB.BNB.crypto.getPrivateKeyFromKeyStore(keystore, password);
+        }
+        catch (e) {
+            console.error(`Error at binance.service.BinanceCrypto.returnPrivateKeyFromKeystore() ${e}`);
+            return '';
+        }
+        return pvtKey;
     }
 
-    public static returnAddressFromPublicKey() {
+
+    public static returnSHA3hashSum(value: string): string {
+        return Binance.BNB.BNB.utils.sha3(Binance.BNB.BNB.utils.str2hexstring(value))
     }
 
-    public static returnAddressFromMnemonic() {
+
+    public static returnAddressFromKeystore(keystore: any, password: string, networkType: string = 'bnb') {
+        const pvtKey = BinanceCrypto.returnPrivateKeyFromKeystore(keystore, password);
+        if (pvtKey.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromKeystore() invalid pvtKey length`);
+            return '';
+        }
+
+        const address = BinanceCrypto.returnAddressFromPrivateKey(pvtKey, networkType);
+        if (address.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromKeystore() invalid address length`);
+            return '';
+        }
+        return address;
     }
 
-    public static validateAddress() {
+    public static returnAddressFromPrivateKey(pvtKey: string, networkType: string = 'bnb'): string {
+        const publicKey = BinanceCrypto.returnAddressFromPublicKey(pvtKey);
+        if (publicKey.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromPrivateKey() invalid publicKey length`);
+            return '';
+        }
+
+        let address;
+        try {
+            address = Binance.BNB.BNB.crypto.getAddressFromPublicKey(publicKey, networkType);
+        }
+        catch (e) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromPrivateKey() ${e}`);
+            return '';
+        }
+
+        return address;
     }
 
+    public static returnAddressFromPublicKey(pvtKey: string): string {
+        if (pvtKey.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromPublicKey() invalid pvtKey length`);
+            return '';
+        }
+        let publicKey;
+        try {
+            publicKey = Binance.BNB.BNB.crypto.getPublicKeyFromPrivateKey(pvtKey);
+        } catch (e) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromPublicKey() ${e}`);
+            return '';
+        }
+        return publicKey
+    }
+
+    public static returnAddressFromMnemonic(mnemonic: string, networkType: string = 'bnb'): string {
+        if (mnemonic.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromMnemonic() invalid mnemonic length`);
+            return '';
+        }
+        const pvtKey = BinanceCrypto.returnPrivateKeyFromMnemonic(mnemonic);
+        if (pvtKey.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromMnemonic() invalid pvtKey length`);
+            return '';
+        }
+        const address = BinanceCrypto.returnAddressFromPrivateKey(pvtKey, networkType);
+
+        if (address.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.returnAddressFromMnemonic() invalid address length`);
+            return '';
+        }
+        return address;
+    }
+
+    public static validateAddress(address: string, networkType: string = 'bnb'): boolean {
+        if (address.length === 0) {
+            console.error(`Error at binance.service.BinanceCrypto.validateAddress() invalid address length`);
+            return false;
+        }
+        let result;
+        try {
+            result = Binance.BNB.BNB.crypto.checkAddress(address, networkType);
+        }
+        catch (e) {
+            console.error(`Error at binance.service.BinanceCrypto.validateAddress() ${e}`);
+            return false;
+        }
+        return result;
+    }
 }
 
 

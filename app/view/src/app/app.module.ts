@@ -19,6 +19,7 @@ import { HistoryComponentComponent } from './history-component/history-component
 import {StorageService} from "./services/storage.service";
 import { UnlockComponent } from './unlock/unlock.component';
 import { EditFormComponent } from './edit-form/edit-form.component';
+import {BinanceService} from "./services/binance.service";
 
 
 @NgModule({
@@ -44,7 +45,7 @@ import { EditFormComponent } from './edit-form/edit-form.component';
         FormsModule,
         SatPopoverModule
     ],
-    providers: [MemoryService, StorageService],
+    providers: [MemoryService, StorageService, BinanceService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
