@@ -15,7 +15,7 @@ export class BinanceService {
 
 export class BinanceCrypto {
 
-    public static returnMnemonic(): string {
+    public static createMnemonic(): string {
         let mnemonic: string;
         try {
             mnemonic = Binance.BNB.BNB.crypto.generateMnemonic();
@@ -54,10 +54,25 @@ export class BinanceCrypto {
         }
     }
 
-    public static returnKeystoreFromMnemonic() {
+    public static returnKeystoreFromMnemonic(mnemonic: string, password: string): any {
+        if (BinanceCrypto._validateMnemonic(mnemonic) && password.length > 0) {
+            const pvtKey = BinanceCrypto.returnPrivateKeyFromMnemonic(mnemonic);
+            let keystore;
+            try {
+                keystore = Binance.BNB.BNB.crypto.generateKeyStore(pvtKey, password);
+            }
+            catch (e) {
+                console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromMnemonic() ${e}`);
+                return '';
+            }
+            return keystore;
+        } else {
+            return '';
+        }
     };
 
     public static returnKeystoreFromPrivateKey() {
+
     };
 
     public static returnPrivateKeyFromKeystore() {
@@ -83,5 +98,19 @@ export class BinanceCrypto {
 
 }
 
+
 export class BinanceWeb {
+
+    getBalanceOfAccount() {
+
+    }
+
+    getBalanceOfToken() {
+
+    }
+
+    getTransactionsHistory() {
+    }
+
+
 }

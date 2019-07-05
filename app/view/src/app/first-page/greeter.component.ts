@@ -10,26 +10,27 @@ import {StorageService} from "../services/storage.service";
 })
 export class GreeterComponent implements OnInit {
 
-    constructor(private router: Router, private storage: StorageService, private memory: MemoryService) {
+    constructor(private router: Router, public storage: StorageService, private memory: MemoryService) {
 
         try {
-            this.storage.get();
+            this.storage.get('privateKeystore').then(() => {
 
-            this.delay(50).then(() => {
-                try {
-                    const storageKeystore = this.memory.getCurrentKeystore();
-                    console.log(`INITED KEY ${storageKeystore}`);
+            });
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
 
-                    if (storageKeystore !== "" && storageKeystore !== 'default keystore') {
-                        this.memory.setCurrentKeystore(storageKeystore);
-                        this.router.navigate(['/unlock']);
-                    }
-                }
-                catch (e) {
-                    console.log(e)
-                }
-            })
+    zalupa() {
+        try {
+            const storageKeystore = this.memory.getCurrentKeystore();
+            console.log(`INITED KEY ${storageKeystore}`);
 
+            if (storageKeystore !== "" && storageKeystore !== 'default keystore') {
+                this.memory.setCurrentKeystore(storageKeystore);
+                this.router.navigate(['/unlock']);
+            }
         }
         catch (e) {
             console.log(e)

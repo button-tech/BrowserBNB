@@ -4,9 +4,14 @@ import {MemoryService} from './memory.service';
 import {BehaviorSubject, from, fromEvent, Observable, Subject} from 'rxjs';
 import {ɵBrowserAnimationBuilder} from '@angular/platform-browser/animations';
 
-export interface IWrappedKeystore {
+export interface IWrappedAccounts {
+    Account: IAccount[];
+}
+
+interface IAccount {
+    encryptedSeed: string;
+    encryptedKeystore: string;
     accountName: string;
-    privateKeystore: any; // TODO: sepcify interface from typings
 }
 
 @Injectable({
@@ -15,7 +20,7 @@ export interface IWrappedKeystore {
 export class StorageService {
 
     // TODO: remove
-    val: IWrappedKeystore = {accountName: 'First', privateKeystore: ''};
+    // val: IWrappedAccounts = {accountName: 'First', privateKeystore: ''};
 
     // TODO: test this
     // private storageSubject: Subject<any> = new Subject();
@@ -58,19 +63,28 @@ export class StorageService {
         return from(promise);
     }
 
-    async get(): Promise<any> {
+    async get(value: string): Promise<any> {
         const promise = new Promise((resolve, reject) => {
             chrome.storage.local.get(['all'], (result) => {
-
+                let finalValue;
                 try {
-                    const value = JSON.parse(result.all);
-                    resolve(value);
+                    finalValue = JSON.parse(result.all);
+                    console.log(`72  ${finalValue}`);
                 } catch {
                     // DO nothing
                 }
 
-                if (!result.all) {
-                    resolve(result.all); // value from storage as it is
+                if (!finalValue) {
+                    console.log(`78  ${finalValue}`);
+                    resolve(finalValue); // value from storage as it is
+                }
+                else if (value === 'privateKeystore') {
+                    console.log(`83  ${finalValue.privateKeystore}`);
+                    resolve(finalValue.privateKeystore)
+                }
+                else if (value === 'accountName') {
+                    console.log(`88  ${finalValue.accountName}`);
+                    resolve(finalValue.accountName)
                 }
             });
         });
@@ -79,8 +93,9 @@ export class StorageService {
     }
 
     // Rx wrapper on promise
-    get$(value: any): Observable<string> {
-        return from(this.get());
+    get$(value: string): Observable<string> {
+        console.log(`99 ${this.get(value)}`);
+        return from(this.get(value));
     }
 
     async reset() {
@@ -95,4 +110,21 @@ export class StorageService {
     reset$(value: any): Observable<any> {
         return from(this.reset());
     }
+
+
+    setNameForAccount$(accountNumber: number, newName: string) {
+
+    }
+
+    getAccountNumberByName$() {
+
+    }
+
+    getAllAccountNames$() {
+    }
+
+    getAccountByName$() {
+    }
+
+
 }

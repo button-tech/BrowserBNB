@@ -32,7 +32,7 @@ export class RegisterRepeatPasswordComponent implements OnInit {
         let password = (<HTMLInputElement>document.getElementById('password')).value;
         let newHash = Binance.sha3(password);
         if (newHash === this.memory.getCurrentPasswordHash()) {
-            this.storage.set();
+            this.storage.set$(JSON.stringify(this.memory.getCurrentKeystore()));
             this.router.navigate(['/main']);
             return true;
         }
