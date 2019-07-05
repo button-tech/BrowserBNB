@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {MemoryService} from "../services/memory.service";
 import {BinanceCrypto} from '../services/binance.service';
-import {ToastrManager} from 'ng6-toastr-notifications';
 import {Router} from "@angular/router";
 import {StorageService} from "../services/storage.service";
+import {AlertsService} from "../services/alerts.service";
 
 @Component({
     selector: 'app-register-repeat-password',
@@ -12,20 +12,11 @@ import {StorageService} from "../services/storage.service";
 })
 export class RegisterRepeatPasswordComponent implements OnInit {
 
-    constructor(private memory: MemoryService, public toastr: ToastrManager, private router: Router, private storage: StorageService) {
+    constructor(private memory: MemoryService, private alert: AlertsService, private router: Router, private storage: StorageService) {
 
     }
 
     ngOnInit() {
-    }
-
-    showError() {
-        this.toastr.errorToastr("Passwords don't match", 'Error', {
-            position: 'top-full-width',
-            maxShown: 1,
-            showCloseButton: true,
-            toastTimeout: 5000
-        });
     }
 
     checkPassword() {
@@ -37,7 +28,7 @@ export class RegisterRepeatPasswordComponent implements OnInit {
             return true;
         }
         else {
-            this.showError();
+            this.alert.showError('Passwords do not match', 'Error');
             return false;
         }
     }

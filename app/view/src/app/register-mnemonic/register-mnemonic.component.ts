@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-
 import {MemoryService} from "../services/memory.service";
-import {ToastrManager} from "ng6-toastr-notifications";
 import {Router} from "@angular/router";
 import {BinanceCrypto} from "../services/binance.service";
+import {AlertsService} from "../services/alerts.service";
 
 @Component({
     selector: 'app-create',
@@ -16,7 +15,7 @@ export class RegisterMnemonicComponent implements OnInit {
     marked = false;
     theCheckbox = false;
 
-    constructor(private memory: MemoryService, public toastr: ToastrManager, private router: Router) {
+    constructor(private memory: MemoryService, private alert: AlertsService, private router: Router) {
         let fromMemory = this.memory.getCurrentMnemonic();
         if (fromMemory !== 'default' && BinanceCrypto.validateMnemonic(fromMemory)) {
             this.mnemonic = fromMemory;
@@ -37,22 +36,12 @@ export class RegisterMnemonicComponent implements OnInit {
             this.router.navigate(['/password']);
         }
         else {
-            this.showError()
+            this.alert.showError('Please, confirm that you have copied mnemonic', 'Error')
         }
     }
 
     toggleVisibility(e) {
         this.marked = e.target.checked;
-    }
-
-
-    showError() {
-        this.toastr.errorToastr("Please, confirm that you have copied mnemonic", 'Error', {
-            position: 'top-full-width',
-            maxShown: 1,
-            showCloseButton: true,
-            toastTimeout: 5000
-        });
     }
 
     copyObj(val: string) {

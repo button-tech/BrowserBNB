@@ -3,6 +3,7 @@ import {MemoryService} from "../services/memory.service";
 import {Router} from "@angular/router";
 import {Toastr, ToastrManager} from "ng6-toastr-notifications";
 import {BinanceService, BinanceCrypto} from "../services/binance.service";
+import {AlertsService} from "../services/alerts.service";
 
 @Component({
     selector: 'app-import-mnemonic',
@@ -11,7 +12,7 @@ import {BinanceService, BinanceCrypto} from "../services/binance.service";
 })
 export class ImportMnemonicComponent implements OnInit {
 
-    constructor(private memory: MemoryService, private router: Router, public toastr: ToastrManager, private binance: BinanceService) {
+    constructor(private memory: MemoryService, private router: Router, private alert: AlertsService) {
     }
 
     ngOnInit() {
@@ -27,11 +28,7 @@ export class ImportMnemonicComponent implements OnInit {
             this.router.navigate(['/password', {imported: true}]);
         }
         else {
-            this.showError();
+            this.alert.showError('Enter a correct mnemonic to continue', 'Error');
         }
-    }
-
-    showError() {
-        this.toastr.errorToastr("Enter a correct mnemonic to continue", 'Error', {position: 'top-full-width', maxShown: 1, showCloseButton: true, toastTimeout: 5000});
     }
 }
