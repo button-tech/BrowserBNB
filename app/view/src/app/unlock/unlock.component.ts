@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
-import {StorageService} from "../services/storage.service";
-import {MemoryService} from "../services/memory.service";
-import {BinanceCrypto} from '../services/binance.service';
-import {ToastrManager} from "ng6-toastr-notifications";
+import {Router} from '@angular/router';
+import {StorageService} from '../services/storage.service';
+import {MemoryService} from '../services/memory.service';
+import {ToastrManager} from 'ng6-toastr-notifications';
+import {getAddressFromPrivateKey, getPrivateKeyFromKeystore} from '../services/binance-crypto';
 
 @Component({
     selector: 'app-unlock',
@@ -11,10 +11,11 @@ import {ToastrManager} from "ng6-toastr-notifications";
     styleUrls: ['./unlock.component.css']
 })
 export class UnlockComponent implements OnInit {
-    keystore: string;
+    keystore: any;
 
-    constructor(private router: Router, private memory: MemoryService, private storage: StorageService,public toastr: ToastrManager) {
-        this.keystore = JSON.parse(this.memory.getCurrentKeystore());
+    constructor(private router: Router, private memory: MemoryService, private storage: StorageService, public toastr: ToastrManager) {
+        const jsonStr = this.memory.getCurrentKeystore();
+        this.keystore = JSON.parse(jsonStr);
     }
 
     ngOnInit() {
@@ -24,21 +25,20 @@ export class UnlockComponent implements OnInit {
         const password = (document.getElementById('password') as HTMLInputElement).value;
 
         try {
-            const privateKey = BinanceCrypto.returnPrivateKeyFromKeystore(this.keystore, password);
+            const privateKey = getPrivateKeyFromKeystore(this.keystore, password);
             this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(BinanceCrypto.returnAddressFromPrivateKey(privateKey));
-            this.router.navigate(['/main'])
-        }
-        catch (e) {
-            this.showError();
+            this.memory.setCurrentAddress(getAddressFromPrivateKey(privateKey));
+            this.router.navigate(['/main']);
+        } catch (e) {
+            this.showWrongPasswordMessage();
             this.router.navigate(['/unlock']);
             console.log(e);
         }
 
     }
 
-    showError() {
-        this.toastr.errorToastr("Password is incorrect", 'Error', {
+    showWrongPasswordMessage() {
+        this.toastr.errorToastr('Password is incorrect', 'Error', {
             position: 'top-full-width',
             maxShown: 1,
             showCloseButton: true,
@@ -47,17 +47,12 @@ export class UnlockComponent implements OnInit {
     }
 
     reset() {
-        this.storage.reset();
-        this.memory.setCurrentKeystore("");
-        this.delay(50).then(()=> {
+        this.storage.reset(); // TODO: should be awaitable
+        this.memory.setCurrentKeystore(''); // TODO: should be awaitable
+
+        // TODO: instead of timeout navigate after `await` on storage setter
+        setTimeout(() => {
             this.router.navigate(['/greeter']);
-        });
-
-
+        }, 50);
     }
-
-    async delay(ms: number) {
-        await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
-    }
-    
 }

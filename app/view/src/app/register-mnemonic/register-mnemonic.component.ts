@@ -1,48 +1,47 @@
 import {Component, OnInit} from '@angular/core';
-import {MemoryService} from "../services/memory.service";
-import {Router} from "@angular/router";
-import {BinanceCrypto} from "../services/binance.service";
-import {AlertsService} from "../services/alerts.service";
+import {MemoryService} from '../services/memory.service';
+import {Router} from '@angular/router';
+import {AlertsService} from '../services/alerts.service';
+import {createMnemonic, getPrivateKeyFromMnemonic, isValidMnemonic} from '../services/binance-crypto';
+import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
 
 @Component({
     selector: 'app-create',
     templateUrl: './register-mnemonic.component.html',
     styleUrls: ['./register-mnemonic.component.css']
 })
-export class RegisterMnemonicComponent implements OnInit {
+export class RegisterMnemonicComponent {
 
     mnemonic: string;
-    marked = false;
     theCheckbox = false;
     copyMessage = 'Copy mnemonic';
 
-    constructor(private memory: MemoryService, private alert: AlertsService, private router: Router) {
-        let fromMemory = this.memory.getCurrentMnemonic();
-        if (fromMemory !== 'default' && BinanceCrypto.validateMnemonic(fromMemory)) {
-            this.mnemonic = fromMemory;
-        } else {
-            this.mnemonic = BinanceCrypto.createMnemonic();
-            let privateKey = BinanceCrypto.returnPrivateKeyFromMnemonic(this.mnemonic);
-            this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(BinanceCrypto.returnAddressFromPrivateKey(privateKey));
-            this.memory.setCurrenMnemonic(this.mnemonic)
-        }
-    }
+    constructor(memorySvc: MemoryService, private alert: AlertsService, private router: Router) {
 
-    ngOnInit() {
+        let mnemonic = memorySvc.getCurrentMnemonic();
+        if (mnemonic === 'default mnemonic' || !isValidMnemonic(mnemonic)) {
+
+            // Init new
+            mnemonic = createMnemonic();
+            const privateKey = getPrivateKeyFromMnemonic(mnemonic);
+            const address = getAddressFromPrivateKey(privateKey);
+
+            // TODO: check - maybe we shouldn't override storage, and show some warming in case we get some mnemonic but it isn't valid
+            memorySvc.setCurrentKey(privateKey);
+            memorySvc.setCurrentAddress(address);
+            memorySvc.setCurrenMnemonic(mnemonic);
+        }
+
+        this.mnemonic = mnemonic;
     }
 
     check() {
-        if (this.theCheckbox) {
-            this.router.navigate(['/password']);
+        if (!this.theCheckbox) {
+            this.alert.showError('Please, confirm that you have copied mnemonic', 'Error');
+            return;
         }
-        else {
-            this.alert.showError('Please, confirm that you have copied mnemonic', 'Error')
-        }
-    }
 
-    toggleVisibility(e) {
-        this.marked = e.target.checked;
+        this.router.navigate(['/password']);
     }
 
     copyObj(val: string) {
@@ -56,8 +55,10 @@ export class RegisterMnemonicComponent implements OnInit {
         obj.focus();
         obj.select();
         document.execCommand('copy');
-        this.copyMessage = 'Copied';
         document.body.removeChild(obj);
+
+        // Update message
+        this.copyMessage = 'Copied';
     }
 
 }

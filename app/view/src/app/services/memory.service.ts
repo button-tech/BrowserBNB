@@ -45,7 +45,7 @@ export class MemoryService {
         return this.mnemonic.value;
     }
 
-    getCurrentKey(): string {
+    getCurrentPrivateKey(): string {
         return this.currentKey.value;
     }
     getCurrentKeystore(): string {
