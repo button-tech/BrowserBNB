@@ -78,13 +78,13 @@ export class BinanceCrypto {
     };
 
     public static returnKeystoreFromPrivateKey(pvtKey: string, password: string): any {
-        if (password.length === 0) {
-            console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromPrivateKey() password length is 0`);
+        if (!password) {
+            console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromPrivateKey() password length is '${password}'`);
             return '';
         }
 
-        if (pvtKey.length === 0) {
-            console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromPrivateKey() pvtKey is invalid`);
+        if (!pvtKey) {
+            console.error(`Error at binance.service.BinanceCrypto.returnKeystoreFromPrivateKey() pvtKey is invalid '${pvtKey}'`);
             return '';
         }
 
