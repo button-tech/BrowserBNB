@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {MemoryService} from '../services/memory.service';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {AlertsService} from '../services/alerts.service';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic, isValidMnemonic} from '../services/binance-crypto';
+import {RegistrationService} from '../services/registration.service';
 
 @Component({
     selector: 'app-import-mnemonic',
@@ -11,18 +11,20 @@ import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic, isValidMnemonic} fr
 })
 export class ImportMnemonicComponent {
 
-    constructor(private memory: MemoryService, private router: Router, private alert: AlertsService) {
+    constructor(private regSvc: RegistrationService, private router: Router, private alert: AlertsService) {
     }
 
-    onContinueClick() {
+    next() {
         const mnemonic = (document.getElementById('mnemonic') as HTMLInputElement).value;
         if (!isValidMnemonic(mnemonic)) {
             this.alert.showError('Enter a correct mnemonic to continue', 'Error');
         }
 
-        let privateKey = getPrivateKeyFromMnemonic(mnemonic);
-        this.memory.setCurrentKey(privateKey);
-        this.memory.setCurrentAddress(getAddressFromPrivateKey(privateKey));
+        const privateKey = getPrivateKeyFromMnemonic(mnemonic);
+        this.memory.setPrivateKey(privateKey);
+
+        const address = getAddressFromPrivateKey(privateKey);
+        this.memory.setCurrentAddress(address);
 
         this.router.navigate(['/password', {imported: true}]);
     }

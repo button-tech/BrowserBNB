@@ -1,9 +1,9 @@
 import {Component, Input} from '@angular/core';
-import {MemoryService} from '../services/memory.service';
-import * as Binance from '../../assets/binance/bnbSDK.js';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, shareReplay, switchMap} from 'rxjs/operators';
+import * as Binance from '../../assets/binance/bnbSDK.js';
+import {AccountService} from '../services/account.service';
 
 
 interface MenuItem {
@@ -30,9 +30,11 @@ export class MainComponent {
         {val: 'MAINNET'},
     ];
 
-    usersMenu: MenuItem[] = [];
+    usersMenu: MenuItem[] = [
 
-    constructor(private memory: MemoryService, private http: HttpClient) {
+    ];
+
+    constructor(private memory: AccountService, private http: HttpClient) {
 
         this.selectedNetwork = 'MAINNET';
 

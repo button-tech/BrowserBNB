@@ -1,11 +1,12 @@
 <div class="container">
-    <div id="top-account-col"
-         class="row text-center">
+    <div id="top-account-col" class="row text-center">
+
         <div class="col" align="left">
             <button [satPopoverAnchor]="menuUsers" (click)="updateUsersList(); menuUsers.toggle()"
                     class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
                 <fa name="users" size="sm"></fa>
             </button>
+
             <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center">
                 <div class="menu-wrapper-users" tabIndex="0">
                     <div class="container">
@@ -48,7 +49,9 @@
                     </div>
                 </div>
             </sat-popover>
+            
         </div>
+
         <div class="col">
             <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
                     class="btn btn-link btn-outline  btn-sm"
@@ -66,6 +69,7 @@
                 </div>
             </sat-popover>
         </div>
+
         <div align="right" class="col">
             <button id="cog" class="btn btn-link btn-just-icon btn-lg" href="/main">
                 <fa name="cog" size="sm"></fa>
@@ -88,6 +92,7 @@
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
         </div>
+
         <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out"
                      [interactiveClose]="false" closeTransition="150ms ease-in" verticalAlign="below">
             <div id="popup" class="tooltip-wrapper">
@@ -99,6 +104,7 @@
         <sat-popover #name hasBackdrop forceAlignment>
             <app-edit-form (update)="this.accountName = $event"></app-edit-form>
         </sat-popover>
+
         <hr id="unusualHr">
         <div class="col-12">
             <img id="imageBNB"
@@ -107,16 +113,14 @@
             <h4 id="fiat">
                 {{(fiat$ | async) || 'pending'}}
             </h4>
-            <a id="more">More
-                balances</a>
+            <a id="more">More balances</a>
         </div>
+
         <div id="buttonsDiv" class="col-12">
-            <button class="btn btn-binance-outline btn-lg main-btn">
-                RECEIVE
-            </button>
-            <button class="btn btn-binance-outline btn-lg main-btn">SEND
-            </button>
+            <button class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
+            <button class="btn btn-binance-outline btn-lg main-btn">SEND</button>
         </div>
+
     </div>
     <div class="row">
         <div id="historyDiv" align="center" class="col-12">

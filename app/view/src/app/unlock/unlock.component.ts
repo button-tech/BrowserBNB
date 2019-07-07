@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {StorageService} from '../services/storage.service';
-import {MemoryService} from '../services/memory.service';
+import {AccountService} from '../services/account.service';
 import {ToastrManager} from 'ng6-toastr-notifications';
 import {getAddressFromPrivateKey, getPrivateKeyFromKeystore} from '../services/binance-crypto';
 
@@ -13,7 +13,7 @@ import {getAddressFromPrivateKey, getPrivateKeyFromKeystore} from '../services/b
 export class UnlockComponent implements OnInit {
     keystore: any;
 
-    constructor(private router: Router, private memory: MemoryService, private storage: StorageService, public toastr: ToastrManager) {
+    constructor(private router: Router, private memory: AccountService, private storage: StorageService, public toastr: ToastrManager) {
         const jsonStr = this.memory.getCurrentKeystore();
         this.keystore = JSON.parse(jsonStr);
     }
