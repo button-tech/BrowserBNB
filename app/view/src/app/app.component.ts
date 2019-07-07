@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {AuthService} from './services/auth.service';
 import {StorageService} from './services/storage.service';
 import {map, tap} from 'rxjs/operators';
-import {combineLatest} from 'rxjs';
+import {combineLatest, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 
 @Component({
@@ -13,26 +13,26 @@ import {Router} from '@angular/router';
 export class AppComponent {
     title = 'bnbbrowser';
 
-    // constructor(private router: Router, authService: AuthService, storageService: StorageService) {
-    //
-    //     const hasAccount$ = storageService.storageData$.pipe(
-    //         map((x) => x.hasAccount)
-    //     );
-    //
-    //     combineLatest([hasAccount$, authService.isAuthenticated$]).pipe(
-    //         tap((x) => {
-    //             const [hasAccount, isAuthenticated] = x;
-    //
-    //             if (hasAccount && isAuthenticated) {
-    //                 this.router.navigate(['/main']);
-    //             } else if (hasAccount && !isAuthenticated) {
-    //                 this.router.navigate(['/unlock']);
-    //             } else {
-    //                 this.router.navigate(['/greeter']);
-    //             }
-    //         })
-    //     );
-    // }
+    subscription: Subscription;
+
+    constructor(private router: Router, authService: AuthService, storageService: StorageService) {
+
+        const redirect$ = combineLatest([storageService.hasAccount$, authService.isLoggedIn$]).pipe(
+            tap((x) => {
+                const [hasAccount, isLoggedIn] = x;
+
+                if (hasAccount && isLoggedIn) {
+                    this.router.navigate(['/main']);
+                } else if (hasAccount && !isLoggedIn) {
+                    this.router.navigate(['/unlock']);
+                } else {
+                    this.router.navigate(['/greeter']);
+                }
+            })
+        );
+
+        this.subscription = redirect$.subscribe();
+    }
 
 }
 

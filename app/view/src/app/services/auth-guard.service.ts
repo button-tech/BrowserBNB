@@ -28,7 +28,7 @@ export class AuthGuardService implements CanActivate, OnDestroy {
             return;
         }
 
-        if (!this.auth.isAuthenticated()) {
+        if (!this.auth.isLoggedIn) {
             this.router.navigate(['/unlock']);
             return false;
         }

@@ -5,6 +5,7 @@ import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operator
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService} from '../services/storage.service';
+import {AuthService} from '../services/auth.service';
 
 
 interface MenuItem {
@@ -34,7 +35,7 @@ export class MainComponent {
 
     usersMenu: MenuItem[] = [];
 
-    constructor(private storage: StorageService, private http: HttpClient, private clipboardService: ClipboardService) {
+    constructor(private authService: AuthService, private storage: StorageService, private http: HttpClient, private clipboardService: ClipboardService) {
 
         this.selectedNetwork = 'MAINNET';
 
@@ -119,5 +120,9 @@ export class MainComponent {
             this.clipboardService.copyToClipboard(address);
             this.copyMessage = 'Copied';
         });
+    }
+
+    logout() {
+        this.authService.logout();
     }
 }

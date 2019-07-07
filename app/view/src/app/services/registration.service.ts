@@ -42,7 +42,7 @@ export class RegistrationService {
         const keystore = getKeystoreFromPrivateKey(privateKey, password);
 
         return new Promise((resolve) => {
-            this.storageService.addAccount(address, privateKey, keystore).then(() => {
+            this.storageService.addAccount(address, privateKey, keystore, getSHA3hashSum(password)).then(() => {
                 resolve(true);
             }, () => resolve(false));
         });

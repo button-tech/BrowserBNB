@@ -7,6 +7,7 @@ import {concat, from, merge, Observable, of, Subject, Subscription} from 'rxjs';
 export interface IStorageData {
     AccountList: IAccount[];
     CurrentAccountIdx: number;
+    PassHash: string,
 }
 
 export interface IAccount {
@@ -91,13 +92,13 @@ export class StorageService {
         }
 
         if (environment.production) {
-            const s$: Subject<any> = new Subject();
+            const subject$: Subject<any> = new Subject();
             chrome.storage.onChanged.addListener((changes, namespace) => {
                 if (namespace === 'local' && changes[STORAGE_KEY]) {
-                    s$.next(changes[STORAGE_KEY].newValue);
+                    subject$.next(changes[STORAGE_KEY].newValue);
                 }
             });
-            return s$.asObservable();
+            return subject$.asObservable();
         }
     }
 
@@ -106,7 +107,8 @@ export class StorageService {
         if (!content) {
             const defaultValue: IStorageData = {
                 AccountList: [],
-                CurrentAccountIdx: 0
+                CurrentAccountIdx: 0,
+                PassHash: ''
             };
 
             const jsonText = JSON.stringify(defaultValue);
@@ -169,9 +171,9 @@ export class StorageService {
     }
 
 
-    async addAccount(address, privateKey, keystore): Promise<void> {
+    async addAccount(address: string, privateKey: string, keystore: any, passHash: string): Promise<void> {
 
-        const data = await this.getFromStorage();
+        const data: IStorageData = await this.getFromStorage();
         const account: IAccount = {
             address,
             // TODO: don't stored it as plain text here
@@ -183,6 +185,7 @@ export class StorageService {
             encryptedSeed: '',
         };
 
+        data.PassHash = passHash;
         data.AccountList.push(account);
         data.CurrentAccountIdx = data.AccountList.length - 1;
         return this.saveToStorage(data);
@@ -191,7 +194,8 @@ export class StorageService {
     reset(): Promise<void> {
         const defaultValue: IStorageData = {
             AccountList: [],
-            CurrentAccountIdx: 0
+            CurrentAccountIdx: 0,
+            PassHash: ''
         };
 
         const jsonText = JSON.stringify(defaultValue);

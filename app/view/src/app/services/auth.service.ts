@@ -1,32 +1,51 @@
-// src/app/auth/auth.service.ts
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
+import {map, startWith, take} from 'rxjs/operators';
+import {StorageService} from './storage.service';
+import {getSHA3hashSum} from './binance-crypto';
 
 @Injectable()
 export class AuthService {
 
-    private s$ = new Subject<boolean>();
-    private isLoggedIn: boolean = false;
-    public isAuthenticated$: Observable<boolean>;
+    private subject$ = new Subject<boolean>();
+    private _isLoggedIn: boolean = false;
 
-    constructor() {
-        this.isAuthenticated$ = this.s$.asObservable();
-        this.isAuthenticated$.subscribe((x) => {
-            this.isLoggedIn = x;
-        });
+    get isLoggedIn(): boolean {
+        return this._isLoggedIn;
     }
 
-    login(password: string): void {
-        // TODO: password check
-        this.s$.next(true);
+    set isLoggedIn(value: boolean) {
+        this._isLoggedIn = value;
+        this.subject$.next(value);
+    }
+
+    public isLoggedIn$: Observable<boolean>;
+
+    constructor(private storage: StorageService) {
+        this.isLoggedIn$ = this.subject$.asObservable().pipe(
+            startWith(this.isLoggedIn)
+        );
+    }
+
+    login(password: string): Observable<boolean> {
+        const x$ = this.storage.storageData$
+            .pipe(
+                take(1),
+                map((data) => {
+                    return data.PassHash == getSHA3hashSum(password);
+                })
+            );
+
+        x$.subscribe((x) => {
+            if (x) {
+                this.isLoggedIn = true;
+            }
+        });
+
+        return x$;
     }
 
     logout(): void {
-        this.s$.next(false);
-    }
-
-
-    public isAuthenticated(): boolean {
-        return this.isLoggedIn;
+        this.isLoggedIn = false;
     }
 }
