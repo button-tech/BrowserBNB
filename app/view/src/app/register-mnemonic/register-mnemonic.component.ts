@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {createMnemonic, getPrivateKeyFromMnemonic, isValidMnemonic} from '../services/binance-crypto';
-import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
-import {AccountService} from "../services/account.service";
-import {Router} from "@angular/router";
-import {AlertsService} from "../services/alerts.service";
+import {Router} from '@angular/router';
+import {AlertsService} from '../services/alerts.service';
 import {RegistrationService} from '../services/registration.service';
+import {ClipboardService} from '../services/clipboard.service';
 
 @Component({
     selector: 'app-create',
@@ -17,14 +15,15 @@ export class RegisterMnemonicComponent implements OnInit {
     theCheckbox = false;
     copyMessage = 'Copy mnemonic';
 
-    constructor(private regSvc: RegistrationService, private alert: AlertsService, private router: Router) {
+    constructor(private regSvc: RegistrationService, private alert: AlertsService, private router: Router,
+                private clipboardService: ClipboardService) {
     }
 
     ngOnInit(): void {
-        this.mnemonic = (this.regSvc.hasMnemonic && this.regSvc.mnemonic) || this.regSvc.generateMnemonic();
+        this.mnemonic = (this.regSvc.hasMnemonic && this.regSvc.generatedMnemonic) || this.regSvc.generateMnemonic();
     }
 
-    check() {
+    next() {
         if (!this.theCheckbox) {
             this.alert.showError('Please, confirm that you have copied mnemonic', 'Error');
             return;
@@ -33,20 +32,8 @@ export class RegisterMnemonicComponent implements OnInit {
         this.router.navigate(['/registration/password']);
     }
 
-    copyToClipboard(val: string) {
-        let obj = document.createElement('textarea');
-        obj.style.position = 'fixed';
-        obj.style.left = '0';
-        obj.style.top = '0';
-        obj.style.opacity = '0';
-        obj.value = val;
-        document.body.appendChild(obj);
-        obj.focus();
-        obj.select();
-        document.execCommand('copy');
-        document.body.removeChild(obj);
-
-        // Update message
+    copyMnemonicToClipboard() {
+        this.clipboardService.copyToClipboard(this.mnemonic);
         this.copyMessage = 'Copied';
     }
 }

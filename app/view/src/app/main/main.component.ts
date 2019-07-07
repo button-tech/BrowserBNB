@@ -1,9 +1,10 @@
 import {Component, Input} from '@angular/core';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import * as Binance from '../../assets/binance/bnbSDK.js';
-import {AccountService} from '../services/account.service';
+import {ClipboardService} from '../services/clipboard.service';
+import {StorageService} from '../services/storage.service';
 
 
 interface MenuItem {
@@ -21,6 +22,7 @@ export class MainComponent {
 
     bnb$: Observable<string>;
     fiat$: Observable<string>;
+    address$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
     selectedNetwork: string;
@@ -30,11 +32,9 @@ export class MainComponent {
         {val: 'MAINNET'},
     ];
 
-    usersMenu: MenuItem[] = [
+    usersMenu: MenuItem[] = [];
 
-    ];
-
-    constructor(private memory: AccountService, private http: HttpClient) {
+    constructor(private storage: StorageService, private http: HttpClient, private clipboardService: ClipboardService) {
 
         this.selectedNetwork = 'MAINNET';
 
@@ -43,10 +43,25 @@ export class MainComponent {
             return bnb ? bnb.free : 0;
         };
 
+        this.address$ = this.storage.currentAccount$.pipe(
+            pluck('address')
+        );
 
-        const bnbRaw$ = timer(0, 4000).pipe(
-            switchMap(() => {
-                const address = this.memory.getCurrentAddress();
+        this.shortAddress$ = this.address$.pipe(
+            map((address) => {
+                const start = address.substring(0, 5);
+                const end = address.substring(address.length - 6, address.length);
+                return `${start}...${end}`;
+            })
+        );
+
+
+        const timer$ = timer(0, 4000);
+
+
+        const bnbRaw$ = combineLatest([this.address$, timer$]).pipe(
+            switchMap((x) => {
+                const [address] = x;
                 const binanceRequest$ = Binance.getBalanceOfAddress(address);
                 return from(binanceRequest$);
             }),
@@ -66,7 +81,7 @@ export class MainComponent {
             map((resp: any) => resp.USD)
         );
 
-        this.fiat$ = combineLatest(bnbRaw$, bnb2usdRate$).pipe(
+        this.fiat$ = combineLatest([bnbRaw$, bnb2usdRate$]).pipe(
             map((arr: any[]) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
@@ -74,14 +89,6 @@ export class MainComponent {
                 return `$ ${truncated} USD`;
             }),
             shareReplay(1)
-        );
-
-        this.shortAddress$ = this.memory.currentAddress.pipe(
-            map((address) => {
-                const start = address.substring(0, 5);
-                const end = address.substring(address.length - 6, address.length);
-                return `${start}...${end}`;
-            })
         );
     }
 
@@ -92,7 +99,7 @@ export class MainComponent {
             {val: 'Personal'},
             {val: 'Team'},
             {val: 'DeFi'},
-        ]
+        ];
     }
 
     selectNetwork(value: string) {
@@ -104,17 +111,13 @@ export class MainComponent {
     }
 
     copyAddress() {
-        this.copyMessage = 'Copied';
-        const obj = document.createElement('textarea');
-        obj.style.position = 'fixed';
-        obj.style.left = '0';
-        obj.style.top = '0';
-        obj.style.opacity = '0';
-        obj.value = this.memory.getCurrentAddress();
-        document.body.appendChild(obj);
-        obj.focus();
-        obj.select();
-        document.execCommand('copy');
-        document.body.removeChild(obj);
+        // TODO: probable better to do that without observables, by just assiging address to MainComponent field
+        this.address$.pipe(
+            takeUntil(timer(100)),
+            take(1),
+        ).subscribe((address) => {
+            this.clipboardService.copyToClipboard(address);
+            this.copyMessage = 'Copied';
+        });
     }
 }

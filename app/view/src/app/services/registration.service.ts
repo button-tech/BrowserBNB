@@ -2,22 +2,23 @@
 import {Injectable} from '@angular/core';
 import {createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum} from './binance-crypto';
 import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
-import {AccountService} from './account.service';
+import {StorageService} from './storage.service';
 
 @Injectable()
 export class RegistrationService {
-    mnemonic: any = null;
+    generatedMnemonic: any = null;
     importedMnemonic: any = null;
 
-    constructor(accountService: AccountService) {
+    constructor(private storageService: StorageService) {
     }
 
     get hasMnemonic(): boolean {
-        return !!this.mnemonic;
+        return !!this.generatedMnemonic;
     }
 
-    generateMnemonic(): any {
-        this.mnemonic = createMnemonic();
+    generateMnemonic(): string {
+        this.generatedMnemonic = createMnemonic();
+        return this.generatedMnemonic;
     }
 
     private passHash: string;
@@ -31,43 +32,39 @@ export class RegistrationService {
     }
 
     cleanup() {
-        this.mnemonic = null;
-        this.passHash = null;
-        this.importedMnemonic = null
+        this.generatedMnemonic = null;
+        this.passHash = null; // ???
+        this.importedMnemonic = null;
     }
 
-    finishRegistration(passwordRepeat: string): Promise<boolean> {
-        if (!this.isPasswordRepeatedCorrectly(passwordRepeat)) {
-            return Promise.resolve(false);
-        }
-        this.cleanup();
+    // TODO: should be refactored - we won't store decrypted date in the storrage
+    private addAccount(seedPhrase: string, password: string): Promise<boolean> {
 
-
-        const privateKey = getPrivateKeyFromMnemonic(this.mnemonic);
-        const address = getAddressFromPrivateKey(privateKey);
-        const keystore = getKeystoreFromPrivateKey(privateKey, passwordRepeat);
-        const jsonStr = JSON.stringify(keystore);
-
-        // // TODO: check - maybe we shouldn't override storage, and show some warming in case we get some mnemonic but it isn't valid
-        // memorySvc.setCurrentKey(privateKey);
-        // memorySvc.setCurrentAddress(address);
-        // memorySvc.setCurrentMnemonic(mnemonic);
-        // this.memory.setCurrentKeystore(jsonStr);
-        // this.memory.setPasswordHash(getSHA3hashSum(password));
-
-
-        return Promise.resolve(true);
-    }
-
-    finishImport(password: string): Promise<boolean>{
-        this.cleanup();
-
-        const privateKey = getPrivateKeyFromMnemonic(this.mnemonic);
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase);
         const address = getAddressFromPrivateKey(privateKey);
         const keystore = getKeystoreFromPrivateKey(privateKey, password);
-        const jsonStr = JSON.stringify(keystore);
 
-        return Promise.resolve(true);
+        return new Promise((resolve) => {
+            this.storageService.addAccount(address, privateKey, keystore).then(() => {
+                resolve(true);
+            }, () => resolve(false));
+        });
+    }
+
+    async finishRegistration(repeatedPassword: string): Promise<boolean> {
+        if (!this.isPasswordRepeatedCorrectly(repeatedPassword)) {
+            return Promise.reject(false);
+        }
+
+        await this.addAccount(this.generatedMnemonic, repeatedPassword);
+        this.cleanup();
+        return true;
+    }
+
+    async finishImport(password: string): Promise<boolean> {
+        this.addAccount(this.importedMnemonic, password);
+        this.cleanup();
+        return true;
     }
 
 }

@@ -1,5 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {AccountService} from '../services/account.service';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {StorageService} from '../services/storage.service';
 
@@ -10,8 +9,8 @@ import {StorageService} from '../services/storage.service';
 })
 export class GreeterComponent {
 
-    constructor(private router: Router, public storage: StorageService, private memory: AccountService) {
-        
+    constructor(private router: Router, public storage: StorageService) {
+
     }
 
 }

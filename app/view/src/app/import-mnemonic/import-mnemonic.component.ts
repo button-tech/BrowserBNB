@@ -20,12 +20,7 @@ export class ImportMnemonicComponent {
             this.alert.showError('Enter a correct mnemonic to continue', 'Error');
         }
 
-        const privateKey = getPrivateKeyFromMnemonic(mnemonic);
-        this.memory.setPrivateKey(privateKey);
-
-        const address = getAddressFromPrivateKey(privateKey);
-        this.memory.setCurrentAddress(address);
-
-        this.router.navigate(['/password', {imported: true}]);
+        this.regSvc.importedMnemonic = mnemonic;
+        this.router.navigate(['/registration/password', {imported: true}]);
     }
 }
