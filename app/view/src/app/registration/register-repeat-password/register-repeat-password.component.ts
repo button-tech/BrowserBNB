@@ -1,10 +1,8 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-import {StorageService} from '../services/storage.service';
-import {AlertsService} from '../services/alerts.service';
-import {getSHA3hashSum} from '../services/binance-crypto';
-import {RegistrationService} from '../services/registration.service';
-import {AuthService} from '../services/auth.service';
+import {AlertsService} from '../../services/alerts.service';
+import {AuthService} from '../../services/auth.service';
+import {RegistrationService} from '../../services/registration.service';
 
 @Component({
     selector: 'app-register-repeat-password',

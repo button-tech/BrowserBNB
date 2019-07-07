@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {AlertsService} from '../services/alerts.service';
-import {RegistrationService} from '../services/registration.service';
-import {ClipboardService} from '../services/clipboard.service';
+import {RegistrationService} from '../../services/registration.service';
+import {AlertsService} from '../../services/alerts.service';
+import {ClipboardService} from '../../services/clipboard.service';
+
 
 @Component({
     selector: 'app-create',
@@ -20,7 +21,7 @@ export class RegisterMnemonicComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.mnemonic = (this.regSvc.hasMnemonic && this.regSvc.generatedMnemonic) || this.regSvc.generateMnemonic();
+        this.mnemonic = (this.regSvc.hasMnemonic && this.regSvc.mnemonic) || this.regSvc.generateMnemonic();
     }
 
     next() {

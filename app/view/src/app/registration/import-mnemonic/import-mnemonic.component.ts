@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
-import {AlertsService} from '../services/alerts.service';
-import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic, isValidMnemonic} from '../services/binance-crypto';
-import {RegistrationService} from '../services/registration.service';
+import {RegistrationService} from '../../services/registration.service';
+import {AlertsService} from '../../services/alerts.service';
+import {isValidMnemonic} from '../../services/binance-crypto';
 
 @Component({
     selector: 'app-import-mnemonic',
@@ -20,7 +20,7 @@ export class ImportMnemonicComponent {
             this.alert.showError('Enter a correct mnemonic to continue', 'Error');
         }
 
-        this.regSvc.importedMnemonic = mnemonic;
+        this.regSvc.mnemonic = mnemonic;
         this.router.navigate(['/registration/password', {imported: true}]);
     }
 }

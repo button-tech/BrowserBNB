@@ -1,4 +1,3 @@
-// src/app/auth/auth.service.ts
 import {Injectable} from '@angular/core';
 import {createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum} from './binance-crypto';
 import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
@@ -6,19 +5,18 @@ import {StorageService} from './storage.service';
 
 @Injectable()
 export class RegistrationService {
-    generatedMnemonic: any = null;
-    importedMnemonic: any = null;
+    mnemonic: any = null;
 
     constructor(private storageService: StorageService) {
     }
 
     get hasMnemonic(): boolean {
-        return !!this.generatedMnemonic;
+        return !!this.mnemonic;
     }
 
     generateMnemonic(): string {
-        this.generatedMnemonic = createMnemonic();
-        return this.generatedMnemonic;
+        this.mnemonic = createMnemonic();
+        return this.mnemonic;
     }
 
     private passHash: string;
@@ -32,9 +30,8 @@ export class RegistrationService {
     }
 
     cleanup() {
-        this.generatedMnemonic = null;
-        this.passHash = null; // ???
-        this.importedMnemonic = null;
+        this.mnemonic = null;
+        this.passHash = null;
     }
 
     // TODO: should be refactored - we won't store decrypted date in the storrage
@@ -56,15 +53,15 @@ export class RegistrationService {
             return Promise.reject(false);
         }
 
-        await this.addAccount(this.generatedMnemonic, repeatedPassword);
+        await this.addAccount(this.mnemonic, repeatedPassword);
         this.cleanup();
         return true;
     }
 
-    async finishImport(password: string): Promise<boolean> {
-        this.addAccount(this.importedMnemonic, password);
-        this.cleanup();
-        return true;
-    }
+    // async finishImport(password: string): Promise<boolean> {
+    //     this.addAccount(this.mnemonic, password);
+    //     this.cleanup();
+    //     return true;
+    // }
 
 }
