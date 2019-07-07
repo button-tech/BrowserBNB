@@ -170,6 +170,17 @@ export class StorageService {
 
     }
 
+    async updateStorage(data: IStorageData): Promise<void> {
+        // const data: IStorageData = await this.getFromStorage();
+        // data.AccountList[index] = account;
+        return this.saveToStorage(data);
+    }
+
+    // async updateAccount(index: number, account: IAccount): Promise<void> {
+    //     // const data: IStorageData = await this.getFromStorage();
+    //     data.AccountList[index] = account;
+    //     return this.saveToStorage(data);
+    // }
 
     async addAccount(address: string, privateKey: string, keystore: any, passHash: string): Promise<void> {
 

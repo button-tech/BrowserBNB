@@ -6,6 +6,7 @@ import * as Binance from '../../assets/binance/bnbSDK.js';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
+import {CurrentAccountService} from '../services/current-account.service';
 
 
 interface MenuItem {
@@ -19,7 +20,8 @@ interface MenuItem {
 })
 export class MainComponent {
 
-    @Input() accountName = 'First account';
+    // accountName = 'First account';
+    // CurrentAccountService
 
     bnb$: Observable<string>;
     fiat$: Observable<string>;
@@ -33,11 +35,23 @@ export class MainComponent {
         {val: 'MAINNET'},
     ];
 
-    usersMenu: MenuItem[] = [];
+    userItems: MenuItem[] = [];
 
-    constructor(private authService: AuthService, private storage: StorageService, private http: HttpClient, private clipboardService: ClipboardService) {
+    constructor(public currentAccount: CurrentAccountService,
+                public storage: StorageService,
+                private authService: AuthService,
+                private http: HttpClient,
+                private clipboardService: ClipboardService
+    ) {
 
         this.selectedNetwork = 'MAINNET';
+
+        this.storage.storageData$.subscribe((x) => {
+            this.userItems = x.AccountList.map((acc) => {
+                return {val: acc.accountName};
+            });
+        });
+
 
         const getBnbBalance = (resp: any) => {
             const bnb = resp.find((x) => x.symbol === 'BNB');
@@ -56,9 +70,7 @@ export class MainComponent {
             })
         );
 
-
         const timer$ = timer(0, 4000);
-
 
         const bnbRaw$ = combineLatest([this.address$, timer$]).pipe(
             switchMap((x) => {
@@ -93,22 +105,12 @@ export class MainComponent {
         );
     }
 
-    updateUsersList() {
-        this.usersMenu = [
-            {val: this.accountName},
-            {val: 'Job'},
-            {val: 'Personal'},
-            {val: 'Team'},
-            {val: 'DeFi'},
-        ];
-    }
-
     selectNetwork(value: string) {
         this.selectedNetwork = value;
     }
 
     selectUser(value: string) {
-        this.accountName = value;
+        // this.currentAccount.accountName = value;
     }
 
     copyAddress() {

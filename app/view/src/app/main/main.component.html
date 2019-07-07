@@ -2,7 +2,7 @@
     <div id="top-account-col" class="row text-center">
 
         <div class="col" align="left">
-            <button [satPopoverAnchor]="menuUsers" (click)="updateUsersList(); menuUsers.toggle()"
+            <button [satPopoverAnchor]="menuUsers" (click)="menuUsers.toggle()"
                     class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
                 <fa name="users" size="sm"></fa>
             </button>
@@ -15,7 +15,9 @@
                                 My Accounts
                             </div>
                             <div id="logOut" align="right" class="col-4">
-                                <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">Log out</button>
+                                <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
+                                    Log out
+                                </button>
                             </div>
                         </div>
                         <hr class="pop-hr">
@@ -23,7 +25,7 @@
                     <div id="scrollableUsers" class="container">
                         <div class="row">
                             <div class="col-12">
-                                <button *ngFor="let item of usersMenu" class="menu-item-users"
+                                <button *ngFor="let item of userItems" class="menu-item-users"
                                         (click)="selectUser(item.val); menuUsers.toggle()">
                                     <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
                                     {{ item.val }}
@@ -35,11 +37,11 @@
                         <div class="row">
                             <div class="col-12">
                                 <hr class="pop-hr">
-                                <button class="menu-item-users">
+                                <button class="menu-item-users" routerLink="/registration/create">
                                     <fa name="plus" size="sm"></fa>
                                     Create Account
                                 </button>
-                                <button class="menu-item-users">
+                                <button class="menu-item-users" routerLink="/registration/import">
                                     <fa name="arrow-right" size="sm"></fa>
                                     Import Account
                                 </button>
@@ -48,7 +50,7 @@
                     </div>
                 </div>
             </sat-popover>
-            
+
         </div>
 
         <div class="col">
@@ -78,7 +80,7 @@
     <div class="row text-center">
         <div class="col-12">
             <button [satPopoverAnchor]="name" (click)="name.open()" class="btn btn-sm btn-link" id="editButton">
-                {{this.accountName}}
+                {{ (this.storage.currentAccount$ | async).accountName }}
                 <fa id="editIcon" name="edit" size="sm"></fa>
             </button>
             <br>
@@ -101,7 +103,7 @@
             </div>
         </sat-popover>
         <sat-popover #name hasBackdrop forceAlignment>
-            <app-edit-form (update)="this.accountName = $event"></app-edit-form>
+            <app-edit-form (update)="this.currentAccount.accountName = $event"></app-edit-form>
         </sat-popover>
 
         <hr id="unusualHr">

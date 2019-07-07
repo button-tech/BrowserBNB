@@ -23,6 +23,7 @@ import {RegisterMnemonicComponent} from './registration/register-mnemonic/regist
 import {RegisterPasswordComponent} from './registration/register-password/register-password.component';
 import {RegisterRepeatPasswordComponent} from './registration/register-repeat-password/register-repeat-password.component';
 import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mnemonic.component';
+import {CurrentAccountService} from './services/current-account.service';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mne
         AuthService,
         AuthGuardService,
         StorageService,
-        ClipboardService
+        ClipboardService,
+        CurrentAccountService
     ],
     bootstrap: [AppComponent]
 })
