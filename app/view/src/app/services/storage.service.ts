@@ -83,8 +83,6 @@ export class StorageService {
     }
 
 
-
-
     initStorageLister(): Observable<string> {
 
         if (!environment.production) {
@@ -130,7 +128,7 @@ export class StorageService {
                 const cmd = {
                     [STORAGE_KEY]: value
                 };
-                chrome.storage.local.set(cmd, () => resolve());
+                chrome.storage.local.set(cmd, () => resolve);
             } else {
                 localStorage.setItem(STORAGE_KEY, value);
                 // Fire our fake localstorage listener
@@ -148,9 +146,7 @@ export class StorageService {
     getFromStorageRaw(): Promise<string> {
         return new Promise<any>((resolve, reject) => {
             if (environment.production) {
-                chrome.storage.local.get([STORAGE_KEY], (result) => {
-                    resolve(result);
-                });
+                chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
             } else {
                 const result = localStorage.getItem(STORAGE_KEY);
                 resolve(result);
