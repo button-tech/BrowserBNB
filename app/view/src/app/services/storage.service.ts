@@ -43,8 +43,8 @@ export class StorageService {
     constructor() {
 
         const initial$ = of(1).pipe(
-            switchMapTo( from(this.initStorage())),
-            switchMapTo( from(this.getFromStorage())),
+            switchMap(() => from(this.initStorage())),
+            switchMap(() => from(this.getFromStorage())),
             // tap((x) => {
             //     console.log('hi!')
             // }),
@@ -110,7 +110,7 @@ export class StorageService {
             };
 
             const jsonText = JSON.stringify(defaultValue);
-            await this.saveToStorageRaw(jsonText);
+            return this.saveToStorageRaw(jsonText);
             // content = await this.getFromStorage(STORAGE_KEY); //
         }
 
@@ -123,12 +123,12 @@ export class StorageService {
     }
 
     saveToStorageRaw(value: string): Promise<void> {
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             if (environment.production) {
                 const cmd = {
                     [STORAGE_KEY]: value
                 };
-                chrome.storage.local.set(cmd, () => resolve);
+                chrome.storage.local.set(cmd, resolve);
             } else {
                 localStorage.setItem(STORAGE_KEY, value);
                 // Fire our fake localstorage listener
