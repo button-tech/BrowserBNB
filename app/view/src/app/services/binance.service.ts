@@ -6,6 +6,7 @@ import * as Binance from '../../assets/binance/bnbSDK.js';
 })
 export class BinanceService {
 
+    binanceInstance: any;
     binanceClient: any;
 
     networksList: {
@@ -19,6 +20,31 @@ export class BinanceService {
     };
 
     constructor() {
+        this.binanceInstance = Binance.initBNB();
+        this.binanceClient = this.initClient(this.networksList.MAIINET);
+    }
+
+    initClient(networkConnection: string): any {
+        let client: any;
+        try {
+            client = this.binanceInstance(networkConnection);
+        }
+        catch (e) {
+            console.assert(e, `Error during binance client init ${e}`);
+        }
+        return client;
+    }
+
+    sendTransaction(sum: number, address: string, coin: string, message?: string) {
+    }
+
+    getBalance(address: string) {
+    }
+
+    getBalanceOfCoin(address: string, coin: string) {
+    }
+
+    getTransactionsHistory(address: string) {
     }
 
 
