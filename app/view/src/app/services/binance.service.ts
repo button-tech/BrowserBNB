@@ -10,26 +10,25 @@ export class BinanceService {
     binanceClient: any;
 
     networksList: {
-        "MAIINET": "https://dex.binance.org/",
-        "MAIINET_ASIA": "https://dex-asiapacific.binance.org/",
-        "MAIINET_ATLANTIC": "https://dex-atlantic.binance.org/",
-        "MAIINET_EUROPE": "https://dex-european.binance.org/",
-        "TESTNET": "https://testnet-dex.binance.org",
-        "TESTNET_ASIA": "https://testnet-dex-asiapacific.binance.org",
-        "TESTNET_ATLANTIC": "https://testnet-dex-atlantic.binance.org"
+        'MAINNET': 'https://dex.binance.org/',
+        'MAINNET_ASIA': 'https://dex-asiapacific.binance.org/',
+        'MAINNET_ATLANTIC': 'https://dex-atlantic.binance.org/',
+        'MAINNET_EUROPE': 'https://dex-european.binance.org/',
+        'TESTNET': 'https://testnet-dex.binance.org',
+        'TESTNET_ASIA': 'https://testnet-dex-asiapacific.binance.org',
+        'TESTNET_ATLANTIC': 'https://testnet-dex-atlantic.binance.org'
     };
 
     constructor() {
         this.binanceInstance = Binance.initBNB();
-        this.binanceClient = this.initClient(this.networksList.MAIINET);
+        this.binanceClient = this.initClient(this.networksList.MAINNET);
     }
 
     initClient(networkConnection: string): any {
         let client: any;
         try {
             client = this.binanceInstance(networkConnection);
-        }
-        catch (e) {
+        } catch (e) {
             console.assert(e, `Error during binance client init ${e}`);
         }
         return client;
