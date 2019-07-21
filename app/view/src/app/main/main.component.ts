@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
@@ -20,8 +20,9 @@ interface MenuItem {
 })
 export class MainComponent {
 
-    // accountName = 'First account';
-    // CurrentAccountService
+    // @ts-ignore
+    @ViewChild('menuNetwork')
+    menuNetwork: ElementRef;
 
     bnb$: Observable<string>;
     fiat$: Observable<string>;
@@ -36,6 +37,7 @@ export class MainComponent {
     ];
 
     userItems: MenuItem[] = [];
+
 
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
