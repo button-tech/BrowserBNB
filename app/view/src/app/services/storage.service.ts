@@ -1,8 +1,8 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {filter, map, shareReplay, startWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
-import {concat, from, merge, Observable, of, Subject, Subscription} from 'rxjs';
+import {filter, map, shareReplay, switchMap, take} from 'rxjs/operators';
+import {concat, from, Observable, of, Subject, Subscription} from 'rxjs';
 
 export interface IStorageData {
     AccountList: IAccount[];

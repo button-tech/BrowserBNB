@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IAccount, IStorageData, StorageService} from './storage.service';
-import {Observable} from 'rxjs';
-import {filter, map, tap} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'

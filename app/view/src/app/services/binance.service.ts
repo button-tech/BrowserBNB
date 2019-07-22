@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
+import {getAddressFromPrivateKey} from './binance-crypto';
 
 @Injectable({
     providedIn: 'root'
@@ -34,7 +35,19 @@ export class BinanceService {
         return client;
     }
 
-    sendTransaction(sum: number, address: string, coin: string, message?: string) {
+    async sendTransaction(sum: number, addressTo: string, coin: string, privateKey: string, message?: string) {
+        const addressFrom = getAddressFromPrivateKey(privateKey);
+        let account: any;
+        try {
+            account = await this.binanceClient._httpClient.request("get", `/api/v1/account/${addressFrom}`);
+        }
+        catch (e) {
+            console.assert(e, `Error during sendTransaction ${e}`);
+        }
+
+        const sequence = account.result && account.result.sequence;
+
+        return this.binanceClient.transfer(addressFrom, addressTo, sum, coin, message, sequence);
     }
 
     getBalance(address: string) {
