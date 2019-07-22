@@ -9,8 +9,8 @@ cache:
   - node_modules
 
 compiler:
-- clang
-- gcc
+  - clang
+  - gcc
 
 script:
 - cd app/view
