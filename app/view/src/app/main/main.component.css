@@ -54,25 +54,11 @@
     font-size: 10px !important
 }
 
-#users-wrapper {
-    margin-top: 2em;
-    margin-left: 0.2em;
-    margin-right: 1.2em
-}
-
 #AccountsHeader {
     font-weight: bold;
+    font-size: 20px;
     color: white;
     white-space: nowrap;
-    margin-top: 1.2em
-}
-
-#logOut {
-    margin-top: 0.5em !important
-}
-
-#logOutBtn {
-    margin-left: -15px
 }
 
 .pop-hr {
@@ -80,9 +66,9 @@
 }
 
 #scrollableUsers {
-    height: 200px !important;
-    position: fixed;
-    overflow-y: scroll;
+    max-height: 260px;
+    overflow: auto;
+    margin-left: -5px;
 }
 
 .tooltip-wrapper {
@@ -100,18 +86,21 @@
 }
 
 #bottom-users {
-    margin-top: 13em
+    position: absolute;
+    bottom: 10px;
+    width: 310px;
+    padding: 0 0 10px 0;
 }
 
 #networkBtn {
     color: white;
-    width: 155px !important;
+    width: 170px !important;
+    max-width: 170px !important;
+    line-height: 1 !important;
+    background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
     margin-top: 1.85em;
     border-radius: 15px;
-    background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
     border: 1.47px solid rgb(240, 185, 11);
-    max-width: 155px !important;
-    line-height: 1 !important;
     font-weight: bold
 }
 
@@ -205,7 +194,7 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
     background: none;
     max-width: 300px !important;
     line-height: 1 !important;
-    width: 155px !important;
+    width: 170px !important;
 }
 
 .menu-wrapper:focus {
@@ -241,14 +230,24 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
     color: white;
 }
 
+
+#users-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-left: 5px;
+}
+
 .menu-wrapper-users {
-    margin-top: 4em;
-    margin-left: -4px;
+    position: absolute;
+    top: 35px;
+    left: -40px;
     border: rgba(11, 14, 17, 0.9);
     background: rgba(11, 14, 17, 0.9);
-    max-width: 300px !important;
-    width: 290px !important;
-    height: 400px !important;
+    max-width: 400px !important;
+    width: 340px !important;
+    height: 460px !important;
     border-radius: 5px;
 }
 

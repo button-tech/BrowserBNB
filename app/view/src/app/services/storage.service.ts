@@ -1,69 +1,233 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
-import {Container} from "../models/container.model";
-import {MemoryService} from "./memory.service";
+import {environment} from '../../environments/environment';
+import {filter, map, shareReplay, startWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
+import {concat, from, merge, Observable, of, Subject, Subscription} from 'rxjs';
+
+export interface IStorageData {
+    AccountList: IAccount[];
+    CurrentAccountIdx: number;
+    PassHash: string,
+}
+
+export interface IAccount {
+    address,
+    privateKey,
+    keystore,
+
+    // TODO: implement this
+    encryptedSeed: string;
+    encryptedKeystore: string;
+    accountName: string;
+}
+
+const STORAGE_KEY = 'all';
 
 @Injectable({
     providedIn: 'root'
 })
 export class StorageService {
 
-    val: Container;
+    storageData$: Observable<IStorageData>;
+    currentAccount$: Observable<IAccount>;
+    hasAccount$: Observable<boolean>;
 
-    constructor(private memory: MemoryService) {
-        this.val = {
-            accountName: "First",
-            privateKeystore: ""
+    // Local storage setter, used in dev environment
+    private lsSetter$: Subject<string> = new Subject<string>();
+    private subscription: Subscription;
+
+    // private _hasAccount: boolean;
+    // get hasAccount() {
+    //     return this._hasAccount;
+    // }
+
+    constructor() {
+
+        const initial$ = of(1).pipe(
+            switchMap(() => from(this.initStorage())),
+            switchMap(() => from(this.getFromStorage())),
+            // tap((x) => {
+            //     console.log('hi!')
+            // }),
+            take(1)
+        );
+
+        const live$ = this.initStorageLister().pipe(
+            map((jsonStr: string) => {
+                return JSON.parse(jsonStr) as IStorageData;
+            })
+        );
+
+        this.storageData$ = concat(initial$, live$).pipe(
+            shareReplay(1)
+        );
+
+        // Launch pipeline right now
+        this.subscription = this.storageData$.subscribe();
+
+        this.hasAccount$ = this.storageData$.pipe(
+            map((data: IStorageData) => {
+                console.log('hasAccount$', data);
+                return data.AccountList.length > 0;
+            })
+        );
+
+        this.currentAccount$ = this.storageData$.pipe(
+            filter((data) => {
+                return data.AccountList.length > 0;
+            }),
+            map((data: IStorageData) => {
+                const idx = data.CurrentAccountIdx;
+                return data.AccountList[idx];
+            })
+        );
+    }
+
+
+    initStorageLister(): Observable<string> {
+
+        if (!environment.production) {
+            // Unfortunately localStorage listening doesn't work when you are emit events from the same page
+            return this.lsSetter$.asObservable();
+        }
+
+        if (environment.production) {
+            const subject$: Subject<any> = new Subject();
+            chrome.storage.onChanged.addListener((changes, namespace) => {
+                if (namespace === 'local' && changes[STORAGE_KEY]) {
+                    subject$.next(changes[STORAGE_KEY].newValue);
+                }
+            });
+            return subject$.asObservable();
+        }
+    }
+
+    async initStorage(): Promise<void> {
+        let content: string = await this.getFromStorageRaw();
+        if (!content) {
+            const defaultValue: IStorageData = {
+                AccountList: [],
+                CurrentAccountIdx: 0,
+                PassHash: ''
+            };
+
+            const jsonText = JSON.stringify(defaultValue);
+            return this.saveToStorageRaw(jsonText);
+            // content = await this.getFromStorage(STORAGE_KEY); //
+        }
+
+        // We also can patch / override object if
+        // Validation - could be disabled in production
+        // let obj: IStorageData;
+        // obj = JSON.parse(content);
+        // const isValid = (('AccountList' in obj) && ('CurrentAccountIdx' in obj));
+        // console.assert(isValid);
+    }
+
+    saveToStorageRaw(value: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (environment.production) {
+                const cmd = {
+                    [STORAGE_KEY]: value
+                };
+                chrome.storage.local.set(cmd, resolve);
+            } else {
+                localStorage.setItem(STORAGE_KEY, value);
+                // Fire our fake localstorage listener
+                this.lsSetter$.next(value);
+                resolve();
+            }
+        });
+    }
+
+    saveToStorage(value: IStorageData): Promise<void> {
+        const jsonStr = JSON.stringify(value);
+        return this.saveToStorageRaw(jsonStr);
+    }
+
+    getFromStorageRaw(): Promise<string> {
+        return new Promise<any>((resolve, reject) => {
+            if (environment.production) {
+                chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
+            } else {
+                const result = localStorage.getItem(STORAGE_KEY);
+                resolve(result);
+            }
+        });
+    }
+
+    getFromStorage(): Promise<IStorageData> {
+        return new Promise((resolve, reject) => {
+            this.getFromStorageRaw().then((value: string) => {
+                try {
+                    resolve(JSON.parse(value));
+                } catch (e) {
+                    console.error('Malformed storage conetent');
+                    reject(e);
+                }
+            });
+        });
+
+    }
+
+    async updateStorage(data: IStorageData): Promise<void> {
+        // const data: IStorageData = await this.getFromStorage();
+        // data.AccountList[index] = account;
+        return this.saveToStorage(data);
+    }
+
+    // async updateAccount(index: number, account: IAccount): Promise<void> {
+    //     // const data: IStorageData = await this.getFromStorage();
+    //     data.AccountList[index] = account;
+    //     return this.saveToStorage(data);
+    // }
+
+    async addAccount(address: string, privateKey: string, keystore: any, passHash: string): Promise<void> {
+
+        const data: IStorageData = await this.getFromStorage();
+        const account: IAccount = {
+            address,
+            // TODO: don't stored it as plain text here
+            privateKey,
+            keystore,
+            accountName: `Account ${data.AccountList.length + 1}`,
+            // TODO: use this
+            encryptedKeystore: '',
+            encryptedSeed: '',
         };
+
+        data.PassHash = passHash;
+        data.AccountList.push(account);
+        data.CurrentAccountIdx = data.AccountList.length - 1;
+        return this.saveToStorage(data);
     }
 
-    set() {
-
-        const wrappedKeystore = JSON.stringify(this.memory.getCurrentKeystore());
-
-        this.val = {
-            accountName: "First",
-            privateKeystore: wrappedKeystore
+    reset(): Promise<void> {
+        const defaultValue: IStorageData = {
+            AccountList: [],
+            CurrentAccountIdx: 0,
+            PassHash: ''
         };
 
-        const wrappedVal = JSON.stringify(this.val);
-
-        chrome.storage.local.set({all: wrappedVal},
-            () => {
-                console.log('Value is set to ' + wrappedVal);
-            }
-        );
+        const jsonText = JSON.stringify(defaultValue);
+        return this.saveToStorageRaw(jsonText);
     }
 
-    async get() {
-        await chrome.storage.local.get(["all"],
-            (result) => {
-                console.log('36 log ' + result.all);
-                this.kostyl(result.all)
-            }
-        );
+    setNameForAccount$(accountNumber: number, newName: string) {
+
     }
 
-    // todo: refactor!
-    kostyl(val2: any) {
-        console.log("45");
-        let res;
-        try {
-            res = JSON.parse(val2);
-        }
-        catch (e) {
-            console.log(e)
-        }
-        this.val = res;
-        if (res) {
-            this.memory.setCurrentKeystore(this.val.privateKeystore);
-        }
+    getAccountNumberByName$() {
+
     }
 
-    reset() {
-        chrome.storage.local.remove(["all"],
-            () => {
-            }
-        );
+    getAllAccountNames$() {
+
     }
+
+    getAccountByName$() {
+
+    }
+
+
 }

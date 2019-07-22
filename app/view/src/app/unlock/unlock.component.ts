@@ -1,63 +1,36 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
-import {StorageService} from "../services/storage.service";
-import {MemoryService} from "../services/memory.service";
-import * as Binance from '../../assets/binance/bnbSDK.js'
-import {ToastrManager} from "ng6-toastr-notifications";
+import {Router} from '@angular/router';
+import {StorageService} from '../services/storage.service';
+import {ToastrManager} from 'ng6-toastr-notifications';
+import {AuthService} from '../services/auth.service';
+import {AlertsService} from '../services/alerts.service';
 
 @Component({
     selector: 'app-unlock',
     templateUrl: './unlock.component.html',
     styleUrls: ['./unlock.component.css']
 })
-export class UnlockComponent implements OnInit {
-    keystore: string;
+export class UnlockComponent {
+    keystore: any;
 
-    constructor(private router: Router, private memory: MemoryService, private storage: StorageService,public toastr: ToastrManager) {
-        this.keystore = JSON.parse(this.memory.getCurrentKeystore());
-    }
-
-    ngOnInit() {
+    constructor(private authService: AuthService, private router: Router, private storage: StorageService, public alert: AlertsService) {
     }
 
     unlock() {
         const password = (document.getElementById('password') as HTMLInputElement).value;
-
-        try {
-            const privateKey = Binance.unlockPrivateKey(this.keystore, password);
-            this.memory.setCurrentKey(privateKey);
-            this.memory.setCurrentAddress(Binance.getAddressFromPrivateKey(privateKey));
-            this.router.navigate(['/main'])
-        }
-        catch (e) {
-            this.showError();
-            this.router.navigate(['/unlock']);
-            console.log(e);
-        }
-
-    }
-
-    showError() {
-        this.toastr.errorToastr("Password is incorrect", 'Error', {
-            position: 'top-full-width',
-            maxShown: 1,
-            showCloseButton: true,
-            toastTimeout: 5000
-        });
+        this.authService.login(password)
+            .subscribe((x) => {
+                if (!x) {
+                    this.alert.showError('Password is incorrect', 'Error');
+                } else {
+                    this.router.navigate(['/main']);
+                }
+            });
     }
 
     reset() {
-        this.storage.reset();
-        this.memory.setCurrentKeystore("");
-        this.delay(50).then(()=> {
+        this.storage.reset().then(() => {
             this.router.navigate(['/greeter']);
         });
-
-
     }
-
-    async delay(ms: number) {
-        await new Promise(resolve => setTimeout(() => resolve(), ms)).then(() => console.log("fired"));
-    }
-    
 }

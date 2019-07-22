@@ -1,54 +1,49 @@
 <div class="container">
-    <div id="top-account-col"
-         class="row text-center">
+    <div id="top-account-col" class="row text-center">
+
         <div class="col" align="left">
-            <button [satPopoverAnchor]="menuUsers" (click)="updateUsersList(); menuUsers.toggle()"
+
+            <button [satPopoverAnchor]="menuUsers" (click)="menuUsers.toggle()"
                     class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
                 <fa name="users" size="sm"></fa>
             </button>
-            <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center">
-                <div class="menu-wrapper-users" tabIndex="0">
-                    <div class="container">
-                        <div id="users-wrapper" class="row">
-                            <div id="AccountsHeader" align="left" class="col-8">
-                                My Accounts
-                            </div>
-                            <div id="logOut" align="right" class="col-4">
-                                <button id="logOutBtn" class="btn btn-binance-outline btn-sm">Log out
-                                </button>
-                            </div>
-                        </div>
+
+
+            <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center" hasBackdrop>
+                <div class="menu-wrapper-users col-12" (click)="menuUsers.close()">
+
+                    <div id="users-wrapper">
+                        <div id="AccountsHeader">My Accounts</div>
+                        <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
+                            Log out
+                        </button>
+                    </div>
+                    <hr class="pop-hr">
+
+                    <div id="scrollableUsers">
+                        <button *ngFor="let item of userItems" class="menu-item-users"
+                                (click)="selectUser(item.val); menuUsers.toggle()">
+                            <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
+                            {{ item.val }}
+                        </button>
+                    </div>
+
+                    <div id="bottom-users">
                         <hr class="pop-hr">
-                    </div>
-                    <div id="scrollableUsers" class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <button *ngFor="let item of usersMenu" class="menu-item-users"
-                                        (click)="selectUser(item.val); menuUsers.toggle()">
-                                    <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
-                                    {{ item.val }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="bottom-users" class="container">
-                        <div class="row">
-                            <div class="col-12">
-                                <hr class="pop-hr">
-                                <button class="menu-item-users">
-                                    <fa name="plus" size="sm"></fa>
-                                    Create Account
-                                </button>
-                                <button class="menu-item-users">
-                                    <fa name="arrow-right" size="sm"></fa>
-                                    Import Account
-                                </button>
-                            </div>
-                        </div>
+                        <button class="menu-item-users" routerLink="/registration/create">
+                            <fa name="plus" size="sm"></fa>
+                            Create Account
+                        </button>
+
+                        <button class="menu-item-users" routerLink="/registration/import">
+                            <fa name="arrow-right" size="sm"></fa>
+                            Import Account
+                        </button>
                     </div>
                 </div>
             </sat-popover>
         </div>
+
         <div class="col">
             <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
                     class="btn btn-link btn-outline  btn-sm"
@@ -56,16 +51,16 @@
                 <strong id="NetworkWord">Network:</strong> {{ this.selectedNetwork }}
                 <fa name="caret-down" size="sm"></fa>
             </button>
-            <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center">
+            <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
                 <div class="menu-wrapper" tabIndex="0">
-                    <button *ngFor="let item of networkMenu"
-                            class="menu-item"
+                    <button *ngFor="let item of networkMenu" class="menu-item"
                             (click)="selectNetwork(item.val); menuNetwork.toggle()">
                         {{ item.val }}
                     </button>
                 </div>
             </sat-popover>
         </div>
+
         <div align="right" class="col">
             <button id="cog" class="btn btn-link btn-just-icon btn-lg" href="/main">
                 <fa name="cog" size="sm"></fa>
@@ -75,7 +70,7 @@
     <div class="row text-center">
         <div class="col-12">
             <button [satPopoverAnchor]="name" (click)="name.open()" class="btn btn-sm btn-link" id="editButton">
-                {{this.accountName}}
+                {{ (this.storage.currentAccount$ | async).accountName }}
                 <fa id="editIcon" name="edit" size="sm"></fa>
             </button>
             <br>
@@ -88,8 +83,9 @@
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
         </div>
-        <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out"
-                     [interactiveClose]="false" closeTransition="150ms ease-in" verticalAlign="below">
+
+        <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
+                     verticalAlign="below">
             <div id="popup" class="tooltip-wrapper">
                 {{this.copyMessage}}
             </div>
@@ -97,8 +93,9 @@
             </div>
         </sat-popover>
         <sat-popover #name hasBackdrop forceAlignment>
-            <app-edit-form (update)="this.accountName = $event"></app-edit-form>
+            <app-edit-form (update)="this.currentAccount.accountName = $event"></app-edit-form>
         </sat-popover>
+
         <hr id="unusualHr">
         <div class="col-12">
             <img id="imageBNB"
@@ -107,16 +104,14 @@
             <h4 id="fiat">
                 {{(fiat$ | async) || 'pending'}}
             </h4>
-            <a id="more">More
-                balances</a>
+            <a id="more">More balances</a>
         </div>
+
         <div id="buttonsDiv" class="col-12">
-            <button class="btn btn-binance-outline btn-lg main-btn">
-                RECEIVE
-            </button>
-            <button class="btn btn-binance-outline btn-lg main-btn">SEND
-            </button>
+            <button class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
+            <button class="btn btn-binance-outline btn-lg main-btn">SEND</button>
         </div>
+
     </div>
     <div class="row">
         <div id="historyDiv" align="center" class="col-12">

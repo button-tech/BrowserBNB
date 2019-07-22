@@ -1,9 +1,12 @@
-import {Component, Input} from '@angular/core';
-import {MemoryService} from '../services/memory.service';
-import * as Binance from '../../assets/binance/bnbSDK.js';
+import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {combineLatest, from, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import * as Binance from '../../assets/binance/bnbSDK.js';
+import {ClipboardService} from '../services/clipboard.service';
+import {StorageService} from '../services/storage.service';
+import {AuthService} from '../services/auth.service';
+import {CurrentAccountService} from '../services/current-account.service';
 
 
 interface MenuItem {
@@ -17,11 +20,13 @@ interface MenuItem {
 })
 export class MainComponent {
 
-
-    @Input() accountName = 'First account';
+    // @ts-ignore
+    @ViewChild('menuNetwork')
+    menuNetwork: ElementRef;
 
     bnb$: Observable<string>;
     fiat$: Observable<string>;
+    address$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
     selectedNetwork: string;
@@ -31,22 +36,47 @@ export class MainComponent {
         {val: 'MAINNET'},
     ];
 
-    usersMenu: MenuItem[] = [];
+    userItems: MenuItem[] = [];
 
 
-    constructor(private memory: MemoryService, private http: HttpClient) {
+    constructor(public currentAccount: CurrentAccountService,
+                public storage: StorageService,
+                private authService: AuthService,
+                private http: HttpClient,
+                private clipboardService: ClipboardService
+    ) {
 
         this.selectedNetwork = 'MAINNET';
+
+        this.storage.storageData$.subscribe((x) => {
+            this.userItems = x.AccountList.map((acc) => {
+                return {val: acc.accountName};
+            });
+        });
+
 
         const getBnbBalance = (resp: any) => {
             const bnb = resp.find((x) => x.symbol === 'BNB');
             return bnb ? bnb.free : 0;
         };
 
+        this.address$ = this.storage.currentAccount$.pipe(
+            pluck('address')
+        );
 
-        const bnbRaw$ = timer(0, 4000).pipe(
-            switchMap(() => {
-                const address = this.memory.getCurrentAddress();
+        this.shortAddress$ = this.address$.pipe(
+            map((address) => {
+                const start = address.substring(0, 5);
+                const end = address.substring(address.length - 6, address.length);
+                return `${start}...${end}`;
+            })
+        );
+
+        const timer$ = timer(0, 4000);
+
+        const bnbRaw$ = combineLatest([this.address$, timer$]).pipe(
+            switchMap((x) => {
+                const [address] = x;
                 const binanceRequest$ = Binance.getBalanceOfAddress(address);
                 return from(binanceRequest$);
             }),
@@ -66,7 +96,7 @@ export class MainComponent {
             map((resp: any) => resp.USD)
         );
 
-        this.fiat$ = combineLatest(bnbRaw$, bnb2usdRate$).pipe(
+        this.fiat$ = combineLatest([bnbRaw$, bnb2usdRate$]).pipe(
             map((arr: any[]) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
@@ -75,24 +105,6 @@ export class MainComponent {
             }),
             shareReplay(1)
         );
-
-        this.shortAddress$ = this.memory.currentAddress.pipe(
-            map((address) => {
-                const start = address.substring(0, 5);
-                const end = address.substring(address.length - 6, address.length);
-                return `${start}...${end}`;
-            })
-        );
-    }
-
-    updateUsersList() {
-        this.usersMenu = [
-            {val: this.accountName},
-            {val: 'Job'},
-            {val: 'Personal'},
-            {val: 'Team'},
-            {val: 'DeFi'},
-        ]
     }
 
     selectNetwork(value: string) {
@@ -100,21 +112,21 @@ export class MainComponent {
     }
 
     selectUser(value: string) {
-        this.accountName = value;
+        // this.currentAccount.accountName = value;
     }
 
     copyAddress() {
-        this.copyMessage = 'Copied';
-        const obj = document.createElement('textarea');
-        obj.style.position = 'fixed';
-        obj.style.left = '0';
-        obj.style.top = '0';
-        obj.style.opacity = '0';
-        obj.value = this.memory.getCurrentAddress();
-        document.body.appendChild(obj);
-        obj.focus();
-        obj.select();
-        document.execCommand('copy');
-        document.body.removeChild(obj);
+        // TODO: probable better to do that without observables, by just assiging address to MainComponent field
+        this.address$.pipe(
+            takeUntil(timer(100)),
+            take(1),
+        ).subscribe((address) => {
+            this.clipboardService.copyToClipboard(address);
+            this.copyMessage = 'Copied';
+        });
+    }
+
+    logout() {
+        this.authService.logout();
     }
 }

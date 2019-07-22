@@ -6,82 +6,45 @@ import * as Binance from '../../assets/binance/bnbSDK.js';
 })
 export class BinanceService {
 
-    crypto: BinanceCrypto;
+    binanceInstance: any;
+    binanceClient: any;
+
+    networksList: {
+        'MAINNET': 'https://dex.binance.org/',
+        'MAINNET_ASIA': 'https://dex-asiapacific.binance.org/',
+        'MAINNET_ATLANTIC': 'https://dex-atlantic.binance.org/',
+        'MAINNET_EUROPE': 'https://dex-european.binance.org/',
+        'TESTNET': 'https://testnet-dex.binance.org',
+        'TESTNET_ASIA': 'https://testnet-dex-asiapacific.binance.org',
+        'TESTNET_ATLANTIC': 'https://testnet-dex-atlantic.binance.org'
+    };
 
     constructor() {
-        this.crypto = new BinanceCrypto()
+        this.binanceInstance = Binance.initBNB();
+        this.binanceClient = this.initClient(this.networksList.MAINNET);
     }
-}
 
-export class BinanceCrypto {
-
-    public static returnMnemonic(): string {
-        let mnemonic: string;
+    initClient(networkConnection: string): any {
+        let client: any;
         try {
-            mnemonic = Binance.BNB.BNB.crypto.generateMnemonic();
+            client = this.binanceInstance(networkConnection);
+        } catch (e) {
+            console.assert(e, `Error during binance client init ${e}`);
         }
-        catch (e) {
-            console.error(`Error at binance.service.BinanceCrypto.returnMnemonic() ${e}`);
-        }
-        return BinanceCrypto._validateMnemonic(mnemonic);
+        return client;
     }
 
-    public static validateMnemonic(mnemonic: string): boolean {
-        return Binance.BNB.BNB.crypto.validateMnemonic(mnemonic)
+    sendTransaction(sum: number, address: string, coin: string, message?: string) {
     }
 
-    private static _validateMnemonic(mnemonic: string): string {
-        if (BinanceCrypto.validateMnemonic(mnemonic)) {
-            return mnemonic;
-        } else {
-            console.error(`Error at binance.service.BinanceCrypto._validateMnemonic()`);
-            return '';
-        }
+    getBalance(address: string) {
     }
 
-    public static returnPrivateKeyFromMnemonic(mnemonic: string): string {
-        if (mnemonic.length !== 0 && BinanceCrypto._validateMnemonic(mnemonic).length !== 0) {
-            let privateKey: string;
-            try {
-                privateKey = Binance.BNB.BNB.crypto.getPrivateKeyFromMnemonic(mnemonic);
-            }
-            catch (e) {
-                console.error(`Error at binance.service.BinanceCrypto.returnPrivateKeyFromMnemonic() ${e}`);
-            }
-            return privateKey;
-        } else {
-            return '';
-        }
+    getBalanceOfCoin(address: string, coin: string) {
     }
 
-    public static returnKeystoreFromMnemonic() {
-    };
-
-    public static returnKeystoreFromPrivateKey() {
-    };
-
-    public static returnPrivateKeyFromKeystore() {
-    };
-
-    public static returnSHA3hashSum() {
-    };
-
-    public static returnAddressFromKeystore() {
+    getTransactionsHistory(address: string) {
     }
 
-    public static returnAddressFromPrivateKey() {
-    }
 
-    public static returnAddressFromPublicKey() {
-    }
-
-    public static returnAddressFromMnemonic() {
-    }
-
-    public static validateAddress() {
-    }
-
-}
-
-export class BinanceWeb {
 }
