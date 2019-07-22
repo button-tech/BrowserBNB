@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {getAddressFromPrivateKey} from './binance-crypto';
-import {timer} from "rxjs";
-import {map, shareReplay, switchMap} from "rxjs/operators";
-import {HttpClient} from '@angular/common/http'
+import { Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +13,7 @@ export class BinanceService {
     binanceInstance: any;
     binanceClient: any;
 
-    networksList: {
+    endpointList = {
         'MAINNET': 'https://dex.binance.org/',
         'MAINNET_ASIA': 'https://dex-asiapacific.binance.org/',
         'MAINNET_ATLANTIC': 'https://dex-atlantic.binance.org/',
@@ -25,7 +25,7 @@ export class BinanceService {
 
     constructor(private http: HttpClient) {
         this.binanceInstance = Binance.initBNB();
-        this.binanceClient = this.initClient(this.networksList.MAINNET);
+        this.binanceClient = this.initClient(this.endpointList.MAINNET);
     }
 
     initClient(networkConnection: string): any {
@@ -42,31 +42,26 @@ export class BinanceService {
         const addressFrom = getAddressFromPrivateKey(privateKey);
         let account: any;
         try {
-            account = await this.binanceClient._httpClient.request("get", `/api/v1/account/${addressFrom}`);
-        }
-        catch (e) {
+            account = await this.binanceClient._httpClient.request('get', `/api/v1/account/${addressFrom}`);
+        } catch (e) {
             console.assert(e, `Error during sendTransaction ${e}`);
         }
-
         const sequence = account.result && account.result.sequence;
-
         return this.binanceClient.transfer(addressFrom, addressTo, sum, coin, message, sequence);
     }
 
-    getBalance(address: string) {
-        const obv = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get(`${this.networksList.MAINNET}/api/v1/account/${address}`);
-            }),
-            map((resp: any) => !resp.length ? 0 : BinanceService.getBnbBalance(resp)),
-            shareReplay(1)
-        );
-    }
 
-    static getBnbBalance(resp: any) {
-        const bnb = resp.find((x) => x.symbol === 'BNB');
-        return bnb ? bnb.free : 0;
-    };
+    getBalance(address: string, endpoint: string): Observable<any> {
+      // https://dex-asiapacific.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
+      return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+        catchError((error: HttpErrorResponse) => {
+            // TODO: properly handle binance 404 response
+            return of({
+              balances: []
+            });
+        })
+      );
+    }
 
     getBalanceOfCoin(address: string, coin: string) {
     }
@@ -77,6 +72,4 @@ export class BinanceService {
 
     getTransactionsHistory(address: string) {
     }
-
-
 }

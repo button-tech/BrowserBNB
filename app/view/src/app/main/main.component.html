@@ -1,8 +1,6 @@
 <div class="container">
     <div id="top-account-col" class="row text-center">
-
         <div class="col" align="left">
-
             <button [satPopoverAnchor]="menuUsers" (click)="menuUsers.toggle()"
                     class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
                 <fa name="users" size="sm"></fa>
@@ -11,7 +9,6 @@
 
             <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center" hasBackdrop>
                 <div class="menu-wrapper-users col-12" (click)="menuUsers.close()">
-
                     <div id="users-wrapper">
                         <div id="AccountsHeader">My Accounts</div>
                         <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
@@ -19,7 +16,6 @@
                         </button>
                     </div>
                     <hr class="pop-hr">
-
                     <div id="scrollableUsers">
                         <button *ngFor="let item of userItems" class="menu-item-users"
                                 (click)="selectUser(item.val); menuUsers.toggle()">
@@ -27,7 +23,6 @@
                             {{ item.val }}
                         </button>
                     </div>
-
                     <div id="bottom-users">
                         <hr class="pop-hr">
                         <button class="menu-item-users" routerLink="/registration/create">
@@ -48,14 +43,14 @@
             <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
                     class="btn btn-link btn-outline  btn-sm"
                     href="/main" id="networkBtn">
-                <strong id="NetworkWord">Network:</strong> {{ this.selectedNetwork }}
+                <strong id="NetworkWord">Network:</strong> {{ this.selectedNetwork$.getValue().label }}
                 <fa name="caret-down" size="sm"></fa>
             </button>
             <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
                 <div class="menu-wrapper" tabIndex="0">
                     <button *ngFor="let item of networkMenu" class="menu-item"
-                            (click)="selectNetwork(item.val); menuNetwork.toggle()">
-                        {{ item.val }}
+                            (click)="selectNetwork(item); menuNetwork.toggle()">
+                        {{ item.label }}
                     </button>
                 </div>
             </sat-popover>
@@ -109,7 +104,7 @@
 
         <div id="buttonsDiv" class="col-12">
             <button class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
-            <button class="btn btn-binance-outline btn-lg main-btn">SEND</button>
+            <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
         </div>
 
     </div>

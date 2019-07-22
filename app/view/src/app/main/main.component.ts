@@ -1,15 +1,17 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {combineLatest, from, Observable, timer} from 'rxjs';
+import { BehaviorSubject, combineLatest, from, Observable, timer } from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import { map, pluck, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
 import {CurrentAccountService} from '../services/current-account.service';
+import { BinanceService } from '../services/binance.service';
 
 
 interface MenuItem {
+    label: string;
     val: string;
 }
 
@@ -29,36 +31,47 @@ export class MainComponent {
     address$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
-    selectedNetwork: string;
+    selectedNetwork$: BehaviorSubject<MenuItem>;
 
-    networkMenu: MenuItem[] = [
-        {val: 'TESTNET'},
-        {val: 'MAINNET'},
-    ];
+    networkMenu: MenuItem[];
 
     userItems: MenuItem[] = [];
-
 
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
                 private authService: AuthService,
                 private http: HttpClient,
-                private clipboardService: ClipboardService
+                private clipboardService: ClipboardService,
+                private bncService: BinanceService
     ) {
 
-        this.selectedNetwork = 'MAINNET';
+        this.networkMenu = [
+          {
+            label: 'MAINNET',
+            val: bncService.endpointList.MAINNET
+          },
+          {
+            label: 'TESTNET',
+            val: bncService.endpointList.TESTNET
+          },
+        ];
+
+        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
 
         this.storage.storageData$.subscribe((x) => {
             this.userItems = x.AccountList.map((acc) => {
-                return {val: acc.accountName};
+                return {
+                  label: acc.accountName,
+                  val: acc.accountName
+                };
             });
         });
 
-
-        const getBnbBalance = (resp: any) => {
-            const bnb = resp.find((x) => x.symbol === 'BNB');
-            return bnb ? bnb.free : 0;
-        };
+        // this.binanceService.getBalance(, 'BNB');
+        // const getBnbBalance = (resp: any) => {
+        //     const bnb = resp.find((x) => x.symbol === 'BNB');
+        //     return bnb ? bnb.free : 0;
+        // };
 
         this.address$ = this.storage.currentAccount$.pipe(
             pluck('address')
@@ -74,20 +87,28 @@ export class MainComponent {
 
         const timer$ = timer(0, 4000);
 
-        const bnbRaw$ = combineLatest([this.address$, timer$]).pipe(
-            switchMap((x) => {
-                const [address] = x;
-                const binanceRequest$ = Binance.getBalanceOfAddress(address);
-                return from(binanceRequest$);
+        const balances$ = combineLatest([this.address$, this.selectedNetwork$, timer$]).pipe(
+            switchMap((x: any[]) => {
+                const [address, networkMenuItem] = x;
+                const endpoint = networkMenuItem.val;
+                return this.bncService.getBalance(address, endpoint);
             }),
-            map((resp: any) => !resp.length ? 0 : getBnbBalance(resp)),
             shareReplay(1)
         );
 
-        this.bnb$ = bnbRaw$.pipe(
-            map((bnb) => `${bnb} BNB`)
+        const pluckBalance = (response: any, coinSymbol: string) => {
+          const balances = response.balances || [];
+          const item = balances.find((x) => x.symbol === coinSymbol);
+          return item ? item.free : 0;
+        };
+
+        const bnbBalance$ = balances$.pipe(
+          map((response) => pluckBalance(response, 'BNB'))
         );
 
+        this.bnb$ = bnbBalance$.pipe(
+            map((bnbAmount) => `${bnbAmount} BNB`),
+        );
 
         const bnb2usdRate$ = timer(0, 60000).pipe(
             switchMap(() => {
@@ -96,7 +117,7 @@ export class MainComponent {
             map((resp: any) => resp.USD)
         );
 
-        this.fiat$ = combineLatest([bnbRaw$, bnb2usdRate$]).pipe(
+        this.fiat$ = combineLatest([bnbBalance$, bnb2usdRate$]).pipe(
             map((arr: any[]) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
@@ -107,8 +128,8 @@ export class MainComponent {
         );
     }
 
-    selectNetwork(value: string) {
-        this.selectedNetwork = value;
+    selectNetwork(value: MenuItem) {
+        this.selectedNetwork$.next(value);
     }
 
     selectUser(value: string) {

@@ -11,15 +11,22 @@ import {RegisterMnemonicComponent} from './registration/register-mnemonic/regist
 import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mnemonic.component';
 import {RegisterPasswordComponent} from './registration/register-password/register-password.component';
 import {RegisterRepeatPasswordComponent} from './registration/register-repeat-password/register-repeat-password.component';
+import {SendComponent} from "./send/send.component";
 
 const routes: Routes = [
     {
         path: '',
         redirectTo: '/main',
         pathMatch: 'full'
-    }, {
+    },
+    {
         path: 'main',
         component: MainComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'send',
+        component: SendComponent,
         canActivate: [AuthGuard]
     },
     {

@@ -24,6 +24,7 @@ import {RegisterPasswordComponent} from './registration/register-password/regist
 import {RegisterRepeatPasswordComponent} from './registration/register-repeat-password/register-repeat-password.component';
 import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mnemonic.component';
 import {CurrentAccountService} from './services/current-account.service';
+import {BinanceService} from './services/binance.service';
 import { SendComponent } from './send/send.component';
 
 
@@ -58,7 +59,8 @@ import { SendComponent } from './send/send.component';
         AuthGuardService,
         StorageService,
         ClipboardService,
-        CurrentAccountService
+        CurrentAccountService,
+        BinanceService
     ],
     bootstrap: [AppComponent]
 })
