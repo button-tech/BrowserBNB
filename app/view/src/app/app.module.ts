@@ -26,6 +26,7 @@ import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mne
 import {CurrentAccountService} from './services/current-account.service';
 import {BinanceService} from './services/binance.service';
 import { SendComponent } from './send/send.component';
+import { MenuTopComponent } from './menu-top/menu-top.component';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { SendComponent } from './send/send.component';
         UnlockComponent,
         EditFormComponent,
         RegistrationComponent,
-        SendComponent
+        SendComponent,
+        MenuTopComponent
     ],
     imports: [
         BrowserModule,

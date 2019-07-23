@@ -1,0 +1,63 @@
+<div id="top-account-col" class="row text-center">
+    <div class="col" align="left">
+        <button [satPopoverAnchor]="menuUsers" (click)="menuUsers.toggle()"
+                class="btn btn-link btn-just-icon btn-lg" id="menuUsers" href="/main">
+            <fa name="users" size="sm"></fa>
+        </button>
+
+
+        <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center" hasBackdrop>
+            <div class="menu-wrapper-users col-12" (click)="menuUsers.close()">
+                <div id="users-wrapper">
+                    <div id="AccountsHeader">My Accounts</div>
+                    <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
+                        Log out
+                    </button>
+                </div>
+                <hr class="pop-hr">
+                <div id="scrollableUsers">
+                    <button *ngFor="let item of userItems" class="menu-item-users"
+                            (click)="selectUser(item.val); menuUsers.toggle()">
+                        <button class="btn btn-just-icon"> {{item.val.charAt(0).toUpperCase()}}</button>
+                        {{ item.val }}
+                    </button>
+                </div>
+                <div id="bottom-users">
+                    <hr class="pop-hr">
+                    <button class="menu-item-users" routerLink="/registration/create">
+                        <fa name="plus" size="sm"></fa>
+                        Create Account
+                    </button>
+
+                    <button class="menu-item-users" routerLink="/registration/import">
+                        <fa name="arrow-right" size="sm"></fa>
+                        Import Account
+                    </button>
+                </div>
+            </div>
+        </sat-popover>
+    </div>
+
+    <div class="col">
+        <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
+                class="btn btn-link btn-outline  btn-sm"
+                href="/main" id="networkBtn">
+            <strong id="NetworkWord">Network:</strong> {{ this.selectedNetwork$.getValue().label }}
+            <fa name="caret-down" size="sm"></fa>
+        </button>
+        <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
+            <div class="menu-wrapper" tabIndex="0">
+                <button *ngFor="let item of networkMenu" class="menu-item"
+                        (click)="selectNetwork(item); menuNetwork.toggle()">
+                    {{ item.label }}
+                </button>
+            </div>
+        </sat-popover>
+    </div>
+
+    <div align="right" class="col">
+        <button id="cog" class="btn btn-link btn-just-icon btn-lg" href="/main">
+            <fa name="cog" size="sm"></fa>
+        </button>
+    </div>
+</div>
