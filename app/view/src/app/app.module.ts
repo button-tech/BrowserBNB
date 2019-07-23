@@ -30,6 +30,7 @@ import {MenuTopComponent} from './menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import { CoinsSelectComponent } from './coins-select/coins-select.component';
 import { AmountInputComponent } from './amount-input/amount-input.component';
+import {MatFormFieldModule, MatInput, MatInputModule} from "@angular/material";
 
 
 @NgModule({
@@ -58,7 +59,7 @@ import { AmountInputComponent } from './amount-input/amount-input.component';
         ToastrModule.forRoot(),
         HttpClientModule,
         FormsModule,
-        SatPopoverModule, NgSelectModule  ,ReactiveFormsModule
+        SatPopoverModule, NgSelectModule  ,ReactiveFormsModule, MatInputModule, MatFormFieldModule
     ],
     providers: [
         RegistrationService,

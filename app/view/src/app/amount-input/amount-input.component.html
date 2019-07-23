@@ -1,7 +1,21 @@
-<form class="example-form">
-    <mat-form-field class="example-full-width">
-        <input matInput placeholder="Email" [formControl]="emailFormControl"
-               [errorStateMatcher]="matcher">
-        <mat-hint>Errors appear instantly!</mat-hint>
+<div style="padding: 3px; border: 1px solid #cbcbcb; border-radius: 4px; margin-left: 1.5em" class="wrap text-center">
+    <mat-form-field style="margin-bottom: -0.5em !important; color: black" class="example-full-width form-group">
+        <div class="inline-wrapper" style=" display: flex;
+  justify-content: flex-start;">
+            <input style="margin-bottom: -0.7em !important; font-weight: bold; font-size: 20px !important"
+                   class="form-control" matInput
+                   [formControl]="emailFormControl"
+                   [errorStateMatcher]="matcher" type="number" value="0">
+            <strong style="margin-bottom: 0.2em; margin-top: 0.4em; font-weight: bold; font-size: 15px">BNB</strong>
+        </div>
+
+        <div class="inline-wrapper" style=" display: flex;
+  justify-content: space-between;">
+            <h5 align="left" style="font-weight: bolder; color: #777777;"> $74479 USD</h5>
+            <button style="margin-bottom: 0.5em" class="btn btn-sm btn-binance btn-just-icon btn-round">
+                <fa id="copyButton" name="random" size="sm"></fa>
+            </button>
+        </div>
+
     </mat-form-field>
-</form>
+</div>
