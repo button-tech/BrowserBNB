@@ -29,8 +29,11 @@ export class UnlockComponent {
     }
 
     reset() {
-        this.storage.reset().then(() => {
-            this.router.navigate(['/greeter']);
-        });
+        // TODO: investigate more on that
+        // this.storage.reset().then(() => {
+        //     this.router.navigate(['/greeter']);
+        // });
+        this.storage.reset();
+        this.router.navigate(['/greeter']);
     }
 }

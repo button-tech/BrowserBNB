@@ -35,11 +35,10 @@ Navigation
 
 ## Step 2 (Infrastructure)
  - [ ] Add background.js and sessions support
- - [ ] Use NGX and Rx to share data between view and background
- - [ ] Make TS wrapper over BNB JS SDK
+ - [x] Make TS wrapper over BNB JS SDK
  - [ ] Send to address support 
  - [ ] Tokens support 
- - [ ] Multiple accounts support
- - [ ] Add first docs and Travis
+ - [x] Multiple accounts support
+ - [x] Add first docs and Travis
  - [ ] Add first tests to BNB TS Wrapper 
  - [ ] Add forms for feedback and make widget public

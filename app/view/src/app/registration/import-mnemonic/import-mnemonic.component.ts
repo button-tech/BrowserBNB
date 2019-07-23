@@ -18,6 +18,7 @@ export class ImportMnemonicComponent {
         const mnemonic = (document.getElementById('mnemonic') as HTMLInputElement).value;
         if (!isValidMnemonic(mnemonic)) {
             this.alert.showError('Enter a correct mnemonic to continue', 'Error');
+            return;
         }
 
         this.regSvc.mnemonic = mnemonic;
