@@ -1,34 +1,37 @@
-<div style="margin-left: 1em; margin-right: 1em" class="row">
-    <div style="display: grid; grid-template: 1fr 1fr / 1fr" class="container">
-        <div style="grid-area: 1 / 1;" class="text">
-            <h5>Make transaction</h5>
-        </div>
-        <div style="grid-area: 1 / 2;" class="close">
-            <button class="btn btn-warning btn-just-icon">
-                <fa name="close" size="sm"></fa>
-            </button>
-        </div>
+<div class="container-fluid">
+    <app-menu-top></app-menu-top>
+</div>
+<div style="margin-left: 1.5em; margin-right: 0em" class="row">
+    <div class="col-12" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+        <button (click)="goBack()" class="btn btn-just-icon btn-default btn-round">
+            <fa name="arrow-left" size="sm"></fa>
+        </button>
     </div>
     <div style="display: grid; grid-template: 1fr 1fr 1fr 1fr / 1fr 4fr" class="container text-center">
         <div class="fromText" style="grid-column: 1; grid-row: 1/4;">
             <h3>From</h3>
         </div>
-        <div class="fromInfo" style="grid-column: 2/4; grid-row: 1/4;">
-            <h3>From info</h3>
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 1;">
+            <select title="Pick a number" class="selectpicker">
+                <option>Select...</option>
+                <option>One</option>
+                <option>Two</option>
+                <option>Three</option>
+            </select>
         </div>
-        <div class="fromText" style="grid-column: 1; grid-row: 2/4;">
+        <div class="fromText" style="grid-column: 1; grid-row: 2;">
             <h3>From</h3>
         </div>
-        <div class="fromInfo" style="grid-column: 2/4; grid-row: 2/4;">
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 2;">
             <h3>From info</h3>
         </div>
-        <div class="fromText" style="grid-column: 1; grid-row: 3/4;">
+        <div class="fromText" style="grid-column: 1; grid-row: 3;">
             <h3>From</h3>
         </div>
-        <div class="fromInfo" style="grid-column: 2/4; grid-row: 3/4;">
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 3;">
             <h3>From info</h3>
         </div>
-        <div class="fromText" style="grid-column: 1; grid-row: 4/4;">
+        <div class="fromText" style="grid-column: 1; grid-row: 4;">
             <h3>From</h3>
         </div>
         <div class="fromInfo" style="grid-column: 2/4; grid-row: 4/4;">
@@ -36,3 +39,4 @@
         </div>
     </div>
 </div>
+
