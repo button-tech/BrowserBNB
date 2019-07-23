@@ -1,13 +1,15 @@
 <form [formGroup]="heroForm" novalidate>
     <div class="form-row">
         <div class="form-group col-md-12">
-            <ng-select [searchable]="false" [clearable]="false" labelForId="heroId"
+            <ng-select [searchable]="true" [clearable]="false" labelForId="heroId"
                        formControlName="heroId">
                 <ng-option value="BNB">
                     <div style="display: inline-block; margin-top: -0.2em" class="wrapper">
-                        <img style="margin-top: 1em; margin-right: 0.2em" src="../../assets/icons/icon128.png" width="28px" height="28px"/>
-                        <strong style="font-weight: bold!important; font-size: 16px; color: black"> 1 BNB</strong>
-                        <h5 style="font-size: 14px !important; margin-top: -0.7em; margin-left: 2.7em; font-weight: bolder !important; color: #777777  !important; margin-bottom: -0.5em !important; padding-bottom: 0px">
+                        <img style="margin-top: 1.5em; margin-right: 0.2em" src="../../assets/icons/icon128.png" width="28px" height="28px"/>
+                        <strong style="font-weight: bold!important; font-size: 16px; color: black; margin-left: 0.3em">Binance Coin</strong>
+                        <h5 style="font-size: 13px !important; margin-top: -1.7em; margin-left: 2.7em; font-weight: bolder !important; color: #777777  !important; margin-bottom: -0.5em !important; padding-bottom: 0px">
+                            1 BNB</h5>
+                        <h5 style="font-size: 13px !important; margin-top: -0.1em; margin-left: 2.7em; font-weight: bolder !important; color: #777777  !important; margin-bottom: -0.5em !important; padding-bottom: 0px">
                             $144 USD</h5>
                     </div>
 

@@ -2,19 +2,27 @@
     <mat-form-field style="margin-bottom: -0.5em !important; color: black" class="example-full-width form-group">
         <div class="inline-wrapper" style=" display: flex;
   justify-content: flex-start;">
-            <input style="margin-bottom: -0.7em !important; font-weight: bold; font-size: 16px !important; width: 95px"
+            <input style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 95px"
                    class="form-control" matInput
                    [formControl]="emailFormControl"
                    [errorStateMatcher]="matcher" type="number" value="0">
-            <strong style="margin-top: 0.35em; font-weight: bold; font-size: 16px">BNB</strong>
+            <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">BNB</strong>
         </div>
 
         <div class="inline-wrapper" style=" display: flex;
   justify-content: space-between;">
-            <h5 align="right" style="font-weight: bolder; color: #777777; font-size: 13px; margin-top: -0.1em; max-width: 40px !important; min-width: 40px !important"> $74479</h5>
-            <h5 style="font-weight: bolder; color: #777777; font-size: 16px; margin-top: -0.3em; margin-left: 2.2em"> USD</h5>
-            <button style="margin-bottom: 0em; margin-top: -0.7em" class="btn btn-sm btn-github btn-just-icon btn-round">
-                <fa id="copyButton" name="exchange" size="sm"></fa>
+            <h5 align="right"
+                style="font-weight: bolder; color: #777777; font-size: 13px; margin-top: -0.1em; max-width: 40px !important; min-width: 40px !important">
+                $74479</h5>
+            <h5 style="font-weight: bolder; color: #777777; font-size: 16px; margin-top: -0.3em; margin-left: 2.2em">
+                USD</h5>
+            <button style="margin-bottom: 0em; margin-top: -0.7em;-webkit-transform: rotate(90deg);
+                    -moz-transform: rotate(90deg);
+                    -o-transform: rotate(90deg);
+                    -ms-transform: rotate(90deg);
+                    transform: rotate(90deg); background: white !important; box-shadow: none!important; color: grey !important"
+                    class="btn btn-sm btn-github btn-just-icon btn-round">
+                <fa  id="copyButton" name="exchange" size="sm"></fa>
             </button>
         </div>
 
