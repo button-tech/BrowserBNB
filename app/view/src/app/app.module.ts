@@ -29,6 +29,7 @@ import {SendComponent} from './send/send.component';
 import {MenuTopComponent} from './menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import { CoinsSelectComponent } from './coins-select/coins-select.component';
+import { AmountInputComponent } from './amount-input/amount-input.component';
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { CoinsSelectComponent } from './coins-select/coins-select.component';
         RegistrationComponent,
         SendComponent,
         MenuTopComponent,
-        CoinsSelectComponent
+        CoinsSelectComponent,
+        AmountInputComponent
     ],
     imports: [
         BrowserModule,
