@@ -4,3 +4,6 @@
 div.ng-value-container {
     margin-bottom: -1em !important;
 }
+.ng-arrow-wrapper {
+    margin-bottom: 0.6em !important;
+}
