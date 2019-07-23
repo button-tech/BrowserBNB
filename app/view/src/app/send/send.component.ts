@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 
 @Component({
@@ -8,17 +8,19 @@ import {Location} from "@angular/common";
 })
 export class SendComponent implements OnInit {
 
-    tokens: string[] = [
-        'BNB', 'KNC', 'INDEX'
-    ];
 
-    constructor(private location: Location) { }
 
-    ngOnInit() {
+    constructor(private location: Location) {
     }
+
 
     goBack() {
         this.location.back();
+    }
+
+
+    ngOnInit() {
+
     }
 
 }

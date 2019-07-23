@@ -8,7 +8,7 @@ import {MainComponent} from './main/main.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SatPopoverModule} from '@ncstate/sat-popover';
 import {AngularFontAwesomeModule} from 'angular-font-awesome';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {HistoryComponentComponent} from './history-component/history-component.component';
 import {StorageService} from './services/storage.service';
@@ -25,8 +25,10 @@ import {RegisterRepeatPasswordComponent} from './registration/register-repeat-pa
 import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mnemonic.component';
 import {CurrentAccountService} from './services/current-account.service';
 import {BinanceService} from './services/binance.service';
-import { SendComponent } from './send/send.component';
-import { MenuTopComponent } from './menu-top/menu-top.component';
+import {SendComponent} from './send/send.component';
+import {MenuTopComponent} from './menu-top/menu-top.component';
+import {NgSelectModule} from '@ng-select/ng-select';
+import { CoinsSelectComponent } from './coins-select/coins-select.component';
 
 
 @NgModule({
@@ -43,7 +45,8 @@ import { MenuTopComponent } from './menu-top/menu-top.component';
         EditFormComponent,
         RegistrationComponent,
         SendComponent,
-        MenuTopComponent
+        MenuTopComponent,
+        CoinsSelectComponent
     ],
     imports: [
         BrowserModule,
@@ -53,7 +56,7 @@ import { MenuTopComponent } from './menu-top/menu-top.component';
         ToastrModule.forRoot(),
         HttpClientModule,
         FormsModule,
-        SatPopoverModule
+        SatPopoverModule, NgSelectModule  ,ReactiveFormsModule
     ],
     providers: [
         RegistrationService,

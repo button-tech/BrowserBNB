@@ -1,17 +1,24 @@
 :host {
     display: block;
     background: white;
-    border-radius: 15px;
+    border-radius: 2px;
 }
 input {
-    padding-top: 6px !important;
+    padding-top: 4px !important;
     /*padding-left: -6px !important;*/
-    line-height: 26px;
+    line-height: 18px;
     text-align: center !important;
     font-size: 15px;
-    border-radius: 15px;
-    border: 1px solid rgb(33, 40, 51);
+    border-radius: 10px;
+    margin-left: 4em;
+    border: 1.5px solid rgb(33, 40, 51);
 }
 input:focus {
     outline: none;
+}
+
+.wrapper {
+    padding-top: 4.2px !important;
+    /*padding-left: -6px !important;*/
+    color: black !important;
 }

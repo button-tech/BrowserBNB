@@ -24,6 +24,7 @@
     "@angular/router": "^8.0.2",
     "@binance-chain/javascript-sdk": "^2.13.9",
     "@ncstate/sat-popover": "^4.0.0",
+    "@ng-select/ng-select": "^3.0.3",
     "@types/chrome": "0.0.86",
     "ajv": "^6.10.0",
     "angular-font-awesome": "^3.1.2",

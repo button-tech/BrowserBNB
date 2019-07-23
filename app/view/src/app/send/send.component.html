@@ -1,41 +1,39 @@
 <div class="container-fluid">
     <app-menu-top></app-menu-top>
 </div>
-<div style="margin-left: 1.5em; margin-right: 0em" class="row">
-    <div class="col-12" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+<div class="row">
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
         <button (click)="goBack()" class="btn btn-just-icon btn-default btn-round">
             <fa name="arrow-left" size="sm"></fa>
         </button>
     </div>
+</div>
+<div style="margin-left: 1em; margin-right:0.2em" class="row">
     <div style="display: grid; grid-template: 1fr 1fr 1fr 1fr / 1fr 4fr" class="container text-center">
         <div class="fromText" style="grid-column: 1; grid-row: 1/4;">
-            <h3>From</h3>
+            <h5 style="font-weight: bold">Asset</h5>
         </div>
-        <div class="fromInfo" style="grid-column: 2/4; grid-row: 1;">
-            <select title="Pick a number" class="selectpicker">
-                <option>Select...</option>
-                <option>One</option>
-                <option>Two</option>
-                <option>Three</option>
-            </select>
+        <div style="text-align: left !important; grid-column: 2/4; grid-row: 1; margin-left: 1.2em; margin-top: -1em; font-size: 19px !important"
+             class="fromInfo">
+            <app-coins-select></app-coins-select>
         </div>
         <div class="fromText" style="grid-column: 1; grid-row: 2;">
-            <h3>From</h3>
+            <h5>Amount</h5>
         </div>
         <div class="fromInfo" style="grid-column: 2/4; grid-row: 2;">
-            <h3>From info</h3>
+            Amount
         </div>
         <div class="fromText" style="grid-column: 1; grid-row: 3;">
-            <h3>From</h3>
+            <h5>Address</h5>
         </div>
         <div class="fromInfo" style="grid-column: 2/4; grid-row: 3;">
-            <h3>From info</h3>
+            <h5>Address info</h5>
         </div>
         <div class="fromText" style="grid-column: 1; grid-row: 4;">
-            <h3>From</h3>
+            <h5>Memo </h5>
         </div>
         <div class="fromInfo" style="grid-column: 2/4; grid-row: 4/4;">
-            <h3>From info</h3>
+            <h3>Memo info</h3>
         </div>
     </div>
 </div>

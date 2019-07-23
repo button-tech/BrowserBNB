@@ -1,0 +1,25 @@
+<form [formGroup]="heroForm" novalidate>
+    <div   class="form-row">
+        <div  class="form-group col-md-12">
+            <ng-select [searchable]="false" [clearable]="false" labelForId="heroId"
+                       formControlName="heroId">
+                <ng-option  value="BNB">
+                    <div style="display: inline-block; margin-bottom: -1em;" class="wrapper">
+                        <img style="margin-top: 1em;" src="../../assets/icons/icon128.png" width="25px" height="25px"/>
+                        1 BNB
+                        <h5 style="font-size: 16px !important; margin-top: -0.7em; margin-left: 2em ">144 $</h5>
+                    </div>
+                   
+                </ng-option>
+                <ng-option value="BEC">
+                    <img src="../../assets/icons/icon128.png" width="25px" height="25px"/>
+                    BEC
+                </ng-option>
+                <ng-option value="BTC">
+                    <img src="../../assets/icons/icon128.png" width="25px" height="25px"/>
+                    BTC
+                </ng-option>
+            </ng-select>
+        </div>
+    </div>
+</form>
