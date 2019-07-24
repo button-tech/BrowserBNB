@@ -1,13 +1,12 @@
 <div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
-    <mat-form-field class="example-full-width form-group">
+    <mat-form-field  class="example-full-width form-group">
         <div style="display: flex">
             <div style="display: grid; grid-template: 1fr / 8fr 1fr; grid-column-gap: 5px; margin-top: 10px; align-items: center;">
-                <input style="margin-bottom: 0em !important; font-weight: bolder; font-size: 15px !important; width: 150px"
+                <input id="address" style="margin-bottom: 0em !important; font-weight: bolder; font-size: 15px !important; width: 150px"
                        class="form-control" matInput
-                       value="bnb address" onclick="if (this.value === 'bnb address') {this.value = '' } ">
+                       value="bnb address" (input)="validate()" onclick="if (this.value === 'bnb address') {this.value = '' }">
                 <i class="fa fa-qrcode" style="margin-top: 0; font-size: 25px;"></i>
             </div>
-
         </div>
     </mat-form-field>
 </div>

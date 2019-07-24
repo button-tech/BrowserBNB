@@ -53,7 +53,8 @@ export class BinanceService {
 
     getBalance(address: string, endpoint: string): Observable<any> {
       // https://dex-asiapacific.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-      return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+      // return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+      return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
         catchError((error: HttpErrorResponse) => {
             // TODO: properly handle binance 404 response
             return of({

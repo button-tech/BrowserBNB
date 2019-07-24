@@ -1,22 +1,20 @@
 <div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
-
     <mat-form-field class="example-full-width form-group">
-
         <div style="display: flex">
             <div style="display: grid; grid-template: 1fr 1fr / 1fr 1fr; grid-column-gap: 5px">
-                <input style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
+                <input id="sum"
+                       style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
                        class="form-control" matInput
-                       [formControl]="emailFormControl" type="number" value="0">
-
-                <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">BNB</strong>
-
-                <div style="font-size: 12px; margin-top: -0.5em">$74479</div>
-                <div style="font-size: 12px;  margin-top: -0.5em">USD</div>
-
+                       [formControl]="emailFormControl" (change)="calcSums()" (input)="calcSums()" type="number"
+                       value=0>
+                <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">{{this.currentBaseCurrency.name}}</strong>
+                <div style="font-size: 12px; margin-top: -0.5em; max-width: 90px; white-space: nowrap">
+                    {{this.currentSecondaryCurrency.symbol}} {{this.currentSum}}
+                </div>
+                <div style="font-size: 12px;  margin-top: -0.5em">{{this.currentSecondaryCurrency.name}}</div>
             </div>
-
             <i class="fa fa-exchange fa-rotate-90" style="margin-right: 30px;margin-left: -8px;
-    margin-top: -0.5em;"></i>
+    margin-top: -0.5em;" (click)="swapCurrencies()"></i>
         </div>
     </mat-form-field>
 </div>

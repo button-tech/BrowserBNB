@@ -68,7 +68,7 @@ export function getPublicKeyFromPrivateKey(privateKey: string): string {
 // }
 
 // // Commented since we don't user it yet
-// public static validateAddress(address: string, networkType: string = 'bnb'): boolean {
-//     console.assert(isNotEmptyString(address));
-//     return crypto.checkAddress(address, networkType);
-// }
+export function validateAddress(address: string, networkType: string = 'bnb'): boolean {
+    console.assert(isNotEmptyString(address));
+    return crypto.checkAddress(address, networkType);
+}

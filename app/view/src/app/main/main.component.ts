@@ -1,14 +1,12 @@
 import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {BehaviorSubject, combineLatest, from, Observable, Subscription, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, pluck, shareReplay, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import * as Binance from '../../assets/binance/bnbSDK.js';
+import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
 import {CurrentAccountService} from '../services/current-account.service';
 import {BinanceService} from '../services/binance.service';
-
 
 interface MenuItem {
     label: string;
