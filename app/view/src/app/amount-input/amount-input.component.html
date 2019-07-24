@@ -1,30 +1,21 @@
-<div style="padding: 3px; border: 1px solid #cbcbcb; border-radius: 4px; margin-left: 1.5em; height: 75px" class="wrap text-center">
-    <mat-form-field style="margin-bottom: -0.5em !important; color: black; margin-top: 0.35em" class="example-full-width form-group">
-        <div class="inline-wrapper" style=" display: flex;
-  justify-content: flex-start;">
-            <input style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
-                   class="form-control" matInput
-                   [formControl]="emailFormControl"
-                   [errorStateMatcher]="matcher" type="number" value="0">
-            <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">BNB</strong>
-        </div>
+<div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
 
-        <div class="inline-wrapper" style=" display: flex;
-  justify-content: space-between;">
-            <h5 align="right"
-                style="font-weight: bolder; color: #777777; font-size: 13px; margin-top: -0.1em; max-width: 50px !important; min-width: 40px !important">
-                $74479</h5>
-            <h5 style="font-weight: bolder; color: #777777; font-size: 16px; margin-top: -0.3em; margin-left: 4.35em">
-                USD</h5>
-            <button style="margin-bottom: 0em; margin-top: -0.7em;margin-left: 0.9em;-webkit-transform: rotate(90deg);
-                    -moz-transform: rotate(90deg);
-                    -o-transform: rotate(90deg);
-                    -ms-transform: rotate(90deg);
-                    transform: rotate(90deg); background: white !important; box-shadow: none!important; color: grey !important"
-                    class="btn btn-sm btn-github btn-just-icon btn-round">
-                <fa  id="copyButton" name="exchange" size="sm"></fa>
-            </button>
-        </div>
+    <mat-form-field class="example-full-width form-group">
 
+        <div style="display: flex">
+            <div style="display: grid; grid-template: 1fr 1fr / 1fr 1fr; grid-column-gap: 5px">
+                <input style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
+                       class="form-control" matInput
+                       [formControl]="emailFormControl" type="number" value="0">
+
+                <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">BNB</strong>
+
+                <div style="font-size: 12px">$74479</div>
+                <div style="font-size: 12px">USD</div>
+
+            </div>
+
+            <i class="fa fa-exchange fa-rotate-90" style="margin-right: 30px;"></i>
+        </div>
     </mat-form-field>
 </div>

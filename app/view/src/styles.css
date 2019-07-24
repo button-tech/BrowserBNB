@@ -1,3 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@ng-select/ng-select/themes/default.theme.css";
 
+.someClass > div {
+    height: 55px !important;
+}
+
+.someClass strong {
+    font-weight: normal !important;
+}
+
+.ng-select.custom {
+    border:0px;
+    min-height: 0px;
+    border-radius: 0;
+}
+.ng-select.custom .ng-select-container  {
+    min-height: 0px;
+    border-radius: 0;
+}
