@@ -31,6 +31,8 @@ import {NgSelectModule} from '@ng-select/ng-select';
 import { CoinsSelectComponent } from './coins-select/coins-select.component';
 import { AmountInputComponent } from './amount-input/amount-input.component';
 import {MatFormFieldModule, MatInput, MatInputModule} from "@angular/material";
+import { AddressInputComponent } from './address-input/address-input.component';
+import { MemoInputComponent } from './memo-input/memo-input.component';
 
 
 @NgModule({
@@ -49,7 +51,9 @@ import {MatFormFieldModule, MatInput, MatInputModule} from "@angular/material";
         SendComponent,
         MenuTopComponent,
         CoinsSelectComponent,
-        AmountInputComponent
+        AmountInputComponent,
+        AddressInputComponent,
+        MemoInputComponent
     ],
     imports: [
         BrowserModule,
