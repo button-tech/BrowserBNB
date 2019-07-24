@@ -1,13 +1,13 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import { BehaviorSubject, combineLatest, from, Observable, timer } from 'rxjs';
+import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {BehaviorSubject, combineLatest, from, Observable, Subscription, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import { map, pluck, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import {map, pluck, shareReplay, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
 import {CurrentAccountService} from '../services/current-account.service';
-import { BinanceService } from '../services/binance.service';
+import {BinanceService} from '../services/binance.service';
 
 
 interface MenuItem {
@@ -20,7 +20,7 @@ interface MenuItem {
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.css']
 })
-export class MainComponent {
+export class MainComponent implements OnDestroy {
 
     // @ts-ignore
     @ViewChild('menuNetwork')
@@ -32,6 +32,7 @@ export class MainComponent {
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
     selectedNetwork$: BehaviorSubject<MenuItem>;
+    subscription: Subscription;
 
     networkMenu: MenuItem[];
 
@@ -46,23 +47,23 @@ export class MainComponent {
     ) {
 
         this.networkMenu = [
-          {
-            label: 'MAINNET',
-            val: bncService.endpointList.MAINNET
-          },
-          {
-            label: 'TESTNET',
-            val: bncService.endpointList.TESTNET
-          },
+            {
+                label: 'MAINNET',
+                val: bncService.endpointList.MAINNET
+            },
+            {
+                label: 'TESTNET',
+                val: bncService.endpointList.TESTNET
+            },
         ];
 
         this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
 
-        this.storage.storageData$.subscribe((x) => {
+        this.subscription = this.storage.storageData$.subscribe((x) => {
             this.userItems = x.AccountList.map((acc) => {
                 return {
-                  label: acc.accountName,
-                  val: acc.accountName
+                    label: acc.accountName,
+                    val: acc.accountName
                 };
             });
         });
@@ -97,13 +98,13 @@ export class MainComponent {
         );
 
         const pluckBalance = (response: any, coinSymbol: string) => {
-          const balances = response.balances || [];
-          const item = balances.find((x) => x.symbol === coinSymbol);
-          return item ? item.free : 0;
+            const balances = response.balances || [];
+            const item = balances.find((x) => x.symbol === coinSymbol);
+            return item ? item.free : 0;
         };
 
         const bnbBalance$ = balances$.pipe(
-          map((response) => pluckBalance(response, 'BNB'))
+            map((response) => pluckBalance(response, 'BNB'))
         );
 
         this.bnb$ = bnbBalance$.pipe(
@@ -149,5 +150,9 @@ export class MainComponent {
 
     logout() {
         this.authService.logout();
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 }
