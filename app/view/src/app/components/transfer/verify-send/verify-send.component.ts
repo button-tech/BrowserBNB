@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {ITransaction, StorageService} from "../../../services/storage.service";
-import {BehaviorSubject, combineLatest, Observable, timer} from "rxjs";
-import {BinanceService} from "../../../services/binance.service";
-import {map, pluck, shareReplay, switchMap} from "rxjs/operators";
-import {HttpClient} from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ITransaction, StorageService } from '../../../services/storage.service';
+import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
+import { BinanceService } from '../../../services/binance.service';
+import { map, pluck, shareReplay, switchMap, take } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-verify-send',
@@ -18,25 +18,21 @@ export class VerifySendComponent implements OnInit {
     fiatAmount$: Observable<string>;
     totalAmount$: Observable<number>;
     fiatTotal$: Observable<string>;
-    address$: Observable<string>;
     privateKey$: Observable<string>;
 
     constructor(private storage: StorageService, private bncService: BinanceService, private http: HttpClient) {
 
-        this.address$ = this.storage.currentAccount$.pipe(
-            pluck('address')
-        );
         this.privateKey$ = this.storage.currentAccount$.pipe(
             pluck('privateKey')
         );
-        const timer$ = timer(0, 4000);
 
+        const timer$ = timer(0, 4000);
 
         const rawFee$ = combineLatest([this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
-                return this.http.get(`${endpoint}api/v1/fees`)
+                return this.http.get(`${endpoint}api/v1/fees`);
             }),
             shareReplay(1)
         );
@@ -48,11 +44,12 @@ export class VerifySendComponent implements OnInit {
 
         this.simpleFee$ = rawFee$.pipe(
             map((response) => {
-                return pluckFee(response)
+                return pluckFee(response);
             }),
             shareReplay(1)
         );
 
+        // TODO: take rates from state service
         const bnb2usdRate$ = timer(0, 60000).pipe(
             switchMap(() => {
                 return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
@@ -63,7 +60,7 @@ export class VerifySendComponent implements OnInit {
         const rawFiatFee$ = combineLatest([bnb2usdRate$, this.simpleFee$]).pipe(
             map((x: any[]) => {
                 const [rate, fee] = x;
-                return rate * fee
+                return rate * fee;
             }), shareReplay(1)
         );
 
@@ -87,7 +84,7 @@ export class VerifySendComponent implements OnInit {
 
         this.totalAmount$ = this.simpleFee$.pipe(
             map((fee) => {
-                return fee + this.sendObj.Amount
+                return fee + this.sendObj.Amount;
             })
         );
         this.fiatTotal$ = combineLatest([rawFiatAmount$, rawFiatFee$]).pipe(
@@ -95,7 +92,7 @@ export class VerifySendComponent implements OnInit {
                 const [amount, fee] = x;
                 return (amount + fee).toFixed(2);
             })
-        )
+        );
     }
 
 
@@ -115,11 +112,10 @@ export class VerifySendComponent implements OnInit {
                     network.networkPrefix,
                     this.sendObj.Symbol,
                     privateKey,
-                    this.sendObj.Memo)
-            })
-        ).subscribe((hash: any) => {
-            // console.log(hash)
-        }).unsubscribe();
+                    this.sendObj.Memo);
+            }),
+            take(1)
+        ).subscribe();
 
     }
 

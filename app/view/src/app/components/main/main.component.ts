@@ -34,13 +34,6 @@ export class MainComponent {
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
     ) {
-
-        // this.binanceService.getBalance(, 'BNB');
-        // const getBnbBalance = (resp: any) => {
-        //     const bnb = resp.find((x) => x.symbol === 'BNB');
-        //     return bnb ? bnb.free : 0;
-        // };
-
         this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
             map((x: any[]) => {
                 const [account, network] = x;
