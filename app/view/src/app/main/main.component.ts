@@ -1,7 +1,7 @@
-import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from 'rxjs';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {combineLatest, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../services/clipboard.service';
 import {StorageService, IMenuItem} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
@@ -15,7 +15,7 @@ import {getAddressFromPrivateKey} from '../services/binance-crypto';
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnDestroy {
+export class MainComponent {
 
     // @ts-ignore
     @ViewChild('menuNetwork')
@@ -27,11 +27,6 @@ export class MainComponent implements OnDestroy {
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
 
-    subscription: Subscription;
-
-
-    userItems: IMenuItem[] = [];
-
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
                 private authService: AuthService,
@@ -40,18 +35,6 @@ export class MainComponent implements OnDestroy {
                 private bncService: BinanceService
     ) {
 
-
-
-        this.subscription = this.storage.storageData$.subscribe((x) => {
-            this.userItems = x.AccountList.map((acc) => {
-                return {
-                    label: acc.accountName,
-                    val: acc.accountName ,
-                    networkPrefix: acc.accountName
-                };
-            });
-        });
-
         // this.binanceService.getBalance(, 'BNB');
         // const getBnbBalance = (resp: any) => {
         //     const bnb = resp.find((x) => x.symbol === 'BNB');
@@ -59,14 +42,12 @@ export class MainComponent implements OnDestroy {
         // };
 
         this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
-            map((x :any[])=> {
+            map((x: any[]) => {
                 const [account, network] = x;
                 const pk = account.privateKey;
                 const networkPrefix = network.networkPrefix;
                 return getAddressFromPrivateKey(pk, networkPrefix);
             })
-
-
         );
 
         this.shortAddress$ = this.address$.pipe(
@@ -143,7 +124,5 @@ export class MainComponent implements OnDestroy {
         this.authService.logout();
     }
 
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
+
 }

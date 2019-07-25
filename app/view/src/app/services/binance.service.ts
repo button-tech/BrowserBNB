@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {getAddressFromPrivateKey} from './binance-crypto';
-import { Observable, of } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {catchError, map} from 'rxjs/operators';
+import {StorageService} from "./storage.service";
 
 @Injectable({
     providedIn: 'root'
@@ -25,43 +26,39 @@ export class BinanceService {
 
     constructor(private http: HttpClient) {
         this.binanceInstance = Binance.initBNB();
-        this.binanceClient = this.initClient(this.endpointList.TESTNET);
+        this.binanceClient = this.initClients(this.endpointList.TESTNET);
     }
 
-    initClient(networkConnection: string): any {
+    initClients(networkConnection: string): any {
         let client: any;
         try {
-            client = this.binanceInstance(networkConnection);
+            client = Binance.initClient(networkConnection);
         } catch (e) {
             console.assert(e, `Error during binance client init ${e}`);
         }
         return client;
     }
 
-    async sendTransaction(sum: number, addressTo: string, coin: string, privateKey: string, message?: string) {
-        const addressFrom = getAddressFromPrivateKey(privateKey);
-        let account: any;
-        try {
-            account = await this.binanceClient._httpClient.request('get', `/api/v1/account/${addressFrom}`);
-        } catch (e) {
-            console.assert(e, `Error during sendTransaction ${e}`);
-        }
-        const sequence = account.result && account.result.sequence;
-        return this.binanceClient.transfer(addressFrom, addressTo, sum, coin, message, sequence);
+    async sendTransaction(sum: number, addressTo: string, networkAddress: string, networkPrefix: string, coin: string, pk: string, message?: string) {
+        const addressFrom = getAddressFromPrivateKey(pk, networkPrefix);
+        return this.http.get(`${networkAddress}api/v1/account/${addressFrom}`).subscribe((account: any) => {
+            const sequence = account.result && account.result.sequence;
+            return this.binanceClient.transfer(addressFrom, addressTo, sum, coin, message, sequence);
+        });
     }
 
 
     getBalance(address: string, endpoint: string): Observable<any> {
-      // https://dex-asiapacific.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-      return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
-      // return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
-        catchError((error: HttpErrorResponse) => {
-            // TODO: properly handle binance 404 response
-            return of({
-              balances: []
-            });
-        })
-      );
+        // https://dex-asiapacific.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
+        return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+            // return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
+            catchError((error: HttpErrorResponse) => {
+                // TODO: properly handle binance 404 response
+                return of({
+                    balances: []
+                });
+            })
+        );
     }
 
     getBalanceOfCoin(address: string, coin: string) {

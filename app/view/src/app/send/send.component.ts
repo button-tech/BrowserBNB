@@ -16,8 +16,7 @@ export class SendComponent implements OnInit {
     fee: Observable<number>;
 
     constructor(private location: Location, private storage: StorageService) {
-
-
+        
     }
 
 
@@ -32,7 +31,7 @@ export class SendComponent implements OnInit {
 
     checkTransactionStatus() {
        const currentTx = this.storage.currentTransaction;
-       if(currentTx.Symbol !== '' && validateAddress(currentTx.AddressTo) && currentTx.Amount >= 0) {
+       if(currentTx.Symbol !== '' && validateAddress(currentTx.AddressTo, this.storage.selectedNetwork$.getValue().networkPrefix) && currentTx.Amount >= 0) {
            this.isValidToNextPage = true;
        }
     }

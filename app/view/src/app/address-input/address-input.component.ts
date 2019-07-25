@@ -22,7 +22,8 @@ export class AddressInputComponent {
     validate() {
         const addressValue = (this.addressElem.nativeElement as HTMLInputElement).value;
         // TODO: give Solid name
-        this.isValid = validateAddress(addressValue);
+        this.isValid = validateAddress(addressValue, this.storage.selectedNetwork$.getValue()
+            .networkPrefix);
         if (this.isValid) {
             this.storage.currentTransaction.AddressTo = addressValue;
         }

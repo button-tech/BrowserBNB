@@ -125,11 +125,18 @@ export class VerifySendComponent implements OnInit {
 
 
     verify() {
-        combineLatest([this.address$, this.privateKey$]).pipe(
+        combineLatest([this.privateKey$, this.storage.selectedNetwork$]).pipe(
             map((x: any[]) => {
                 console.log(x);
-                const [address, privateKey] = x;
-                return 'ffff'
+                const [privateKey, network] = x;
+                return this.bncService.sendTransaction(
+                    this.sendObj.Amount,
+                    this.sendObj.AddressTo,
+                    network.val,
+                    network.networkPrefix,
+                    this.sendObj.Symbol,
+                    privateKey,
+                    this.sendObj.Memo)
             })
         ).subscribe((hash: any) => {
             console.log(hash)

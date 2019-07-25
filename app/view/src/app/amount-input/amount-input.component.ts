@@ -49,7 +49,6 @@ export class AmountInputComponent implements OnInit {
         let cache = this.currentBaseCurrency;
         this.currentBaseCurrency = this.currentSecondaryCurrency;
         this.currentSecondaryCurrency = cache;
-        this.currentSum = this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name);
         this.calcSums();
     }
 
@@ -63,8 +62,8 @@ export class AmountInputComponent implements OnInit {
     }
 
     save() {
-        const sum = (((document.getElementById('sum') as HTMLInputElement).value) as unknown as number);
-        this.storage.currentTransaction.Amount = sum;
+
+        this.storage.currentTransaction.Amount =  this.currentSum;
     }
 
     calcSums() {

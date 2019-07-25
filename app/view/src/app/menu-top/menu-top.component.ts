@@ -1,5 +1,5 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
+import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {BehaviorSubject, Subscription} from "rxjs";
 import {CurrentAccountService} from "../services/current-account.service";
 import {IMenuItem, StorageService} from "../services/storage.service";
 import {AuthService} from "../services/auth.service";
@@ -10,7 +10,7 @@ import {AuthService} from "../services/auth.service";
     templateUrl: './menu-top.component.html',
     styleUrls: ['./menu-top.component.css']
 })
-export class MenuTopComponent {
+export class MenuTopComponent implements OnDestroy{
 
 
     // @ts-ignore
@@ -19,7 +19,8 @@ export class MenuTopComponent {
 
     networkMenu: IMenuItem[];
     selectedNetwork$: BehaviorSubject<IMenuItem>;
-
+    userItems: IMenuItem[] = [];
+    subscription: Subscription;
 
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
@@ -28,6 +29,15 @@ export class MenuTopComponent {
 
         this.selectedNetwork$ = this.storage.selectedNetwork$;
         this.networkMenu = this.storage.networkMenu;
+        this.subscription = this.storage.storageData$.subscribe((x) => {
+            this.userItems = x.AccountList.map((acc) => {
+                return {
+                    label: acc.accountName,
+                    val: acc.accountName,
+                    networkPrefix: acc.accountName
+                };
+            });
+        });
     }
 
     selectNetwork(value: IMenuItem) {
@@ -41,6 +51,9 @@ export class MenuTopComponent {
 
     logout() {
         this.authService.logout();
+    }
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 
 }
