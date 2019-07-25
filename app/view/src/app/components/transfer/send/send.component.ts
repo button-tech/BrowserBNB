@@ -1,22 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Location} from "@angular/common";
 import {StorageService} from "../../../services/storage.service";
 import {validateAddress} from "../../../services/binance-crypto";
-import {Observable, timer} from "rxjs";
-import {map} from "rxjs/operators";
+import {Observable} from "rxjs";
 
 @Component({
     selector: 'app-send',
     templateUrl: './send.component.html',
     styleUrls: ['./send.component.css']
 })
-export class SendComponent implements OnInit {
+export class SendComponent {
 
     isValidToNextPage: boolean;
     fee: Observable<number>;
 
     constructor(private location: Location, private storage: StorageService) {
-        
     }
 
 
@@ -24,14 +22,12 @@ export class SendComponent implements OnInit {
         this.location.back();
     }
 
-
-    ngOnInit() {
-
-    }
-
+    // TODO: smb should call that
     checkTransactionStatus() {
-       const currentTx = this.storage.currentTransaction;
-       if(currentTx.Symbol !== '' && validateAddress(currentTx.AddressTo, this.storage.selectedNetwork$.getValue().networkPrefix) && currentTx.Amount >= 0) {
+       const {Symbol, Amount, AddressTo} = this.storage.currentTransaction;
+       const networkPrefix = this.storage.selectedNetwork$.getValue().networkPrefix;
+       if (Symbol && Amount >= 0 && validateAddress(AddressTo, networkPrefix)
+       ) {
            this.isValidToNextPage = true;
        }
     }
