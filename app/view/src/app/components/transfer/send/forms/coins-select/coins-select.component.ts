@@ -37,7 +37,6 @@ export class CoinsSelectComponent implements OnInit {
     heroForm: FormGroup;
 
     constructor(private fb: FormBuilder,
-                public currentAccount: CurrentAccountService,
                 public storage: StorageService,
                 private authService: AuthService,
                 private http: HttpClient,
@@ -48,7 +47,10 @@ export class CoinsSelectComponent implements OnInit {
 
         const timer$ = timer(0, 4000);
 
-        const address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
+        const {currentAccount$, selectedNetwork$} = this.storage;
+
+        // TODO: address should come from state service
+        const address$ = combineLatest([currentAccount$, selectedNetwork$]).pipe(
             map((x: any[]) => {
                 const [account, network] = x;
                 const pk = account.privateKey;
@@ -57,6 +59,7 @@ export class CoinsSelectComponent implements OnInit {
             })
         );
 
+        // TODO: address should come from state service
         const balances$ = combineLatest([address$, this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [address, networkMenuItem] = x;
@@ -79,30 +82,7 @@ export class CoinsSelectComponent implements OnInit {
         this.bnb$ = bnbBalance$.pipe(
             map((bnbAmount) => `${bnbAmount} BNB`),
         );
-
-        const bnb2usdRate$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            map((resp: any) => resp.USD)
-        );
-
-        this.fiat$ = combineLatest([bnbBalance$, bnb2usdRate$]).pipe(
-            map((arr: any[]) => {
-                const [bnb, rate] = arr;
-                const fiat = (bnb * rate);
-                const truncated = (Math.floor(fiat * 100) / 100).toFixed(2);
-                return `$ ${truncated} USD`;
-            }),
-            shareReplay(1)
-        );
     }
-
-
-
-
-
-
 
 
     ngOnInit() {
@@ -111,6 +91,6 @@ export class CoinsSelectComponent implements OnInit {
             agree: null
         });
 
-        this.storage.currentTransaction.Symbol = this.heroForm.getRawValue().heroId
+        this.storage.currentTransaction.Symbol = this.heroForm.getRawValue().heroId;
     }
 }

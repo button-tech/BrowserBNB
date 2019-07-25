@@ -8,7 +8,7 @@ import {BinanceService} from "./binance.service";
 export interface IStorageData {
     AccountList: IAccount[];
     CurrentAccountIdx: number;
-    PassHash: string,
+    PassHash: string;
 }
 
 export interface IMenuItem {
@@ -18,9 +18,9 @@ export interface IMenuItem {
 }
 
 export interface IAccount {
-    address,
-    privateKey,
-    keystore,
+    address;
+    privateKey;
+    keystore;
 
     // TODO: implement this
     encryptedSeed: string;
@@ -29,11 +29,11 @@ export interface IAccount {
 }
 
 export interface ITransaction {
-    Amount: number,
-    AddressTo: string,
-    AddressFrom: string,
-    Memo: string,
-    Symbol: string
+    Amount: number;
+    AddressTo: string;
+    AddressFrom: string;
+    Memo: string;
+    Symbol: string;
 }
 
 const STORAGE_KEY = 'all';
