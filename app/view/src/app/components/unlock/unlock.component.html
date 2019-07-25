@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row text-center">
+        <div style="margin-top: 6.5em;" align="center" class="col-12 text-center">
+            <img width="86" src="../../../assets/icons/icon128.png">
+        </div>
+        <div class="col-12">
+            <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: black; margin-top: 2.5em"
+                class="card-title">Welcome back!</h3>
+            <p style="font-weight: bold; font-size: 17px; color: #828282">Enter your password to continue</p>
+        </div>
+        <div style="margin-top: 2em; padding-left:1.5em; padding-right: 1.5em !important" class="col-12 text-center">
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+        </div>
+        <div style="margin-top: 0.75em;" class="col-12 text-center">
+            <button (click)="unlock();" class="btn btn-binance btn-lg">Continue
+            </button>
+            <br>
+            <button class="btn btn-sm btn-link" (click)="reset()"
+                    style="font-weight: bold; color: grey; margin-top: 1em; text-decoration: underline; font-size: 13px">
+                Reset all
+            </button>
+        </div>
+    </div>
+</div>

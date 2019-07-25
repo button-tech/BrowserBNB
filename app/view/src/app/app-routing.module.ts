@@ -1,18 +1,18 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {GreeterComponent} from './greeter/greeter.component';
-import {MainComponent} from './main/main.component';
-import {UnlockComponent} from './unlock/unlock.component';
+import {FirstPageComponent} from './components/first-page/first-page.component';
+import {MainComponent} from './components/main/main.component';
+import {UnlockComponent} from './components/unlock/unlock.component';
 import {
     AuthGuardService as AuthGuard
 } from './services/auth-guard.service';
-import {RegistrationComponent} from './registration/registration.component';
-import {RegisterMnemonicComponent} from './registration/register-mnemonic/register-mnemonic.component';
-import {ImportMnemonicComponent} from './registration/import-mnemonic/import-mnemonic.component';
-import {RegisterPasswordComponent} from './registration/register-password/register-password.component';
-import {RegisterRepeatPasswordComponent} from './registration/register-repeat-password/register-repeat-password.component';
-import {SendComponent} from "./send/send.component";
-import {VerifySendComponent} from "./verify-send/verify-send.component";
+import {RegistrationComponent} from './components/registration/registration.component';
+import {RegisterMnemonicComponent} from './components/registration/register-mnemonic/register-mnemonic.component';
+import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
+import {RegisterPasswordComponent} from './components/registration/register-password/register-password.component';
+import {RegisterRepeatPasswordComponent} from './components/registration/register-repeat-password/register-repeat-password.component';
+import {SendComponent} from "./components/transfer/send/send.component";
+import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 
 const routes: Routes = [
     {
@@ -37,7 +37,7 @@ const routes: Routes = [
     },
     {
         path: 'greeter',
-        component: GreeterComponent,
+        component: FirstPageComponent,
     },
     {
         path: 'registration',
