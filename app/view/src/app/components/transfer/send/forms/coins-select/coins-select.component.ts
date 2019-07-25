@@ -22,18 +22,9 @@ interface MenuItem {
     styleUrls: ['./coins-select.component.css']
 })
 export class CoinsSelectComponent implements OnInit {
-    // @ts-ignore
-    @ViewChild('menuNetwork')
-    menuNetwork: ElementRef;
 
     bnb$: Observable<string>;
-    fiat$: Observable<string>;
-    copyMessage = 'Copy to clipboard';
     chosenCurrency: string;
-
-    subscription: Subscription;
-
-
     heroForm: FormGroup;
 
     constructor(private fb: FormBuilder,
@@ -42,8 +33,6 @@ export class CoinsSelectComponent implements OnInit {
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService) {
-
-
 
         const timer$ = timer(0, 4000);
 

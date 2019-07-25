@@ -1,15 +1,14 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {StorageService} from "../../../../../services/storage.service";
-import {BehaviorSubject, timer} from "rxjs";
-import {map, switchMap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { StorageService } from '../../../../../services/storage.service';
+import { Subscription, timer } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 interface ICurrency {
-    symbol: string,
-    name: string
+    symbol: string;
+    name: string;
 }
-
 
 @Component({
     selector: 'app-amount-input',
@@ -17,80 +16,86 @@ interface ICurrency {
     styleUrls: ['./amount-input.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class AmountInputComponent implements OnInit {
+export class AmountInputComponent implements OnInit, OnDestroy {
 
-
+    // TODO: for tokens and fiat
     fiatList = [
         {
-            "symbol": "$",
-            "name": "USD"
+            'symbol': '$',
+            'name': 'USD'
         }
     ];
+
     cryptoList = [
         {
-            "symbol": "",
-            "name": "BNB"
+            'symbol': '',
+            'name': 'BNB'
         }
     ];
 
     currentBaseCurrency = {
-        "symbol": "",
-        "name": "BNB"
+        'symbol': '',
+        'name': 'BNB'
     };
+
     currentSecondaryCurrency = {
-        "symbol": "$",
-        "name": "USD"
+        'symbol': '$',
+        'name': 'USD'
     };
+
+    emailFormControl = new FormControl('', []);
 
     currentSum: number;
     currentSumsecondary: number;
-    bal: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-    swaped: boolean;
+    isSwapped: boolean;
+    rate = 0;
+
+    subscription: Subscription;
 
     constructor(private storage: StorageService, private http: HttpClient) {
-        const bnb2usdRate$ = timer(0, 60000).pipe(
+        // TODO get rates from state service
+        this.subscription = timer(0, 60000).pipe(
             switchMap(() => {
                 return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
             }),
-            map((resp: any) => this.bal.next(resp.USD)),
+            tap((resp: any) => {
+                this.rate = resp.USD;
+            }),
         ).subscribe();
-
     }
 
     swapCurrencies() {
-        this.swaped = !this.swaped;
-
-        let cache = this.currentBaseCurrency;
+        this.isSwapped = !this.isSwapped;
+        const tmp = this.currentBaseCurrency;
         this.currentBaseCurrency = this.currentSecondaryCurrency;
-        this.currentSecondaryCurrency = cache;
+        this.currentSecondaryCurrency = tmp;
         this.calcSums();
     }
 
 
     getCurrencyRates(base, secondary: string): number {
         if (base === 'BNB') {
-            return this.bal.getValue();
-        }
-        else {
-            return 1 / this.bal.getValue();
+            return this.rate;
+        } else {
+            return 1 / this.rate;
         }
     }
 
     save() {
         const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
-        if (!this.swaped) {
+        if (!this.isSwapped) {
             this.currentSum = Number(sum.toFixed(8));
-        } else if (this.swaped) {
+        } else if (this.isSwapped) {
             this.currentSum = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(8));
         }
         this.storage.currentTransaction.Amount = this.currentSum;
     }
 
     calcSums() {
-        if (this.swaped) {
+        if (this.isSwapped) {
             const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
             this.currentSumsecondary = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(8));
-        } else if (!this.swaped) {
+        } else if (!this.isSwapped) {
             const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
             this.currentSumsecondary = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(2));
         }
@@ -102,6 +107,8 @@ export class AmountInputComponent implements OnInit {
         this.calcSums();
     }
 
-    emailFormControl = new FormControl('', []);
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
 
 }
