@@ -28,5 +28,6 @@ export class AddressInputComponent {
             this.storage.currentTransaction.AddressTo = addressValue;
         }
     }
+
     addressFormControl = new FormControl('', []);
 }

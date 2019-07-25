@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
-import {getAddressFromPrivateKey} from './binance-crypto';
-import {Observable, of} from 'rxjs';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {catchError, map} from 'rxjs/operators';
-import {StorageService} from "./storage.service";
+import { getAddressFromPrivateKey } from './binance-crypto';
+import { Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, map } from 'rxjs/operators';
+import { StorageService } from './storage.service';
 
 @Injectable({
     providedIn: 'root'
@@ -26,28 +26,35 @@ export class BinanceService {
 
     constructor(private http: HttpClient) {
         this.binanceInstance = Binance.initBNB();
-        this.binanceClient = this.initClients(this.endpointList.TESTNET);
+        this.initClients(this.endpointList.TESTNET).then((client) => {
+            this.binanceClient = client;
+        });
     }
 
-    initClients(networkConnection: string): any {
-        let client: any;
+    async initClients(networkConnection: string): Promise<any> {
         try {
-            client = Binance.initClient(networkConnection);
-            console.log(` BINANCE CLIENT ${Binance.initClient(networkConnection)}`)
+            return await Binance.initClient(networkConnection);
         } catch (e) {
             console.assert(e, `Error during binance client init ${e}`);
         }
-        return client;
     }
 
-    async sendTransaction(sum: number, addressTo: string, networkAddress: string, networkPrefix: string, coin: string, pk: string, message?: string) {
+    async sendTransaction(sum: number, addressTo: string, networkAddress: string, networkPrefix: string,
+                          coin: string, pk: string, message?: string) {
+        const client = this.binanceClient;
+        await client.chooseNetwork('testnet');
+        await client.initChain();
+        await client.setPrivateKey(pk);
         const addressFrom = getAddressFromPrivateKey(pk, networkPrefix);
-        return this.http.get(`${networkAddress}api/v1/account/${addressFrom}`).subscribe((account: any) => {
-            const sequence = account.result && account.result.sequence;
 
-            let hash = Binance.transfer(networkAddress,sum, addressFrom, addressTo, pk, coin, message, sequence);
-            console.log(hash)
-        });
+        const url = `${networkAddress}api/v1/account/${addressFrom}`;
+        return this.http.get(url).pipe(
+            map(async (account: any) => {
+                const sequence = account.result && account.result.sequence;
+
+                return await client.transfer(addressFrom, addressTo, sum, coin, message, sequence);
+            })
+        ).subscribe(console.log);
     }
 
 
