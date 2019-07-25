@@ -18,14 +18,14 @@ export class BinanceService {
         'MAINNET_ASIA': 'https://dex-asiapacific.binance.org/',
         'MAINNET_ATLANTIC': 'https://dex-atlantic.binance.org/',
         'MAINNET_EUROPE': 'https://dex-european.binance.org/',
-        'TESTNET': 'https://testnet-dex.binance.org',
-        'TESTNET_ASIA': 'https://testnet-dex-asiapacific.binance.org',
-        'TESTNET_ATLANTIC': 'https://testnet-dex-atlantic.binance.org'
+        'TESTNET': 'https://testnet-dex.binance.org/',
+        'TESTNET_ASIA': 'https://testnet-dex-asiapacific.binance.org/',
+        'TESTNET_ATLANTIC': 'https://testnet-dex-atlantic.binance.org/'
     };
 
     constructor(private http: HttpClient) {
         this.binanceInstance = Binance.initBNB();
-        this.binanceClient = this.initClient(this.endpointList.MAINNET);
+        this.binanceClient = this.initClient(this.endpointList.TESTNET);
     }
 
     initClient(networkConnection: string): any {
@@ -53,8 +53,8 @@ export class BinanceService {
 
     getBalance(address: string, endpoint: string): Observable<any> {
       // https://dex-asiapacific.binance.org/api/v1/account/bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m
-      // return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
-      return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
+      return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+      // return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
         catchError((error: HttpErrorResponse) => {
             // TODO: properly handle binance 404 response
             return of({

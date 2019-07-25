@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import {validateAddress} from '../services/binance-crypto';
+import {FormControl} from "@angular/forms";
+import {StorageService} from "../services/storage.service";
 
 @Component({
     selector: 'app-address-input',
@@ -14,12 +16,16 @@ export class AddressInputComponent {
     // @ts-ignore
     @ViewChild('addressElem') addressElem: ElementRef;
 
-    constructor() {
+    constructor(private storage: StorageService) {
     }
 
     validate() {
         const addressValue = (this.addressElem.nativeElement as HTMLInputElement).value;
         // TODO: give Solid name
         this.isValid = validateAddress(addressValue);
+        if (this.isValid) {
+            this.storage.currentTransaction.AddressTo = addressValue;
+        }
     }
+    addressFormControl = new FormControl('', []);
 }

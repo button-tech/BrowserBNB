@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    <app-menu-top></app-menu-top>
+</div>
+<div style="margin-top: 1em" class="row">
+    <div class="col-11 offset-1">
+        <div style="display: grid; grid-template: 1fr 1fr / 1fr 3fr; align-items: start ">
+            <br>
+            <div style="grid-column: 1; grid-row: 1">
+                <h5><strong>Sum:</strong></h5>
+            </div>
+
+            <div style="grid-column: 2;grid-row: 1">
+                <h5>{{sendObj.Amount}} {{sendObj.Symbol}} </h5>
+                <h5 style="margin-top: -1em">
+                    <small>${{(fiatAmount$ | async ) || 'pending'}} USD</small>
+                </h5>
+            </div>
+            <div style="grid-column: 1; grid-row: 2">
+                <h5><strong>Fee: </strong></h5>
+            </div>
+            <div style="grid-column: 2;grid-row: 2">
+                <h5>{{(simpleFee$ | async) || 'pending'}} BNB </h5>
+                <h5 style="margin-top: -1em">
+                    <small>${{(fiatFee$ | async) || 'pending'}} USD</small>
+                </h5>
+            </div>
+        </div>
+        <hr>
+        <div style="display: grid; grid-template-columns: 1fr 3fr; align-items: start; ">
+            <div style="grid-column: 1;">
+                <h5><strong>Total: </strong></h5>
+            </div>
+            <div style="grid-column: 2">
+                <h5>{{(totalAmount$| async) || 'pending'}} BNB </h5>
+                <h5 style="margin-top: -1em">
+                    <small>${{(fiatTotal$ | async) || 'pending'}} USD</small>
+                </h5>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
+        <button routerLink="/main" class="btn btn-outline-danger btn-lg main-btn">Reject</button>
+        <button routerLink="/main" (click)="verify()" class="btn btn-binance-outline btn-lg main-btn">Verify</button>
+    </div>
+</div>

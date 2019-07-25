@@ -33,6 +33,7 @@ import { AmountInputComponent } from './amount-input/amount-input.component';
 import {MatFormFieldModule, MatInput, MatInputModule} from "@angular/material";
 import { AddressInputComponent } from './address-input/address-input.component';
 import { MemoInputComponent } from './memo-input/memo-input.component';
+import { VerifySendComponent } from './verify-send/verify-send.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { MemoInputComponent } from './memo-input/memo-input.component';
         CoinsSelectComponent,
         AmountInputComponent,
         AddressInputComponent,
-        MemoInputComponent
+        MemoInputComponent,
+        VerifySendComponent
     ],
     imports: [
         BrowserModule,

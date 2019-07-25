@@ -5,7 +5,7 @@
                 <input id="sum"
                        style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
                        class="form-control" matInput
-                       [formControl]="emailFormControl" (change)="calcSums()" (input)="calcSums()" type="number"
+                       [formControl]="emailFormControl" (change)="calcSums()" (input)="calcSums(); save()" type="number"
                        value=0>
                 <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">{{this.currentBaseCurrency.name}}</strong>
                 <div style="font-size: 12px; margin-top: -0.5em; max-width: 90px; white-space: nowrap">

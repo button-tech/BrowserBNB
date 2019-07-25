@@ -3,15 +3,12 @@ import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from 'r
 import {HttpClient} from '@angular/common/http';
 import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../services/clipboard.service';
-import {StorageService} from '../services/storage.service';
+import {StorageService, IMenuItem} from '../services/storage.service';
 import {AuthService} from '../services/auth.service';
 import {CurrentAccountService} from '../services/current-account.service';
 import {BinanceService} from '../services/binance.service';
+import {getAddressFromPrivateKey} from '../services/binance-crypto';
 
-interface MenuItem {
-    label: string;
-    val: string;
-}
 
 @Component({
     selector: 'app-main',
@@ -29,12 +26,11 @@ export class MainComponent implements OnDestroy {
     address$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
-    selectedNetwork$: BehaviorSubject<MenuItem>;
+
     subscription: Subscription;
 
-    networkMenu: MenuItem[];
 
-    userItems: MenuItem[] = [];
+    userItems: IMenuItem[] = [];
 
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
@@ -44,24 +40,14 @@ export class MainComponent implements OnDestroy {
                 private bncService: BinanceService
     ) {
 
-        this.networkMenu = [
-            {
-                label: 'MAINNET',
-                val: bncService.endpointList.MAINNET
-            },
-            {
-                label: 'TESTNET',
-                val: bncService.endpointList.TESTNET
-            },
-        ];
 
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
 
         this.subscription = this.storage.storageData$.subscribe((x) => {
             this.userItems = x.AccountList.map((acc) => {
                 return {
                     label: acc.accountName,
-                    val: acc.accountName
+                    val: acc.accountName ,
+                    networkPrefix: acc.accountName
                 };
             });
         });
@@ -72,8 +58,15 @@ export class MainComponent implements OnDestroy {
         //     return bnb ? bnb.free : 0;
         // };
 
-        this.address$ = this.storage.currentAccount$.pipe(
-            pluck('address')
+        this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
+            map((x :any[])=> {
+                const [account, network] = x;
+                const pk = account.privateKey;
+                const networkPrefix = network.networkPrefix;
+                return getAddressFromPrivateKey(pk, networkPrefix);
+            })
+
+
         );
 
         this.shortAddress$ = this.address$.pipe(
@@ -86,7 +79,7 @@ export class MainComponent implements OnDestroy {
 
         const timer$ = timer(0, 4000);
 
-        const balances$ = combineLatest([this.address$, this.selectedNetwork$, timer$]).pipe(
+        const balances$ = combineLatest([this.address$, this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [address, networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
@@ -127,8 +120,8 @@ export class MainComponent implements OnDestroy {
         );
     }
 
-    selectNetwork(value: MenuItem) {
-        this.selectedNetwork$.next(value);
+    selectNetwork(value: IMenuItem) {
+        this.storage.selectedNetwork$.next(value);
     }
 
     selectUser(value: string) {

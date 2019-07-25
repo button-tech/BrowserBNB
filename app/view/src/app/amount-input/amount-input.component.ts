@@ -1,10 +1,12 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {StorageService} from "../services/storage.service";
 
 interface ICurrency {
     symbol: string,
     name: string
 }
+
 
 @Component({
     selector: 'app-amount-input',
@@ -13,6 +15,7 @@ interface ICurrency {
     encapsulation: ViewEncapsulation.None
 })
 export class AmountInputComponent implements OnInit {
+
 
     fiatList = [
         {
@@ -30,17 +33,16 @@ export class AmountInputComponent implements OnInit {
     currentBaseCurrency = {
         "symbol": "",
         "name": "BNB"
-    }
+    };
     currentSecondaryCurrency = {
         "symbol": "$",
         "name": "USD"
-    }
+    };
 
-    sum: number;
     currentSum: number;
 
 
-    constructor() {
+    constructor(private storage: StorageService) {
     }
 
     swapCurrencies() {
@@ -59,6 +61,12 @@ export class AmountInputComponent implements OnInit {
             return 1 / 28;
         }
     }
+
+    save() {
+        const sum = (((document.getElementById('sum') as HTMLInputElement).value) as unknown as number);
+        this.storage.currentTransaction.Amount = sum;
+    }
+
     calcSums() {
         const sum = (((document.getElementById('sum') as HTMLInputElement).value) as unknown as number);
         this.currentSum = this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum;

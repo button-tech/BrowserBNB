@@ -1,12 +1,18 @@
 <div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
     <mat-form-field class="example-full-width form-group">
         <div style="display: flex">
-            <div style="display: grid; grid-template: 1fr / 1fr; grid-column-gap: 5px; margin-top: 10px; align-items: center;">
-                <input style="margin-bottom: 0em !important; font-weight: bolder; font-size: 15px !important; width: 250px"
-                       class="form-control" matInput  value="custom memo"
-                       onclick="if (this.value === 'custom memo') {this.value = '' } ">
+            <div style="display: grid; grid-template: 1fr / 1fr; grid-column-gap: 5px;">
+                <input #addressElem class="form-control"
+                       style="background-image: none!important; grid-column: 1/1; width: 180p;margin-top: 0.8em"
+                       (input)="save(addressElem.value)"
+                       (focus)="touched = true"
+
+                       placeholder="Optional memo"
+                       spellcheck="false">
+
             </div>
 
         </div>
+        <input matInput style="display: none">
     </mat-form-field>
 </div>

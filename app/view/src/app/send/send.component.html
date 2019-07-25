@@ -38,7 +38,7 @@
     </div>
     <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
         <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
-        <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Next</button>
+        <button [ngClass]="{'grey-border':  !isValidToNextPage, 'normal-border': isValidToNextPage}" routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next</button>
     </div>
 </div>
 

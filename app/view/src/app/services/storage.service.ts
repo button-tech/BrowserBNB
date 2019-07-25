@@ -2,12 +2,19 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {filter, map, shareReplay, switchMap, take} from 'rxjs/operators';
-import {concat, from, Observable, of, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, concat, from, Observable, of, Subject, Subscription} from 'rxjs';
+import {BinanceService} from "./binance.service";
 
 export interface IStorageData {
     AccountList: IAccount[];
     CurrentAccountIdx: number;
     PassHash: string,
+}
+
+export interface IMenuItem {
+    label: string;
+    val: string;
+    networkPrefix: string;
 }
 
 export interface IAccount {
@@ -21,6 +28,14 @@ export interface IAccount {
     accountName: string;
 }
 
+export interface ITransaction {
+    Amount: number,
+    AddressTo: string,
+    AddressFrom: string,
+    Memo: string,
+    Symbol: string
+}
+
 const STORAGE_KEY = 'all';
 
 @Injectable({
@@ -28,9 +43,21 @@ const STORAGE_KEY = 'all';
 })
 export class StorageService {
 
+    currentTransaction: ITransaction = {
+        "Amount": 0,
+        "AddressTo": '',
+        "AddressFrom": '',
+        "Memo": '',
+        "Symbol": ''
+    };
+    selectedNetwork$: BehaviorSubject<IMenuItem>;
     storageData$: Observable<IStorageData>;
     currentAccount$: Observable<IAccount>;
+    // currentTransaction$: Observable<ITransaction>;
     hasAccount$: Observable<boolean>;
+
+
+    networkMenu: IMenuItem[];
 
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
@@ -41,7 +68,8 @@ export class StorageService {
     //     return this._hasAccount;
     // }
 
-    constructor() {
+    constructor(private bncService: BinanceService) {
+
 
         const initial$ = of(1).pipe(
             switchMap(() => from(this.initStorage())),
@@ -81,6 +109,21 @@ export class StorageService {
                 return data.AccountList[idx];
             })
         );
+        this.networkMenu = [
+            {
+                label: 'MAINNET',
+                networkPrefix: 'bnb',
+                val: bncService.endpointList.MAINNET
+            },
+            {
+                label: 'TESTNET',
+                networkPrefix: 'tbnb',
+                val: bncService.endpointList.TESTNET
+            },
+        ];
+
+        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
+
     }
 
 

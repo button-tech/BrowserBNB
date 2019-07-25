@@ -32,7 +32,6 @@ export class CoinsSelectComponent implements OnInit {
     selectedNetwork$: BehaviorSubject<MenuItem>;
     subscription: Subscription;
 
-    chosenCurrency: string;
 
     networkMenu: MenuItem[];
 
@@ -149,6 +148,6 @@ export class CoinsSelectComponent implements OnInit {
             agree: null
         });
 
-        this.chosenCurrency = this.heroForm.getRawValue().heroId
+        this.storage.currentTransaction.Symbol = this.heroForm.getRawValue().heroId
     }
 }
