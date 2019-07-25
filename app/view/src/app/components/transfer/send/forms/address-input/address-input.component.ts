@@ -12,6 +12,7 @@ export class AddressInputComponent {
 
     isValid: boolean;
     touched: boolean;
+    addressFormControl = new FormControl('', []);
 
     // @ts-ignore
     @ViewChild('addressElem') addressElem: ElementRef;
@@ -24,10 +25,7 @@ export class AddressInputComponent {
         // TODO: give Solid name
         this.isValid = validateAddress(addressValue, this.storage.selectedNetwork$.getValue()
             .networkPrefix);
-        if (this.isValid) {
-            this.storage.currentTransaction.AddressTo = addressValue;
-        }
-    }
 
-    addressFormControl = new FormControl('', []);
+        this.storage.currentTransaction.AddressTo = addressValue;
+    }
 }

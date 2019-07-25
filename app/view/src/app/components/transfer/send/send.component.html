@@ -27,6 +27,7 @@
             <h5  align="left"  style="font-weight: bolder; margin-top: 0.75em">Address:</h5>
         </div>
         <div class="fromInfo" style="grid-column: 2/4; grid-row: 3;">
+            <!-- TODO: make that componet dummy -->
            <app-address-input></app-address-input>
         </div>
         <div class="fromText" style="grid-column: 1; grid-row: 4;">
@@ -38,7 +39,7 @@
     </div>
     <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
         <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
-        <button [ngClass]="{'grey-border':  !isValidToNextPage, 'normal-border': isValidToNextPage}"
+        <button [disabled]="!isValidToNextPage"
                 routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next</button>
     </div>
 </div>
