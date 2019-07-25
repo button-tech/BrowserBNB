@@ -17,9 +17,7 @@ export class EditFormComponent implements OnInit {
 
     onSubmit() {
         this.update.next(this.value);
-        if (this.popover) {
-            this.popover.close();
-        }
+        this.popover.close();
     }
 
     ngOnInit() {
