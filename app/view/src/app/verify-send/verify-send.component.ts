@@ -5,12 +5,6 @@ import {BinanceService} from "../services/binance.service";
 import {map, pluck, shareReplay, switchMap} from "rxjs/operators";
 import {HttpClient} from '@angular/common/http';
 
-interface MenuItem {
-    label: string;
-    val: string;
-}
-
-
 @Component({
     selector: 'app-verify-send',
     templateUrl: './verify-send.component.html',
@@ -19,13 +13,11 @@ interface MenuItem {
 export class VerifySendComponent implements OnInit {
 
     sendObj: ITransaction;
-    selectedNetwork$: BehaviorSubject<MenuItem>;
     simpleFee$: Observable<number>;
     fiatFee$: Observable<string>;
     fiatAmount$: Observable<string>;
     totalAmount$: Observable<number>;
     fiatTotal$: Observable<string>;
-    networkMenu: MenuItem[];
     address$: Observable<string>;
     privateKey$: Observable<string>;
 
@@ -39,20 +31,8 @@ export class VerifySendComponent implements OnInit {
         );
         const timer$ = timer(0, 4000);
 
-        this.networkMenu = [
-            {
-                label: 'MAINNET',
-                val: bncService.endpointList.MAINNET
-            },
-            {
-                label: 'TESTNET',
-                val: bncService.endpointList.TESTNET
-            },
-        ];
 
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
-
-        const rawFee$ = combineLatest([this.selectedNetwork$, timer$]).pipe(
+        const rawFee$ = combineLatest([this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
@@ -127,7 +107,6 @@ export class VerifySendComponent implements OnInit {
     verify() {
         combineLatest([this.privateKey$, this.storage.selectedNetwork$]).pipe(
             map((x: any[]) => {
-                console.log(x);
                 const [privateKey, network] = x;
                 return this.bncService.sendTransaction(
                     this.sendObj.Amount,
@@ -139,7 +118,7 @@ export class VerifySendComponent implements OnInit {
                     this.sendObj.Memo)
             })
         ).subscribe((hash: any) => {
-            console.log(hash)
+            // console.log(hash)
         }).unsubscribe();
 
     }

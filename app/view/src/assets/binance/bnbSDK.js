@@ -74756,6 +74756,22 @@ export function initBNB() {
     return BNB.BNB;
 }
 
-export function initClient(network) {
-  return new BNB.BNB(network);
+export async function initClient(network) {
+    const client = await new BNB.BNB(network);
+    await client.chooseNetwork('testnet');
+    // client.useDefaultSigningDelegate();
+    // client.useDefaultBroadcastDelegate();
+    await client.initChain();
+    return client;
+}
+
+export async function transfer(network, sum, addressFrom, addressTo, pk, coin,memo, sq) {
+    const client = await new BNB.BNB(network);
+    await client.chooseNetwork('testnet');
+    await client.initChain();
+    console.log(addressTo)
+    console.log(addressFrom)
+    await client.setPrivateKey(pk);
+    const hash =  await client.transfer(addressFrom,addressTo, sum, coin,memo, sq)
+    return hash.result[0].hash;
 }

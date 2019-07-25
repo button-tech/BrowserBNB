@@ -8,6 +8,8 @@ import {AuthService} from "../services/auth.service";
 import {HttpClient} from "@angular/common/http";
 import {ClipboardService} from "../services/clipboard.service";
 import {BinanceService} from "../services/binance.service";
+import {getAddressFromPrivateKey} from "../services/binance-crypto";
+
 
 interface MenuItem {
     label: string;
@@ -45,43 +47,21 @@ export class CoinsSelectComponent implements OnInit {
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService) {
-        this.networkMenu = [
-            {
-                label: 'MAINNET',
-                val: bncService.endpointList.MAINNET
-            },
-            {
-                label: 'TESTNET',
-                val: bncService.endpointList.TESTNET
-            },
-        ];
 
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
 
-        this.subscription = this.storage.storageData$.subscribe((x) => {
-            this.userItems = x.AccountList.map((acc) => {
-                return {
-                    label: acc.accountName,
-                    val: acc.accountName
-                };
-            });
-        });
-
-        this.address$ = this.storage.currentAccount$.pipe(
-            pluck('address')
-        );
-
-        this.shortAddress$ = this.address$.pipe(
-            map((address) => {
-                const start = address.substring(0, 5);
-                const end = address.substring(address.length - 6, address.length);
-                return `${start}...${end}`;
-            })
-        );
 
         const timer$ = timer(0, 4000);
 
-        const balances$ = combineLatest([this.address$, this.selectedNetwork$, timer$]).pipe(
+        const address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
+            map((x: any[]) => {
+                const [account, network] = x;
+                const pk = account.privateKey;
+                const networkPrefix = network.networkPrefix;
+                return getAddressFromPrivateKey(pk, networkPrefix);
+            })
+        );
+
+        const balances$ = combineLatest([address$, this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [address, networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;

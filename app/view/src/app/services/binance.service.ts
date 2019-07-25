@@ -33,6 +33,7 @@ export class BinanceService {
         let client: any;
         try {
             client = Binance.initClient(networkConnection);
+            console.log(` BINANCE CLIENT ${Binance.initClient(networkConnection)}`)
         } catch (e) {
             console.assert(e, `Error during binance client init ${e}`);
         }
@@ -43,7 +44,9 @@ export class BinanceService {
         const addressFrom = getAddressFromPrivateKey(pk, networkPrefix);
         return this.http.get(`${networkAddress}api/v1/account/${addressFrom}`).subscribe((account: any) => {
             const sequence = account.result && account.result.sequence;
-            return this.binanceClient.transfer(addressFrom, addressTo, sum, coin, message, sequence);
+
+            let hash = Binance.transfer(networkAddress,sum, addressFrom, addressTo, pk, coin, message, sequence);
+            console.log(hash)
         });
     }
 
