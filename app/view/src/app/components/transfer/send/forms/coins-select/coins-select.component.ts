@@ -28,16 +28,12 @@ export class CoinsSelectComponent implements OnInit {
 
     bnb$: Observable<string>;
     fiat$: Observable<string>;
-    address$: Observable<string>;
-    shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
-    selectedNetwork$: BehaviorSubject<MenuItem>;
+    chosenCurrency: string;
+
     subscription: Subscription;
 
 
-    networkMenu: MenuItem[];
-
-    userItems: MenuItem[] = [];
     heroForm: FormGroup;
 
     constructor(private fb: FormBuilder,
@@ -103,24 +99,11 @@ export class CoinsSelectComponent implements OnInit {
     }
 
 
-    selectNetwork(value: MenuItem) {
-        this.selectedNetwork$.next(value);
-    }
 
-    selectUser(value: string) {
-        // this.currentAccount.accountName = value;
-    }
 
-    copyAddress() {
-        // TODO: probable better to do that without observables, by just assiging address to MainComponent field
-        this.address$.pipe(
-            takeUntil(timer(100)),
-            take(1),
-        ).subscribe((address) => {
-            this.clipboardService.copyToClipboard(address);
-            this.copyMessage = 'Copied';
-        });
-    }
+
+
+
 
     ngOnInit() {
         this.heroForm = this.fb.group({
