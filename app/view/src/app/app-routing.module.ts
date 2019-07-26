@@ -13,6 +13,7 @@ import {RegisterPasswordComponent} from './components/registration/register-pass
 import {RegisterRepeatPasswordComponent} from './components/registration/register-repeat-password/register-repeat-password.component';
 import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
+import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
 
 const routes: Routes = [
     {
@@ -38,6 +39,10 @@ const routes: Routes = [
     {
         path: 'greeter',
         component: FirstPageComponent,
+    },
+    {
+        path: 'balances',
+        component: AllBalancesComponent,
     },
     {
         path: 'registration',

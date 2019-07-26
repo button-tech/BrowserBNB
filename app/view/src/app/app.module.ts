@@ -28,13 +28,17 @@ import {BinanceService} from './services/binance.service';
 import {SendComponent} from './components/transfer/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
-import { CoinsSelectComponent } from './components/transfer/send/forms/coins-select/coins-select.component';
-import { AmountInputComponent } from './components/transfer/send/forms/amount-input/amount-input.component';
-import {MatFormFieldModule, MatInput, MatInputModule} from "@angular/material";
-import { AddressInputComponent } from './components/transfer/send/forms/address-input/address-input.component';
-import { MemoInputComponent } from './components/transfer/send/forms/memo-input/memo-input.component';
-import { VerifySendComponent } from './components/transfer/verify-send/verify-send.component';
-
+import {CoinsSelectComponent} from './components/transfer/send/forms/coins-select/coins-select.component';
+import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
+import {
+    MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,
+    MatSortModule, MatTableModule, MatTabsModule
+} from "@angular/material";
+import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
+import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
+import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
+import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
     declarations: [
@@ -55,7 +59,8 @@ import { VerifySendComponent } from './components/transfer/verify-send/verify-se
         AmountInputComponent,
         AddressInputComponent,
         MemoInputComponent,
-        VerifySendComponent
+        VerifySendComponent,
+        AllBalancesComponent
     ],
     imports: [
         BrowserModule,
@@ -65,7 +70,14 @@ import { VerifySendComponent } from './components/transfer/verify-send/verify-se
         ToastrModule.forRoot(),
         HttpClientModule,
         FormsModule,
-        SatPopoverModule, NgSelectModule  ,ReactiveFormsModule, MatInputModule, MatFormFieldModule
+        MatInputModule,
+        MatPaginatorModule,
+        MatProgressSpinnerModule,
+        MatTableModule,
+        MatTabsModule,
+
+        MatSortModule,
+        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatNativeDateModule
     ],
     providers: [
         RegistrationService,
