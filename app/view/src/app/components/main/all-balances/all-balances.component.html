@@ -1,0 +1,20 @@
+<div class="container-fluid">
+    <app-menu-top></app-menu-top>
+</div>
+<div class="row">
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+        <button (click)="goBack()" class="btn btn-just-icon btn-default btn-round">
+            <fa name="arrow-left" size="sm"></fa>
+        </button>
+    </div>
+</div>
+<div class="container-fluid">
+    <div style="display: grid; margin-left: 0em" *ngFor="let b of  (x| async).balances">
+        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr">
+            <img style="align-items: center !important; align-self: center; align-content: center"
+                 src="../../../../assets/icons/icon128.png" width="36" height="36">
+            <h5 style=" align-self: center; font-weight: bolder">{{b.symbol || 'pending'}}</h5>
+            <h5 style=" align-self: center; font-weight: bolder">{{b.free || 'pending'}}</h5>
+        </div>
+    </div>
+</div>
