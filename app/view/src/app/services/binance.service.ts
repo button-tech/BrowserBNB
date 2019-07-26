@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
-import { getAddressFromPrivateKey } from './binance-crypto';
-import { Observable, of } from 'rxjs';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map } from 'rxjs/operators';
-import { StorageService } from './storage.service';
+import {getAddressFromPrivateKey} from './binance-crypto';
+import {Observable, of} from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {catchError, map} from 'rxjs/operators';
+import {StorageService} from './storage.service';
+
+
 
 @Injectable({
     providedIn: 'root'
@@ -63,10 +65,12 @@ export class BinanceService {
         return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
             // return this.http.get(`${endpoint}api/v1/account/bnb187tqe4ezg5r6uf5g5rr2vm5z5nqeygt4jr85me`).pipe(
             catchError((error: HttpErrorResponse) => {
-                // TODO: properly handle binance 404 response
+                // // TODO: properly handle binance 404 response
+                // const errResp:  AccountInfo;
                 return of({
-                    balances: []
-                });
+                        balances: []
+                    }
+                );
             })
         );
     }
