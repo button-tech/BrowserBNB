@@ -25,3 +25,21 @@ body {
     color: rgb(255, 255, 255) !important;
     background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
 }
+
+.btn-infos {
+    min-width: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 15px !important;
+    background: rgb(33, 40, 51) !important;
+}
+
+.infos-fa {
+    font-size: 14px !important;
+    line-height: 22px !important;
+}
+
+.fa-info {
+    font-size: 13px !important;
+    line-height: 21px !important;
+}
