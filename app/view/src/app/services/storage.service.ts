@@ -6,34 +6,9 @@ import {BehaviorSubject, concat, from, Observable, of, Subject, Subscription} fr
 import {BinanceService} from "./binance.service";
 
 export interface IStorageData {
-    AccountList: IAccount[];
+    SeedPhrase: ArrayBuffer;
     CurrentAccountIdx: number;
     PassHash: string;
-}
-
-export interface IMenuItem {
-    label: string;
-    val: string;
-    networkPrefix: string;
-}
-
-export interface IAccount {
-    address;
-    privateKey;
-    keystore;
-
-    // TODO: implement this
-    encryptedSeed: string;
-    encryptedKeystore: string;
-    accountName: string;
-}
-
-export interface ITransaction {
-    Amount: number;
-    AddressTo: string;
-    AddressFrom: string;
-    Memo: string;
-    Symbol: string;
 }
 
 const STORAGE_KEY = 'all';
@@ -43,21 +18,8 @@ const STORAGE_KEY = 'all';
 })
 export class StorageService {
 
-    currentTransaction: ITransaction = {
-        "Amount": 0,
-        "AddressTo": '',
-        "AddressFrom": '',
-        "Memo": '',
-        "Symbol": ''
-    };
-    selectedNetwork$: BehaviorSubject<IMenuItem>;
     storageData$: Observable<IStorageData>;
-    currentAccount$: Observable<IAccount>;
-    // currentTransaction$: Observable<ITransaction>;
     hasAccount$: Observable<boolean>;
-
-
-    networkMenu: IMenuItem[];
 
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
@@ -70,13 +32,9 @@ export class StorageService {
 
     constructor(private bncService: BinanceService) {
 
-
         const initial$ = of(1).pipe(
             switchMap(() => from(this.initStorage())),
             switchMap(() => from(this.getFromStorage())),
-            // tap((x) => {
-            //     console.log('hi!')
-            // }),
             take(1)
         );
 
@@ -90,40 +48,14 @@ export class StorageService {
             shareReplay(1)
         );
 
-        // Launch pipeline right now
-        this.subscription = this.storageData$.subscribe();
-
         this.hasAccount$ = this.storageData$.pipe(
             map((data: IStorageData) => {
-                console.log('hasAccount$', data);
                 return data.AccountList.length > 0;
             })
         );
 
-        this.currentAccount$ = this.storageData$.pipe(
-            filter((data) => {
-                return data.AccountList.length > 0;
-            }),
-            map((data: IStorageData) => {
-                const idx = data.CurrentAccountIdx;
-                return data.AccountList[idx];
-            })
-        );
-        this.networkMenu = [
-            {
-                label: 'MAINNET',
-                networkPrefix: 'bnb',
-                val: bncService.endpointList.MAINNET
-            },
-            {
-                label: 'TESTNET',
-                networkPrefix: 'tbnb',
-                val: bncService.endpointList.TESTNET
-            },
-        ];
-
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
-
+        // Launch pipeline right now
+        this.subscription = this.storageData$.subscribe();
     }
 
 
@@ -146,25 +78,17 @@ export class StorageService {
     }
 
     async initStorage(): Promise<void> {
-        let content: string = await this.getFromStorageRaw();
+        const content: string = await this.getFromStorageRaw();
         if (!content) {
             const defaultValue: IStorageData = {
-                AccountList: [],
+                SeedPhrase: new ArrayBuffer(0),
                 CurrentAccountIdx: 0,
                 PassHash: ''
             };
 
             const jsonText = JSON.stringify(defaultValue);
             return this.saveToStorageRaw(jsonText);
-            // content = await this.getFromStorage(STORAGE_KEY); //
         }
-
-        // We also can patch / override object if
-        // Validation - could be disabled in production
-        // let obj: IStorageData;
-        // obj = JSON.parse(content);
-        // const isValid = (('AccountList' in obj) && ('CurrentAccountIdx' in obj));
-        // console.assert(isValid);
     }
 
     saveToStorageRaw(value: string): Promise<void> {
@@ -225,29 +149,40 @@ export class StorageService {
     //     return this.saveToStorage(data);
     // }
 
-    async addAccount(address: string, privateKey: string, keystore: any, passHash: string): Promise<void> {
+    async registerAccount(blob: ArrayBuffer, passHash: string): Promise<void> {
 
-        const data: IStorageData = await this.getFromStorage();
-        const account: IAccount = {
-            address,
-            // TODO: don't stored it as plain text here
-            privateKey,
-            keystore,
-            accountName: `Account ${data.AccountList.length + 1}`,
-            // TODO: use this
-            encryptedKeystore: '',
-            encryptedSeed: '',
+        // const data: IStorageData = await this.getFromStorage();
+        // const account: IAccount = {
+        //     address,
+        //     // TODO: don't stored it as plain text here
+        //     privateKey,
+        //     keystore,
+        //     accountName: `Account ${data.AccountList.length + 1}`,
+        //     // TODO: use this
+        //     encryptedKeystore: '',
+        //     encryptedSeed: '',
+        // };
+        //
+        // data.PassHash = passHash;
+        // data.AccountList.push(account);
+        // data.CurrentAccountIdx = data.AccountList.length - 1;
+
+        const data: IStorageData = {
+            SeedPhrase: blob,
+            CurrentAccountIdx: 0,
+            PassHash: passHash
         };
 
-        data.PassHash = passHash;
-        data.AccountList.push(account);
-        data.CurrentAccountIdx = data.AccountList.length - 1;
-        return this.saveToStorage(data);
+        //
+
+        const jsonText = JSON.stringify(data);
+        // await this.saveToStorage(data);
+        this.saveToStorageRaw(jsonText);
     }
 
     reset(): Promise<void> {
         const defaultValue: IStorageData = {
-            AccountList: [],
+            SeedPhrase: new ArrayBuffer(0),
             CurrentAccountIdx: 0,
             PassHash: ''
         };
@@ -255,22 +190,4 @@ export class StorageService {
         const jsonText = JSON.stringify(defaultValue);
         return this.saveToStorageRaw(jsonText);
     }
-
-    setNameForAccount$(accountNumber: number, newName: string) {
-
-    }
-
-    getAccountNumberByName$() {
-
-    }
-
-    getAllAccountNames$() {
-
-    }
-
-    getAccountByName$() {
-
-    }
-
-
 }
