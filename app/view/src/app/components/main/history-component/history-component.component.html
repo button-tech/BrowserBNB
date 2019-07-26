@@ -1,35 +1,18 @@
-<p align="center"> Will be soon! </p>
-<!--&lt;!&ndash;<div  class="row">&ndash;&gt;-->
-<!--&lt;!&ndash;<div class="col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;<p style="font-size: 7px!important" *ngFor="let h of hist$  | async ">{{h.sum || ' '}}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
-<!--&lt;!&ndash;<div class="col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;<p style="font-size: 7px!important" *ngFor="let h of hist$  | async ">{{h.type || ' '}}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
-<!--&lt;!&ndash;<div class="col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;<p style="font-size: 7px!important" *ngFor="let h of hist$  | async ">{{h.coin || ' '}}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
-<!--&lt;!&ndash;<div class="col-3">&ndash;&gt;-->
-<!--&lt;!&ndash;<p style="font-size: 7px!important" *ngFor="let h of hist$  | async ">{{h.address || ' '}}</p>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
-<!--&lt;!&ndash;</div>&ndash;&gt;-->
+<div style="margin-top: -1.4em">
 
 
-<!--<div style="margin: 0 !important; padding: 0 !important;  height: 4em !important" class="col-12">-->
-<!--<div style="margin-left: 0.2em; margin-right: 0.5em; height: 4em !important" class="row">-->
-<!--<div style=" height: 4em !important" class="col-2">-->
-<!--<button style="background: #5ab911 !important; " class="btn btn-just-icon btn-md btn-round">-->
-<!--<fa name="space-shuttle" size="5x"></fa>-->
-<!--</button>-->
-<!--</div>-->
-<!--<div style="height: 4em !important; margin-top: 0" class="col-4">-->
-<!--<h3 style="font-weight: bold;">Deposit</h3>-->
-<!--<p>Info</p>-->
-<!--</div>-->
-<!--<div class="col-6">-->
-<!--f-->
-<!--</div>-->
-
-<!--</div>-->
-<!--<hr style="width: 100%; border: 0.55px solid #c5c5c5; margin-bottom: 0px; margin-top: 0px">-->
-<!--</div>-->
+    <div style="margin-top: 1.4em; margin-left: 0.3em" class="container-fluid" *ngFor="let tx of (hist$| async).tx">
+        <div style="display: grid; grid-template: 1fr 1fr / 1fr 4fr 1fr; height: 30px;  align-content: center">
+            <div style="grid-column: 1; grid-row: 1/2 !important; align-self: center; align-content: center; align-items: center; margin-bottom: -1.5em; margin-left: 1.2em">
+                <img src="../../../../assets/icons/icon48.png" alt="info" width="25" height="25">
+            </div>
+            <div style="grid-column: 2; grid-row: 1; font-weight: bolder; font-size: 15px">{{tx.txType }}</div>
+            <div style="grid-column: 2; grid-row: 2">
+                <small>{{tx.value || ''}} {{tx.txAsset || ''}}</small>
+            </div>
+            <div style="grid-column: 3; grid-row: 2; margin-top: -0.5em">
+                <fa style="" name="info" size="sm"></fa>
+            </div>
+        </div>
+    </div>
+</div>
