@@ -37,13 +37,13 @@
             <h4 id="fiat">
                 {{(fiat$ | async) || 'pending'}}
             </h4>
-            <a id="more">More balances</a>
+            <a routerLink="/balances" id="more">More balances</a>
         </div>
 
         <div id="buttonsDiv" class="col-12">
-        <button class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
-        <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
-    </div>
+            <button class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
+            <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
+        </div>
 
     </div>
     <div class="row">

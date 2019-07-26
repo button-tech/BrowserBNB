@@ -3,13 +3,11 @@
         <div style="display: flex">
             <div style="display: grid; grid-template: 1fr / 1fr; grid-column-gap: 5px;">
                 <input #addressElem class="form-control"
-                       style="background-image: none!important; grid-column: 1/1; width: 180p;margin-top: 0.8em"
+                       style="background-image: none!important; grid-column: 1/1; width: 180px;margin-top: 0.8em"
                        (input)="save(addressElem.value)"
                        placeholder="Optional memo"
                        spellcheck="false">
-
             </div>
-
         </div>
         <input matInput style="display: none">
     </mat-form-field>
