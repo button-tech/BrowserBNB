@@ -8,13 +8,14 @@
         </button>
     </div>
 </div>
-<div class="container-fluid">
-    <div style="display: grid; margin-left: 0em" *ngFor="let b of  (x| async).balances">
-        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr">
+
+<div style="margin-top: 2em" class="container col-11 offset-1">
+    <div style="display: grid; margin-left: 0em; " *ngFor="let b of  (x| async).balances">
+        <div style="display: grid; grid-template-columns: 1fr 2fr 3fr">
             <img style="align-items: center !important; align-self: center; align-content: center"
                  src="../../../../assets/icons/icon128.png" width="36" height="36">
             <h5 style=" align-self: center; font-weight: bolder">{{b.symbol || 'pending'}}</h5>
-            <h5 style=" align-self: center; font-weight: bolder">{{b.free || 'pending'}}</h5>
+            <h5 align="left" style=" align-self: center; font-weight: bolder">{{b.free || 'pending'}}</h5>
         </div>
     </div>
 </div>
