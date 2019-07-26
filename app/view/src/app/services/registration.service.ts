@@ -1,11 +1,13 @@
-import {Injectable} from '@angular/core';
-import {createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum} from './binance-crypto';
-import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
-import {StorageService} from './storage.service';
+import { Injectable } from '@angular/core';
+import { createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum } from './binance-crypto';
+import { getAddressFromPrivateKey } from '../../assets/binance/bnbSDK';
+import { StorageService } from './storage.service';
+import * as passworder from 'browser-passworder';
 
 @Injectable()
 export class RegistrationService {
     mnemonic: any = null;
+    private passHash: string;
 
     constructor(private storageService: StorageService) {
     }
@@ -18,8 +20,6 @@ export class RegistrationService {
         this.mnemonic = createMnemonic();
         return this.mnemonic;
     }
-
-    private passHash: string;
 
     set password(value: string) {
         this.passHash = getSHA3hashSum(value);
@@ -34,26 +34,27 @@ export class RegistrationService {
         this.passHash = null;
     }
 
-    // TODO: should be refactored - we won't store decrypted date in the storrage
-    private addAccount(seedPhrase: string, password: string): Promise<boolean> {
-
-        const privateKey = getPrivateKeyFromMnemonic(seedPhrase);
-        const address = getAddressFromPrivateKey(privateKey);
-        const keystore = getKeystoreFromPrivateKey(privateKey, password);
-
-        return new Promise((resolve) => {
-            this.storageService.addAccount(address, privateKey, keystore, getSHA3hashSum(password)).then(() => {
-                resolve(true);
-            }, () => resolve(false));
-        });
-    }
-
     async finishRegistration(repeatedPassword: string): Promise<boolean> {
         if (!this.isPasswordRepeatedCorrectly(repeatedPassword)) {
             return Promise.reject(false);
         }
 
-        await this.addAccount(this.mnemonic, repeatedPassword);
+        // await this.addAccount(this.mnemonic, repeatedPassword);
+
+        // const privateKey = getPrivateKeyFromMnemonic(this.mnemonic);
+        // const address = getAddressFromPrivateKey(privateKey);
+        // const keystore = getKeystoreFromPrivateKey(privateKey, password);
+
+        return new Promise(async (resolve) => {
+
+            const blob: ArrayBuffer = await passworder.encrypt(repeatedPassword, {seedPhrase: this.mnemonic});
+            this.storageService.registerAccount(blob, getSHA3hashSum(password))
+                .then(
+                    () => resolve(true),
+                    () => resolve(false)
+                );
+        });
+
         this.cleanup();
         return true;
     }

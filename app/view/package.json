@@ -31,6 +31,7 @@
     "angular-font-awesome": "^3.1.2",
     "angularx-qrcode": "^1.6.4",
     "bindings": "^1.5.0",
+    "browser-passworder": "^2.0.3",
     "browserify-sign": "^4.0.4",
     "cipher-base": "^1.0.4",
     "core-js": "^2",
