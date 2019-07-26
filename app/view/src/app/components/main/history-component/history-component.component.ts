@@ -16,7 +16,6 @@ export class HistoryComponentComponent implements OnInit {
 
         const rawHistory$ = timer(0, 60000).pipe(
             switchMap(() => {
-
                 return this.http.get('https://dex.binance.org/api/v1/transactions?address=bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu&startTime=1555707600000');
             })
         );

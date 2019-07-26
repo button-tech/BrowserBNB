@@ -36,6 +36,10 @@
                 </div>
             </div>
         </sat-popover>
+
+        <sat-popover #settings horizontalAlign="after" verticalAlign="below" hasBackdrop>
+            <app-settings></app-settings>
+        </sat-popover>
     </div>
 
     <div class="col">
@@ -56,7 +60,8 @@
     </div>
 
     <div align="right" class="col">
-        <button id="cog" class="btn btn-link btn-just-icon btn-lg" href="/main">
+        <button id="cog" [satPopoverAnchor]="settings" (click)="settings.toggle()"
+                class="btn btn-link btn-just-icon btn-lg" href="/main">
             <fa name="cog" size="sm"></fa>
         </button>
     </div>
