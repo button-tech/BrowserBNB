@@ -32,13 +32,12 @@ import {CoinsSelectComponent} from './components/transfer/send/forms/coins-selec
 import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
 import {
     MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,
-    MatSortModule, MatTableModule, MatTabsModule
 } from "@angular/material";
 import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
 import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
-import {MatNativeDateModule} from '@angular/material/core';
+
 
 @NgModule({
     declarations: [
@@ -73,11 +72,7 @@ import {MatNativeDateModule} from '@angular/material/core';
         MatInputModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
-        MatTableModule,
-        MatTabsModule,
-
-        MatSortModule,
-        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, MatNativeDateModule
+        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule,
     ],
     providers: [
         RegistrationService,
