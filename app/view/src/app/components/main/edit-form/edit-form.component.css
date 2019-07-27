@@ -6,15 +6,18 @@
 input {
     padding-top: 4px !important;
     /*padding-left: -6px !important;*/
-    line-height: 18px;
+    line-height: 16px;
+    height: 30px;
     text-align: center !important;
     font-size: 15px;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-left: 4em;
     border: 1.5px solid rgb(33, 40, 51);
 }
 input:focus {
     outline: none;
+    color: rgb(33, 40, 51) !important;
+    font-weight: bolder !important;
 }
 
 .wrapper {

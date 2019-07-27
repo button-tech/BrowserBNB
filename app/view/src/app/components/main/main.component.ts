@@ -109,7 +109,7 @@ export class MainComponent {
             take(1),
         ).subscribe((address) => {
             this.clipboardService.copyToClipboard(address);
-            this.copyMessage = 'Copied';
+            this.copyMessage = 'Copied ✔';
         });
     }
 
