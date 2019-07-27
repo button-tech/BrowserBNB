@@ -14,6 +14,7 @@ import {RegisterRepeatPasswordComponent} from './components/registration/registe
 import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
+import {SettingsComponent} from "./components/main/settings/settings.component";
 
 const routes: Routes = [
     {
@@ -43,6 +44,10 @@ const routes: Routes = [
     {
         path: 'balances',
         component: AllBalancesComponent,
+    },
+    {
+        path: 'settings',
+        component: SettingsComponent,
     },
     {
         path: 'registration',
