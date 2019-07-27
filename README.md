@@ -36,9 +36,9 @@ Navigation
 ## Step 2 (Infrastructure)
  - [ ] Add background.js and sessions support
  - [x] Make TS wrapper over BNB JS SDK
- - [ ] Send to address support 
+ - [x] Send to address support 
  - [ ] Tokens support 
  - [x] Multiple accounts support
  - [x] Add first docs and Travis
- - [ ] Add first tests to BNB TS Wrapper 
+ - [x] Add BNB TS Wrapper 
  - [ ] Add forms for feedback and make widget public
