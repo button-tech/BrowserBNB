@@ -3,6 +3,7 @@ import {BehaviorSubject, Subscription} from "rxjs";
 import {CurrentAccountService} from "../../../services/current-account.service";
 import {IMenuItem, StorageService} from "../../../services/storage.service";
 import {AuthService} from "../../../services/auth.service";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -32,7 +33,7 @@ export class MenuTopComponent implements OnDestroy{
         this.subscription = this.storage.storageData$.subscribe((x) => {
             this.userItems = x.AccountList.map((acc) => {
                 return {
-                    label: acc.accountName,
+                    label: acc.address.substring(0, 8) + '...' + acc.address.substring(acc.address.length - 8, acc.address.length),
                     val: acc.accountName,
                     networkPrefix: acc.accountName
                 };

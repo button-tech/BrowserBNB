@@ -62,11 +62,11 @@
 }
 
 .pop-hr {
-    border: 1px solid white
+    border: 0.8px solid white
 }
 
 #scrollableUsers {
-    max-height: 260px;
+    max-height: 320px;
     overflow: auto;
     margin-left: -5px;
 }
@@ -221,7 +221,7 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
     padding: 5px;
     width: 100%;
     font-size: .6875rem;
-    font-weight: bold;
+    font-weight: bolder;
     color: white;
 }
 
@@ -241,14 +241,14 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
 
 .menu-wrapper-users {
     position: absolute;
-    top: 35px;
-    left: -40px;
-    border: rgba(11, 14, 17, 0.9);
-    background: rgba(11, 14, 17, 0.9);
+    top: 34px;
+    left: -45px;
+    border: rgba(11, 14, 17, .9);
+    background: rgba(11, 14, 17, .9);
     max-width: 400px !important;
-    width: 340px !important;
-    height: 460px !important;
-    border-radius: 5px;
+    width: 350px !important;
+    height: 533px !important;
+    border-radius: 0px;
 }
 
 .menu-wrapper-users:focus {
@@ -261,14 +261,36 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
     display: block;
     padding: 5px;
     width: 100%;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 18px;
+    font-weight: bolder;
     color: white;
     text-align: left;
 }
 
 .menu-item-users:hover {
-    font-size: 23px;
+    font-size: 18px;
     color: rgb(239, 184, 11);
-    font-weight: bold;
+    font-weight: bolder;
+}
+
+.item-of:hover {
+    background: rgba(11, 14, 17, .3);
+    border-radius: 10px;
+    border: solid 0.5px rgb(239, 184, 11);
+}
+
+
+.btn-basic {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 13px;
+}
+
+.btn-basic:hover {
+    background: rgb(239, 184, 11);
+    border: none;
+    color: rgb(11, 14, 17);
+    font-size: 13px;
+    border-radius: 10px;
 }
