@@ -95,7 +95,7 @@ export class StorageService {
 
         this.hasAccount$ = this.storageData$.pipe(
             map((data: IStorageData) => {
-                console.log('hasAccount$', data);
+                // console.log('hasAccount$', data);
                 return data.AccountList.length > 0;
             })
         );

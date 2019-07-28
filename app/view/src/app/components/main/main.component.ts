@@ -17,10 +17,6 @@ import {getAddressFromPrivateKey} from '../../services/binance-crypto';
 })
 export class MainComponent {
 
-    // @ts-ignore
-    @ViewChild('menuNetwork')
-    menuNetwork: ElementRef;
-
     bnb$: Observable<string>;
     fiat$: Observable<string>;
     address$: Observable<string>;
@@ -29,7 +25,6 @@ export class MainComponent {
 
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
-                private authService: AuthService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
@@ -94,14 +89,6 @@ export class MainComponent {
         );
     }
 
-    selectNetwork(value: IMenuItem) {
-        this.storage.selectedNetwork$.next(value);
-    }
-
-    selectUser(value: string) {
-        // this.currentAccount.accountName = value;
-    }
-
     copyAddress() {
         // TODO: probable better to do that without observables, by just assiging address to MainComponent field
         this.address$.pipe(
@@ -113,9 +100,6 @@ export class MainComponent {
         });
     }
 
-    logout() {
-        this.authService.logout();
-    }
 
 
 }

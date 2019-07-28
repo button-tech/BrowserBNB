@@ -43,3 +43,8 @@ body {
     font-size: 13px !important;
     line-height: 21px !important;
 }
+
+.hover-anchor:hover {
+    background: rgba(11, 14, 17, .1) !important;
+    border-radius: 15px;
+}

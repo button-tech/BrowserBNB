@@ -185,7 +185,9 @@
 }
 
 button#addressButton.btn.btn-sm.btn-link.hover-anchor {
-
+    background: rgba(11, 14, 17, .3) !important;
+    border-radius: 8px;
+    z-index: -99999;
 }
 
 .menu-wrapper {

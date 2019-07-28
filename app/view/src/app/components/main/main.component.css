@@ -2,6 +2,10 @@
     font-size: 14px !important;
 }
 
+#accc:hover {
+    background: rgba(11, 14, 17, .3);
+    border-radius: 7px;
+}
 #editButton {
     font-weight: bold;
     white-space: nowrap;
@@ -11,7 +15,6 @@
 }
 
 #editButton:hover {
-    font-size: 17px !important;
 }
 
 #addressButton {

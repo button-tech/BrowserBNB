@@ -1,8 +1,14 @@
-<form style="margin-top: 3.5em; background: none!important; width: 300px" (ngSubmit)="onSubmit()">
-    <input autocomplete="off" type="text" name="value" [(ngModel)]="this.value">
-    <div class="wrapper text-center">
-        <button class="btn btn-sm btn-binance-outline">
-            <fa id="editIcon2" name="edit" size="sm"></fa>
-            <strong> SAVE</strong></button>
-    </div>
+<form style="background: none; width: 190px;    margin-left: -14.8em;
+    margin-top: -1.9em; color: white!important;" (ngSubmit)="onSubmit()">
+    <input autocomplete="off" class="form-control" type="text" name="value" [(ngModel)]="this.value">
+
+
 </form>
+<div style="    margin-top: -2.7em;
+    background: black;
+    border-radius: 10px;" class="div">
+    <button (click)="onSubmit()" style="white-space: nowrap!important" class="btn-basic">
+        <fa name="save"></fa>
+        save
+    </button>
+</div>

@@ -1,7 +1,6 @@
 :host {
     display: block;
-    background: white;
-    border-radius: 2px;
+    background: none;
 }
 input {
     padding-top: 4px !important;
@@ -9,19 +8,35 @@ input {
     line-height: 16px;
     height: 30px;
     text-align: center !important;
-    font-size: 15px;
-    border-radius: 5px;
-    margin-left: 4em;
-    border: 1.5px solid rgb(33, 40, 51);
+    font-size: 18px;
+    margin-left: 2em;
+    background: rgba(11, 14, 17, 1) !important;
+    border-radius: 8px;
+    color: white !important;
 }
 input:focus {
     outline: none;
-    color: rgb(33, 40, 51) !important;
+    color: white !important;
     font-weight: bolder !important;
 }
 
 .wrapper {
-    padding-top: 4.2px !important;
+
     /*padding-left: -6px !important;*/
-    color: black !important;
+    color: white !important;
+}
+
+.btn-basic {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 13px;
+}
+
+.btn-basic:hover {
+    background: rgb(239, 184, 11);
+    border: none;
+    color: rgb(11, 14, 17);
+    font-size: 13px;
+    border-radius: 10px;
 }

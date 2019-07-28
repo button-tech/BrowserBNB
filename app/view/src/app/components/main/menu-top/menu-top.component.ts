@@ -1,9 +1,9 @@
 import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {BehaviorSubject, Subscription} from "rxjs";
 import {CurrentAccountService} from "../../../services/current-account.service";
-import {IMenuItem, StorageService} from "../../../services/storage.service";
+import {IAccount, IMenuItem, StorageService} from "../../../services/storage.service";
 import {AuthService} from "../../../services/auth.service";
-import {map} from "rxjs/operators";
+import {map, take} from "rxjs/operators";
 
 
 @Component({
@@ -11,7 +11,7 @@ import {map} from "rxjs/operators";
     templateUrl: './menu-top.component.html',
     styleUrls: ['./menu-top.component.css']
 })
-export class MenuTopComponent implements OnDestroy{
+export class MenuTopComponent implements OnDestroy {
 
 
     // @ts-ignore
@@ -21,8 +21,6 @@ export class MenuTopComponent implements OnDestroy{
     networkMenu: IMenuItem[];
     selectedNetwork$: BehaviorSubject<IMenuItem>;
     userItems: IMenuItem[] = [];
-    subscription: Subscription;
-
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
                 private authService: AuthService,
@@ -30,16 +28,25 @@ export class MenuTopComponent implements OnDestroy{
 
         this.selectedNetwork$ = this.storage.selectedNetwork$;
         this.networkMenu = this.storage.networkMenu;
-        this.subscription = this.storage.storageData$.subscribe((x) => {
-            this.userItems = x.AccountList.map((acc) => {
-                return {
-                    label: acc.address.substring(0, 8) + '...' + acc.address.substring(acc.address.length - 8, acc.address.length),
-                    val: acc.accountName,
-                    networkPrefix: acc.accountName
-                };
-            });
-        });
+
     }
+
+    toShortAddress(address) {
+        return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length)
+    }
+
+    rename(name: any, index: number) {
+        console.log(index)
+        console.log(name)
+        this.storage.storageData$.pipe(
+            map((x) => {
+                x.AccountList[index].accountName = name;
+                this.storage.updateStorage(x);
+            }),
+        ).subscribe();
+
+    }
+
 
     selectNetwork(value: IMenuItem) {
         this.storage.selectedNetwork$.next(value);
@@ -53,8 +60,9 @@ export class MenuTopComponent implements OnDestroy{
     logout() {
         this.authService.logout();
     }
+
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+
     }
 
 }
