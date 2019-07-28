@@ -7,10 +7,10 @@ import {ClipboardService} from '../../../services/clipboard.service';
 
 @Component({
     selector: 'app-create',
-    templateUrl: './register-mnemonic.component.html',
-    styleUrls: ['./register-mnemonic.component.css']
+    templateUrl: './mnemonic.component.html',
+    styleUrls: ['./mnemonic.component.css']
 })
-export class RegisterMnemonicComponent implements OnInit {
+export class MnemonicComponent implements OnInit {
 
     mnemonic: string;
     theCheckbox = false;

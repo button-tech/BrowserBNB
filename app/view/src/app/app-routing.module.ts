@@ -7,10 +7,10 @@ import {
     AuthGuardService as AuthGuard
 } from './services/auth-guard.service';
 import {RegistrationComponent} from './components/registration/registration.component';
-import {RegisterMnemonicComponent} from './components/registration/register-mnemonic/register-mnemonic.component';
+import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
-import {RegisterPasswordComponent} from './components/registration/register-password/register-password.component';
-import {RegisterRepeatPasswordComponent} from './components/registration/register-repeat-password/register-repeat-password.component';
+import {PasswordComponent} from './components/registration/password/password.component';
+import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
 import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
@@ -53,10 +53,10 @@ const routes: Routes = [
         path: 'registration',
         component: RegistrationComponent,
         children: [
-            {path: 'create', component: RegisterMnemonicComponent},
+            {path: 'create', component: MnemonicComponent},
             {path: 'import', component: ImportMnemonicComponent},
-            {path: 'password', component: RegisterPasswordComponent},
-            {path: 'repeat', component: RegisterRepeatPasswordComponent},
+            {path: 'password', component: PasswordComponent},
+            {path: 'repeat', component: RepeatPasswordComponent},
         ]
     },
     {

@@ -19,9 +19,9 @@ import {RegistrationService} from './services/registration.service';
 import {AuthGuardService} from './services/auth-guard.service';
 import {RegistrationComponent} from './components/registration/registration.component';
 import {ClipboardService} from './services/clipboard.service';
-import {RegisterMnemonicComponent} from './components/registration/register-mnemonic/register-mnemonic.component';
-import {RegisterPasswordComponent} from './components/registration/register-password/register-password.component';
-import {RegisterRepeatPasswordComponent} from './components/registration/register-repeat-password/register-repeat-password.component';
+import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.component';
+import {PasswordComponent} from './components/registration/password/password.component';
+import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
 import {CurrentAccountService} from './services/current-account.service';
 import {BinanceService} from './services/binance.service';
@@ -44,10 +44,10 @@ import {SettingsComponent} from './components/main/settings/settings.component';
     declarations: [
         AppComponent,
         FirstPageComponent,
-        RegisterMnemonicComponent,
-        RegisterPasswordComponent,
+        MnemonicComponent,
+        PasswordComponent,
         MainComponent,
-        RegisterRepeatPasswordComponent,
+        RepeatPasswordComponent,
         ImportMnemonicComponent,
         HistoryComponentComponent,
         UnlockComponent,

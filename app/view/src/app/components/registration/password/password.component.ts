@@ -7,10 +7,10 @@ import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-password-creation',
-    templateUrl: './register-password.component.html',
-    styleUrls: ['./register-password.component.css']
+    templateUrl: './password.component.html',
+    styleUrls: ['./password.component.css']
 })
-export class RegisterPasswordComponent {
+export class PasswordComponent {
     constructor(private regSvc: RegistrationService, private authService: AuthService, private router: Router, private alert: AlertsService) {
     }
 

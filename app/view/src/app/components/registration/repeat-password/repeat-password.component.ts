@@ -6,10 +6,10 @@ import {RegistrationService} from '../../../services/registration.service';
 
 @Component({
     selector: 'app-register-repeat-password',
-    templateUrl: './register-repeat-password.component.html',
-    styleUrls: ['./register-repeat-password.component.css']
+    templateUrl: './repeat-password.component.html',
+    styleUrls: ['./repeat-password.component.css']
 })
-export class RegisterRepeatPasswordComponent {
+export class RepeatPasswordComponent {
 
     constructor(private authService: AuthService, private regSvc: RegistrationService, private alert: AlertsService, private router: Router) {
     }
