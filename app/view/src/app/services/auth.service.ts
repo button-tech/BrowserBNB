@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {map, startWith, take} from 'rxjs/operators';
 import {StorageService} from './storage.service';
 import {getSHA3hashSum} from './binance-crypto';
+import {StateService} from './state.service';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,9 @@ export class AuthService {
 
     public isLoggedIn$: Observable<boolean>;
 
-    constructor(private storage: StorageService) {
+    // subscription: Subscription;
+
+    constructor(private storage: StorageService, private stateService: StateService) {
         this.isLoggedIn$ = this.subject$.asObservable().pipe(
             startWith(this.isLoggedIn)
         );
@@ -32,20 +35,21 @@ export class AuthService {
             .pipe(
                 take(1),
                 map((data) => {
-                    return data.PassHash == getSHA3hashSum(password);
+                    const x = data.PassHash == getSHA3hashSum(password);
+                    if (x) {
+                        this.isLoggedIn = true;
+                        this.stateService.setPassword(password);
+                    }
+                    return x;
                 })
             );
 
-        x$.subscribe((x) => {
-            if (x) {
-                this.isLoggedIn = true;
-            }
-        });
-
+        x$.subscribe();
         return x$;
     }
 
     logout(): void {
         this.isLoggedIn = false;
+        this.stateService.setPassword('');
     }
 }

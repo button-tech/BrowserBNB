@@ -1,10 +1,9 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {combineLatest, Observable, timer} from 'rxjs';
+import {Component} from '@angular/core';
+import {combineLatest, Observable, of, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
-import {StorageService, IMenuItem} from '../../services/storage.service';
-import {AuthService} from '../../services/auth.service';
+import {StorageService} from '../../services/storage.service';
 import {CurrentAccountService} from '../../services/current-account.service';
 import {BinanceService} from '../../services/binance.service';
 import {getAddressFromPrivateKey} from '../../services/binance-crypto';
@@ -17,31 +16,30 @@ import {getAddressFromPrivateKey} from '../../services/binance-crypto';
 })
 export class MainComponent {
 
-    // @ts-ignore
-    @ViewChild('menuNetwork')
-    menuNetwork: ElementRef;
-
     bnb$: Observable<string>;
     fiat$: Observable<string>;
     address$: Observable<string>;
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
 
+    currentAccountName = 'Hi, name here';
+
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
-                private authService: AuthService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
     ) {
-        this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
-            map((x: any[]) => {
-                const [account, network] = x;
-                const pk = account.privateKey;
-                const networkPrefix = network.networkPrefix;
-                return getAddressFromPrivateKey(pk, networkPrefix);
-            })
-        );
+
+        this.address$ = of('bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu');
+        //     combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
+        //     map((x: any[]) => {
+        //         const [account, network] = x;
+        //         const pk = account.privateKey;
+        //         const networkPrefix = network.networkPrefix;
+        //         return getAddressFromPrivateKey(pk, networkPrefix);
+        //     })
+        // );
 
         this.shortAddress$ = this.address$.pipe(
             map((address) => {
@@ -53,7 +51,13 @@ export class MainComponent {
 
         const timer$ = timer(0, 4000);
 
-        const balances$ = combineLatest([this.address$, this.storage.selectedNetwork$, timer$]).pipe(
+        const combination = [
+            this.address$,
+            //this.storage.selectedNetwork$,
+            of('mainnet'),
+            timer$
+        ];
+        const balances$ = combineLatest(combination).pipe(
             switchMap((x: any[]) => {
                 const [address, networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
@@ -94,14 +98,6 @@ export class MainComponent {
         );
     }
 
-    selectNetwork(value: IMenuItem) {
-        this.storage.selectedNetwork$.next(value);
-    }
-
-    selectUser(value: string) {
-        // this.currentAccount.accountName = value;
-    }
-
     copyAddress() {
         // TODO: probable better to do that without observables, by just assiging address to MainComponent field
         this.address$.pipe(
@@ -111,10 +107,6 @@ export class MainComponent {
             this.clipboardService.copyToClipboard(address);
             this.copyMessage = 'Copied ✔';
         });
-    }
-
-    logout() {
-        this.authService.logout();
     }
 
 

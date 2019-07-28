@@ -1,35 +1,27 @@
 import {Component, OnInit} from '@angular/core';
-import { Observable, of, timer } from 'rxjs';
-import {map, shareReplay, switchMap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import {Observable, of, timer} from 'rxjs';
+import {map, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
     selector: 'app-history-component',
     templateUrl: './history-component.component.html',
     styleUrls: ['./history-component.component.css']
 })
-export class HistoryComponentComponent implements OnInit {
+export class HistoryComponentComponent {
 
-    hist$: Observable<any>;
+    history$: Observable<any>;
 
     constructor(private http: HttpClient) {
 
-        const rawHistory$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://dex.binance.org/api/v1/transactions?address=bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu&startTime=1555707600000');
-            })
+        const address = 'bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu';
+        const startTime = '1555707600000';
+        const hardcodedUrl = `https://dex.binance.org/api/v1/transactions?address=${address}&startTime=${startTime}`;
+
+        this.history$ = timer(0, 60000).pipe(
+            switchMapTo(this.http.get(hardcodedUrl)),
+            pluck('tx'),
+            // TODO: share replay and so on
         );
-
-        this.hist$ = rawHistory$.pipe(
-            map((x: any) => {
-                return x;
-            })
-        )
-
-        this.hist$.subscribe()
-
-    }
-
-    ngOnInit() {
     }
 }

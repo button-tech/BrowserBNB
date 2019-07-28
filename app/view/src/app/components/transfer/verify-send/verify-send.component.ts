@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { ITransaction, StorageService } from '../../../services/storage.service';
-import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
-import { BinanceService } from '../../../services/binance.service';
-import { map, pluck, shareReplay, switchMap, take } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {combineLatest, Observable, timer} from 'rxjs';
+import {BinanceService} from '../../../services/binance.service';
+import {map, shareReplay, switchMap, take} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
+import {ITransaction, StateService} from '../../../services/state.service';
 
 @Component({
     selector: 'app-verify-send',
     templateUrl: './verify-send.component.html',
     styleUrls: ['./verify-send.component.css']
 })
-export class VerifySendComponent implements OnInit {
+export class VerifySendComponent {
 
     sendObj: ITransaction;
     simpleFee$: Observable<number>;
@@ -18,17 +18,12 @@ export class VerifySendComponent implements OnInit {
     fiatAmount$: Observable<string>;
     totalAmount$: Observable<number>;
     fiatTotal$: Observable<string>;
-    privateKey$: Observable<string>;
 
-    constructor(private storage: StorageService, private bncService: BinanceService, private http: HttpClient) {
-
-        this.privateKey$ = this.storage.currentAccount$.pipe(
-            pluck('privateKey')
-        );
+    constructor(private stateService: StateService, private bncService: BinanceService, private http: HttpClient) {
 
         const timer$ = timer(0, 4000);
 
-        const rawFee$ = combineLatest([this.storage.selectedNetwork$, timer$]).pipe(
+        const rawFee$ = combineLatest([this.stateService.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
@@ -95,28 +90,17 @@ export class VerifySendComponent implements OnInit {
         );
     }
 
-
-    ngOnInit() {
-        this.sendObj = this.storage.currentTransaction;
-    }
-
-
     verify() {
-        combineLatest([this.privateKey$, this.storage.selectedNetwork$]).pipe(
-            map((x: any[]) => {
-                const [privateKey, network] = x;
-                return this.bncService.sendTransaction(
-                    this.sendObj.Amount,
-                    this.sendObj.AddressTo,
-                    network.val,
-                    network.networkPrefix,
-                    this.sendObj.Symbol,
-                    privateKey,
-                    this.sendObj.Memo);
-            }),
-            take(1)
-        ).subscribe();
-
+        // TODO: FIX privateKey
+        // const privateKey = '';
+        // return this.bncService.sendTransaction(
+        //     this.sendObj.Amount,
+        //     this.sendObj.AddressTo,
+        //     network.val,
+        //     network.networkPrefix,
+        //     this.sendObj.Symbol,
+        //     privateKey,
+        //     this.sendObj.Memo);
     }
 
 }

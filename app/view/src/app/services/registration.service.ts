@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
-import { createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum } from './binance-crypto';
-import { getAddressFromPrivateKey } from '../../assets/binance/bnbSDK';
-import { StorageService } from './storage.service';
+import {Injectable} from '@angular/core';
+import {createMnemonic, getSHA3hashSum} from './binance-crypto';
+import {StorageService} from './storage.service';
 import * as passworder from 'browser-passworder';
+import {StateService} from './state.service';
 
 @Injectable()
 export class RegistrationService {
     mnemonic: any = null;
     private passHash: string;
 
-    constructor(private storageService: StorageService) {
+    constructor(private storageService: StorageService, private stateService: StateService) {
     }
 
     get hasMnemonic(): boolean {
@@ -40,23 +40,24 @@ export class RegistrationService {
         }
 
         // await this.addAccount(this.mnemonic, repeatedPassword);
-
         // const privateKey = getPrivateKeyFromMnemonic(this.mnemonic);
         // const address = getAddressFromPrivateKey(privateKey);
         // const keystore = getKeystoreFromPrivateKey(privateKey, password);
 
         return new Promise(async (resolve) => {
 
+            this.stateService.setPassword(repeatedPassword);
+
             const blob: ArrayBuffer = await passworder.encrypt(repeatedPassword, {seedPhrase: this.mnemonic});
-            this.storageService.registerAccount(blob, getSHA3hashSum(password))
+            this.storageService.registerAccount(blob, getSHA3hashSum(repeatedPassword))
                 .then(
-                    () => resolve(true),
+                    () => {
+                        this.cleanup();
+                        resolve(true);
+                    },
                     () => resolve(false)
                 );
         });
-
-        this.cleanup();
-        return true;
     }
 
     // async finishImport(password: string): Promise<boolean> {

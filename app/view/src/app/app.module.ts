@@ -38,6 +38,7 @@ import {MemoInputComponent} from './components/transfer/send/forms/memo-input/me
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
 import {SettingsComponent} from './components/main/settings/settings.component';
+import {StateService} from './services/state.service';
 
 
 @NgModule({
@@ -81,6 +82,7 @@ import {SettingsComponent} from './components/main/settings/settings.component';
         AuthService,
         AuthGuardService,
         StorageService,
+        StateService,
         ClipboardService,
         CurrentAccountService,
         BinanceService

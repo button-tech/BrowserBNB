@@ -1,38 +1,37 @@
 import {Injectable} from '@angular/core';
-import {IAccount, IStorageData, StorageService} from './storage.service';
-import {filter, tap} from 'rxjs/operators';
+import {IStorageData, StorageService} from './storage.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CurrentAccountService {
 
-    account: IAccount = null;
+    // account: IAccount = null;
     index: number = null;
     private storageData: IStorageData;
 
     constructor(private storageService: StorageService) {
-        this.storageService.storageData$.pipe(
-            filter((data) => {
-                return data.AccountList.length > 0;
-            }),
-            tap((data: IStorageData) => {
-                this.storageData = data;
-                this.index = data.CurrentAccountIdx;
-                this.account = this.storageData.AccountList[this.index];
-            })
-        ).subscribe();
+        // this.storageService.storageData$.pipe(
+        //     filter((data) => {
+        //         return data.AccountList.length > 0;
+        //     }),
+        //     tap((data: IStorageData) => {
+        //         this.storageData = data;
+        //         this.index = data.CurrentAccountIdx;
+        //         this.account = this.storageData.AccountList[this.index];
+        //     })
+        // ).subscribe();
     }
 
     get accountName(): string {
-        return this.account.accountName;
+        return "";
+        // return this.account.accountName;
     }
 
     set accountName(value: string) {
-        this.account.accountName = value;
-
-        this.storageData.AccountList[this.index] = this.account;
-        this.storageService.updateStorage(this.storageData);
+        // this.account.accountName = value;
+        // this.storageData.AccountList[this.index] = this.account;
+        // this.storageService.updateStorage(this.storageData);
     }
 
     // private _privateKey: string;

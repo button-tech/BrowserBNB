@@ -2,16 +2,14 @@
     <app-menu-top></app-menu-top>
     <div class="row text-center">
         <div class="col-12">
-            <button [satPopoverAnchor]="name" (click)="name.open()" class="btn btn-sm btn-link" id="editButton">
-                {{ (this.storage.currentAccount$ | async).accountName }}
-                <fa id="editIcon" name="edit" size="sm"></fa>
-            </button>
-            <br>
-            <button [satPopoverAnchor]="p"
+            <button style="margin-top: 0.3em; margin-bottom: 0.9em;" [satPopoverAnchor]="p"
                     (mouseenter)="p.open()"
                     (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
                     (click)="this.copyAddress();"
                     class="btn btn-sm btn-link hover-anchor">
+                <p style="margin-top: 0 !important; margin-bottom: -0.5em !important" id="editButton">
+                    {{ currentAccountName }}
+                </p>
                 {{this.shortAddress$ | async}}
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
@@ -24,9 +22,6 @@
             </div>
             <div class="arrow">
             </div>
-        </sat-popover>
-        <sat-popover #name hasBackdrop forceAlignment>
-            <app-edit-form (update)="this.currentAccount.accountName = $event"></app-edit-form>
         </sat-popover>
 
 

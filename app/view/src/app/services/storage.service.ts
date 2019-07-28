@@ -1,15 +1,30 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {filter, map, shareReplay, switchMap, take} from 'rxjs/operators';
-import {BehaviorSubject, concat, from, Observable, of, Subject, Subscription} from 'rxjs';
-import {BinanceService} from "./binance.service";
+import {map, shareReplay, switchMap, take} from 'rxjs/operators';
+import {concat, from, Observable, of, Subject, Subscription} from 'rxjs';
+import {BinanceService} from './binance.service';
 
 export interface IStorageData {
-    SeedPhrase: ArrayBuffer;
+    EncryptedSeedPhrase: ArrayBuffer | null;
     CurrentAccountIdx: number;
     PassHash: string;
+    NetworkPrefix: string;
+    NetworkEndpoint: string;
+    // TODO:  we can use address or address hash mapping, note: we should make mapping for both main net and test net address,
+    // or event private keys
+    NamesMapping: { [address: string]: string }
 }
+
+const emptyStorage = Object.freeze({
+    EncryptedSeedPhrase: null,
+    CurrentAccountIdx: 0,
+    MaxAccount: 0,
+    PassHash: null,
+    NetworkPrefix: 'bnb',
+    NetworkEndpoint: 'https://dex.binance.org',
+    NamesMapping: {}
+});
 
 const STORAGE_KEY = 'all';
 
@@ -50,7 +65,7 @@ export class StorageService {
 
         this.hasAccount$ = this.storageData$.pipe(
             map((data: IStorageData) => {
-                return data.AccountList.length > 0;
+                return !!data.EncryptedSeedPhrase;
             })
         );
 
@@ -80,13 +95,7 @@ export class StorageService {
     async initStorage(): Promise<void> {
         const content: string = await this.getFromStorageRaw();
         if (!content) {
-            const defaultValue: IStorageData = {
-                SeedPhrase: new ArrayBuffer(0),
-                CurrentAccountIdx: 0,
-                PassHash: ''
-            };
-
-            const jsonText = JSON.stringify(defaultValue);
+            const jsonText = JSON.stringify(emptyStorage);
             return this.saveToStorageRaw(jsonText);
         }
     }
@@ -168,26 +177,19 @@ export class StorageService {
         // data.CurrentAccountIdx = data.AccountList.length - 1;
 
         const data: IStorageData = {
-            SeedPhrase: blob,
-            CurrentAccountIdx: 0,
-            PassHash: passHash
+            ...emptyStorage,
+            PassHash: passHash,
+            EncryptedSeedPhrase: blob
         };
 
         //
-
         const jsonText = JSON.stringify(data);
         // await this.saveToStorage(data);
         this.saveToStorageRaw(jsonText);
     }
 
     reset(): Promise<void> {
-        const defaultValue: IStorageData = {
-            SeedPhrase: new ArrayBuffer(0),
-            CurrentAccountIdx: 0,
-            PassHash: ''
-        };
-
-        const jsonText = JSON.stringify(defaultValue);
+        const jsonText = JSON.stringify(emptyStorage);
         return this.saveToStorageRaw(jsonText);
     }
 }

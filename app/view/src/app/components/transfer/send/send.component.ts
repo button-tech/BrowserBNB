@@ -29,9 +29,9 @@ export class SendComponent implements OnDestroy {
     }
 
     checkForm(): void {
-        const {Symbol, Amount, AddressTo} = this.storage.currentTransaction;
-        const networkPrefix = this.storage.selectedNetwork$.getValue().networkPrefix;
-        this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
+        // const {Symbol, Amount, AddressTo} = this.storage.currentTransaction;
+        // const networkPrefix = this.storage.selectedNetwork$.getValue().networkPrefix;
+        // this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
     }
 
     ngOnDestroy(): void {

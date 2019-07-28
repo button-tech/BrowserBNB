@@ -1,14 +1,15 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from "rxjs";
-import {map, pluck, shareReplay, switchMap, take, takeUntil} from "rxjs/operators";
-import {CurrentAccountService} from "../../../../../services/current-account.service";
-import {StorageService} from "../../../../../services/storage.service";
-import {AuthService} from "../../../../../services/auth.service";
-import {HttpClient} from "@angular/common/http";
-import {ClipboardService} from "../../../../../services/clipboard.service";
-import {BinanceService} from "../../../../../services/binance.service";
-import {getAddressFromPrivateKey} from "../../../../../services/binance-crypto";
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from 'rxjs';
+import {map, pluck, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import {CurrentAccountService} from '../../../../../services/current-account.service';
+import {StorageService} from '../../../../../services/storage.service';
+import {AuthService} from '../../../../../services/auth.service';
+import {HttpClient} from '@angular/common/http';
+import {ClipboardService} from '../../../../../services/clipboard.service';
+import {BinanceService} from '../../../../../services/binance.service';
+import {getAddressFromPrivateKey} from '../../../../../services/binance-crypto';
+import {StateService} from '../../../../../services/state.service';
 
 
 interface MenuItem {
@@ -28,7 +29,7 @@ export class CoinsSelectComponent implements OnInit {
     heroForm: FormGroup;
 
     constructor(private fb: FormBuilder,
-                public storage: StorageService,
+                public stateService: StateService,
                 private authService: AuthService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
@@ -36,23 +37,22 @@ export class CoinsSelectComponent implements OnInit {
 
         const timer$ = timer(0, 4000);
 
-        const {currentAccount$, selectedNetwork$} = this.storage;
+        const currentAccount = this.stateService.currentAccount;
+        const selectedNetwork = this.stateService.selectedNetwork;
+        const address = this.stateService.currentAccount.address;
 
         // TODO: address should come from state service
-        const address$ = combineLatest([currentAccount$, selectedNetwork$]).pipe(
-            map((x: any[]) => {
-                const [account, network] = x;
-                const pk = account.privateKey;
-                const networkPrefix = network.networkPrefix;
-                return getAddressFromPrivateKey(pk, networkPrefix);
-            })
-        );
+        map((x: any[]) => {
+            const [account, network] = x;
+            const pk = account.privateKey;
+            const networkPrefix = network.networkPrefix;
+            return getAddressFromPrivateKey(pk, networkPrefix);
+        });
 
         // TODO: address should come from state service
-        const balances$ = combineLatest([address$, this.storage.selectedNetwork$, timer$]).pipe(
+        const balances$ = combineLatest([timer$]).pipe(
             switchMap((x: any[]) => {
-                const [address, networkMenuItem] = x;
-                const endpoint = networkMenuItem.val;
+                const endpoint = selectedNetwork.val;
                 return this.bncService.getBalance(address, endpoint);
             }),
             shareReplay(1)
@@ -80,6 +80,7 @@ export class CoinsSelectComponent implements OnInit {
             agree: null
         });
 
-        this.storage.currentTransaction.Symbol = this.heroForm.getRawValue().heroId;
+        // TODO: fix - by passing value to the next from
+        // this.storage.currentTransaction.Symbol = this.heroForm.getRawValue().heroId;
     }
 }
