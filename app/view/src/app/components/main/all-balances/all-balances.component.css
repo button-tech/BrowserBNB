@@ -1,0 +1,19 @@
+
+.btn-back {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+}
+
+.btn-back:hover {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+}
+
+.btn-back:active {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+
+}

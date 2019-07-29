@@ -38,6 +38,8 @@ import {MemoInputComponent} from './components/transfer/send/forms/memo-input/me
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
 import {SettingsComponent} from './components/main/settings/settings.component';
+import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
+import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 
 
 @NgModule({
@@ -61,7 +63,9 @@ import {SettingsComponent} from './components/main/settings/settings.component';
         MemoInputComponent,
         VerifySendComponent,
         AllBalancesComponent,
-        SettingsComponent
+        SettingsComponent,
+        NetworksComponent,
+        AccountsComponent
     ],
     imports: [
         BrowserModule,
