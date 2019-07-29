@@ -2,6 +2,7 @@
     background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
     color: white !important;
     font-weight: bold !important;
+    box-shadow: none !important;
 }
 
 body {
@@ -15,6 +16,7 @@ body {
     color: rgb(240, 185, 11) !important;
     background: none !important;
     font-weight: bold !important;
+    box-shadow: none !important;
 }
 
 .btn-binance-outline[disabled] {

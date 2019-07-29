@@ -1,20 +1,24 @@
-<div style="margin-top: -1.4em; " class="">
-    <div style="margin-top: 1.4em; margin-left: 0em; border-bottom: 1.5px solid #c5c5c5;;     padding-bottom: 1.2em;"
+<div style="margin-top: -1.4em; padding-left: 0.4em; padding-right: 0.4em " class="">
+    <div style="margin-top: 1.4em; margin-left: 0em; border-bottom:  0.0625rem solid rgba(234, 236, 239, 0.5); padding-bottom: 1.2em;"
          class="container-fluid" *ngFor="let tx of (hist$| async).tx">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 6fr 1fr; height: 30px;  align-content: center">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
-                <small style="font-size: 11px !important; font-weight: 500">{{tx.timeStamp | date: 'dd/MM/yyyy' ||
-                    ''}}
+                <small style="font-size: 11px !important; font-weight: 500;     color: rgb(132, 142, 156);
+">{{tx.timeStamp | date: 'dd/MM/yyyy' ||
+                ''}}
                 </small>
             </div>
-            <div style="grid-column: 1; grid-row: 1/3 !important; align-self: center; align-content: center; align-items: center; margin-bottom: -1.5em;">
+            <div style="grid-column: 1; grid-row: 1/3 !important; align-self: center; align-content: center; align-items: center; margin-bottom: -1.5em;     color: rgb(132, 142, 156);
+">
                 <img src="../../../../assets/icons/icon48.png" alt="info" width="25" height="25">
             </div>
-            <div style="grid-column: 2; grid-row: 2; font-weight: bolder;  font-weight: bold;color: #5a5a5a;
+            <div style="grid-column: 2; grid-row: 2; font-weight: bolder;  font-weight: bold;     color: rgb(33, 40, 51)
+
     font-size: 13px">{{tx.txType }}
             </div>
-            <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em;">
-                <small>{{tx.value || ''}} {{tx.txAsset || ''}}</small>
+            <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em;     color: rgb(132, 142, 156);
+">
+                <small style="   color: rgb(132, 142, 156);">{{tx.value || ''}} {{tx.txAsset || ''}}</small>
             </div>
             <div class="text-center"
                  style="grid-column: 3; grid-row: 3; margin-top: -0.9em; margin-right: -2em; margin-bottom: 0.2em">

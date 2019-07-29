@@ -1,8 +1,8 @@
 <div class="col-12">
-    <h3 style="font-family: 'Montserrat', sans-serif !important; font-weight: 600; color: black; margin-top: 2.5em"
+    <h3 style="font-family: 'Montserrat', sans-serif !important; font-weight: 600; color: rgb(33, 40, 51); margin-top: 2.5em"
         class="card-title">
         Save your mnemonic</h3>
-    <p style="margin: 1em; font-size: 12px; font-weight: bold; color: grey">{{this.mnemonic}}</p>
+    <p style="margin: 1em; font-weight: bolder; font-size: 13px; color: rgb(72, 81, 93);">{{this.mnemonic}}</p>
     <button [satPopoverAnchor]="copied"
             (mouseenter)="this.copyMessage = 'Copy mnemonic';copied.open()"
             (mouseleave)="copied.close();"
