@@ -4,9 +4,7 @@ import {getAddressFromPrivateKey} from './binance-crypto';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, map} from 'rxjs/operators';
-import {StorageService} from './storage.service';
-
-
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 
 @Injectable({
     providedIn: 'root'
@@ -16,19 +14,9 @@ export class BinanceService {
     binanceInstance: any;
     binanceClient: any;
 
-    endpointList = {
-        'MAINNET': 'https://dex.binance.org/',
-        'MAINNET_ASIA': 'https://dex-asiapacific.binance.org/',
-        'MAINNET_ATLANTIC': 'https://dex-atlantic.binance.org/',
-        'MAINNET_EUROPE': 'https://dex-european.binance.org/',
-        'TESTNET': 'https://testnet-dex.binance.org/',
-        'TESTNET_ASIA': 'https://testnet-dex-asiapacific.binance.org/',
-        'TESTNET_ATLANTIC': 'https://testnet-dex-atlantic.binance.org/'
-    };
-
     constructor(private http: HttpClient) {
         this.binanceInstance = Binance.initBNB();
-        this.initClients(this.endpointList.TESTNET).then((client) => {
+        this.initClients(NETWORK_ENDPOINT_MAPPING.TESTNET).then((client) => {
             this.binanceClient = client;
         });
     }

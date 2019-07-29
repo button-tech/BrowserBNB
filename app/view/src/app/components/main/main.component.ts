@@ -1,12 +1,11 @@
 import {Component} from '@angular/core';
 import {combineLatest, Observable, of, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import {map, shareReplay, switchMap, switchMapTo, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {StorageService} from '../../services/storage.service';
 import {CurrentAccountService} from '../../services/current-account.service';
 import {BinanceService} from '../../services/binance.service';
-import {getAddressFromPrivateKey} from '../../services/binance-crypto';
 
 
 @Component({
@@ -54,7 +53,7 @@ export class MainComponent {
         const combination = [
             this.address$,
             //this.storage.selectedNetwork$,
-            of('mainnet'),
+            of('bnb'),
             timer$
         ];
         const balances$ = combineLatest(combination).pipe(
@@ -80,10 +79,13 @@ export class MainComponent {
             map((bnbAmount) => `${bnbAmount} BNB`),
         );
 
+
+        const srcCurrency = 'BNB';
+        const dstCurrency = 'USD';
+        const ratesUrl = `https://min-api.cryptocompare.com/data/price?fsym=${srcCurrency}&tsyms=${dstCurrency}`;
+
         const bnb2usdRate$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
+            switchMapTo(this.http.get(ratesUrl)),
             map((resp: any) => resp.USD)
         );
 

@@ -1,38 +1,33 @@
 // src/app/auth/auth-guard.service.ts
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Router, CanActivate} from '@angular/router';
 import {AuthService} from './auth.service';
 import {StorageService} from './storage.service';
+import {Observable} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 
 @Injectable()
-export class AuthGuardService implements CanActivate, OnDestroy {
-
-    private hasAccount;
-    private subscription;
+export class AuthGuardService implements CanActivate {
 
     constructor(private auth: AuthService, private storageService: StorageService, private router: Router) {
-
-        this.subscription = this.storageService.hasAccount$.subscribe((x) => {
-            this.hasAccount = x;
-        });
     }
 
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
+    canActivate(): Observable<boolean> {
+        return this.storageService.hasAccountOnce$().pipe(
+            map((hasAccount) => {
 
-    canActivate(): boolean {
+                if (!hasAccount) {
+                    this.router.navigate(['/greeter']);
+                    return false;
+                }
 
-        if (!this.hasAccount) {
-            this.router.navigate(['/greeter']);
-            return;
-        }
+                if (!this.auth.isLoggedIn) {
+                    this.router.navigate(['/unlock']);
+                    return false;
+                }
 
-        if (!this.auth.isLoggedIn) {
-            this.router.navigate(['/unlock']);
-            return false;
-        }
-
-        return true;
+                return true;
+            })
+        );
     }
 }
