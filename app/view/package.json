@@ -29,6 +29,7 @@
     "@types/chrome": "0.0.86",
     "ajv": "^6.10.0",
     "angular-font-awesome": "^3.1.2",
+    "angularx-qrcode": "^1.6.4",
     "bindings": "^1.5.0",
     "browserify-sign": "^4.0.4",
     "cipher-base": "^1.0.4",

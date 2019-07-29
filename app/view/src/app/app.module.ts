@@ -1,3 +1,4 @@
+import {QRCodeModule} from 'angularx-qrcode';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {ToastrModule} from 'ng6-toastr-notifications';
@@ -80,7 +81,7 @@ import {RecieveComponent} from './components/main/recieve/recieve.component';
         MatInputModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
-        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule,
+        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, QRCodeModule
     ],
     providers: [
         RegistrationService,

@@ -12,9 +12,12 @@ import {ClipboardService} from "../../../services/clipboard.service";
 export class RecieveComponent implements OnInit {
 
     copyMessage = 'Copy to clipboard';
+    myAngularxQrCode: string = null;
 
     constructor(private location: Location, private clipboardService: ClipboardService,) {
+        this.myAngularxQrCode = 'Your QR code data string';
     }
+
 
     ngOnInit() {
     }
