@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import { Observable, of, timer } from 'rxjs';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, of, timer} from 'rxjs';
 import {map, shareReplay, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 
@@ -8,9 +8,10 @@ import {HttpClient} from "@angular/common/http";
     templateUrl: './history-component.component.html',
     styleUrls: ['./history-component.component.css']
 })
-export class HistoryComponentComponent implements OnInit {
+export class HistoryComponentComponent implements OnInit, OnDestroy {
 
     hist$: Observable<any>;
+    rate$ = of(1);
 
     constructor(private http: HttpClient) {
 
@@ -24,7 +25,7 @@ export class HistoryComponentComponent implements OnInit {
             map((x: any) => {
                 return x;
             })
-        )
+        );
 
         this.hist$.subscribe()
 
@@ -32,4 +33,16 @@ export class HistoryComponentComponent implements OnInit {
 
     ngOnInit() {
     }
+
+    ngOnDestroy() {
+    }
+
+    convert2fiat(sum: string, asset: string): string {
+        const value = String((Number(28) * Number(sum)).toFixed(2));
+        if (value === '0.00' || asset !== 'BNB') {
+            return ''
+        }
+        return '$' + value;
+    }
+    
 }
