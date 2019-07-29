@@ -13,7 +13,7 @@
 
 
 .menu-item:first-child {
-    padding-top: 6px;
+    padding-top: 5px;
     border-top-left-radius: 100px;
     border-top-right-radius: 100px;
 }
