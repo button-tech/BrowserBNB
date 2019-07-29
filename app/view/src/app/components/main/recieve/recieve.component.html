@@ -1,0 +1,46 @@
+<div class="container-fluid">
+    <app-menu-top></app-menu-top>
+</div>
+<div class="row">
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+        <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
+            <fa name="arrow-left" size="sm"></fa>
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+        <img src="../../../../assets/icons/icon128.png" alt="">
+    </div>
+    <div class="text-center"
+         style="padding-bottom: 3em; padding-right: 0; padding-left: 0em; margin-left: 0; margin-right: 0">
+        <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; margin-left: 4em; box-shadow: none; border-radius: 2px"
+                [satPopoverAnchor]="p"
+                (mouseenter)="p.open()"
+                (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
+                (click)="this.copyAddress();" class="button-qr btn btn-default">
+            {{'bnb16ynltur5r4ap7n52fvlfjjrpuuxc0q855jqeqe'}}
+            <fa id="copyButton" name="copy" size="sm"></fa>
+        </button>
+    </div>
+    <div style="border-top:  0.0625rem solid rgba(234, 236, 239, 0.5);" class="text-center">
+        <div style="margin-left: 4em">
+            <button style="width: 250px" class="btn-binance-outline btn-lg">
+                View on explorer
+            </button>
+            <br>
+            <br>
+            <!--            <button style="width: 250px" class="btn-binance-outline btn-lg">-->
+            <!--                Buy BNB-->
+            <!--            </button>-->
+        </div>
+
+    </div>
+    <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
+                 verticalAlign="below">
+        <div id="popup" class="tooltip-wrapper">
+            {{this.copyMessage}}
+        </div>
+    </sat-popover>
+</div>
