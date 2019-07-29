@@ -15,6 +15,7 @@ import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
 import {SettingsComponent} from "./components/main/settings/settings.component";
+import {RecieveComponent} from "./components/main/recieve/recieve.component";
 
 const routes: Routes = [
     {
@@ -25,6 +26,11 @@ const routes: Routes = [
     {
         path: 'main',
         component: MainComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'receive',
+        component: RecieveComponent,
         canActivate: [AuthGuard]
     },
     {

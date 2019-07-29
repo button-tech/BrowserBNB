@@ -40,6 +40,7 @@ import {AllBalancesComponent} from './components/main/all-balances/all-balances.
 import {SettingsComponent} from './components/main/settings/settings.component';
 import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
+import {RecieveComponent} from './components/main/recieve/recieve.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import {AccountsComponent} from './components/main/menu-top/accounts/accounts.co
         AllBalancesComponent,
         SettingsComponent,
         NetworksComponent,
-        AccountsComponent
+        AccountsComponent,
+        RecieveComponent
     ],
     imports: [
         BrowserModule,
