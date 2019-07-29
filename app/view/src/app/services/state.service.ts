@@ -23,16 +23,26 @@ export interface IMenuItem {
 
 export interface IUiAccount extends IStorageAccount {
     name: string;
+    shortMainnetAddress: string;
+    shortTestnetAddress: string;
 }
 
 export interface IUiState {
     accounts: IUiAccount[],
     activeAccount: IUiAccount,
-    network: NetworkType
+    network: NetworkType,
+
+    // Maintain that for correct storage update
+    storageData: IStorageData
+}
+
+export interface IUiBalance {
+    bnb: string,
+    bnbFiat: string
 }
 
 @Injectable()
-export class StateService implements OnDestroy {
+export class StateService {
 
     // TODO: should be used only for UI, for traking purposes we should define another model
     // currentTransaction: ITransaction = {
@@ -46,32 +56,51 @@ export class StateService implements OnDestroy {
     emptyState: IUiState = Object.freeze({
         accounts: [],
         activeAccount: null,
-        network: null
+        network: null,
+
+        //
+        storageData: null
     });
 
     selectedNetwork$: BehaviorSubject<IMenuItem>;
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(this.emptyState);
-    password$: BehaviorSubject<string> = new BehaviorSubject('');
 
-    public get uiState(): IUiState {
-        return this.uiState$.getValue();
+    balance$: Observable<IUiBalance> = of({
+        bnb: 'pending',
+        bnbFiat: 'pending'
+    });
+
+    getBalancePipeline$(address: string): Observable<IUiBalance> {
+        return of({
+            bnb: 'pending',
+            bnbFiat: 'pending'
+        });
     }
 
-    networkMenu: IMenuItem[];
 
-    public get selectedNetwork(): IMenuItem {
-        return this.selectedNetwork$.getValue();
+    get uiState(): IUiState {
+        return this.uiState$.getValue();
     }
 
     private password: string = '';
 
+    static toShotAddress(address: string): string {
+        return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
+    }
+
     initState(data: IStorageData, password: string) {
 
         const accounts = data.accounts.map((account) => {
+
             const name = data.address2name[account.addressMainnet];
+            const shortMainnetAddress = StateService.toShotAddress(account.addressMainnet);
+            const shortTestnetAddress = StateService.toShotAddress(account.addressTestnet);
+
             return {
                 ...account,
-                name
+                name,
+                shortMainnetAddress,
+                shortTestnetAddress
             };
         });
 
@@ -82,7 +111,8 @@ export class StateService implements OnDestroy {
         const uiState: IUiState = {
             accounts,
             activeAccount: activeAccount,
-            network: data.selectedNetwork
+            network: data.selectedNetwork,
+            storageData: data
         };
 
         this.uiState$.next(uiState);
@@ -94,61 +124,57 @@ export class StateService implements OnDestroy {
         this.password = '';
     }
 
+    addAccount(): void {
+        // Use hd wallet ...
+        // const newStorageState: IStorageData = {
+        //     ...this.uiState.storageData,
+        //     selectedAddress: toAccount.addressMainnet
+        // };
+        //
+        // const newUiState = {
+        //     ...this.uiState,
+        //     activeAccount: toAccount
+        // };
+        // this.uiState$.next(newUiState);
+        //
+        // this.storageService.encryptAndSave(newStorageState, this.password);
+    }
 
-    private subscription: Subscription;
+    switchAccount(toAccount: IUiAccount): void {
+
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            selectedAddress: toAccount.addressMainnet
+        };
+
+        const newUiState = {
+            ...this.uiState,
+            activeAccount: toAccount
+        };
+        this.uiState$.next(newUiState);
+
+        //this.getBalancePipeline$();
+
+        this.storageService.encryptAndSave(newStorageState, this.password);
+    }
+
+    switchNetwork(network: NetworkType): void {
+
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            selectedNetwork: network
+        };
+
+        const newUiState = {
+            ...this.uiState,
+            selectedNetwork: network
+        };
+        this.uiState$.next(newUiState);
+
+        this.storageService.encryptAndSave(newStorageState, this.password);
+    }
 
     constructor(private storageService: StorageService, private bncService: BinanceService) {
-
-        // const storageData$ = this.storageService.storageData$;
-        //
-        // type CombinedData = [IStorageData, string];
-        // const source = [storageData$, this.password$];
-
-        // const seedPhrase$: Observable<string> = combineLatest(source).pipe(
-        //     filter((x: CombinedData) => {
-        //         const [data, password] = x; // Допустим тут менять только если поменялся пароль и storage ??
-        //         return !!(data.EncryptedSeedPhrase && password);
-        //     }),
-        //     switchMap((x: CombinedData) => {
-        //         const [data, password] = x;
-        //         return from(passworder.decrypt(password, data.EncryptedSeedPhrase));
-        //     }),
-        //     map((decrypted: any) => {
-        //         return decrypted.seedPhrase as string;
-        //     })
-        // );
-
-        // const uiState$ = combineLatest([seedPhrase$, storageData$]).pipe(
-        //     map((x) => {
-        //         const [seedPhrase, storageData] = x;
-        //         const {MaxAccount, CurrentAccountIdx, NetworkPrefix, NamesMapping} = storageData;
-        //
-        //         const accounts = [];
-        //         for (let i = 0; i <= MaxAccount; i++) {
-        //             const privateKey = getPrivateKeyFromMnemonic(seedPhrase, i);
-        //             const address = getAddressFromPrivateKey(privateKey, NetworkPrefix);
-        //             const accountName = NamesMapping[address] || `Account ${i + 1}`;
-        //             accounts.push({
-        //                 idx: i,
-        //                 accountName,
-        //                 address,
-        //                 privateKey
-        //             });
-        //         }
-        //
-        //         const activeAccount = accounts[CurrentAccountIdx] || accounts[0];
-        //
-        //         return {
-        //             accounts: accounts,
-        //             activeAccount,
-        //             networkPrefix: NetworkPrefix
-        //         };
-        //     })
-        // );
-        // this.subscription = uiState$.subscribe((uiState: IUiState) => {
-        //     this.uiState$.next(uiState);
-        // });
-        //seedPhrase$.subscribe();
 
         this.networkMenu = [
             {
@@ -163,10 +189,6 @@ export class StateService implements OnDestroy {
             },
         ];
 
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
-    }
-
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        // this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
     }
 }

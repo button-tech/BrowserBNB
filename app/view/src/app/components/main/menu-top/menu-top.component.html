@@ -15,7 +15,7 @@
                 <hr class="pop-hr">
                 <div id="scrollableUsers">
                     <div class="item-of"
-                         *ngFor="let item of AccountList; let i = index; "
+                         *ngFor="let item of (this.storage.storageData$ | async).AccountList; let i = index; "
                          style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
                         <div (click)="menuUsers.close()"
                              style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
@@ -60,7 +60,6 @@
 
     </div>
 
-    <!--
     <div class="col">
         <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
                 class="btn btn-link btn-outline  btn-sm"
@@ -84,5 +83,4 @@
             <fa name="cog" size="sm"></fa>
         </button>
     </div>
-    -->
 </div>

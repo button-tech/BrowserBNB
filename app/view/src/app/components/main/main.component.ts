@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
-import {combineLatest, Observable, of, timer} from 'rxjs';
+import {combineLatest, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap, switchMapTo, take, takeUntil} from 'rxjs/operators';
+import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {StorageService} from '../../services/storage.service';
 import {CurrentAccountService} from '../../services/current-account.service';
 import {BinanceService} from '../../services/binance.service';
-
+import {getAddressFromPrivateKey} from '../../services/binance-crypto';
 
 @Component({
     selector: 'app-main',
@@ -21,24 +21,20 @@ export class MainComponent {
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
 
-    currentAccountName = 'Hi, name here';
-
     constructor(public currentAccount: CurrentAccountService,
                 public storage: StorageService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
     ) {
-
-        this.address$ = of('bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu');
-        //     combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
-        //     map((x: any[]) => {
-        //         const [account, network] = x;
-        //         const pk = account.privateKey;
-        //         const networkPrefix = network.networkPrefix;
-        //         return getAddressFromPrivateKey(pk, networkPrefix);
-        //     })
-        // );
+        this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
+            map((x: any[]) => {
+                const [account, network] = x;
+                const pk = account.privateKey;
+                const networkPrefix = network.networkPrefix;
+                return getAddressFromPrivateKey(pk, networkPrefix);
+            })
+        );
 
         this.shortAddress$ = this.address$.pipe(
             map((address) => {
@@ -50,13 +46,7 @@ export class MainComponent {
 
         const timer$ = timer(0, 4000);
 
-        const combination = [
-            this.address$,
-            //this.storage.selectedNetwork$,
-            of('bnb'),
-            timer$
-        ];
-        const balances$ = combineLatest(combination).pipe(
+        const balances$ = combineLatest([this.address$, this.storage.selectedNetwork$, timer$]).pipe(
             switchMap((x: any[]) => {
                 const [address, networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
@@ -79,13 +69,10 @@ export class MainComponent {
             map((bnbAmount) => `${bnbAmount} BNB`),
         );
 
-
-        const srcCurrency = 'BNB';
-        const dstCurrency = 'USD';
-        const ratesUrl = `https://min-api.cryptocompare.com/data/price?fsym=${srcCurrency}&tsyms=${dstCurrency}`;
-
         const bnb2usdRate$ = timer(0, 60000).pipe(
-            switchMapTo(this.http.get(ratesUrl)),
+            switchMap(() => {
+                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
+            }),
             map((resp: any) => resp.USD)
         );
 
@@ -110,6 +97,4 @@ export class MainComponent {
             this.copyMessage = 'Copied ✔';
         });
     }
-
-
 }
