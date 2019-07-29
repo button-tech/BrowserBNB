@@ -19,18 +19,19 @@
                          style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
                         <div (click)="menuUsers.close()"
                              style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
-                            <button class="btn btn-just-icon btn-round btn-binance-outline"> {{item.accountName.charAt(0).toUpperCase()}}</button>
+                            <button class="btn btn-just-icon btn-round btn-binance-outline-two"> #{{(1 + i)}}</button>
                         </div>
-                        <sat-popover #name hasBackdrop forceAlignment>
+                        <sat-popover openTransition="0ms ease-out"
+                                     closeTransition="0ms ease-in" #name hasBackdrop forceAlignment>
                             <app-edit-form (update)=" rename($event, i)"></app-edit-form>
                         </sat-popover>
 
                         <div (click)="menuUsers.close()"
-                             style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: 0.29em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
+                             style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
                             {{item.accountName}}
                         </div>
                         <div (click)="menuUsers.close()"
-                             style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 13px; margin-top: -1.8em;  margin-left: 0.3em">
+                             style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 11px; margin-top: -1.8em;  margin-left: -0.4em">
                             {{toShortAddress(item.address)}}
                         </div>
                         <div [satPopoverAnchor]="name" (click)="name.open()"

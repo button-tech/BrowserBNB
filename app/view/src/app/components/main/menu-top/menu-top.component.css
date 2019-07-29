@@ -278,7 +278,7 @@ button#addressButton.btn.btn-sm.btn-link.hover-anchor {
 .item-of:hover {
     background: rgba(11, 14, 17, .3);
     border-radius: 10px;
-    border: solid 0.5px rgb(239, 184, 11);
+    border: none;
 }
 
 

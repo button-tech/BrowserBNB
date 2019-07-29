@@ -19,6 +19,21 @@ body {
     box-shadow: none !important;
 }
 
+.btn-binance-outline-two {
+    border: none;
+    color: rgb(240, 185, 11) !important;
+    background: none !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
+
+.btn-binance-outline-two:hover {
+    border: none;
+    color: rgb(240, 185, 11) !important;
+    background: none !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
 .btn-binance-outline[disabled] {
     box-shadow: none !important;
 }
