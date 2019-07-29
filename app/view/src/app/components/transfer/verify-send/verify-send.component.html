@@ -12,7 +12,7 @@
             <div style="grid-column: 2;grid-row: 1">
                 <h5>{{sendObj.Amount}} {{sendObj.Symbol}} </h5>
                 <h5 style="margin-top: -1em">
-                    <small>${{(fiatAmount$ | async ) || 'pending'}} USD</small>
+                    <small>${{(fiatAmount$ | async) || 'pending'}} USD</small>
                 </h5>
             </div>
             <div style="grid-column: 1; grid-row: 2">
@@ -25,7 +25,7 @@
                 </h5>
             </div>
         </div>
-        <hr>
+        <hr style="margin-right: 2em">
         <div style="display: grid; grid-template-columns: 1fr 3fr; align-items: start; ">
             <div style="grid-column: 1;">
                 <h5><strong>Total: </strong></h5>
@@ -39,7 +39,8 @@
         </div>
     </div>
     <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
-        <button routerLink="/main" class="btn btn-outline-danger btn-lg main-btn">Reject</button>
+        <button routerLink="/main" class="btn btn-outline-danger btn-lg main-btn bd-da">Reject
+        </button>
         <button routerLink="/main" (click)="verify()" class="btn btn-binance-outline btn-lg main-btn">Verify</button>
     </div>
 </div>
