@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {StorageService} from "../../../../../services/storage.service";
-import {FormControl} from "@angular/forms";
+import {StorageService} from '../../../../../services/storage.service';
+import {FormControl} from '@angular/forms';
 
 @Component({
     selector: 'app-memo-input',
@@ -15,8 +15,9 @@ export class MemoInputComponent implements OnInit {
     ngOnInit() {
     }
 
-    save(memo: string) {
-        this.storage.currentTransaction.Memo = memo;
+    save(memo: string): void {
+        // this.storage.currentTransaction.Memo = memo;
     }
+
     memoFormControl = new FormControl('', []);
 }

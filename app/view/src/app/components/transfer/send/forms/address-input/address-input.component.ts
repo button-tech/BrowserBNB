@@ -21,11 +21,12 @@ export class AddressInputComponent {
     }
 
     validate() {
-        const addressValue = (this.addressElem.nativeElement as HTMLInputElement).value;
-        // TODO: give Solid name
-        this.isValid = validateAddress(addressValue, this.storage.selectedNetwork$.getValue()
-            .networkPrefix);
-
-        this.storage.currentTransaction.AddressTo = addressValue;
+        // const addressValue = (this.addressElem.nativeElement as HTMLInputElement).value;
+        // // TODO: give Solid name
+        // this.isValid = validateAddress(addressValue, this.storage.selectedNetwork$.getValue()
+        //     .networkPrefix);
+        //
+        // this.storage.currentTransaction.AddressTo = addressValue;
     }
 }
+
