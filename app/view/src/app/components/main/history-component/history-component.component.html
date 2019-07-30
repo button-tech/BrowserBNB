@@ -1,5 +1,5 @@
 <div style="margin-top: -1.4em;">
-    <div class="container-fluid histcomp" *ngFor="let tx of (hist$ | async).tx">
+    <div class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
                 <small class="time" style="font-size: 11px !important; font-weight: 500; color: rgb(132, 142, 156);">
@@ -11,7 +11,7 @@
                 <img src="../../../../assets/icons/icon48.png" alt="info" width="25" height="25">
             </div>
             <div class="type">
-                {{tx.txType }}
+                {{tx.txType.replace('_', ' ') }}
             </div>
             <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
                 <small class="sums">{{tx.value || ''}} {{tx.txAsset || ''}}</small>
@@ -21,7 +21,7 @@
             </div>
             <div class="text-center"
                  style="grid-column: 4; grid-row: 3; margin-top: -0.9em; margin-right: 0em; margin-bottom: 0.2em">
-                <button class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
+                <button (click)="goToDetails(tx)"  class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
                     <fa align="center" class="infos-fa" style="color: #FFFFFF" name="info" size="sm"></fa>
                 </button>
             </div>

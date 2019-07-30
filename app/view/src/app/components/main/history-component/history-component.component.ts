@@ -2,6 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable, of, timer} from 'rxjs';
 import {map, shareReplay, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
+import {TemporaryService} from "../../../services/temporary.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-history-component',
@@ -11,9 +13,9 @@ import {HttpClient} from "@angular/common/http";
 export class HistoryComponentComponent implements OnInit, OnDestroy {
 
     hist$: Observable<any>;
-    rate$ = of(1);
 
-    constructor(private http: HttpClient) {
+
+    constructor(private http: HttpClient, private temp: TemporaryService, private router: Router) {
 
         const rawHistory$ = timer(0, 60000).pipe(
             switchMap(() => {
@@ -23,7 +25,7 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
 
         this.hist$ = rawHistory$.pipe(
             map((x: any) => {
-                return x;
+                return x.tx;
             })
         );
 
@@ -37,6 +39,11 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
+    goToDetails(tx: any) {
+        this.temp.details$ = of(tx);
+        this.router.navigate(['/details'])
+    }
+
     convert2fiat(sum: string, asset: string): string {
         const value = String((Number(28) * Number(sum)).toFixed(2));
         if (value === '0.00' || asset !== 'BNB') {
@@ -44,5 +51,5 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
         }
         return '$' + value;
     }
-    
+
 }

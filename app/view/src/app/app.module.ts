@@ -42,6 +42,7 @@ import {SettingsComponent} from './components/main/settings/settings.component';
 import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 import {RecieveComponent} from './components/main/recieve/recieve.component';
+import { HistoryDetailsComponent } from './components/main/history-component/history-details/history-details.component';
 
 
 @NgModule({
@@ -68,7 +69,8 @@ import {RecieveComponent} from './components/main/recieve/recieve.component';
         SettingsComponent,
         NetworksComponent,
         AccountsComponent,
-        RecieveComponent
+        RecieveComponent,
+        HistoryDetailsComponent
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,141 @@
+<div class="container-fluid">
+    <app-menu-top></app-menu-top>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+            <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
+                <fa name="arrow-left" size="sm"></fa>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <p style="font-weight: bolder; font-size: 20px">{{((this.temp.details$ | async).txType).replace('_', ' ')}}</p>
+            <p style="font-size: 12px; color: rgb(73,77,88); margin-top: -1.35em;"
+               *ngIf="(this.temp.details$ | async).timeStamp"> {{((this.temp.details$ | async).timeStamp | date :'medium')}} </p>
+        </div>
+        <div style="margin-top: -0.9em" *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value" class="col-8 offset-2">
+            <hr class="unusualHr">
+        </div>
+        <div style="display: grid; grid-template: 1fr 1fr / 1fr 3fr; margin-left: 3.5em; margin-bottom: -0.5em" class="col-12">
+            <div *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value"
+                 style="grid-column: 1;">
+                Sum
+            </div>
+            <div style="grid-column: 2"
+                 *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value">
+                {{(this.temp.details$ | async).value}} {{(this.temp.details$ | async).txAsset}}
+            </div>
+            <div style="grid-column: 1" *ngIf="(this.temp.details$ | async).txFee > 0">Fee
+            </div>
+            <div style="grid-column: 2" *ngIf="(this.temp.details$ | async).txFee > 0">
+                {{ (this.temp.details$ | async).txFee + ' BNB'}}
+            </div>
+            <div style="grid-column: 1; font-weight: bolder;"
+                 *ngIf="(this.temp.details$ | async).txFee > 0 && (this.temp.details$ | async).txAsset && (this.temp.details$ | async).value">
+                Total
+            </div>
+            <div style="grid-column: 2;  font-weight: bolder; "
+                 *ngIf="(this.temp.details$ | async).txFee > 0 && (this.temp.details$ | async).txAsset && (this.temp.details$ | async).value ">
+                {{ this.sum((this.temp.details$ | async).txFee, (this.temp.details$ | async).value) + ' BNB'}}
+            </div>
+        </div>
+        <div class="col-8 offset-2">
+            <hr class="unusualHr">
+        </div>
+        <div *ngIf="(this.temp.details$ | async).fromAddr && (this.temp.details$ | async).toAddr "
+             style="display: inline-flex; font-weight: bolder; font-size: 18px; margin-left: 0.55em"
+             class="fromTo col-12 text-center">
+            <div>
+                <p>From</p>
+                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                        [satPopoverAnchor]="p2"
+                        (mouseenter)="p2.open()"
+                        (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
+                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                    {{toShortAddress((this.temp.details$ | async).fromAddr)}}
+                    <fa name="copy" size="sm"></fa>
+                </button>
+                <sat-popover #p2 horizontalAlign="center" openTransition="100ms ease-out"
+                             closeTransition="150ms ease-in"
+                             verticalAlign="below">
+                    <div class="tooltip-wrapper">
+                        {{this.copyMessage}}
+                    </div>
+                </sat-popover>
+            </div>
+            <div>
+                <fa name="chevron-right" size="sm"></fa>
+            </div>
+            <div>
+                <p>To</p>
+                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                        [satPopoverAnchor]="p3"
+                        (mouseenter)="p3.open()"
+                        (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
+                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                    {{toShortAddress((this.temp.details$ | async).toAddr)}}
+                    <fa name="copy" size="sm"></fa>
+                </button>
+                <sat-popover #p3 horizontalAlign="center" openTransition="100ms ease-out"
+                             closeTransition="150ms ease-in"
+                             verticalAlign="below">
+                    <div class="tooltip-wrapper">
+                        {{this.copyMessage}}
+                    </div>
+                </sat-popover>
+            </div>
+        </div>
+        <div *ngIf="(this.temp.details$ | async).fromAddr && (this.temp.details$ | async).toAddr "
+             class="col-8 offset-2">
+            <hr class="unusualHr">
+        </div>
+        <div style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 5.5em" class="col-12">
+            <div>
+                <h6 style="margin-bottom: -0.5em">HASH</h6>
+            </div>
+            <div>
+                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                        [satPopoverAnchor]="p"
+                        (mouseenter)="p.open()"
+                        (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';"
+                        id="addressButton"
+                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                    {{toShortAddress((this.temp.details$ | async).txHash)}}
+                    <fa id="copyButton" name="copy" size="sm"></fa>
+                </button>
+                <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out"
+                             closeTransition="150ms ease-in"
+                             verticalAlign="below">
+                    <div id="popup" class="tooltip-wrapper">
+                        {{this.copyMessage}}
+                    </div>
+                </sat-popover>
+            </div>
+        </div>
+        <div *ngIf="(this.temp.details$ | async).memo"
+             style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 5.5em" class="col-12">
+            <div>
+                <h6 style="margin-bottom: -0.5em">MEMO</h6>
+            </div>
+            <div>
+                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                        [satPopoverAnchor]="p4"
+                        (mouseenter)="p4.open()"
+                        (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
+                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                    {{((this.temp.details$ | async).memo).substring(0, 20)}}
+                    <fa name="copy" size="sm"></fa>
+                </button>
+                <sat-popover #p4 horizontalAlign="center" openTransition="100ms ease-out"
+                             closeTransition="150ms ease-in"
+                             verticalAlign="below">
+                    <div class="tooltip-wrapper">
+                        {{this.copyMessage}}
+                    </div>
+                </sat-popover>
+            </div>
+        </div>
+    </div>
+</div>
