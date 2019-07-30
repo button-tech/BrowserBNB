@@ -43,6 +43,7 @@ import {NetworksComponent} from './components/main/menu-top/networks/networks.co
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 import {RecieveComponent} from './components/main/recieve/recieve.component';
 import { HistoryDetailsComponent } from './components/main/history-component/history-details/history-details.component';
+import {NgxLoadersCssModule} from 'ngx-loaders-css';
 
 
 @NgModule({
@@ -83,7 +84,7 @@ import { HistoryDetailsComponent } from './components/main/history-component/his
         MatInputModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
-        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, QRCodeModule
+        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, QRCodeModule, NgxLoadersCssModule
     ],
     providers: [
         RegistrationService,

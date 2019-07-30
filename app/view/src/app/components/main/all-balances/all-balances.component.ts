@@ -6,7 +6,7 @@ import {Location} from "@angular/common";
 import {map, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {rawTokensImg} from '../../../constants';
-
+import {LoadersCSS} from 'ngx-loaders-css';
 @Component({
     selector: 'app-all-balances',
     templateUrl: './all-balances.component.html',
@@ -14,6 +14,9 @@ import {rawTokensImg} from '../../../constants';
 })
 export class AllBalancesComponent implements OnInit {
     tokens$: Observable<any>;
+    loader: LoadersCSS = 'line-scale';
+    bgColor = 'white';
+    color = 'rgb(239, 184, 11) ';
 
     constructor(private bncService: BinanceService,
                 private storage: StorageService,

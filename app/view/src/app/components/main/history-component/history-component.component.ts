@@ -5,6 +5,7 @@ import {HttpClient} from "@angular/common/http";
 import {TemporaryService} from "../../../services/temporary.service";
 import {Router} from "@angular/router";
 import {rawTokensImg} from '../../../constants';
+import {LoadersCSS} from "ngx-loaders-css";
 
 @Component({
     selector: 'app-history-component',
@@ -12,8 +13,11 @@ import {rawTokensImg} from '../../../constants';
     styleUrls: ['./history-component.component.css']
 })
 export class HistoryComponentComponent implements OnInit {
-
+    loader: LoadersCSS = 'line-scale';
+    bgColor = 'white';
+    color = 'rgb(239, 184, 11) ';
     hist$: Observable<any>;
+    histLen$: Observable<any>;
 
 
     constructor(private http: HttpClient, public temp: TemporaryService, private router: Router) {
@@ -31,7 +35,13 @@ export class HistoryComponentComponent implements OnInit {
             })
         );
 
-        this.hist$.subscribe()
+        this.histLen$ = this.hist$.pipe(
+            map((x) => {
+                return x.length
+            })
+        )
+
+        this.histLen$.subscribe();
 
     }
 
