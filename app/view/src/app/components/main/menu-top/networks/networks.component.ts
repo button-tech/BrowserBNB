@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NetworkType} from '../../../../services/storage.service';
 import {NETWORK_ENDPOINT_MAPPING} from '../../../../services/network_endpoint_mapping';
-import {StateService} from '../../../../services/state.service';
+import {IUiState, StateService} from '../../../../services/state.service';
 import {pluck, map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
@@ -34,8 +34,8 @@ export class NetworksComponent {
     constructor(private stateService: StateService) {
 
         this.selectedNetworkLabel$ = stateService.uiState$.pipe(
-            pluck('network'),
-            map((network: NetworkType) => {
+            map((uiState: IUiState) => {
+                const network = uiState.storageData.selectedNetwork;
                 return network === 'bnb' ? 'MAINNET' : 'TESTNET';
             })
         );

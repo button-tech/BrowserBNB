@@ -237,6 +237,7 @@ export class StateService {
             currentAccount,
             storageData: newStorageState
         };
+        
         this.uiState$.next(newUiState);
     }
 
