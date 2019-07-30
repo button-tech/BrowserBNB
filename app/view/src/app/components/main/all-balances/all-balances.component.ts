@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {BinanceService} from '../../../services/binance.service';
-import {StorageService} from '../../../services/storage.service';
-import {Observable, of, combineLatest, timer} from 'rxjs';
-import {Location} from '@angular/common';
-import {map, switchMap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
+import {BinanceService} from "../../../services/binance.service";
+import {StorageService} from "../../../services/storage.service";
+import {Observable, of, combineLatest, timer} from "rxjs";
+import {Location} from "@angular/common";
+import {map, shareReplay, switchMap} from "rxjs/operators";
+import {HttpClient} from "@angular/common/http";
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
-
 @Component({
     selector: 'app-all-balances',
     templateUrl: './all-balances.component.html',
@@ -25,16 +24,15 @@ export class AllBalancesComponent implements OnInit {
                 private http: HttpClient) {
     }
 
-
     ngOnInit() {
         const timer$ = timer(0, 4000);
         const balances$ = timer$.pipe(
             switchMap(() => {
                 //TODO: add current address and current endpoint
-                return this.bncService.getBalance$('bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m', ' https://dex.binance.org/');
+                return this.bncService.getBalance('bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m', ' https://dex.binance.org/');
             }),
             map((resp: any) => {
-                return resp.balances;
+                return resp.balances
             })
         );
         const bnb2usdRate$ = timer(0, 60000).pipe(
@@ -49,6 +47,7 @@ export class AllBalancesComponent implements OnInit {
             }),
             map((resp: any) => resp)
         );
+
         this.tokens$ = combineLatest([balances$, marketRates$, bnb2usdRate$])
             .pipe(
                 map((x: any[]) => {
@@ -76,7 +75,8 @@ export class AllBalancesComponent implements OnInit {
 
                     });
                     return finalBalances.sort((a, b) => parseFloat(a.balance2usd) - parseFloat(b.balance2usd));
-                }));
+                }),
+                shareReplay(1));
     }
 
     goBack() {
