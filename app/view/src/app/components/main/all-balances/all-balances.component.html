@@ -27,7 +27,7 @@
             </p>
             <p align="left"
                style="font-weight: bolder;grid-row: 3; grid-column: 2;  margin-left: 0.8em; font-size: 16px; margin-bottom: 8em; color: rgb(132, 142, 156)"
-            >${{token.balance2usd.toFixed(2) || 'pending'}} USD
+            >{{token.balance2usd ? ('$' + token.balance2usd.toFixed(2)+ ' USD') : ''}}
             </p>
         </div>
     </div>
@@ -40,4 +40,3 @@
         </div>
     </div>
 </div>
-
