@@ -1,11 +1,9 @@
-import {Injectable, OnDestroy} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import * as passworder from 'browser-passworder';
-import {BehaviorSubject, combineLatest, from, Observable, of, Subscription} from 'rxjs';
-import {filter, map, startWith, switchMap, take, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of, timer} from 'rxjs';
 import {BinanceService} from './binance.service';
-import {getPrivateKeyFromMnemonic, getAddressFromPrivateKey} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import {distinctUntilChanged, map, mapTo, pluck, switchMap, switchMapTo} from 'rxjs/operators';
 
 export interface ITransaction {
     Amount: number;
@@ -188,6 +186,31 @@ export class StateService {
                 val: NETWORK_ENDPOINT_MAPPING.TESTNET
             },
         ];
+
+        // Array balances of different tokens for current account
+        const balances$ = this.uiState$.pipe(
+            distinctUntilChanged((a: IUiState, b: IUiState) => {
+                const sameAccount = (a.activeAccount === b.activeAccount);
+                const sameNetwork = (a.network === b.network);
+                return sameAccount && sameNetwork;
+            }),
+            switchMap((uiState: IUiState) => {
+                const {activeAccount, network} = uiState;
+                const address = network == 'bnb'
+                    ? activeAccount.addressMainnet
+                    : activeAccount.addressTestnet;
+
+                const endpoint = network == 'bnb'
+                    ? NETWORK_ENDPOINT_MAPPING.MAINNET
+                    : NETWORK_ENDPOINT_MAPPING.TESTNET;
+
+                return timer(0, 60000).pipe(
+                    switchMap(() => {
+                        return this.bncService.getBalance$(address, endpoint);
+                    })
+                );
+            }),
+        );
 
         // this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
     }
