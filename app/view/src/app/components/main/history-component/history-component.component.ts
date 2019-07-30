@@ -15,7 +15,7 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
     hist$: Observable<any>;
 
 
-    constructor(private http: HttpClient, private temp: TemporaryService, private router: Router) {
+    constructor(private http: HttpClient, public temp: TemporaryService, private router: Router) {
 
         const rawHistory$ = timer(0, 60000).pipe(
             switchMap(() => {

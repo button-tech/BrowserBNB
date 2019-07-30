@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "BNB Browser",
   "description": "Online wallet for Binance Chain",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "browser_action": {
     "default_icon": {
       "16": "assets/icons/icon16.png",
@@ -13,7 +13,8 @@
   },
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

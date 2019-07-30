@@ -53,7 +53,7 @@
                         [satPopoverAnchor]="p2"
                         (mouseenter)="p2.open()"
                         (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                        (click)="this.copyAddress(this.temp.details$, 'fromAddr');" class="button-qr btn btn-default">
                     {{toShortAddress((this.temp.details$ | async).fromAddr)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
@@ -74,7 +74,7 @@
                         [satPopoverAnchor]="p3"
                         (mouseenter)="p3.open()"
                         (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                        (click)="this.copyAddress(this.temp.details$, 'toAddr');" class="button-qr btn btn-default">
                     {{toShortAddress((this.temp.details$ | async).toAddr)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
@@ -87,11 +87,10 @@
                 </sat-popover>
             </div>
         </div>
-        <div *ngIf="(this.temp.details$ | async).fromAddr && (this.temp.details$ | async).toAddr "
-             class="col-8 offset-2">
+        <div sclass="col-8 offset-2">
             <hr class="unusualHr">
         </div>
-        <div style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 5.5em" class="col-12">
+        <div style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 4.5em" class="col-12">
             <div>
                 <h6 style="margin-bottom: -0.5em">HASH</h6>
             </div>
@@ -101,7 +100,7 @@
                         (mouseenter)="p.open()"
                         (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';"
                         id="addressButton"
-                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                        (click)="this.copyAddress(this.temp.details$, 'txHash');" class="button-qr btn btn-default">
                     {{toShortAddress((this.temp.details$ | async).txHash)}}
                     <fa id="copyButton" name="copy" size="sm"></fa>
                 </button>
@@ -115,7 +114,7 @@
             </div>
         </div>
         <div *ngIf="(this.temp.details$ | async).memo"
-             style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 5.5em" class="col-12">
+             style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 4.5em" class="col-12">
             <div>
                 <h6 style="margin-bottom: -0.5em">MEMO</h6>
             </div>
@@ -124,7 +123,7 @@
                         [satPopoverAnchor]="p4"
                         (mouseenter)="p4.open()"
                         (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress();" class="button-qr btn btn-default">
+                        (click)="this.copyAddress(this.temp.details$, 'memo');" class="button-qr btn btn-default">
                     {{((this.temp.details$ | async).memo).substring(0, 20)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
@@ -136,6 +135,11 @@
                     </div>
                 </sat-popover>
             </div>
+        </div>
+        <div style="margin-top: 1em" class="col-12  text-center">
+            <button (click)="this.openTab(this.temp.details$, 'mainnet')" style="width: 250px" class="btn-binance-outline btn-sm">
+                View on explorer
+            </button>
         </div>
     </div>
 </div>

@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {TemporaryService} from "../../../../services/temporary.service";
 import {Location} from "@angular/common";
 import {ClipboardService} from "../../../../services/clipboard.service";
+import {map, subscribeOn, take, takeUntil} from "rxjs/operators";
+import {timer} from "rxjs";
+import {ChromeApiService} from "../../../../services/chrome-api.service";
 
 @Component({
     selector: 'app-history-details',
@@ -11,9 +14,27 @@ import {ClipboardService} from "../../../../services/clipboard.service";
 export class HistoryDetailsComponent implements OnInit {
     copyMessage = 'Copy to clipboard';
 
-    constructor(private temp: TemporaryService, private location: Location, private clipboardService: ClipboardService) {
+    constructor(public temp: TemporaryService, private location: Location, private clipboardService: ClipboardService, public chrome: ChromeApiService) {
 
     }
+
+    openTab(txHash$: any, network: string) {
+        let url;
+        switch (network) {
+            case 'mainnet':
+                url = 'https://explorer.binance.org/tx/';
+                break;
+            case 'testnet':
+                url = 'https://testnet-explorer.binance.org/tx/';
+        }
+        txHash$.pipe(
+            map((transaction: any) => {
+                this.chrome.openNewTab(`${url}${transaction.txHash}`)
+            }),
+            take(1)
+        ).subscribe()
+    }
+
 
     ngOnInit() {
 
@@ -22,24 +43,39 @@ export class HistoryDetailsComponent implements OnInit {
     goBack() {
         this.location.back();
     }
-    copyAddress() {
-        this.clipboardService.copyToClipboard('d');
-        this.copyMessage = 'Copied ✔';
+
+    copyAddress(data, val) {
         // // TODO: probable better to do that without observables, by just assiging address to MainComponent field
-        // this.address$.pipe(
-        //     takeUntil(timer(100)),
-        //     take(1),
-        // ).subscribe((address) => {
-        //     this.clipboardService.copyToClipboard(address);
-        //     this.copyMessage = 'Copied ✔';
-        // });
+        data.pipe(
+            takeUntil(timer(100)),
+            take(1),
+        ).subscribe((address) => {
+            let toCopy;
+            switch (val) {
+                case 'fromAddr':
+                    toCopy = address.fromAddr;
+                    break;
+                case 'toAddr':
+                    toCopy = address.toAddr;
+                    break;
+                case 'txHash':
+                    toCopy = address.txHash;
+                    break;
+                case 'memo':
+                    toCopy = address.memo;
+                    break;
+            }
+            this.clipboardService.copyToClipboard(toCopy);
+            this.copyMessage = 'Copied ✔';
+        });
     }
+
     toShortAddress(address) {
         return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length)
     }
 
     sum(a, b): string {
-       return String((Number(a) + Number(b)).toFixed(8));
+        return String((Number(a) + Number(b)).toFixed(8));
     }
 
 }
