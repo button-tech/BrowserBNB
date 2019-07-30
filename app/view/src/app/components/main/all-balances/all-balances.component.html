@@ -10,22 +10,23 @@
 </div>
 
 <div style="margin-top: 0.2em">
-    <div style="display: grid; margin-left: 0em;"
+    <div style="display: grid; margin-left: 0em; border-bottom: 0.0625rem solid rgba(234, 236, 239, 0.5);"
          *ngFor="let token of (tokens$ | async)">
-        <div style="display: grid; grid-template-columns: 1fr 4fr 4fr; grid-template-rows: 2fr 1fr; width: 100%">
-            <img style="grid-row: 1; grid-column: 1; margin-left: 1em"
+        <div style="display: grid; grid-template-columns: 1fr 4fr; grid-template-rows: 25px 25px 25px; width: 100%; height: 80px">
+            <img style="grid-row: 2; grid-column: 1; margin-left: 1.2em;"
                  src="{{token.image || '../../../assets/icons/default.png'}}"
-                 width="32"
-                 height="32">
-            <p style="font-weight: bolder; grid-row: 1; grid-column: 2">
-                {{token.name}}
+                 width="38"
+                 height="38"
+                 class="img-circle">
+            <p style="font-weight: bold; grid-row: 1; grid-column: 2; margin-left: 0.8em; margin-top: 14px; font-size: 16px; color: rgb(33, 40, 51);">
+                {{this.makeItShort(token.name)}}
             </p>
             <p align="left"
-               style="font-weight: bolder;  grid-row: 1; grid-column: 3"
-            >{{token.balance.toFixed(8) || 'pending'}}
+               style="font-weight: bolder;grid-row: 2; grid-column: 2;  margin-left: 0.8em; font-size: 16px; margin-top: 7px; color: rgb(132, 142, 156)"
+            >{{token.balance.toFixed(8) || 'pending'}} {{token.mappedName}}
             </p>
             <p align="left"
-               style="font-weight: bolder; grid-row: 2; grid-column: 3; margin-top: -1.5em"
+               style="font-weight: bolder;grid-row: 3; grid-column: 2;  margin-left: 0.8em; font-size: 16px; margin-bottom: 8em; color: rgb(132, 142, 156)"
             >${{token.balance2usd.toFixed(2) || 'pending'}} USD
             </p>
         </div>
