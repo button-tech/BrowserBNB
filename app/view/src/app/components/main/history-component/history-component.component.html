@@ -1,4 +1,4 @@
-<div *ngIf="(hist$ | async) && (histLen$ | async) > 0" style="margin-top: -1.4em;">
+<div *ngIf="(histLen$ | async) > 0" style="margin-top: -1.4em;">
     <div (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
@@ -30,11 +30,11 @@
         </div>
     </div>
 </div>
-<div *ngIf="!(hist$ | async)" style="margin-top: -1.4em;">
+<div *ngIf="!((histLen$ | async) === 0)" style="margin-top: -1.4em;">
     <loaders-css [loader]="loader" [scale]="1" [bgColor]="bgColor" [color]="color"></loaders-css>
 </div>
-<div *ngIf="(hist$ | async)" style="margin-top: -1.4em;">
-    <div *ngIf="(histLen$ | async) === 0" class="row">
+<div *ngIf="(histLen$ | async) === 0" style="margin-top: -1.4em;">
+    <div class="row">
         <div class="col-12 text-center">
             <p style="color: rgb(132, 142, 156); font-size: 14px;">You have no transactions</p>
         </div>
