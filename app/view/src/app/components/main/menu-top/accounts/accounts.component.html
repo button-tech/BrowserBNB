@@ -14,10 +14,10 @@
         <div id="scrollableUsers">
 
             <div class="item-of" *ngFor="let item of (accounts$ | async); let i = index;"
+                 (click)="switchAccount(item);menuUsers.close()"
                  style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
 
-                <div (click)="menuUsers.close()"
-                     style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
+                <div style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
                     <button class="btn btn-just-icon btn-round btn-binance-outline-two"> #{{(1 + i)}}</button>
                 </div>
 
@@ -26,15 +26,14 @@
                     <app-edit-form (update)="renameAccount($event, i)"></app-edit-form>
                 </sat-popover>
 
-                <div (click)="menuUsers.close()"
-                     style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
+                <div style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
                     {{item.name}}
                 </div>
-                <div (click)="menuUsers.close()"
-                     style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 12px; margin-top: -1.8em;  margin-left: -0.4em">
+                <div style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 12px; margin-top: -1.8em;  margin-left: -0.4em">
                     {{item.shortAddress}}
                 </div>
-                <div [satPopoverAnchor]="name" (click)="name.open()"
+
+                <div [satPopoverAnchor]="name" (click)="name.open(); stopEvent($event)"
                      style="margin-top: -2.5em; margin-right: 0.3em; margin-bottom: 0.2em; grid-row: 2; grid-column: 4;">
                     <button class="btn-basic">
                         <fa name="edit"></fa>

@@ -16,15 +16,15 @@ export class AccountsComponent {
     constructor(public stateService: StateService, private authService: AuthService) {
         this.accounts$ = stateService.uiState$.pipe(
             pluck('accounts')
-        )
+        );
     }
 
     renameAccount(name: any, index: number): void {
 
     }
 
-    switchAccount(value: string): void {
-
+    switchAccount(account: IUiAccount): void {
+        this.stateService.switchAccount(account);
     }
 
     addAccount(): void {
@@ -35,4 +35,7 @@ export class AccountsComponent {
         this.authService.logout();
     }
 
+    stopEvent(event: Event) {
+        event.stopPropagation();
+    }
 }
