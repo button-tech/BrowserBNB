@@ -31,7 +31,6 @@ export class NetworksComponent {
 
     selectedNetworkLabel$: Observable<string>;
 
-
     constructor(private stateService: StateService) {
 
         this.selectedNetworkLabel$ = stateService.uiState$.pipe(

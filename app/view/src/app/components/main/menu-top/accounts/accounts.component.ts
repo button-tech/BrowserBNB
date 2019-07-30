@@ -28,7 +28,7 @@ export class AccountsComponent {
     }
 
     addAccount(): void {
-
+        this.stateService.addAccount();
     }
 
     logout() {

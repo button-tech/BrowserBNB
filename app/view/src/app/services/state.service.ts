@@ -5,6 +5,7 @@ import {BinanceService} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {distinctUntilChanged, map, mapTo, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
+import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 
 export interface ITransaction {
     Amount: number;
@@ -63,7 +64,8 @@ export class StateService {
             shortAddress: '',
             addressMainnet: '',
             addressTestnet: '',
-            privateKey: ''
+            privateKey: '',
+            index: 0
         },
         storageData: null
     });
@@ -131,19 +133,59 @@ export class StateService {
     }
 
     addAccount(): void {
-        // Use hd wallet ...
-        // const newStorageState: IStorageData = {
-        //     ...this.uiState.storageData
-        // };
+
+        const seedPhrase = this.uiState.storageData.seedPhrase;
+        const indexes = this.uiState.storageData.accounts.map(a => a.index);
+        const index = Math.max(...indexes) + 1;
+
+        // Prepare account
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, index);
+
+        // tslint:disable-next-line:max-line-length
+        // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
+        const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
+        const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
+
+        const name = `Account ${index + 1}`;
+        const address2name = {
+            [addressMainnet]: name,
+            [addressTestnet]: name
+        };
+
         //
-        // this.uiState.accounts.push({
-        //
-        // });
-        //
-        // const newUiState = {
-        //     ...this.uiState
-        // };
-        // this.uiState$.next(newUiState);
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            address2name: {
+                ...this.uiState.storageData.address2name,
+                ...address2name
+            },
+            accounts: [...this.uiState.storageData.accounts, {
+                addressMainnet,
+                addressTestnet,
+                privateKey,
+                index
+            }]
+        };
+
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        const address = this.uiState.storageData.selectedNetwork === 'bnb'
+            ? addressMainnet
+            : addressTestnet;
+
+
+        this.uiState.storageData = newStorageState;
+        this.uiState.accounts.push({
+            name,
+            address,
+            shortAddress: toShortAddress(address),
+            addressMainnet,
+            addressTestnet,
+            privateKey,
+            index,
+        });
+
+        this.uiState$.next(this.uiState);
     }
 
     switchAccount(toAccount: IUiAccount): void {
@@ -152,13 +194,14 @@ export class StateService {
             ...this.uiState.storageData,
             selectedAddress: toAccount.addressMainnet
         };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
 
         const newUiState = {
             ...this.uiState,
-            currentAccount: toAccount
+            currentAccount: toAccount,
+            storageData: newStorageState
         };
-
-        this.storageService.encryptAndSave(newUiState.storageData, this.password);
         this.uiState$.next(newUiState);
     }
 
@@ -168,6 +211,8 @@ export class StateService {
             ...this.uiState.storageData,
             selectedNetwork: network
         };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
 
         const newAccounts = this.uiState.accounts.map((account) => {
             const newAddress = network === 'bnb'
@@ -189,10 +234,9 @@ export class StateService {
         const newUiState: IUiState = {
             ...this.uiState,
             accounts: newAccounts,
-            currentAccount
+            currentAccount,
+            storageData: newStorageState
         };
-
-        this.storageService.encryptAndSave(newUiState.storageData, this.password);
         this.uiState$.next(newUiState);
     }
 

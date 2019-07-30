@@ -15,6 +15,7 @@ export interface IStorageAccount {
     addressMainnet: string;
     addressTestnet: string;
     privateKey: string;
+    index: number
 }
 
 export interface IStorageData {
@@ -180,6 +181,7 @@ export class StorageService {
                     addressMainnet,
                     addressTestnet,
                     privateKey,
+                    index: 0
                 }
             ],
             selectedAddress: addressMainnet,
