@@ -1,13 +1,14 @@
 import {Injectable} from '@angular/core';
-import {createMnemonic, getKeystoreFromPrivateKey, getPrivateKeyFromMnemonic, getSHA3hashSum} from './binance-crypto';
-import {getAddressFromPrivateKey} from '../../assets/binance/bnbSDK';
+import {createMnemonic, getSHA3hashSum} from './binance-crypto';
 import {StorageService} from './storage.service';
+import {StateService} from './state.service';
 
 @Injectable()
 export class RegistrationService {
     mnemonic: any = null;
+    private passHash: string;
 
-    constructor(private storageService: StorageService) {
+    constructor(private storageService: StorageService, private stateService: StateService) {
     }
 
     get hasMnemonic(): boolean {
@@ -19,45 +20,30 @@ export class RegistrationService {
         return this.mnemonic;
     }
 
-    private passHash: string;
-
     set password(value: string) {
         this.passHash = getSHA3hashSum(value);
     }
 
-    isPasswordRepeatedCorrectly(passwordRepeat: string) {
-        return this.passHash && this.passHash == getSHA3hashSum(passwordRepeat);
+    isPasswordRepeatedCorrectly(passwordRepeat: string): boolean {
+        return this.passHash && this.passHash === getSHA3hashSum(passwordRepeat);
     }
 
-    cleanup() {
-        this.mnemonic = null;
-        this.passHash = null;
-    }
-
-    // TODO: should be refactored - we won't store decrypted date in the storrage
-    private addAccount(seedPhrase: string, password: string): Promise<boolean> {
-
-        const privateKey = getPrivateKeyFromMnemonic(seedPhrase);
-        const address = getAddressFromPrivateKey(privateKey);
-        const keystore = getKeystoreFromPrivateKey(privateKey, password);
-
-        return new Promise((resolve) => {
-            this.storageService.addAccount(address, privateKey, keystore, getSHA3hashSum(password)).then(() => {
-                resolve(true);
-            }, () => resolve(false));
-        });
-    }
-
-    async finishRegistration(repeatedPassword: string): Promise<boolean> {
+    finishRegistration(repeatedPassword: string): boolean {
         if (!this.isPasswordRepeatedCorrectly(repeatedPassword)) {
-            return Promise.reject(false);
+            return false;
         }
 
-        await this.addAccount(this.mnemonic, repeatedPassword);
-        this.cleanup();
+        const data = this.storageService.registerAccount(this.mnemonic, repeatedPassword);
+        this.stateService.initState(data, repeatedPassword);
+
+        // cleanup - TODO: move at the component level
+        this.mnemonic = null;
+        this.passHash = null;
+
         return true;
     }
 
+    // TODO: check how import works now
     // async finishImport(password: string): Promise<boolean> {
     //     this.addAccount(this.mnemonic, password);
     //     this.cleanup();

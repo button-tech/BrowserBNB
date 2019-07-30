@@ -24,7 +24,6 @@ import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.com
 import {PasswordComponent} from './components/registration/password/password.component';
 import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
-import {CurrentAccountService} from './services/current-account.service';
 import {BinanceService} from './services/binance.service';
 import {SendComponent} from './components/transfer/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
@@ -33,7 +32,7 @@ import {CoinsSelectComponent} from './components/transfer/send/forms/coins-selec
 import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
 import {
     MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,
-} from "@angular/material";
+} from '@angular/material';
 import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
 import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
@@ -42,7 +41,9 @@ import {SettingsComponent} from './components/main/settings/settings.component';
 import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 import {RecieveComponent} from './components/main/recieve/recieve.component';
-import { HistoryDetailsComponent } from './components/main/history-component/history-details/history-details.component';
+import {HistoryDetailsComponent} from './components/main/history-component/history-details/history-details.component';
+import {StateService} from './services/state.service';
+import {FmtPipe} from './fmt.pipe';
 import {NgxLoadersCssModule} from 'ngx-loaders-css';
 
 
@@ -71,7 +72,8 @@ import {NgxLoadersCssModule} from 'ngx-loaders-css';
         NetworksComponent,
         AccountsComponent,
         RecieveComponent,
-        HistoryDetailsComponent
+        HistoryDetailsComponent,
+        FmtPipe
     ],
     imports: [
         BrowserModule,
@@ -84,15 +86,21 @@ import {NgxLoadersCssModule} from 'ngx-loaders-css';
         MatInputModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
-        SatPopoverModule, NgSelectModule, ReactiveFormsModule, MatInputModule, MatFormFieldModule, QRCodeModule, NgxLoadersCssModule
+        SatPopoverModule,
+        NgSelectModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        QRCodeModule,
+        NgxLoadersCssModule
     ],
     providers: [
         RegistrationService,
         AuthService,
         AuthGuardService,
+        StateService,
         StorageService,
         ClipboardService,
-        CurrentAccountService,
         BinanceService
     ],
     bootstrap: [AppComponent]

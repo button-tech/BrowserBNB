@@ -88,7 +88,8 @@ export class AmountInputComponent implements OnInit, OnDestroy {
         } else if (this.isSwapped) {
             this.currentSum = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(8));
         }
-        this.storage.currentTransaction.Amount = this.currentSum;
+
+        // this.storage.currentTransaction.Amount = this.currentSum;
     }
 
     calcSums() {

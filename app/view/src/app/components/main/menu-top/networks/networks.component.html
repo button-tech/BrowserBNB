@@ -1,7 +1,7 @@
 <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
     <div class="menu-wrapper" tabIndex="0">
         <button *ngFor="let item of networkMenu" class="menu-item"
-                (click)="selectNetwork(item); menuNetwork.toggle()">
+                (click)="selectNetwork(item.networkPrefix); menuNetwork.toggle()">
             {{ item.label }}
         </button>
     </div>
@@ -9,6 +9,6 @@
 <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
         class="btn btn-link btn-outline  btn-sm"
         href="/main" id="networkBtn">
-    <strong id="NetworkWord">Network:</strong> {{ this.storage.selectedNetwork$.getValue().label }}
+    <strong id="NetworkWord">Network:</strong> {{ this.selectedNetworkLabel$ |async}}
     <fa name="caret-down" size="sm"></fa>
 </button>

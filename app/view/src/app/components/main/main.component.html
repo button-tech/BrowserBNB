@@ -1,14 +1,18 @@
 <div class="container">
     <app-menu-top></app-menu-top>
+
     <div class="row text-center">
+
         <div class="col-12">
             <button style="margin-top: 0.3em; margin-bottom: 1.2em; color: rgb(132, 142, 156);" [satPopoverAnchor]="p"
                     (mouseenter)="p.open()"
                     (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
                     (click)="this.copyAddress();"
                     class="btn btn-sm btn-link hover-anchor">
-                <p style="margin-top: 0px !important; margin-bottom: -0.5em !important; color: rgb(33, 40, 51)"
-                   id="editButton">{{ (this.storage.currentAccount$ | async).accountName }} </p>
+                <p style="margin-top: 0 !important; margin-bottom: -0.5em !important; color: rgb(33, 40, 51)"
+                   id="editButton">
+                    {{accountName$ | async}}
+                </p>
                 {{this.shortAddress$ | async}}
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
@@ -22,13 +26,14 @@
             <div class="arrow">
             </div>
         </sat-popover>
+
         <hr id="unusualHr">
+
         <div class="col-12">
-            <img id="imageBNB"
-                 draggable="false" width="48" src="../../../assets/icons/icon128.png">
-            <h3 class="bold">{{(bnb$ | async) || 'pending'}}</h3>
+            <img id="imageBNB" draggable="false" width="48" src="../../../assets/icons/icon128.png">
+            <h3 class="bold">{{(bnb$ | async) | fmtPipe : 'BNB'}}</h3>
             <h4 id="fiat">
-                {{(fiat$ | async) || 'pending'}}
+                {{(bnbInUsd$  | async) | fmtPipe : 'USD'}}
             </h4>
             <a routerLink="/balances" id="more">More balances</a>
         </div>
@@ -37,8 +42,8 @@
             <button routerLink="/receive" class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
             <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
         </div>
-
     </div>
+
     <div class="row">
         <div id="historyDiv" align="center" class="col-12">
             <p id="historyP">History</p>

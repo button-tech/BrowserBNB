@@ -4,6 +4,7 @@ import {StorageService} from '../../services/storage.service';
 import {ToastrManager} from 'ng6-toastr-notifications';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
+import {StateService} from '../../services/state.service';
 
 @Component({
     selector: 'app-unlock',
@@ -13,7 +14,11 @@ import {AlertsService} from '../../services/alerts.service';
 export class UnlockComponent {
     keystore: any;
 
-    constructor(private authService: AuthService, private router: Router, private storage: StorageService, public alert: AlertsService) {
+    constructor(private authService: AuthService,
+                private router: Router,
+                private storage: StorageService,
+                public alert: AlertsService
+    ) {
     }
 
     unlock() {

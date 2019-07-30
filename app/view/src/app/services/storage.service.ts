@@ -1,40 +1,39 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {filter, map, shareReplay, switchMap, take} from 'rxjs/operators';
-import {BehaviorSubject, concat, from, Observable, of, Subject, Subscription} from 'rxjs';
-import {BinanceService} from "./binance.service";
+import {map, shareReplay, switchMap, take} from 'rxjs/operators';
+import {concat, from, Observable, of, Subject, Subscription} from 'rxjs';
+import {BinanceService} from './binance.service';
+import * as passworder from 'browser-passworder';
+import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic, validateAddress} from './binance-crypto';
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+
+
+export type NetworkType = 'bnb' | 'tbnb' | null;
+
+export interface IStorageAccount {
+    addressMainnet: string;
+    addressTestnet: string;
+    privateKey: string;
+}
 
 export interface IStorageData {
-    AccountList: IAccount[];
-    CurrentAccountIdx: number;
-    PassHash: string;
+    seedPhrase: string | null;
+    accounts: IStorageAccount[];
+    selectedAddress: string | null;
+    selectedNetwork: NetworkType;
+    selectedNetworkEndpoint: string | null;
+    address2name: { [address: string]: string }
 }
 
-export interface IMenuItem {
-    label: string;
-    val: string;
-    networkPrefix: string;
-}
-
-export interface IAccount {
-    address;
-    privateKey;
-    keystore;
-
-    // TODO: implement this
-    encryptedSeed: string;
-    encryptedKeystore: string;
-    accountName: string;
-}
-
-export interface ITransaction {
-    Amount: number;
-    AddressTo: string;
-    AddressFrom: string;
-    Memo: string;
-    Symbol: string;
-}
+// const emptyStorage: IStorageData = {
+//     seedPhrase: null,
+//     accounts: [],
+//     selectedAddress: null,
+//     selectedNetwork: null,
+//     selectedNetworkEndpoint: null,
+//     address2name: {}
+// };
 
 const STORAGE_KEY = 'all';
 
@@ -43,131 +42,76 @@ const STORAGE_KEY = 'all';
 })
 export class StorageService {
 
-    currentTransaction: ITransaction = {
-        "Amount": 0,
-        "AddressTo": '',
-        "AddressFrom": '',
-        "Memo": '',
-        "Symbol": ''
-    };
-    selectedNetwork$: BehaviorSubject<IMenuItem>;
-    storageData$: Observable<IStorageData>;
-    currentAccount$: Observable<IAccount>;
-    // currentTransaction$: Observable<ITransaction>;
-    hasAccount$: Observable<boolean>;
-
-
-    networkMenu: IMenuItem[];
+    // hasAccount$: Observable<boolean>;
 
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
-    private subscription: Subscription;
-
-    // private _hasAccount: boolean;
-    // get hasAccount() {
-    //     return this._hasAccount;
-    // }
 
     constructor(private bncService: BinanceService) {
 
+        // const initial$ = of(1).pipe(
+        //     switchMap(() => from(this.initStorage())),
+        //     switchMap(() => from(this.getFromStorage())),
+        //     take(1)
+        // );
 
-        const initial$ = of(1).pipe(
-            switchMap(() => from(this.initStorage())),
-            switchMap(() => from(this.getFromStorage())),
-            // tap((x) => {
-            //     console.log('hi!')
-            // }),
-            take(1)
-        );
+        // const live$ = this.initStorageLister().pipe(
+        //     map((jsonStr: string) => {
+        //         return JSON.parse(jsonStr) as IStorageData;
+        //     })
+        // );
 
-        const live$ = this.initStorageLister().pipe(
-            map((jsonStr: string) => {
-                return JSON.parse(jsonStr) as IStorageData;
-            })
-        );
+        // this.storageData$ = concat(initial$, live$).pipe(
+        //     shareReplay(1)
+        // );
 
-        this.storageData$ = concat(initial$, live$).pipe(
-            shareReplay(1)
-        );
+        // this.hasAccount$ = this.storageData$.pipe(
+        //     map((data: any) => !!data),
+        //     shareReplay(1)
+        // );
 
         // Launch pipeline right now
-        this.subscription = this.storageData$.subscribe();
+        // this.subscription = this.storageData$.subscribe();
+    }
 
-        this.hasAccount$ = this.storageData$.pipe(
-            map((data: IStorageData) => {
-                // console.log('hasAccount$', data);
-                return data.AccountList.length > 0;
+    hasAccountOnce$(): Observable<boolean> {
+        return from(this.getFromStorageRaw()).pipe(
+            map((encryptedData) => {
+                return !!encryptedData;
             })
         );
-
-        this.currentAccount$ = this.storageData$.pipe(
-            filter((data) => {
-                return data.AccountList.length > 0;
-            }),
-            map((data: IStorageData) => {
-                const idx = data.CurrentAccountIdx;
-                return data.AccountList[idx];
-            })
-        );
-        this.networkMenu = [
-            {
-                label: 'MAINNET',
-                networkPrefix: 'bnb',
-                val: bncService.endpointList.MAINNET
-            },
-            {
-                label: 'TESTNET',
-                networkPrefix: 'tbnb',
-                val: bncService.endpointList.TESTNET
-            },
-        ];
-
-        this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
-
     }
 
+    // initStorageLister(): Observable<string> {
+    //
+    //     if (!environment.production) {
+    //         // Unfortunately localStorage listening doesn't work when you are emit events from the same page
+    //         return this.lsSetter$.asObservable();
+    //     }
+    //
+    //     if (environment.production) {
+    //         const subject$: Subject<any> = new Subject();
+    //         chrome.storage.onChanged.addListener((changes, namespace) => {
+    //             if (namespace === 'local' && changes[STORAGE_KEY]) {
+    //                 subject$.next(changes[STORAGE_KEY].newValue);
+    //             }
+    //         });
+    //         return subject$.asObservable();
+    //     }
+    // }
 
-    initStorageLister(): Observable<string> {
+    // async initStorage(): Promise<void> {
+    //     const content: string = await this.getFromStorageRaw();
+    //     if (!content) {
+    //         const jsonText = JSON.stringify(emptyStorage);
+    //         return this.saveToStorageRaw(jsonText);
+    //     }
+    // }
 
-        if (!environment.production) {
-            // Unfortunately localStorage listening doesn't work when you are emit events from the same page
-            return this.lsSetter$.asObservable();
-        }
+    private saveToStorageRaw(value: string): Promise<void> {
 
-        if (environment.production) {
-            const subject$: Subject<any> = new Subject();
-            chrome.storage.onChanged.addListener((changes, namespace) => {
-                if (namespace === 'local' && changes[STORAGE_KEY]) {
-                    subject$.next(changes[STORAGE_KEY].newValue);
-                }
-            });
-            return subject$.asObservable();
-        }
-    }
+        console.log('Save to storage:', value);
 
-    async initStorage(): Promise<void> {
-        let content: string = await this.getFromStorageRaw();
-        if (!content) {
-            const defaultValue: IStorageData = {
-                AccountList: [],
-                CurrentAccountIdx: 0,
-                PassHash: ''
-            };
-
-            const jsonText = JSON.stringify(defaultValue);
-            return this.saveToStorageRaw(jsonText);
-            // content = await this.getFromStorage(STORAGE_KEY); //
-        }
-
-        // We also can patch / override object if
-        // Validation - could be disabled in production
-        // let obj: IStorageData;
-        // obj = JSON.parse(content);
-        // const isValid = (('AccountList' in obj) && ('CurrentAccountIdx' in obj));
-        // console.assert(isValid);
-    }
-
-    saveToStorageRaw(value: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (environment.production) {
                 const cmd = {
@@ -183,12 +127,7 @@ export class StorageService {
         });
     }
 
-    saveToStorage(value: IStorageData): Promise<void> {
-        const jsonStr = JSON.stringify(value);
-        return this.saveToStorageRaw(jsonStr);
-    }
-
-    getFromStorageRaw(): Promise<string> {
+    private getFromStorageRaw(): Promise<string> {
         return new Promise<any>((resolve, reject) => {
             if (environment.production) {
                 chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
@@ -199,78 +138,71 @@ export class StorageService {
         });
     }
 
-    getFromStorage(): Promise<IStorageData> {
-        return new Promise((resolve, reject) => {
-            this.getFromStorageRaw().then((value: string) => {
-                try {
-                    resolve(JSON.parse(value));
-                } catch (e) {
-                    console.error('Malformed storage conetent');
-                    reject(e);
+    public getFromStorage(password: string): Observable<IStorageData> {
+        return from(this.getFromStorageRaw()).pipe(
+            switchMap((encrypted: any) => {
+                return from(passworder.decrypt(password, encrypted));
+            }),
+            map((dectypted: any) => {
+                return dectypted as IStorageData;
+            })
+        );
+    }
+
+    async encryptAndSave(data: IStorageData, password: string): Promise<void> {
+        const encrypted: any = await passworder.encrypt(password, data);
+        return this.saveToStorageRaw(encrypted);
+    }
+
+    registerAccount(seedPhrase: string, password: string): IStorageData {
+        // Prepare account
+
+        // tslint:disable-next-line:max-line-length
+        // const seedPhrase = 'offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin';
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, 0);
+
+
+        // tslint:disable-next-line:max-line-length
+        // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
+        const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
+        const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
+
+        const address2name = {
+            [addressMainnet]: `Account 1`,
+            [addressTestnet]: `Account 1`
+        };
+
+        //
+        const data: IStorageData = {
+            seedPhrase,
+            accounts: [
+                {
+                    addressMainnet,
+                    addressTestnet,
+                    privateKey,
+                }
+            ],
+            selectedAddress: addressMainnet,
+            selectedNetwork: 'bnb',
+            selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
+            address2name
+        };
+
+        // Promise result ignored by intend
+        this.encryptAndSave(data, password);
+        return data;
+    }
+
+    reset(): void {
+        if (environment.production) {
+            chrome.storage.local.clear(() => {
+                let error = chrome.runtime.lastError;
+                if (error) {
+                    console.error(error);
                 }
             });
-        });
-
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+        }
     }
-
-    async updateStorage(data: IStorageData): Promise<void> {
-        // const data: IStorageData = await this.getFromStorage();
-        // data.AccountList[index] = account;
-        return this.saveToStorage(data);
-    }
-
-    // async updateAccount(index: number, account: IAccount): Promise<void> {
-    //     // const data: IStorageData = await this.getFromStorage();
-    //     data.AccountList[index] = account;
-    //     return this.saveToStorage(data);
-    // }
-
-    async addAccount(address: string, privateKey: string, keystore: any, passHash: string): Promise<void> {
-
-        const data: IStorageData = await this.getFromStorage();
-        const account: IAccount = {
-            address,
-            // TODO: don't stored it as plain text here
-            privateKey,
-            keystore,
-            accountName: `Account ${data.AccountList.length + 1}`,
-            // TODO: use this
-            encryptedKeystore: '',
-            encryptedSeed: '',
-        };
-
-        data.PassHash = passHash;
-        data.AccountList.push(account);
-        data.CurrentAccountIdx = data.AccountList.length - 1;
-        return this.saveToStorage(data);
-    }
-
-    reset(): Promise<void> {
-        const defaultValue: IStorageData = {
-            AccountList: [],
-            CurrentAccountIdx: 0,
-            PassHash: ''
-        };
-
-        const jsonText = JSON.stringify(defaultValue);
-        return this.saveToStorageRaw(jsonText);
-    }
-
-    setNameForAccount$(accountNumber: number, newName: string) {
-
-    }
-
-    getAccountNumberByName$() {
-
-    }
-
-    getAllAccountNames$() {
-
-    }
-
-    getAccountByName$() {
-
-    }
-
-
 }

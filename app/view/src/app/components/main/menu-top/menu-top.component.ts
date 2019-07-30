@@ -1,9 +1,4 @@
-import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {BehaviorSubject} from "rxjs";
-import {IMenuItem, StorageService} from "../../../services/storage.service";
-import {AuthService} from "../../../services/auth.service";
-import {map} from "rxjs/operators";
-
+import {Component} from '@angular/core';
 
 @Component({
     selector: 'app-menu-top',

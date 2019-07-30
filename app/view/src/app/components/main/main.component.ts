@@ -1,14 +1,10 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {combineLatest, Observable, timer} from 'rxjs';
+import {Component} from '@angular/core';
+import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
-import {StorageService, IMenuItem} from '../../services/storage.service';
-import {AuthService} from '../../services/auth.service';
-import {CurrentAccountService} from '../../services/current-account.service';
 import {BinanceService} from '../../services/binance.service';
-import {getAddressFromPrivateKey} from '../../services/binance-crypto';
-
+import {IUiState, StateService} from '../../services/state.service';
 
 @Component({
     selector: 'app-main',
@@ -17,89 +13,33 @@ import {getAddressFromPrivateKey} from '../../services/binance-crypto';
 })
 export class MainComponent {
 
-    bnb$: Observable<string>;
-    fiat$: Observable<string>;
+    bnb$: Observable<number>;
+    bnbInUsd$: Observable<number>;
     address$: Observable<string>;
     shortAddress$: Observable<string>;
+    accountName$: Observable<string>;
     copyMessage = 'Copy to clipboard';
 
-    constructor(public currentAccount: CurrentAccountService,
-                public storage: StorageService,
+    constructor(public stateService: StateService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
     ) {
-        this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
-            map((x: any[]) => {
-                const [account, network] = x;
-                const pk = account.privateKey;
-                const networkPrefix = network.networkPrefix;
-                return getAddressFromPrivateKey(pk, networkPrefix);
+
+        this.accountName$ = this.stateService.uiState$.pipe(
+            map((uiState: IUiState) => {
+                return uiState.currentAccount.name;
             })
         );
-
-        this.shortAddress$ = this.address$.pipe(
-            map((address) => {
-                const start = address.substring(0, 5);
-                const end = address.substring(address.length - 6, address.length);
-                return `${start}...${end}`;
-            })
-        );
-
-        const timer$ = timer(0, 4000);
-
-        const balances$ = combineLatest([this.address$, this.storage.selectedNetwork$, timer$]).pipe(
-            switchMap((x: any[]) => {
-                const [address, networkMenuItem] = x;
-                const endpoint = networkMenuItem.val;
-                return this.bncService.getBalance(address, endpoint);
-            }),
-            shareReplay(1)
-        );
-
-        const pluckBalance = (response: any, coinSymbol: string) => {
-            const balances = response.balances || [];
-            const item = balances.find((x) => x.symbol === coinSymbol);
-            return item ? item.free : 0;
-        };
-
-        const bnbBalance$ = balances$.pipe(
-            map((response) => pluckBalance(response, 'BNB'))
-        );
-
-        this.bnb$ = bnbBalance$.pipe(
-            map((bnbAmount) => `${bnbAmount} BNB`),
-        );
-
-        const bnb2usdRate$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            map((resp: any) => resp.USD)
-        );
-
-        this.fiat$ = combineLatest([bnbBalance$, bnb2usdRate$]).pipe(
-            map((arr: any[]) => {
-                const [bnb, rate] = arr;
-                const fiat = (bnb * rate);
-                const truncated = (Math.floor(fiat * 100) / 100).toFixed(2);
-                return `$ ${truncated} USD`;
-            }),
-            shareReplay(1)
-        );
+        this.address$ = this.stateService.currentAddress$;
+        this.shortAddress$ = this.stateService.currentAddressShort$;
+        this.bnb$ = this.stateService.bnbBalance$;
+        this.bnbInUsd$ = this.stateService.bnbBalanceInUsd$;
     }
 
     copyAddress() {
-        // TODO: probable better to do that without observables, by just assiging address to MainComponent field
-        this.address$.pipe(
-            takeUntil(timer(100)),
-            take(1),
-        ).subscribe((address) => {
-            this.clipboardService.copyToClipboard(address);
-            this.copyMessage = 'Copied ✔';
-        });
+        const currentAddress = this.stateService.currentAddress;
+        this.clipboardService.copyToClipboard(currentAddress);
+        this.copyMessage = 'Copied ✔';
     }
-
-
-
 }

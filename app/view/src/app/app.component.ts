@@ -15,23 +15,23 @@ export class AppComponent {
 
     subscription: Subscription;
 
-    constructor(private router: Router, authService: AuthService, storageService: StorageService) {
+    constructor(private router: Router, authService: AuthService) {
 
-        const redirect$ = combineLatest([storageService.hasAccount$, authService.isLoggedIn$]).pipe(
-            tap((x) => {
-                const [hasAccount, isLoggedIn] = x;
-
-                if (hasAccount && isLoggedIn) {
-                    this.router.navigate(['/main']);
-                } else if (hasAccount && !isLoggedIn) {
-                    this.router.navigate(['/unlock']);
-                } else {
-                    this.router.navigate(['/greeter']);
-                }
-            })
-        );
-
-        this.subscription = redirect$.subscribe();
+        // const redirect$ = combineLatest([storageService.hasAccount$, authService.isLoggedIn$]).pipe(
+        //     tap((x) => {
+        //         const [hasAccount, isLoggedIn] = x;
+        //
+        //         if (hasAccount && isLoggedIn) {
+        //             this.router.navigate(['/main']);
+        //         } else if (hasAccount && !isLoggedIn) {
+        //             this.router.navigate(['/unlock']);
+        //         } else {
+        //             this.router.navigate(['/greeter']);
+        //         }
+        //     })
+        // );
+        //
+        // this.subscription = redirect$.subscribe();
     }
 
 }

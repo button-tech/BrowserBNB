@@ -12,25 +12,27 @@
         </div>
         <hr class="pop-hr">
         <div id="scrollableUsers">
-            <div class="item-of"
-                 *ngFor="let item of (this.storage.storageData$ | async).AccountList; let i = index; "
+
+            <div class="item-of" *ngFor="let item of (accounts$ | async); let i = index;"
                  style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
+
                 <div (click)="menuUsers.close()"
                      style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
                     <button class="btn btn-just-icon btn-round btn-binance-outline-two"> #{{(1 + i)}}</button>
                 </div>
+
                 <sat-popover openTransition="0ms ease-out"
                              closeTransition="0ms ease-in" #name hasBackdrop forceAlignment>
-                    <app-edit-form (update)=" rename($event, i)"></app-edit-form>
+                    <app-edit-form (update)="renameAccount($event, i)"></app-edit-form>
                 </sat-popover>
 
                 <div (click)="menuUsers.close()"
                      style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
-                    {{item.accountName}}
+                    {{item.name}}
                 </div>
                 <div (click)="menuUsers.close()"
                      style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 12px; margin-top: -1.8em;  margin-left: -0.4em">
-                    {{toShortAddress(item.address)}}
+                    {{item.shortAddress}}
                 </div>
                 <div [satPopoverAnchor]="name" (click)="name.open()"
                      style="margin-top: -2.5em; margin-right: 0.3em; margin-bottom: 0.2em; grid-row: 2; grid-column: 4;">
@@ -43,9 +45,9 @@
         </div>
         <div id="bottom-users">
             <hr class="pop-hr">
-            <button class="menu-item-users" routerLink="/registration/create">
+            <button class="menu-item-users" routerLink="/registration/create" (click)="addAccount()">
                 <fa name="plus" size="sm"></fa>
-                Create Account
+                Add Account
             </button>
             <button class="menu-item-users" routerLink="/registration/import">
                 <fa name="arrow-right" size="sm"></fa>

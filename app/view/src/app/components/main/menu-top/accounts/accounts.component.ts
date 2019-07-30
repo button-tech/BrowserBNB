@@ -1,40 +1,35 @@
 import {Component, OnInit} from '@angular/core';
-import {map} from "rxjs/operators";
-import {StorageService} from "../../../../services/storage.service";
-import {AuthService} from "../../../../services/auth.service";
+import {map, pluck} from 'rxjs/operators';
+import {AuthService} from '../../../../services/auth.service';
+import {IUiAccount, StateService} from '../../../../services/state.service';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.css']
 })
-export class AccountsComponent implements OnInit {
+export class AccountsComponent {
 
-    constructor(public storage: StorageService,
-                private authService: AuthService,) {
+    accounts$: Observable<IUiAccount[]>;
+
+    constructor(public stateService: StateService, private authService: AuthService) {
+        this.accounts$ = stateService.uiState$.pipe(
+            pluck('accounts')
+        )
     }
 
-    ngOnInit() {
-    }
-
-    toShortAddress(address) {
-        return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length)
-    }
-
-    rename(name: any, index: number) {
-        this.storage.storageData$.pipe(
-            map((x) => {
-                x.AccountList[index].accountName = name;
-                this.storage.updateStorage(x);
-            }),
-        ).subscribe();
+    renameAccount(name: any, index: number): void {
 
     }
 
-    selectUser(value: string) {
-        // this.currentAccount.accountName = value;
+    switchAccount(value: string): void {
+
     }
 
+    addAccount(): void {
+
+    }
 
     logout() {
         this.authService.logout();
