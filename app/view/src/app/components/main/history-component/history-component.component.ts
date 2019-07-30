@@ -46,6 +46,17 @@ export class HistoryComponentComponent implements OnInit {
         return symbol
     }
 
+    findMappedImage(symbol: string): string {
+        if (symbol) {
+            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+            if (!result.image) {
+                return '../../../../assets/icons/default.png'
+            }
+            return result.image;
+        }
+        return '../../../../assets/icons/default.png'
+    }
+
     goToDetails(tx: any) {
         this.temp.details$ = of(tx);
         this.router.navigate(['/details'])
