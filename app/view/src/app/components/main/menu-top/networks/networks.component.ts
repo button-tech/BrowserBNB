@@ -1,37 +1,49 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {IMenuItem, StorageService} from "../../../../services/storage.service";
-import {BehaviorSubject} from "rxjs";
-import {CurrentAccountService} from "../../../../services/current-account.service";
-import {AuthService} from "../../../../services/auth.service";
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NetworkType } from '../../../../services/storage.service';
+import { NETWORK_ENDPOINT_MAPPING } from '../../../../services/network_endpoint_mapping';
+import { IMenuItem, StateService } from '../../../../services/state.service';
+import { pluck, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-networks',
-  templateUrl: './networks.component.html',
-  styleUrls: ['./networks.component.css']
+    selector: 'app-networks',
+    templateUrl: './networks.component.html',
+    styleUrls: ['./networks.component.css']
 })
-export class NetworksComponent implements OnInit {
+export class NetworksComponent {
 
-  // @ts-ignore
-  @ViewChild('menuNetwork')
-  menuNetwork: ElementRef;
+    // @ts-ignore
+    @ViewChild('menuNetwork')
+    menuNetwork: ElementRef;
 
-  networkMenu: IMenuItem[];
-  selectedNetwork$: BehaviorSubject<IMenuItem>;
-  userItems: IMenuItem[] = [];
-  constructor(public currentAccount: CurrentAccountService,
-              public storage: StorageService,
-  ) {
+    networkMenu = [
+        {
+            label: 'MAINNET',
+            networkPrefix: 'bnb',
+            val: NETWORK_ENDPOINT_MAPPING.MAINNET
+        },
+        {
+            label: 'TESTNET',
+            networkPrefix: 'tbnb',
+            val: NETWORK_ENDPOINT_MAPPING.TESTNET
+        },
+    ];
 
-    this.selectedNetwork$ = this.storage.selectedNetwork$;
-    this.networkMenu = this.storage.networkMenu;
+    selectedNetworkLabel$: Observable<string>;
 
-  }
 
-  ngOnInit() {
-  }
+    constructor(private stateService: StateService) {
 
-  selectNetwork(value: IMenuItem) {
-    this.storage.selectedNetwork$.next(value);
-  }
+        this.selectedNetworkLabel$ = stateService.uiState$.pipe(
+            pluck('network'),
+            map((network: NetworkType) => {
+                return network === 'bnb' ? 'MAINNET' : 'TESTNET';
+            })
+        );
+    }
+
+    selectNetwork(value: NetworkType) {
+        this.stateService.switchNetwork(value);
+    }
 
 }

@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {IAccount} from './storage.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +8,7 @@ export class ClipboardService {
     constructor() {
     }
 
-    copyToClipboard(value: any) {
+    public copyToClipboard(value: any): void {
         const obj = document.createElement('textarea');
         obj.style.position = 'fixed';
         obj.style.left = '0';

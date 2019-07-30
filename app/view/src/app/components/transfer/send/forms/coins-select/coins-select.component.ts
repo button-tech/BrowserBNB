@@ -2,7 +2,6 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {BehaviorSubject, combineLatest, Observable, Subscription, timer} from "rxjs";
 import {map, pluck, shareReplay, switchMap, take, takeUntil} from "rxjs/operators";
-import {CurrentAccountService} from "../../../../../services/current-account.service";
 import {StorageService} from "../../../../../services/storage.service";
 import {AuthService} from "../../../../../services/auth.service";
 import {HttpClient} from "@angular/common/http";

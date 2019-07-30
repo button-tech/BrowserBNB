@@ -24,7 +24,6 @@ import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.com
 import {PasswordComponent} from './components/registration/password/password.component';
 import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
-import {CurrentAccountService} from './services/current-account.service';
 import {BinanceService} from './services/binance.service';
 import {SendComponent} from './components/transfer/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
@@ -43,6 +42,7 @@ import {NetworksComponent} from './components/main/menu-top/networks/networks.co
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 import {RecieveComponent} from './components/main/recieve/recieve.component';
 import { HistoryDetailsComponent } from './components/main/history-component/history-details/history-details.component';
+import { StateService } from './services/state.service';
 
 
 @NgModule({
@@ -89,9 +89,9 @@ import { HistoryDetailsComponent } from './components/main/history-component/his
         RegistrationService,
         AuthService,
         AuthGuardService,
+        StateService,
         StorageService,
         ClipboardService,
-        CurrentAccountService,
         BinanceService
     ],
     bootstrap: [AppComponent]

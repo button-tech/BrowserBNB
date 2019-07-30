@@ -16,9 +16,9 @@ export function isValidMnemonic(mnemonic: string): boolean {
     return crypto.validateMnemonic(mnemonic);
 }
 
-export function getPrivateKeyFromMnemonic(mnemonic: string): string {
+export function getPrivateKeyFromMnemonic(mnemonic: string, index: number = 0): string {
     console.assert(isNotEmptyString(mnemonic));
-    return crypto.getPrivateKeyFromMnemonic(mnemonic);
+    return crypto.getPrivateKeyFromMnemonic(mnemonic, true, index);
 }
 
 export function getKeystoreFromMnemonic(mnemonic: string, password: string): any {
@@ -43,7 +43,7 @@ export function getSHA3hashSum(value: string): string {
 }
 
 // Commented since we don't user it yet
-// public static returnAddressFromKeystore(keystore: any, password: string, networkType: string = 'bnb'): string {
+// public static returnAddressFromKeystore(keystore: any, password  : string, networkType: string = 'bnb'): string {
 //     const privateKey = BinanceCrypto.returnPrivateKeyFromKeystore(keystore, password);
 //     return BinanceCrypto.returnAddressFromPrivateKey(privateKey, networkType);
 // }

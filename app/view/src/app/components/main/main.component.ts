@@ -1,14 +1,11 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {combineLatest, Observable, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, shareReplay, switchMap, take, takeUntil} from 'rxjs/operators';
+import { map, pluck, shareReplay, switchMap, take, takeUntil } from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
-import {StorageService, IMenuItem} from '../../services/storage.service';
-import {AuthService} from '../../services/auth.service';
-import {CurrentAccountService} from '../../services/current-account.service';
 import {BinanceService} from '../../services/binance.service';
 import {getAddressFromPrivateKey} from '../../services/binance-crypto';
-
+import { StateService } from '../../services/state.service';
 
 @Component({
     selector: 'app-main',
@@ -23,12 +20,17 @@ export class MainComponent {
     shortAddress$: Observable<string>;
     copyMessage = 'Copy to clipboard';
 
-    constructor(public currentAccount: CurrentAccountService,
-                public storage: StorageService,
+    constructor(public stateService: StateService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private bncService: BinanceService
     ) {
+
+        // this.stateService.uiState$.pipe(
+        //     pluck('currentAccount'),
+        //     pluck('currentAccount')
+        // );
+
         this.address$ = combineLatest([this.storage.currentAccount$, this.storage.selectedNetwork$]).pipe(
             map((x: any[]) => {
                 const [account, network] = x;
@@ -99,7 +101,4 @@ export class MainComponent {
             this.copyMessage = 'Copied ✔';
         });
     }
-
-
-
 }
