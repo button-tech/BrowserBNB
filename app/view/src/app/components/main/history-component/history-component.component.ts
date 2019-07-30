@@ -1,16 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Observable, of, timer} from 'rxjs';
-import {map, shareReplay, switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {TemporaryService} from "../../../services/temporary.service";
 import {Router} from "@angular/router";
+import {rawTokensImg} from '../../../constants';
 
 @Component({
     selector: 'app-history-component',
     templateUrl: './history-component.component.html',
     styleUrls: ['./history-component.component.css']
 })
-export class HistoryComponentComponent implements OnInit, OnDestroy {
+export class HistoryComponentComponent implements OnInit {
 
     hist$: Observable<any>;
 
@@ -37,7 +38,12 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
     ngOnInit() {
     }
 
-    ngOnDestroy() {
+    findMappedName(symbol: string): string {
+        if (symbol) {
+            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+            return result.mappedAsset;
+        }
+        return symbol
     }
 
     goToDetails(tx: any) {

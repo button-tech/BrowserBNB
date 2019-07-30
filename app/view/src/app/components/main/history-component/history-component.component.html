@@ -2,7 +2,8 @@
     <div  (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
-                <small class="time" style="font-size: 11px !important; font-weight: 500; color: rgb(132, 142, 156);">
+                <small class="time"
+                       style="font-size: 12px !important; font-weight: 500; color: rgb(132, 142, 156);margin-left: 0.1em">
                     {{tx.timeStamp | date: 'dd/MM/yyyy' || ''}}
                 </small>
             </div>
@@ -10,11 +11,12 @@
             align-content: center; align-items: center; margin-bottom: -1.5em; color: rgb(132, 142, 156);">
                 <img src="../../../../assets/icons/icon48.png" alt="info" width="25" height="25">
             </div>
-            <div class="type">
+            <div style="font-size: 15px; font-weight: bold" class="type">
                 {{tx.txType.replace('_', ' ') }}
             </div>
             <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
-                <small class="sums">{{tx.value || ''}} {{tx.txAsset || ''}}</small>
+                <small style="font-size: 14px"
+                       class="sums">{{tx.value || ''}} {{this.findMappedName(tx.txAsset) || ''}}</small>
             </div>
             <div style="grid-column: 3; grid-row: 3; margin-top: -1.6em; color: rgb(132, 142, 156); ">
                 <!--                <small style="font-size: 15px; font-weight: bold" class="sums">{{convert2fiat(tx.value, tx.txAsset)}}</small>-->
