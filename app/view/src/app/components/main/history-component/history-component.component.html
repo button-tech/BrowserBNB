@@ -1,30 +1,42 @@
-<div style="margin-top: -1.4em;">
-    <div  (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
+<div *ngIf="(histLen$ | async) > 0" style="margin-top: -2.4em;">
+    <div (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
-                <small class="time" style="font-size: 11px !important; font-weight: 500; color: rgb(132, 142, 156);">
+                <small class="time"
+                       style="font-size: 12px !important; font-weight: 500; color: rgb(132, 142, 156);margin-left: 0.1em">
                     {{tx.timeStamp | date: 'dd/MM/yyyy' || ''}}
                 </small>
             </div>
             <div style="grid-column: 1; grid-row: 1/3 !important; align-self: center;
             align-content: center; align-items: center; margin-bottom: -1.5em; color: rgb(132, 142, 156);">
-                <img src="../../../../assets/icons/icon48.png" alt="info" width="25" height="25">
+                <img src="{{findMappedImage(tx.txAsset)}}" alt="info" width="25" height="25">
             </div>
-            <div class="type">
+            <div style="font-size: 15px; font-weight: bold" class="type">
                 {{tx.txType.replace('_', ' ') }}
             </div>
             <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
-                <small class="sums">{{tx.value || ''}} {{tx.txAsset || ''}}</small>
+                <small style="font-size: 14px"
+                       class="sums">{{tx.value || ''}} {{this.findMappedName(tx.txAsset) || ''}}</small>
             </div>
             <div style="grid-column: 3; grid-row: 3; margin-top: -1.6em; color: rgb(132, 142, 156); ">
                 <!--                <small style="font-size: 15px; font-weight: bold" class="sums">{{convert2fiat(tx.value, tx.txAsset)}}</small>-->
             </div>
             <div class="text-center"
                  style="grid-column: 4; grid-row: 3; margin-top: -0.9em; margin-right: 0em; margin-bottom: 0.2em">
-                <button (click)="goToDetails(tx)"  class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
+                <button (click)="goToDetails(tx)" class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
                     <fa align="center" class="infos-fa" style="color: #FFFFFF" name="info" size="sm"></fa>
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!((histLen$ | async) === 0)" style="margin-top: -1.4em;">
+    <loaders-css [loader]="loader" [scale]="1" [bgColor]="bgColor" [color]="color"></loaders-css>
+</div>
+<div *ngIf="(histLen$ | async) === 0" style="margin-top: -1.4em;">
+    <div class="row">
+        <div class="col-12 text-center">
+            <p style="color: rgb(132, 142, 156); font-size: 14px;">You have no transactions</p>
         </div>
     </div>
 </div>

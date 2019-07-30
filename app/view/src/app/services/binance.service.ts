@@ -46,9 +46,10 @@ export class BinanceService {
 
     getBalance$(address: string, endpoint: string): Observable<any> {
         return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
-            tap((x) => {
-                debugger;
-            }),
+            // TODO: fix with share replay upstream
+            // tap((x) => {
+            //     debugger;
+            // }),
             catchError((error: HttpErrorResponse) => {
                 // TODO: properly handle binance 404 response
                 // const errResp:  AccountInfo;

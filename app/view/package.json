@@ -40,6 +40,7 @@
     "hash-base": "^3.0.4",
     "ndjson": "^1.5.0",
     "ng6-toastr-notifications": "^1.0.4",
+    "ngx-loaders-css": "^1.0.1",
     "node-hid": "^0.7.9",
     "rxjs": "^6.5.2",
     "tslib": "^1.9.0",

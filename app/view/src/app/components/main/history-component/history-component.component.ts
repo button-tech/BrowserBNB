@@ -1,18 +1,23 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Observable, of, timer} from 'rxjs';
-import {map, shareReplay, switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {TemporaryService} from "../../../services/temporary.service";
 import {Router} from "@angular/router";
+import {rawTokensImg} from '../../../constants';
+import {LoadersCSS} from "ngx-loaders-css";
 
 @Component({
     selector: 'app-history-component',
     templateUrl: './history-component.component.html',
     styleUrls: ['./history-component.component.css']
 })
-export class HistoryComponentComponent implements OnInit, OnDestroy {
-
+export class HistoryComponentComponent implements OnInit {
+    loader: LoadersCSS = 'line-scale';
+    bgColor = 'white';
+    color = 'rgb(239, 184, 11) ';
     hist$: Observable<any>;
+    histLen$: Observable<any>;
 
 
     constructor(private http: HttpClient, public temp: TemporaryService, private router: Router) {
@@ -30,14 +35,36 @@ export class HistoryComponentComponent implements OnInit, OnDestroy {
             })
         );
 
-        this.hist$.subscribe()
+        this.histLen$ = this.hist$.pipe(
+            map((x) => {
+                return x.length
+            })
+        )
+
+        this.histLen$.subscribe();
 
     }
 
     ngOnInit() {
     }
 
-    ngOnDestroy() {
+    findMappedName(symbol: string): string {
+        if (symbol) {
+            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+            return result.mappedAsset;
+        }
+        return symbol
+    }
+
+    findMappedImage(symbol: string): string {
+        if (symbol) {
+            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+            if (!result.image) {
+                return '../../../../assets/icons/default.png'
+            }
+            return result.image;
+        }
+        return '../../../../assets/icons/default.png'
     }
 
     goToDetails(tx: any) {

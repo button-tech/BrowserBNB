@@ -3,8 +3,9 @@ import {TemporaryService} from "../../../../services/temporary.service";
 import {Location} from "@angular/common";
 import {ClipboardService} from "../../../../services/clipboard.service";
 import {map, subscribeOn, take, takeUntil} from "rxjs/operators";
-import {timer} from "rxjs";
+import {Observable, timer} from "rxjs";
 import {ChromeApiService} from "../../../../services/chrome-api.service";
+import {rawTokensImg} from "../../../../constants";
 
 @Component({
     selector: 'app-history-details',
@@ -33,6 +34,19 @@ export class HistoryDetailsComponent implements OnInit {
             }),
             take(1)
         ).subscribe()
+    }
+
+    findMappedName(symbol$: any): Observable<string> {
+        return symbol$.pipe(
+            map((symbol: any) => {
+                if (symbol.txAsset) {
+                    const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol.txAsset);
+                    return result.mappedAsset;
+                }
+                return symbol.txAsset
+            }),
+            take(1)
+        )
     }
 
 

@@ -27,7 +27,7 @@
             </div>
             <div style="grid-column: 2"
                  *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value">
-                {{(this.temp.details$ | async).value}} {{(this.temp.details$ | async).txAsset}}
+                {{(this.temp.details$ | async).value}} {{this.findMappedName(this.temp.details$) | async}}
             </div>
             <div style="grid-column: 1" *ngIf="(this.temp.details$ | async).txFee > 0">Fee
             </div>

@@ -37,6 +37,7 @@ export class NetworksComponent {
         this.selectedNetworkLabel$ = stateService.uiState$.pipe(
             pluck('network'),
             map((network: NetworkType) => {
+                debugger
                 return network === 'bnb' ? 'MAINNET' : 'TESTNET';
             })
         );
