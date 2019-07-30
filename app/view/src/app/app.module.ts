@@ -43,6 +43,7 @@ import {AccountsComponent} from './components/main/menu-top/accounts/accounts.co
 import {RecieveComponent} from './components/main/recieve/recieve.component';
 import { HistoryDetailsComponent } from './components/main/history-component/history-details/history-details.component';
 import { StateService } from './services/state.service';
+import {FmtPipe} from './fmt.pipe';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { StateService } from './services/state.service';
         NetworksComponent,
         AccountsComponent,
         RecieveComponent,
-        HistoryDetailsComponent
+        HistoryDetailsComponent,
+        FmtPipe
     ],
     imports: [
         BrowserModule,

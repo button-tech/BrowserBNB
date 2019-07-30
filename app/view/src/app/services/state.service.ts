@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
-import { IStorageAccount, IStorageData, NetworkType, StorageService } from './storage.service';
-import { BehaviorSubject, Observable, of, timer } from 'rxjs';
-import { BinanceService } from './binance.service';
-import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
-import { distinctUntilChanged, map, mapTo, pluck, shareReplay, switchMap, switchMapTo } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
+import {BehaviorSubject, combineLatest, Observable, of, timer} from 'rxjs';
+import {BinanceService} from './binance.service';
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import {distinctUntilChanged, map, mapTo, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
 
 export interface ITransaction {
     Amount: number;
@@ -21,14 +22,13 @@ export interface IMenuItem {
 
 export interface IUiAccount extends IStorageAccount {
     name: string;
-    shortMainnetAddress: string;
-    shortTestnetAddress: string;
+    address: string;
+    shortAddress: string;
 }
 
 export interface IUiState {
     accounts: IUiAccount[];
     currentAccount: IUiAccount;
-    network: NetworkType;
     // Maintain that for correct storage update
     storageData: IStorageData;
 }
@@ -38,7 +38,7 @@ export interface IUiBalance {
     bnbFiat: string;
 }
 
-export function toShotAddress(address: string): string {
+export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
 
@@ -57,10 +57,14 @@ export class StateService {
 
     emptyState: IUiState = Object.freeze({
         accounts: [],
-        currentAccount: null,
-        network: null,
-
-        //
+        currentAccount: {
+            name: '',
+            address: '',
+            shortAddress: '',
+            addressMainnet: '',
+            addressTestnet: '',
+            privateKey: ''
+        },
         storageData: null
     });
 
@@ -69,7 +73,12 @@ export class StateService {
 
     allBalances$: Observable<Array<any>>;
     bnbBalance$: Observable<number>;
-    bnbBalanceInFiat$: Observable<number>;
+    bnbBalanceInUsd$: Observable<number>;
+
+    currentAddress$: Observable<string>;
+    currentAddress: string;
+
+    currentAddressShort$: Observable<string>;
 
     getBalancePipeline$(address: string): Observable<IUiBalance> {
         return of({
@@ -77,7 +86,6 @@ export class StateService {
             bnbFiat: 'pending'
         });
     }
-
 
     get uiState(): IUiState {
         return this.uiState$.getValue();
@@ -88,14 +96,18 @@ export class StateService {
         const accounts = data.accounts.map((account) => {
 
             const name = data.address2name[account.addressMainnet];
-            const shortMainnetAddress = toShotAddress(account.addressMainnet);
-            const shortTestnetAddress = toShotAddress(account.addressTestnet);
+
+            const address = data.selectedNetwork === 'bnb'
+                ? account.addressMainnet
+                : account.addressTestnet;
+
+            const shortAddress = toShortAddress(address);
 
             return {
                 ...account,
                 name,
-                shortMainnetAddress,
-                shortTestnetAddress
+                address,
+                shortAddress
             };
         });
 
@@ -106,7 +118,6 @@ export class StateService {
         const uiState: IUiState = {
             accounts,
             currentAccount,
-            network: data.selectedNetwork,
             storageData: data
         };
 
@@ -122,17 +133,17 @@ export class StateService {
     addAccount(): void {
         // Use hd wallet ...
         // const newStorageState: IStorageData = {
-        //     ...this.uiState.storageData,
-        //     selectedAddress: toAccount.addressMainnet
+        //     ...this.uiState.storageData
         // };
+        //
+        // this.uiState.accounts.push({
+        //
+        // });
         //
         // const newUiState = {
-        //     ...this.uiState,
-        //     activeAccount: toAccount
+        //     ...this.uiState
         // };
         // this.uiState$.next(newUiState);
-        //
-        // this.storageService.encryptAndSave(newStorageState, this.password);
     }
 
     switchAccount(toAccount: IUiAccount): void {
@@ -144,13 +155,11 @@ export class StateService {
 
         const newUiState = {
             ...this.uiState,
-            activeAccount: toAccount
+            currentAccount: toAccount
         };
+
+        this.storageService.encryptAndSave(newUiState.storageData, this.password);
         this.uiState$.next(newUiState);
-
-        // this.getBalancePipeline$();
-
-        this.storageService.encryptAndSave(newStorageState, this.password);
     }
 
     switchNetwork(network: NetworkType): void {
@@ -160,32 +169,72 @@ export class StateService {
             selectedNetwork: network
         };
 
-        const newUiState = {
-            ...this.uiState,
-            selectedNetwork: network
-        };
-        this.uiState$.next(newUiState);
+        const newAccounts = this.uiState.accounts.map((account) => {
+            const newAddress = network === 'bnb'
+                ? account.addressMainnet
+                : account.addressTestnet;
 
-        this.storageService.encryptAndSave(newStorageState, this.password);
+            return {
+                ...account,
+                address: newAddress,
+                shortAddress: toShortAddress(newAddress)
+            };
+        });
+
+        const currentAccount = newAccounts.find((account) => {
+            return account.addressMainnet === this.uiState.storageData.selectedAddress ||
+                account.addressTestnet === this.uiState.storageData.selectedAddress;
+        });
+
+        const newUiState: IUiState = {
+            ...this.uiState,
+            accounts: newAccounts,
+            currentAccount
+        };
+
+        this.storageService.encryptAndSave(newUiState.storageData, this.password);
+        this.uiState$.next(newUiState);
     }
 
-    constructor(private storageService: StorageService, private bncService: BinanceService) {
+    constructor(private storageService: StorageService, private bncService: BinanceService, private http: HttpClient) {
+
+        this.currentAddress$ = this.uiState$.pipe(
+            map((uiState: IUiState) => {
+                const {currentAccount, storageData} = uiState;
+
+                return storageData.selectedNetwork === 'bnb'
+                    ? currentAccount.addressMainnet
+                    : currentAccount.addressTestnet;
+            }),
+            tap((value) => {
+                this.currentAddress = value;
+            }),
+            shareReplay(1)
+        );
+
+        this.currentAddressShort$ = this.currentAddress$.pipe(
+            map((address: string) => {
+                return toShortAddress(address);
+            }),
+            shareReplay(1)
+        );
 
         // Array balances of different tokens for current account
         this.allBalances$ = this.uiState$.pipe(
+            // TODO: simplify using current address and current endpoint
             distinctUntilChanged((a: IUiState, b: IUiState) => {
                 const sameAccount = (a.currentAccount === b.currentAccount);
-                const sameNetwork = (a.network === b.network);
+                const sameNetwork = (a.storageData.selectedNetwork === b.storageData.selectedNetwork);
                 return sameAccount && sameNetwork;
             }),
             switchMap((uiState: IUiState) => {
-                const {currentAccount, network} = uiState;
+                const {currentAccount, storageData} = uiState;
 
-                const [address, endpoint] = network === 'bnb'
+                const [address, endpoint] = storageData.selectedNetwork === 'bnb'
                     ? [currentAccount.addressMainnet, NETWORK_ENDPOINT_MAPPING.MAINNET]
                     : [currentAccount.addressTestnet, NETWORK_ENDPOINT_MAPPING.TESTNET];
 
-                return timer(0, 60000).pipe(
+                return timer(0, 5000).pipe(
                     switchMap(() => {
                         return this.bncService.getBalance$(address, endpoint);
                     })
@@ -194,13 +243,33 @@ export class StateService {
             shareReplay(1)
         );
 
+        const pluckBalance = (response: any, coinSymbol: string) => {
+            const balances = response.balances || [];
+            const item = balances.find((x) => x.symbol === coinSymbol);
+            return item ? item.free : 0;
+        };
+
         this.bnbBalance$ = this.allBalances$.pipe(
-
+            map((response) => pluckBalance(response, 'BNB')),
+            shareReplay(1)
         );
 
-        this.bnbBalanceInFiat$ = this.bnbBalance$.pipe(
 
+        const bnb2usdRate$ = timer(0, 10000).pipe(
+            switchMap(() => {
+                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
+            }),
+            map((resp: any) => resp.USD),
+            shareReplay(1)
         );
-        // this.selectedNetwork$ = new BehaviorSubject(this.networkMenu[0]);
+
+        this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, bnb2usdRate$]).pipe(
+            map((arr: any[]) => {
+                const [bnb, rate] = arr;
+                const fiat = (bnb * rate);
+                return +((Math.floor(fiat * 100) / 100).toFixed(2));
+            }),
+            shareReplay(1)
+        );
     }
 }

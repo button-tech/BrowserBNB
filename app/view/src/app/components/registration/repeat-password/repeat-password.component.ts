@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertsService } from '../../../services/alerts.service';
-import { AuthService } from '../../../services/auth.service';
-import { RegistrationService } from '../../../services/registration.service';
-import { timer } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {AlertsService} from '../../../services/alerts.service';
+import {AuthService} from '../../../services/auth.service';
+import {RegistrationService} from '../../../services/registration.service';
+import {timer} from 'rxjs';
+import {switchMap, take, tap} from 'rxjs/operators';
 
 @Component({
     selector: 'app-register-repeat-password',
-    templateUrl: './register-repeat-password.component.html',
-    styleUrls: ['./register-repeat-password.component.css']
+    templateUrl: './repeat-password.component.html',
+    styleUrls: ['./repeat-password.component.css']
 })
 export class RepeatPasswordComponent {
 

@@ -39,7 +39,7 @@ export class AuthService {
                 this.stateService.initState(data, password);
                 return true;
             }),
-            catchError(() => {
+            catchError((error) => {
                 return of(false);
             })
         );

@@ -78,8 +78,7 @@ export class StorageService {
         return from(this.getFromStorageRaw()).pipe(
             map((encryptedData) => {
                 return !!encryptedData;
-            }),
-            take(1)
+            })
         );
     }
 
@@ -110,6 +109,9 @@ export class StorageService {
     // }
 
     private saveToStorageRaw(value: string): Promise<void> {
+
+        console.log('Save to storage:', value);
+
         return new Promise<void>((resolve, reject) => {
             if (environment.production) {
                 const cmd = {

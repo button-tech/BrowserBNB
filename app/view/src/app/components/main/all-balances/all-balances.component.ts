@@ -12,7 +12,7 @@ import {Location} from "@angular/common";
 export class AllBalancesComponent implements OnInit, OnDestroy {
     x: Observable<any>;
 
-    constructor(private bncService: BinanceService, private storage: StorageService, private location: Location,) {
+    constructor(private bncService: BinanceService, private storage: StorageService, private location: Location) {
 
     }
 
@@ -22,7 +22,7 @@ export class AllBalancesComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // TODO: real address
-        this.x = this.bncService.getBalance('bnb1rgsk5024ej3tg77qahty0a2kav72mr702r349w', ' https://dex.binance.org/');
+        this.x = this.bncService.getBalance$('bnb1rgsk5024ej3tg77qahty0a2kav72mr702r349w', ' https://dex.binance.org/');
     }
 
     ngOnDestroy() {
