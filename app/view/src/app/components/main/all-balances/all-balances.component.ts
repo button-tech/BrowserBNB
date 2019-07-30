@@ -3,7 +3,7 @@ import {BinanceService} from "../../../services/binance.service";
 import {StorageService} from "../../../services/storage.service";
 import {Observable, of, combineLatest, timer} from "rxjs";
 import {Location} from "@angular/common";
-import {map, switchMap} from "rxjs/operators";
+import {map, shareReplay, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
@@ -75,7 +75,8 @@ export class AllBalancesComponent implements OnInit {
 
                     });
                     return finalBalances.sort((a, b) => parseFloat(a.balance2usd) - parseFloat(b.balance2usd));
-                }));
+                }),
+                shareReplay(1));
     }
 
     goBack() {
