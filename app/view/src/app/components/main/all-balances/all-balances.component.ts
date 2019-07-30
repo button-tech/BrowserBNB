@@ -21,6 +21,7 @@ export class AllBalancesComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // TODO: real address
         this.x = this.bncService.getBalance('bnb1rgsk5024ej3tg77qahty0a2kav72mr702r349w', ' https://dex.binance.org/');
     }
 
