@@ -9,13 +9,14 @@
     </div>
 </div>
 
-<div style="margin-top: 2em" class="container col-11 offset-1">
-    <div style="display: grid; margin-left: 0em; " *ngFor="let b of  (x| async).balances">
-        <div style="display: grid; grid-template-columns: 1fr 2fr 3fr">
-            <img style="align-items: center !important; align-self: center; align-content: center"
-                 src="../../../../assets/icons/icon128.png" width="36" height="36">
-            <h5 style=" align-self: center; font-weight: bolder">{{b.symbol || 'pending'}}</h5>
-            <h5 align="left" style=" align-self: center; font-weight: bolder">{{b.free || 'pending'}}</h5>
+<div style="margin-top: 2em">
+    <div style="display: grid; margin-left: 0em; " *ngFor="let b of (balances$ | async)">
+        <div style="display: grid; grid-template-columns: 1fr 4fr 4fr; grid-template-rows: 2fr 1fr; width: 100%">
+            <img style="grid-row: 1; grid-column: 1; margin-left: 1em"
+                src="{{b.image || '../../../assets/icons/default.png'}}" width="23" height="23">
+            <p style="font-weight: bolder; grid-row: 1; grid-column: 2 ">{{b.name }}</p>
+            <p align="left" style="font-weight: bolder;  grid-row: 1; grid-column: 3">{{b.balance.toFixed(8) || 'pending'}}</p>
+            <p align="left" style="font-weight: bolder; grid-row: 2; grid-column: 3; margin-top: -1.5em">${{b.balance2usd.toFixed(2) || 'pending'}} USD</p>
         </div>
     </div>
 </div>
