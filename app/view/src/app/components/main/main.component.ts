@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {BinanceService} from '../../services/binance.service';
 import {IUiState, StateService} from '../../services/state.service';

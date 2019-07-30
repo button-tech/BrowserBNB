@@ -11,7 +11,7 @@
                     class="btn btn-sm btn-link hover-anchor">
                 <p style="margin-top: 0 !important; margin-bottom: -0.5em !important; color: rgb(33, 40, 51)"
                    id="editButton">
-                    {{accountName$}}
+                    {{accountName$ | async}}
                 </p>
                 {{this.shortAddress$ | async}}
                 <fa id="copyButton" name="copy" size="sm"></fa>
