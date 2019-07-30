@@ -16,6 +16,10 @@ platformBrowserDynamic().bootstrapModule(AppModule).then(ref => {
     }
     window['ngRef'] = ref;
 
+    if (window['global'] === undefined) {
+        window['global'] = window;
+    }
+
     // Otherise, log the boot error
 }).catch(err => console.error(err));
 
