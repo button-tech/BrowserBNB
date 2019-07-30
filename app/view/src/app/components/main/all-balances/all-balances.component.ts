@@ -14,39 +14,31 @@ const rawTokensImg = '[{"image":"http://static.binance.org/icon/7df5e4de406a4764
     styleUrls: ['./all-balances.component.css'],
 })
 export class AllBalancesComponent implements OnInit {
+    tokens$: Observable<any>;
 
-
-    balances$: Observable<any>;
-
-
-    constructor(private bncService: BinanceService, private storage: StorageService, private location: Location, private http: HttpClient) {
-
-    }
-
-    goBack() {
-        this.location.back();
+    constructor(private bncService: BinanceService,
+                private storage: StorageService,
+                private location: Location,
+                private http: HttpClient) {
     }
 
     ngOnInit() {
-
         const timer$ = timer(0, 4000);
-
         const balances$ = timer$.pipe(
             switchMap(() => {
+                //TODO: add current address and current endpoint
                 return this.bncService.getBalance('bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m', ' https://dex.binance.org/');
             }),
             map((resp: any) => {
                 return resp.balances
             })
         );
-
         const bnb2usdRate$ = timer(0, 60000).pipe(
             switchMap(() => {
                 return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
             }),
             map((resp: any) => resp.USD)
         );
-
         const marketRates$ = timer$.pipe(
             switchMap(() => {
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
@@ -54,59 +46,36 @@ export class AllBalancesComponent implements OnInit {
             map((resp: any) => resp)
         );
 
-        // const tokensImages$ = timer$.pipe(
-        //     switchMap(() => {
-        //         return this.http.get('https://explorer.binance.org/api/v1/assets?page=1&rows=3500')
-        //     }),
-        //     map((resp: any) => {
-        //         return resp.assetInfoList;
-        //     })
-        // )
-
-
-        this.balances$ = combineLatest([balances$, marketRates$, bnb2usdRate$])
+        this.tokens$ = combineLatest([balances$, marketRates$, bnb2usdRate$])
             .pipe(
                 map((x: any[]) => {
                     const [balances, marketRates, bnb2usd] = x;
-                    let array = [];
-                    balances.forEach((balanceI) => {
-                        if (balanceI.symbol !== 'BNB') {
-                            array.push({
-                                'sum': Number(balanceI.free),
-                                'symbol': balanceI.symbol
-                            })
-                        }
+                    const imagesUrls = JSON.parse(rawTokensImg);
+                    let finalBalances = [];
+                    balances.forEach((token) => {
+                        const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
+                        const tokensDetailsForCurrentToken = imagesUrls.find(o => o.symbol === token.symbol);
+                        const isOk =
+                            marketTickerForCurrentToken !== undefined
+                            && tokensDetailsForCurrentToken !== undefined
+                            && token.symbol !== 'BNB';
 
-                    });
-                    let arrayOfRates = [];
-                    marketRates.forEach((tokenPair) => {
-                        if (tokenPair.symbol !== 'BNB') {
-                            arrayOfRates.push({
-                                'symbol': tokenPair.baseAssetName,
-                                'rate': Number(tokenPair.lastPrice) * bnb2usd,
-                            })
-                        }
-                    });
-                    let imagesUrls = JSON.parse(rawTokensImg);
-
-                    let d = [];
-                    array.forEach((x) => {
-                        let bObj = arrayOfRates.find(o => o.symbol === x.symbol);
-                        let tObj = imagesUrls.find(o => o.symbol === x.symbol);
-                        if (bObj !== undefined && tObj !== undefined) {
-                            d.push({
-                                'symbol': x.symbol,
-                                'balance2usd': bObj.rate * x.sum,
-                                'balance': x.sum,
-                                'image': tObj.image,
-                                'name': tObj.name,
+                        if (isOk) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': Number(marketTickerForCurrentToken.lastPrice) * bnb2usd * Number(token.free),
+                                'balance': Number(token.free),
+                                'image': tokensDetailsForCurrentToken.image,
+                                'name': tokensDetailsForCurrentToken.name,
                             });
                         }
 
                     });
-                    return d.sort((a, b) => parseFloat(a.balance) - parseFloat(b.balance));
+                    return finalBalances.sort((a, b) => parseFloat(a.balance2usd) - parseFloat(b.balance2usd));
                 }));
+    }
 
-
+    goBack() {
+        this.location.back();
     }
 }

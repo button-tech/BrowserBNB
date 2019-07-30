@@ -9,14 +9,25 @@
     </div>
 </div>
 
-<div style="margin-top: 2em">
-    <div style="display: grid; margin-left: 0em; " *ngFor="let b of (balances$ | async)">
+<div style="margin-top: 0.2em">
+    <div style="display: grid; margin-left: 0em;"
+         *ngFor="let token of (tokens$ | async)">
         <div style="display: grid; grid-template-columns: 1fr 4fr 4fr; grid-template-rows: 2fr 1fr; width: 100%">
             <img style="grid-row: 1; grid-column: 1; margin-left: 1em"
-                src="{{b.image || '../../../assets/icons/default.png'}}" width="23" height="23">
-            <p style="font-weight: bolder; grid-row: 1; grid-column: 2 ">{{b.name }}</p>
-            <p align="left" style="font-weight: bolder;  grid-row: 1; grid-column: 3">{{b.balance.toFixed(8) || 'pending'}}</p>
-            <p align="left" style="font-weight: bolder; grid-row: 2; grid-column: 3; margin-top: -1.5em">${{b.balance2usd.toFixed(2) || 'pending'}} USD</p>
+                 src="{{token.image || '../../../assets/icons/default.png'}}"
+                 width="32"
+                 height="32">
+            <p style="font-weight: bolder; grid-row: 1; grid-column: 2">
+                {{token.name}}
+            </p>
+            <p align="left"
+               style="font-weight: bolder;  grid-row: 1; grid-column: 3"
+            >{{token.balance.toFixed(8) || 'pending'}}
+            </p>
+            <p align="left"
+               style="font-weight: bolder; grid-row: 2; grid-column: 3; margin-top: -1.5em"
+            >${{token.balance2usd.toFixed(2) || 'pending'}} USD
+            </p>
         </div>
     </div>
 </div>
