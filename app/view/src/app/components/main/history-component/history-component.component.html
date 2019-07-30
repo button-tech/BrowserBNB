@@ -1,4 +1,4 @@
-<div *ngIf="(histLen$ | async) > 0" style="margin-top: -1.4em;">
+<div *ngIf="(histLen$ | async) > 0" style="margin-top: -2.4em;">
     <div (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of (hist$ | async)">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
