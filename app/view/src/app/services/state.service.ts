@@ -3,7 +3,7 @@ import {IStorageAccount, IStorageData, NetworkType, StorageService} from './stor
 import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {distinctUntilChanged, map, mapTo, mergeAll, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
+import {distinctUntilChanged, map, mapTo, mergeAll, pluck, shareReplay, startWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 
@@ -238,12 +238,14 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
+    //
+    // refreshHistory$ = new Subject<any>();
+    // refreshHistory() {
+    //     this.refreshHistory$.next();
+    // }
+    //
 
-    refreshHistory$ = new Subject<any>();
-
-    refreshHistory() {
-        this.refreshHistory$.next();
-    }
+    showHistoryLoadingIndicator$ = new BehaviorSubject(true);
 
     constructor(private storageService: StorageService, private bncService: BinanceService, private http: HttpClient) {
 
@@ -336,43 +338,44 @@ export class StateService {
         // const endpoint = 'dex.binance.org';
         // const address = 'bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu';
 
-        combineLatest([this.currentAddress$, this.currentEndpoint$, this.refreshHistory$]).pipe(
+        this.history$ = combineLatest([this.currentAddress$, this.currentEndpoint$]).pipe(
             tap(() => {
-                // TODO: .next() to show indicator
+                this.showHistoryLoadingIndicator$.next(true);
             }),
             switchMap((x) => {
                 const [address, endpoint] = x;
-
                 return concat(
                     bncService.getHistory$(address, endpoint).pipe(
                         tap(() => {
-                            // TODO: .next() to stop indicator
+                            this.showHistoryLoadingIndicator$.next(false);
                         })
                     ),
-                    timer(0, 30000).pipe(
+                    timer(0, 10000).pipe(
                         switchMap(() => {
                             return bncService.getHistory$(address, endpoint);
                         })
                     )
                 );
-            })
-        );
-
-        const historyRefresh$ = combineLatest([
-            this.currentAddress$,
-            this.currentEndpoint$,
-            merge(
-                timer(0, 30000).pipe(mapTo(true)),
-                this.refreshHistory$.pipe(mapTo(false)),
-            )
-        ]);
-
-        this.history$ = historyRefresh$.pipe(
-            switchMap((x) => {
-                const [address, endpoint, silent] = x;
-                return bncService.getHistory$(address, endpoint);
             }),
             shareReplay(1)
         );
+
+        // Simple pipeline
+        //
+        // const historyRefresh$ = combineLatest([this.currentAddress$, this.currentEndpoint$]);
+        // this.history$ = historyRefresh$.pipe(
+        //     tap(() => {
+        //         this.showHistoryLoadingIndicator$.next(true);
+        //     }),
+        //     switchMap((x) => {
+        //         const [address, endpoint] = x;
+        //         return bncService.getHistory$(address, endpoint);
+        //     }),
+        //     tap(() => {
+        //         this.showHistoryLoadingIndicator$.next(false);
+        //     }),
+        //     shareReplay(1)
+        // );
+        //
     }
 }
