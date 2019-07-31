@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, Observable, of, timer} from 'rxjs';
-import {BinanceService} from './binance.service';
+import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
+import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {distinctUntilChanged, map, mapTo, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
+import {distinctUntilChanged, map, mapTo, mergeAll, pluck, shareReplay, switchMap, switchMapTo, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 
@@ -34,6 +34,20 @@ export interface IUiState {
     storageData: IStorageData;
 }
 
+const emptyState: IUiState = Object.freeze({
+    accounts: [],
+    currentAccount: {
+        name: '',
+        address: '',
+        shortAddress: '',
+        addressMainnet: '',
+        addressTestnet: '',
+        privateKey: '',
+        index: 0
+    },
+    storageData: null
+});
+
 export interface IUiBalance {
     bnb: string;
     bnbFiat: string;
@@ -46,34 +60,12 @@ export function toShortAddress(address: string): string {
 @Injectable()
 export class StateService {
 
-    // TODO: should be used only for UI, for traking purposes we should define another model
-    // currentTransaction: ITransaction = {
-    //     'Amount': 0,
-    //     'AddressTo': '',
-    //     'AddressFrom': '',
-    //     'Memo': '',
-    //     'Symbol': ''
-    // };
     private password = '';
 
-    emptyState: IUiState = Object.freeze({
-        accounts: [],
-        currentAccount: {
-            name: '',
-            address: '',
-            shortAddress: '',
-            addressMainnet: '',
-            addressTestnet: '',
-            privateKey: '',
-            index: 0
-        },
-        storageData: null
-    });
-
     selectedNetwork$: BehaviorSubject<IMenuItem>;
-    uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(this.emptyState);
+    uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
-    allBalances$: Observable<Array<any>>;
+    allBalances$: Observable<IBalance[]>;
     bnbBalance$: Observable<number>;
     bnbBalanceInUsd$: Observable<number>;
 
@@ -81,6 +73,11 @@ export class StateService {
     currentAddress: string;
 
     currentAddressShort$: Observable<string>;
+
+    currentEndpoint$: Observable<NETWORK_ENDPOINT_MAPPING>;
+    currentEndpoint: NETWORK_ENDPOINT_MAPPING;
+
+    history$: Observable<any>;
 
     getBalancePipeline$(address: string): Observable<IUiBalance> {
         return of({
@@ -128,7 +125,7 @@ export class StateService {
     }
 
     resetState() {
-        this.uiState$.next(this.emptyState);
+        this.uiState$.next(emptyState);
         this.password = '';
     }
 
@@ -237,8 +234,15 @@ export class StateService {
             currentAccount,
             storageData: newStorageState
         };
-        
+
         this.uiState$.next(newUiState);
+    }
+
+
+    refreshHistory$ = new Subject<any>();
+
+    refreshHistory() {
+        this.refreshHistory$.next();
     }
 
     constructor(private storageService: StorageService, private bncService: BinanceService, private http: HttpClient) {
@@ -253,6 +257,18 @@ export class StateService {
             }),
             tap((value) => {
                 this.currentAddress = value;
+            }),
+            shareReplay(1)
+        );
+
+        this.currentEndpoint$ = this.uiState$.pipe(
+            map((uiState: IUiState) => {
+                return uiState.storageData.selectedNetwork === 'bnb'
+                    ? NETWORK_ENDPOINT_MAPPING.MAINNET
+                    : NETWORK_ENDPOINT_MAPPING.TESTNET;
+            }),
+            tap((value) => {
+                this.currentEndpoint = value;
             }),
             shareReplay(1)
         );
@@ -288,10 +304,9 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckBalance = (response: any, coinSymbol: string) => {
-            const balances = response.balances || [];
+        const pluckBalance = (balances: IBalance[], coinSymbol: string) => {
             const item = balances.find((x) => x.symbol === coinSymbol);
-            return item ? item.free : 0;
+            return item ? +item.free : 0;
         };
 
         this.bnbBalance$ = this.allBalances$.pipe(
@@ -313,6 +328,49 @@ export class StateService {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
                 return +((Math.floor(fiat * 100) / 100).toFixed(2));
+            }),
+            shareReplay(1)
+        );
+
+        // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin
+        // const endpoint = 'dex.binance.org';
+        // const address = 'bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu';
+
+        combineLatest([this.currentAddress$, this.currentEndpoint$, this.refreshHistory$]).pipe(
+            tap(() => {
+                // TODO: .next() to show indicator
+            }),
+            switchMap((x) => {
+                const [address, endpoint] = x;
+
+                return concat(
+                    bncService.getHistory$(address, endpoint).pipe(
+                        tap(() => {
+                            // TODO: .next() to stop indicator
+                        })
+                    ),
+                    timer(0, 30000).pipe(
+                        switchMap(() => {
+                            return bncService.getHistory$(address, endpoint);
+                        })
+                    )
+                );
+            })
+        );
+
+        const historyRefresh$ = combineLatest([
+            this.currentAddress$,
+            this.currentEndpoint$,
+            merge(
+                timer(0, 30000).pipe(mapTo(true)),
+                this.refreshHistory$.pipe(mapTo(false)),
+            )
+        ]);
+
+        this.history$ = historyRefresh$.pipe(
+            switchMap((x) => {
+                const [address, endpoint, silent] = x;
+                return bncService.getHistory$(address, endpoint);
             }),
             shareReplay(1)
         );

@@ -1,83 +1,64 @@
-import {Component, OnInit} from '@angular/core';
-import {Observable, of, timer} from 'rxjs';
-import {map, switchMap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
-import {TemporaryService} from "../../../services/temporary.service";
-import {Router} from "@angular/router";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Observable, of, Subscription, timer} from 'rxjs';
+import {map, startWith, switchMap, tap} from 'rxjs/operators';
+import {HttpClient} from '@angular/common/http';
+import {TemporaryService} from '../../../services/temporary.service';
+import {Router} from '@angular/router';
 import {rawTokensImg} from '../../../constants';
-import {LoadersCSS} from "ngx-loaders-css";
+import {LoadersCSS} from 'ngx-loaders-css';
+import {IHistoryTx} from '../../../services/binance.service';
+import {StateService} from '../../../services/state.service';
 
 @Component({
     selector: 'app-history-component',
     templateUrl: './history-component.component.html',
     styleUrls: ['./history-component.component.css']
 })
-export class HistoryComponentComponent implements OnInit {
+export class HistoryComponentComponent implements OnDestroy {
+
     loader: LoadersCSS = 'line-scale';
     bgColor = 'white';
     color = 'rgb(239, 184, 11) ';
-    hist$: Observable<any>;
-    histLen$: Observable<any>;
 
+    isLoaded = false;
+    history: IHistoryTx[] = [];
+    private subscription: Subscription;
+    private isEmpty: boolean;
 
-    constructor(private http: HttpClient, public temp: TemporaryService, private router: Router) {
-
-        const rawHistory$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                // TODO:  real address and time now - 3 months UNIX
-                return this.http.get('https://dex.binance.org/api/v1/transactions?address=bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu&startTime=1555707600000');
+    constructor(private stateService: StateService, private router: Router, public temp: TemporaryService) {
+        this.subscription = this.stateService.history$.pipe(
+            tap((history: IHistoryTx[]) => {
+                this.history = history;
+                this.isEmpty = !this.history.length;
+                this.isLoaded = true;
             })
-        );
-
-        this.hist$ = rawHistory$.pipe(
-            map((x: any) => {
-                return x.tx;
-            })
-        );
-
-        this.histLen$ = this.hist$.pipe(
-            map((x) => {
-                return x.length
-            })
-        )
-
-        this.histLen$.subscribe();
-
-    }
-
-    ngOnInit() {
+        ).subscribe();
     }
 
     findMappedName(symbol: string): string {
         if (symbol) {
             const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
-            return result.mappedAsset;
+            return result && result.mappedAsset;
         }
-        return symbol
+        return symbol;
     }
 
     findMappedImage(symbol: string): string {
-        if (symbol) {
-            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
-            if (!result.image) {
-                return '../../../../assets/icons/default.png'
-            }
-            return result.image;
+        const defaultImg = '../../../../assets/icons/default.png';
+        if (!symbol) {
+            return defaultImg;
         }
-        return '../../../../assets/icons/default.png'
+
+        const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+        return (result && result.image) || defaultImg;
     }
 
     goToDetails(tx: any) {
         this.temp.details$ = of(tx);
-        this.router.navigate(['/details'])
+        this.router.navigate(['/details']);
     }
 
-    convert2fiat(sum: string, asset: string): string {
-        const value = String((Number(28) * Number(sum)).toFixed(2));
-        if (value === '0.00' || asset !== 'BNB') {
-            return ''
-        }
-        return '$' + value;
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
-
 }

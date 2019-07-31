@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BinanceService} from '../../../services/binance.service';
+import {BinanceService, IBalance} from '../../../services/binance.service';
 import {StorageService} from '../../../services/storage.service';
 import {Observable, of, combineLatest, timer} from 'rxjs';
 import {Location} from '@angular/common';
@@ -41,9 +41,6 @@ export class AllBalancesComponent implements OnInit {
             switchMap(() => {
                 //TODO: add current address and current endpoint
                 return this.bncService.getBalance$('bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m', ' https://dex.binance.org/');
-            }),
-            map((resp: any) => {
-                return resp.balances;
             })
         );
 
