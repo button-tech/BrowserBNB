@@ -1,7 +1,7 @@
 /// <reference types="chrome"/>
 import {Component} from '@angular/core';
 import {catchError, map, switchMap} from 'rxjs/operators';
-import {BehaviorSubject, combineLatest, Observable, of, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subscription, timer} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
 export interface IBalance {
@@ -27,7 +27,8 @@ export interface IGetBalanceResponse {
 export class AppComponent {
   title = 'background';
   example = new BehaviorSubject('init');
-  timer$: Observable<any>;
+  timer$: Subscription;
+  demo: string;
 
   constructor() {
 
@@ -42,20 +43,17 @@ export class AppComponent {
       }
     );
 
-    this.timer$ = timer(0, 1000);
-    combineLatest([this.timer$, this.getBalance$('bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu', 'https://dex.binance.org/')])
-      .pipe(
-        switchMap((x: any[]) => {
-          const [bal] = x;
-          // this.example.next(bal);
-          return x;
-        })
-      ).subscribe();
+    this.timer$ = timer(0, 10000).pipe(
+      map((x) => {
+        this.getBalance$('bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu', 'https://dex.binance.org/');
+        return x;
+      })
+    ).subscribe();
 
   }
 
-  getBalance$(address: string, endpoint: string): Observable<IBalance[]> {
-    // return this.http.get(`${endpoint}api/v1/account/${address}`).pipe(
+  getBalance$(address: string, endpoint: string) {
+    // return this.http.get(`${https://dex.binance.org/}api/v1/account/${bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu}`).pipe(
     //   map((response: IGetBalanceResponse) => {
     //     return response.balances;
     //   }),
@@ -65,8 +63,13 @@ export class AppComponent {
     //     return of([]);
     //   })
     // );
-    return of([]);
+    //
+    fetch(`${endpoint}api/v1/account/${address}`).then(
+      (resp) => {
+        // @ts-ignore
+        this.example.next(resp.json());
+        console.error(resp.json());
+      });
   }
-
 
 }
