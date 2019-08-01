@@ -51,8 +51,8 @@ export class StorageService {
     constructor(private bncService: BinanceService) {
 
         if (environment.production) {
-            // @ts-ignore
-            const port = chrome.extension.connect({
+
+            const port = chrome.runtime.connect({
                 name: "Sample Communication"
             });
 

@@ -3,10 +3,8 @@ import { timer } from "rxjs";
 
 async function f() {
 
-    //console.log(chrome.extension.onConnect.addListener);
 
-    // @ts-ignore
-    chrome.extension.onConnect.addListener(function (port) {
+    chrome.runtime.onConnect.addListener(function (port) {
         console.log("Connected .....");
         port.onMessage.addListener(function (msg) {
             console.log("message recieved" + msg);
