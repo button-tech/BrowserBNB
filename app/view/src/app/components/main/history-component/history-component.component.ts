@@ -23,7 +23,7 @@ export class HistoryComponentComponent implements OnDestroy {
     isLoaded = false;
     history: IHistoryTx[] = [];
     private subscription: Subscription;
-    private isEmpty: boolean;
+    public isEmpty: boolean;
 
     constructor(private stateService: StateService, private router: Router, public temp: TemporaryService) {
         this.subscription = this.stateService.history$.pipe(
