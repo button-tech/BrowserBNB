@@ -1,24 +1,34 @@
 <div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
     <mat-form-field class="example-full-width form-group">
         <div style="display: flex">
-            <div style="display: grid; grid-template: 1fr 1fr / 90px 60px 1fr; grid-column-gap: 0px; width: 100% !important">
-                <div style="grid-column: 1; grid-row: 1">
+
+            <div style="display: grid; grid-template: 1fr 1fr / 90px 60px 1fr; grid-column-gap: 0; width: 100% !important">
+                <div style="grid-column: 1; grid-row: 1;">
                     <input #sum
-                           style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
+                           style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px;"
                            class="form-control" matInput
                            [formControl]="emailFormControl" value="0"
-                           (change)="this.calcSums()" (input)="this.calcSums()">
-                    <!--                       value=0>-->
-                </div>
-                <div style="grid-column: 2; grid-row: 1; margin-top: 0.35em;">
-                    <strong style="font-weight: bolder; font-size: 13px">{{(currentState$|async).baseSymbol || ''}}</strong>
+                           (input)="this.nextValue()">
                 </div>
 
-                <div style="grid-column: 1; grid-row: 2;font-size: 12px; margin-top: -1em; max-width: 90px; white-space: nowrap; ">
-                    {{(currentState$ |async).calculatedSum || 0}} {{(currentState$|async).secondarySymbol || ''}}
+                <div style="grid-column: 2; grid-row: 1; margin-top: 0.35em;" class="overflow-ellipsis">
+                    <strong style="font-weight: bolder; font-size: 13px;">
+                        {{currentState.baseSymbol || ''}}
+                    </strong>
                 </div>
-                <div style="grid-column: 2; grid-row: 2;font-size: 12px;  margin-top: -1em">{{(currentState$|async).secondaryName || ''}}</div>
-                <div (click)="swapCurrencies(); calcSums()" style="grid-column: 3; grid-row: 1/2; ">
+
+                <div *ngIf="currentState.rate2usd" class="overflow-ellipsis"
+                     style="grid-column: 1; grid-row: 2;font-size: 12px; margin-top: -1em; max-width: 90px;">
+                    {{currentState.calculatedSum || 0}}
+                </div>
+
+
+                <div style="grid-column: 2; grid-row: 2;font-size: 12px;  margin-top: -1em">
+                    {{currentState.secondarySymbol || '' }}
+                </div>
+
+
+                <div *ngIf="currentState.rate2usd" (click)="swapCurrencies();" style="grid-column: 3; grid-row: 1/2; ">
                     <i class="fa fa-exchange fa-rotate-90"
                        style="margin-right: 30px; margin-top: -0.5em; margin-top: 1em; margin-left: 1em;"></i>
                 </div>

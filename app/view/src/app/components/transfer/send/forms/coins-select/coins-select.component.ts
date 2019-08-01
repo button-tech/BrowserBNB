@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {StateService, ITokenInfo} from '../../../../../services/state.service';
-import {Observable, Subscription} from 'rxjs';
-import {map, take} from "rxjs/operators";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { StateService, ITokenInfo } from '../../../../../services/state.service';
+import { Observable, Subscription } from 'rxjs';
+import { map, take } from "rxjs/operators";
 
 
 @Component({
@@ -17,12 +17,15 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     tokens$: Observable<ITokenInfo[]>;
     bnb2usdRate$: Observable<number>;
 
-    // subscription: Subscription;
+    subscription: Subscription;
 
     constructor(private fb: FormBuilder, public stateService: StateService) {
+
         this.bnb$ = this.stateService.bnbBalance$;
         this.tokens$ = this.stateService.tokens$;
         this.bnb2usdRate$ = this.stateService.bnb2usdRate$;
+
+        // TODO: subscribe
         this.stateService.selectedNetwork$.subscribe(() => {
             this.heroForm = this.fb.group({
                 heroId: 'BNB',
@@ -38,14 +41,18 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
                     newTx.rate2usd = rate;
                     this.stateService.currentTransaction.next(newTx);
                 })
-            ).subscribe()
+            ).subscribe();
         })
     }
 
     selectCoin(rawCoin: any) {
         const newTx = this.stateService.currentTransaction.getValue();
-        // this.subscription =
-        this.bnb2usdRate$.pipe(
+
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+
+        this.subscription = this.bnb2usdRate$.pipe(
             map((rate: number) => {
                 if (rawCoin && rawCoin === 'BNB') {
                     newTx.mapppedName = 'BNB';
@@ -72,6 +79,6 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        // this.subscription.unsubscribe();
+        this.subscription.unsubscribe();
     }
 }

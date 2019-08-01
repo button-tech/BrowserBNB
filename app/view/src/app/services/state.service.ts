@@ -1,24 +1,18 @@
-import {Injectable} from '@angular/core';
-import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
-import {BinanceService, IBalance} from './binance.service';
-import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import { Injectable } from '@angular/core';
+import { IStorageAccount, IStorageData, NetworkType, StorageService } from './storage.service';
+import { BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer } from 'rxjs';
+import { BinanceService, IBalance } from './binance.service';
+import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
 import {
     distinctUntilChanged,
     map,
-    mapTo,
-    mergeAll,
-    pluck,
     shareReplay,
-    startWith,
     switchMap,
-    switchMapTo,
-    take,
     tap
 } from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
-import {rawTokensImg} from "../constants";
+import { HttpClient } from '@angular/common/http';
+import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
+import { rawTokensImg } from "../constants";
 
 export interface ITransaction {
     Amount: number;
@@ -26,20 +20,20 @@ export interface ITransaction {
     AddressFrom: string;
     Memo: string;
     Symbol: string;
-    name: string,
-    mapppedName: string,
-    rate2usd: number,
+    name: string;
+    mapppedName: string;
+    rate2usd: number;
 }
 
 export interface ITokenInfo {
-    balance: string,
-    balance2usd: number,
-    balance2usdStr: string,
-    image: string,
-    mappedName: string,
-    name: string,
-    symbol: string,
-    rate2usd: number
+    balance: string;
+    balance2usd: number;
+    balance2usdStr: string;
+    image: string;
+    mappedName: string;
+    name: string;
+    symbol: string;
+    rate2usd: number;
 }
 
 export interface IMenuItem {
