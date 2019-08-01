@@ -12,7 +12,9 @@ export class ChromeApiService {
     port: any;
     balance = new BehaviorSubject('');
     constructor() {
-        this.port = chrome.runtime.connect();
+        if (environment.production) {
+            this.port = chrome.runtime.connect();
+        }
     }
 
     openNewTab(url: string) {
@@ -24,8 +26,10 @@ export class ChromeApiService {
     }
 
     connectToBackground() {
-        this.port.onMessage.addListener((message, sender) => {});
-        this.updateBalance();
+        if (environment.production) {
+            this.port.onMessage.addListener((message, sender) => {});
+            this.updateBalance();
+        }
 
     }
 
