@@ -1,12 +1,24 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import * as passworder from '../node_modules/browser-passworder';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+function f() {
+    const data = {a:1};
 
-if (environment.production) {
-  enableProdMode();
+    const password ='11';
+
+    passworder.encrypt(password, data).then( (encrypted) => {
+        console.log(encrypted);
+        debugger;
+    });
+
+
+
+    let a = "https://dex.binance.org/api/v1/account/bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu";
+    const x = fetch(a).then((x) => {
+        x.json().then((obj) => {
+            debugger
+        })
+
+    })
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+f();
