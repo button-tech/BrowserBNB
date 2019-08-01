@@ -1,4 +1,4 @@
-import * as passworder from '../node_modules/browser-passworder';
+import * as passworder from 'browser-passworder';
 
 function f() {
     const data = {a:1};
@@ -9,7 +9,6 @@ function f() {
         console.log(encrypted);
         debugger;
     });
-
 
 
     let a = "https://dex.binance.org/api/v1/account/bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu";
