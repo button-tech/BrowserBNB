@@ -13,11 +13,12 @@ export default {
         ),
         resolve(),
         typescript({module: 'CommonJS'}),
-        commonjs({extensions: ['.js', '.ts']}) // the ".ts" extension is required
+        commonjs({extensions: ['.js', '.ts']})
     ],
     output: {
         file: '../view/dist/bnbbrowser/background.js',
         format: 'iife',
+        sourcemap: true,
         name: 'BackgroundBundle'
     }
 }

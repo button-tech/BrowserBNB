@@ -18,7 +18,8 @@
   ],
   "background": {
     "scripts": [
-      "background.js"
+      "background.js",
+      "background.js.map"
     ]
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"

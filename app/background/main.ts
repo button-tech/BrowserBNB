@@ -1,7 +1,7 @@
 import * as passworder from 'browser-passworder';
 import { timer } from "rxjs";
 
-function f() {
+async function f() {
     const data = {a: 1};
 
     const password = '11';
@@ -10,11 +10,8 @@ function f() {
         console.log('1123');
     });
 
-    passworder.encrypt(password, data).then((encrypted) => {
-        console.log(encrypted);
-        debugger;
-    });
-
+    const encrypted = await passworder.encrypt(password, data);
+    console.log(encrypted);
 
     let a = "https://dex.binance.org/api/v1/account/bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu";
     const x = fetch(a).then((x) => {
