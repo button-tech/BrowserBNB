@@ -4,7 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run copy",
+    "build:watch": "ng build --watch",
+    "copyToView": "cp ./dist/background/*.js ../view/background",
+    "copyToApp": " cp -r ../view/background ../view/dist/bnbbrowser",
+    "copy": "npm run copyToView && npm run copyToApp",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
