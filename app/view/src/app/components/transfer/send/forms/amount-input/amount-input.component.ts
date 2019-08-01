@@ -48,35 +48,35 @@ export class AmountInputComponent implements OnInit, OnDestroy {
 
 
     calcSums() {
+        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
         if (!this.isSwapped) {
             this.stateService.currentTransaction.subscribe((x: ITransaction) => {
                 this.calculatedSum = this.rate2usd.pipe(
                     map((rate: number) => {
-                        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
                         return rate * sum;
                     }),
-                    map((sum: number) => {
-                        return +sum.toFixed(2)
+                    // tslint:disable-next-line:no-shadowed-variable
+                    map((x: number) => {
+                        return +x.toFixed(2);
                     })
-                )
-            })
+                );
+            });
         } else {
             this.stateService.currentTransaction.subscribe((x: ITransaction) => {
                 this.calculatedSum = this.rate2usd.pipe(
                     map((rate: number) => {
-                        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
                         if (rate * sum === 0) {
                             return 0;
-                        } 
+                        }
                         return 1 / rate * sum;
                     }),
-                    map((sum: number) => {
-                        return +sum.toFixed(2);
+                    // tslint:disable-next-line:no-shadowed-variable
+                    map((x: number) => {
+                        return +x.toFixed(2);
                     })
-                )
-            })
+                );
+            });
         }
-        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
         const newTx = this.stateService.currentTransaction.getValue();
         newTx.Amount = sum;
         this.stateService.currentTransaction.next(newTx);
@@ -97,7 +97,7 @@ export class AmountInputComponent implements OnInit, OnDestroy {
                 return x.substring(0, 4) + '...';
             }
             return x;
-        }))
+        }));
     }
 
     ngOnInit() {
