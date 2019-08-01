@@ -1,3 +1,4 @@
+/// <reference types="chrome"/>
 import {Component} from '@angular/core';
 
 @Component({
@@ -10,6 +11,10 @@ export class AppComponent {
 
   constructor() {
     console.log('background works!');
+    chrome.runtime.onConnect.addListener(function (port) {
+      port.postMessage({greeting: "hello"});
+    });
+
   }
 
 

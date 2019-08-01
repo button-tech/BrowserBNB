@@ -5,19 +5,21 @@ import {ToastrManager} from 'ng6-toastr-notifications';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
 import {StateService} from '../../services/state.service';
+import {ChromeApiService} from "../../services/chrome-api.service";
 
 @Component({
     selector: 'app-unlock',
     templateUrl: './unlock.component.html',
     styleUrls: ['./unlock.component.css']
 })
-export class UnlockComponent {
+export class UnlockComponent implements OnInit {
     keystore: any;
 
     constructor(private authService: AuthService,
                 private router: Router,
                 private storage: StorageService,
-                public alert: AlertsService
+                public alert: AlertsService,
+                private chrome: ChromeApiService
     ) {
     }
 
@@ -40,5 +42,9 @@ export class UnlockComponent {
         // });
         this.storage.reset();
         this.router.navigate(['/greeter']);
+    }
+
+    ngOnInit(): void {
+        this.chrome.connectToBackground();
     }
 }

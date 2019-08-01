@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "sources": [
+    "webpack:///./src/$_lazy_route_resource lazy namespace object",
+    "webpack:///./src/app/app.component.css",
+    "webpack:///./src/app/app.component.html",
+    "webpack:///./src/app/app.component.ts",
+    "webpack:///./src/app/app.module.ts",
+    "webpack:///./src/environments/environment.ts",
+    "webpack:///./src/main.ts"
+  ],
+  "names": [],
+  "mappings": ";;;;;;;;;AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA,EAAE;AACF;AACA,4CAA4C,WAAW;AACvD;AACA;AACA,4E;;;;;;;;;;;ACZA,+DAA+D,+H;;;;;;;;;;;ACA/D,mB;;;;;;;;;;;;;;;;;ACAA,+BAA+B;AACS;AAOxC;IAGE;QAFA,UAAK,GAAG,YAAY,CAAC;QAGnB,OAAO,CAAC,GAAG,CAAC,mBAAmB,CAAC,CAAC;QAC/B,MAAM,CAAC,OAAO,CAAC,SAAS,CAAC,WAAW,CAAC,UAAS,IAAI;YAClD,IAAI,CAAC,WAAW,CAAC,EAAC,QAAQ,EAAC,OAAO,EAAC,CAAC,CAAC;QACvC,CAAC,CAAC,CAAC;IAEL,CAAC;IATU,YAAY;QALxB,+DAAS,CAAC;YACT,QAAQ,EAAE,UAAU;YACpB,yFAAmC;;SAEpC,CAAC;;OACW,YAAY,CAYxB;IAAD,mBAAC;CAAA;AAZwB;;;;;;;;;;;;;;;;;;;;ACRiC;AACjB;AAEM;AAY/C;IAAA;IAAyB,CAAC;IAAb,SAAS;QAVrB,8DAAQ,CAAC;YACR,YAAY,EAAE;gBACZ,2DAAY;aACb;YACD,OAAO,EAAE;gBACP,uEAAa;aACd;YACD,SAAS,EAAE,EAAE;YACb,SAAS,EAAE,CAAC,2DAAY,CAAC;SAC1B,CAAC;OACW,SAAS,CAAI;IAAD,gBAAC;CAAA;AAAJ;;;;;;;;;;;;;ACftB;AAAA;AAAA,gFAAgF;AAChF,0EAA0E;AAC1E,gEAAgE;AAEzD,IAAM,WAAW,GAAG;IACzB,UAAU,EAAE,KAAK;CAClB,CAAC;AAEF;;;;;;GAMG;AACH,mEAAmE;;;;;;;;;;;;;ACfnE;AAAA;AAAA;AAAA;AAAA;AAA+C;AAC4B;AAE9B;AACY;AAEzD,IAAI,qEAAW,CAAC,UAAU,EAAE;IAC1B,oEAAc,EAAE,CAAC;CAClB;AAED,gGAAsB,EAAE,CAAC,eAAe,CAAC,yDAAS,CAAC;KAChD,KAAK,CAAC,aAAG,IAAI,cAAO,CAAC,KAAK,CAAC,GAAG,CAAC,EAAlB,CAAkB,CAAC,CAAC",
+  "file": "main.js",
+  "sourcesContent": [
+    "function webpackEmptyAsyncContext(req) {\n\t// Here Promise.resolve().then() is used instead of new Promise() to prevent\n\t// uncaught exception popping up in devtools\n\treturn Promise.resolve().then(function() {\n\t\tvar e = new Error(\"Cannot find module '\" + req + \"'\");\n\t\te.code = 'MODULE_NOT_FOUND';\n\t\tthrow e;\n\t});\n}\nwebpackEmptyAsyncContext.keys = function() { return []; };\nwebpackEmptyAsyncContext.resolve = webpackEmptyAsyncContext;\nmodule.exports = webpackEmptyAsyncContext;\nwebpackEmptyAsyncContext.id = \"./src/$$_lazy_route_resource lazy recursive\";",
+    "module.exports = \"\\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FwcC5jb21wb25lbnQuY3NzIn0= */\"",
+    "module.exports = \"\"",
+    "/// <reference types=\"chrome\"/>\nimport {Component} from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.component.html',\n  styleUrls: ['./app.component.css']\n})\nexport class AppComponent {\n  title = 'background';\n\n  constructor() {\n    console.log('background works!');\n      chrome.runtime.onConnect.addListener(function(port){\n      port.postMessage({greeting:\"hello\"});\n    });\n\n  }\n\n\n}\n",
+    "import { BrowserModule } from '@angular/platform-browser';\nimport { NgModule } from '@angular/core';\n\nimport { AppComponent } from './app.component';\n\n@NgModule({\n  declarations: [\n    AppComponent\n  ],\n  imports: [\n    BrowserModule\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule { }\n",
+    "// This file can be replaced during build by using the `fileReplacements` array.\n// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.\n// The list of file replacements can be found in `angular.json`.\n\nexport const environment = {\n  production: false\n};\n\n/*\n * For easier debugging in development mode, you can import the following file\n * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.\n *\n * This import should be commented out in production mode because it will have a negative impact\n * on performance if an error is thrown.\n */\n// import 'zone.js/dist/zone-error';  // Included with Angular CLI.\n",
+    "import { enableProdMode } from '@angular/core';\nimport { platformBrowserDynamic } from '@angular/platform-browser-dynamic';\n\nimport { AppModule } from './app/app.module';\nimport { environment } from './environments/environment';\n\nif (environment.production) {\n  enableProdMode();\n}\n\nplatformBrowserDynamic().bootstrapModule(AppModule)\n  .catch(err => console.error(err));\n"
+  ],
+  "sourceRoot": ""
+}

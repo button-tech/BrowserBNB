@@ -4,6 +4,7 @@ import {StorageService} from './services/storage.service';
 import {map, tap} from 'rxjs/operators';
 import {combineLatest, Subscription} from 'rxjs';
 import {Router} from '@angular/router';
+import {ChromeApiService} from "./services/chrome-api.service";
 
 @Component({
     selector: 'app-root',
@@ -15,7 +16,7 @@ export class AppComponent {
 
     subscription: Subscription;
 
-    constructor(private router: Router, authService: AuthService) {
+    constructor(private router: Router, authService: AuthService, private chrome: ChromeApiService) {
 
         // const redirect$ = combineLatest([storageService.hasAccount$, authService.isLoggedIn$]).pipe(
         //     tap((x) => {
