@@ -16,6 +16,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "@types/chrome": "0.0.86",
     "browser-passworder": "^2.0.3",
     "rollup-plugin-alias": "^1.5.2",
     "rollup-plugin-commonjs": "^10.0.1",

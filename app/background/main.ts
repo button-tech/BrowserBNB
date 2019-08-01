@@ -2,6 +2,19 @@ import * as passworder from 'browser-passworder';
 import { timer } from "rxjs";
 
 async function f() {
+
+    //console.log(chrome.extension.onConnect.addListener);
+
+    // @ts-ignore
+    chrome.extension.onConnect.addListener(function (port) {
+        console.log("Connected .....");
+        port.onMessage.addListener(function (msg) {
+            console.log("message recieved" + msg);
+            port.postMessage("Hi Popup.js");
+        });
+    });
+
+
     const data = {a: 1};
 
     const password = '11';

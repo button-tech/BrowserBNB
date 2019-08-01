@@ -1,12 +1,12 @@
 /// <reference types="chrome"/>
-import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {map, switchMap} from 'rxjs/operators';
-import {from, Observable, Subject} from 'rxjs';
-import {BinanceService} from './binance.service';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { map, switchMap } from 'rxjs/operators';
+import { from, Observable, Subject } from 'rxjs';
+import { BinanceService } from './binance.service';
 import * as passworder from 'browser-passworder';
-import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
-import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
+import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
 
 
 export type NetworkType = 'bnb' | 'tbnb' | null;
@@ -49,6 +49,18 @@ export class StorageService {
     private lsSetter$: Subject<string> = new Subject<string>();
 
     constructor(private bncService: BinanceService) {
+
+        if (environment.production) {
+            // @ts-ignore
+            const port = chrome.extension.connect({
+                name: "Sample Communication"
+            });
+
+            port.postMessage("Hi BackGround");
+            port.onMessage.addListener(function (msg) {
+                console.log("message recieved" + msg);
+            });
+        }
 
         // const initial$ = of(1).pipe(
         //     switchMap(() => from(this.initStorage())),
