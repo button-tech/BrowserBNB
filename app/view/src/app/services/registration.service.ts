@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {createMnemonic, getSHA3hashSum} from './binance-crypto';
-import {StorageService} from './storage.service';
-import {StateService} from './state.service';
+import { Injectable } from '@angular/core';
+import { createMnemonic, getSHA3hashSum } from './binance-crypto';
+import { StorageService } from './storage.service';
+import { StateService } from './state.service';
 
 @Injectable()
 export class RegistrationService {
-    mnemonic: any = null;
+    mnemonic: string = null;
     private passHash: string;
 
     constructor(private storageService: StorageService, private stateService: StateService) {

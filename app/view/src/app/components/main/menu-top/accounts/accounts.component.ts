@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {map, pluck} from 'rxjs/operators';
-import {AuthService} from '../../../../services/auth.service';
-import {IUiAccount, StateService} from '../../../../services/state.service';
-import {Observable} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { map, pluck } from 'rxjs/operators';
+import { AuthService } from '../../../../services/auth.service';
+import { IUiAccount, StateService } from '../../../../services/state.service';
+import { Observable } from 'rxjs';
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-accounts',
@@ -13,7 +14,7 @@ export class AccountsComponent {
 
     accounts$: Observable<IUiAccount[]>;
 
-    constructor(public stateService: StateService, private authService: AuthService) {
+    constructor(public stateService: StateService, private authService: AuthService, private router: Router) {
         this.accounts$ = stateService.uiState$.pipe(
             pluck('accounts')
         );
@@ -37,5 +38,14 @@ export class AccountsComponent {
 
     stopEvent(event: Event) {
         event.stopPropagation();
+    }
+
+    importAccount() {
+        // importSingleKey
+        this.router.navigate(['/registration/import'], {
+            queryParams: {
+                importSingleKey: true
+            }
+        });
     }
 }

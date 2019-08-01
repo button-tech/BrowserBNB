@@ -425,8 +425,12 @@ export class StateService {
     }
 
     addAccount(): void {
-
         const seedPhrase = this.uiState.storageData.seedPhrase;
+        this.addAccountFromSeed(seedPhrase);
+    }
+
+    addAccountFromSeed(seedPhrase: string): void {
+
         const indexes = this.uiState.storageData.accounts.map(a => a.index);
         const index = Math.max(...indexes) + 1;
 
