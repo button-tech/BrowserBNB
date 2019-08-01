@@ -1,6 +1,8 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from "../../environments/environment";
+import {BehaviorSubject, timer} from "rxjs";
+import {map} from "rxjs/operators";
 
 
 @Injectable({
@@ -8,9 +10,9 @@ import {environment} from "../../environments/environment";
 })
 export class ChromeApiService {
     port: any;
-
+    balance = new BehaviorSubject('');
     constructor() {
-
+        this.port = chrome.runtime.connect();
     }
 
     openNewTab(url: string) {
@@ -22,17 +24,22 @@ export class ChromeApiService {
     }
 
     connectToBackground() {
-        // this.port = chrome.runtime.connect({name:"mycontentscript"}).port.onMessage.addListener((message,sender) => {
-        //     if(message.greeting === "hello"){
-        //         alert(message.greeting);
-        //     }
-        // });
-        this.port = chrome.runtime.connect({name: "mycontentscript"});
-        this.port.onMessage.addListener((message, sender) => {
-            if (message.greeting === "hello") {
-                alert(message.greeting);
-            }
-        });
+        this.port.onMessage.addListener((message, sender) => {});
+        this.updateBalance();
 
+    }
+
+    updateBalance() {
+        timer(0, 1000).pipe(
+            map((x) => {
+                chrome.runtime.sendMessage(
+                    "balance",
+                    (response) => {
+                        this.balance.next(response);
+                        console.log(response);
+                    }
+                );
+            })
+        ).subscribe();
     }
 }
