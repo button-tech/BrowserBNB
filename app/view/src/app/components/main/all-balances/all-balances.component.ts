@@ -7,6 +7,7 @@ import {map, shareReplay, switchMap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
+import {StateService} from "../../../services/state.service";
 
 export interface ITokenInfo {
     balance: string,
@@ -17,6 +18,7 @@ export interface ITokenInfo {
     name: string,
     symbol: string,
 }
+
 
 @Component({
     selector: 'app-all-balances',
@@ -32,32 +34,14 @@ export class AllBalancesComponent implements OnInit {
     constructor(private bncService: BinanceService,
                 private storage: StorageService,
                 private location: Location,
-                private http: HttpClient) {
+                private http: HttpClient,
+                private stateService: StateService) {
     }
 
     ngOnInit() {
-        const timer$ = timer(0, 4000);
-        const balances$ = timer$.pipe(
-            switchMap(() => {
-                //TODO: add current address and current endpoint
-                return this.bncService.getBalance$('bnb1jxfh2g85q3v0tdq56fnevx6xcxtcnhtsmcu64m', ' https://dex.binance.org/');
-            })
-        );
-
-        const bnb2usdRate$ = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            map((resp: any) => resp.USD)
-        );
-
-        const marketRates$ = timer$.pipe(
-            switchMap(() => {
-                return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
-            }),
-            map((resp: any) => resp)
-        );
-
+        const balances$ = this.stateService.allBalances$;
+        const bnb2usdRate$ = this.stateService.bnbBalanceInUsd$;
+        const marketRates$ = this.stateService.marketRates$;
 
         this.tokens$ = combineLatest([balances$, marketRates$, bnb2usdRate$])
             .pipe(
@@ -71,6 +55,8 @@ export class AllBalancesComponent implements OnInit {
                         const isOk =
                             marketTickerForCurrentToken !== undefined
                             && tokensDetailsForCurrentToken !== undefined
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
                             && token.symbol !== 'BNB';
 
                         if (isOk) {
@@ -82,7 +68,11 @@ export class AllBalancesComponent implements OnInit {
                                 'name': tokensDetailsForCurrentToken.name,
                                 'mappedName': tokensDetailsForCurrentToken.mappedAsset,
                             });
-                        } else if (token.symbol !== 'BNB') {
+                        } else if (token.symbol !== 'BNB'
+                            && tokensDetailsForCurrentToken
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
+                        ) {
                             finalBalances.push({
                                 'symbol': token.symbol,
                                 'balance2usd': 0,
@@ -91,66 +81,51 @@ export class AllBalancesComponent implements OnInit {
                                 'name': tokensDetailsForCurrentToken.name,
                                 'mappedName': tokensDetailsForCurrentToken.mappedAsset,
                             });
+                        } else if (tokensDetailsForCurrentToken &&
+                            tokensDetailsForCurrentToken.name === undefined &&
+                            tokensDetailsForCurrentToken.mappedAsset !== undefined) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': '',
+                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
+                            });
+                        } else if (tokensDetailsForCurrentToken
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset === undefined) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': tokensDetailsForCurrentToken.name,
+                                'mappedName': '',
+                            });
+                        } else if (!tokensDetailsForCurrentToken) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': token.symbol,
+                                'mappedName': token.symbol,
+                            });
                         }
-
                     });
 
                     return finalBalances.sort((a, b) => {
-                        const usdBalanceDiff = parseFloat(b.balance2usd) - parseFloat(a.balance2usd);
-                        return usdBalanceDiff || (b.balance > a.balance ? 1 : -1);
+                        const usdBalanceDiff = b.balance2usd - a.balance2usd;
+                        if (usdBalanceDiff === 0) {
+                            const balanceDiff = b.balance - a.balance;
+                            if (balanceDiff === 0) {
+                                return a.symbol > b.symbol ? 1 : -1;
+                            }
+                            return balanceDiff;
+                        }
+                        return usdBalanceDiff;
                     });
-
-                    // return finalBalances.sort((a, b) => parseFloat(b.balance2usd) - parseFloat(a.balance2usd));
-
-                    // const [balances, marketRates, bnb2usd] = x;
-                    // const imagesUrls = JSON.parse(rawTokensImg);
-                    // const finalBalances: Array<ITokenInfo> = [];
-                    //
-                    //
-                    // for (let token of balances) {
-                    //
-                    //     if (token.symbol === 'BNB') {
-                    //         continue;
-                    //     }
-                    //
-                    //     const marketTicker = marketRates.find(o => o.baseAssetName === token.symbol) || 0;
-                    //     const balance2usd = marketTicker.lastPrice * bnb2usd * token.free;
-                    //     const balance2usdStr = balance2usd ? `$${balance2usd.toFixed(2)} USD` : '';
-                    //
-                    //     const tokensDetails = imagesUrls.find(o => o.symbol === token.symbol);
-                    //
-                    //     finalBalances.push({
-                    //         'symbol': token.symbol,
-                    //         'balance2usd': balance2usd,
-                    //         'balance2usdStr': balance2usdStr,
-                    //         'balance': Number(token.free).toFixed(8),
-                    //         'image': tokensDetails && tokensDetails.image,
-                    //         'name': tokensDetails.name,
-                    //         'mappedName': tokensDetails.mappedAsset,
-                    //     });
-                    // }
-                    //
-                    // return finalBalances.sort((a, b) => {
-                    //     const usdBalanceDiff = a.balance2usd - b.balance2usd;
-                    //     if (!usdBalanceDiff) {
-                    //         console.log(a, b, a.balance > b.balance ? 1 : -1);
-                    //     }
-                    //     return usdBalanceDiff || (a.symbol > b.symbol ? 1 : -1);
-                    // });
-
-                    // return finalBalances.sort((a, b) => {
-                    //     const usdBalanceDiff = parseFloat(''+a.balance2usd) - parseFloat(''+b.balance2usd);
-                    //     if (usdBalanceDiff !== 0) {
-                    //         return usdBalanceDiff > 0 ? 1 : -1;
-                    //     }
-                    //
-                    //     const balanceDiff = parseFloat(a.balance) - parseFloat(b.balance);
-                    //     if (balanceDiff !== 0) {
-                    //         return balanceDiff > 0 ? 1 : -1;
-                    //     }
-                    //
-                    //     return a.symbol > b.symbol ? 1 : -1;
-                    // });
                 }),
                 shareReplay(1));
     }

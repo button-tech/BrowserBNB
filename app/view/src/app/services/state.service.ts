@@ -53,6 +53,31 @@ export interface IUiBalance {
     bnbFiat: string;
 }
 
+export interface IMarketRates {
+    symbol: string;
+    baseAssetName: string;
+    quoteAssetName: string;
+    priceChange: string;
+    priceChangePercent: string;
+    prevClosePrice: string;
+    lastPrice: string;
+    lastQuantity: string;
+    openPrice: string;
+    highPrice: string;
+    lowPrice: string;
+    openTime: any;
+    closeTime: any;
+    firstId: string;
+    lastId: string;
+    bidPrice: string;
+    bidQuantity: string;
+    askPrice: string;
+    askQuantity: string;
+    weightedAvgPrice: string;
+    volume: string;
+    quoteVolume: string;
+    count: number;
+}
 export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
@@ -68,6 +93,7 @@ export class StateService {
     allBalances$: Observable<IBalance[]>;
     bnbBalance$: Observable<number>;
     bnbBalanceInUsd$: Observable<number>;
+    marketRates$: Observable<IMarketRates[]>;
 
     currentAddress$: Observable<string>;
     currentAddress: string;
@@ -332,6 +358,13 @@ export class StateService {
                 return +((Math.floor(fiat * 100) / 100).toFixed(2));
             }),
             shareReplay(1)
+        );
+
+        this.marketRates$ = timer(0, 12000).pipe(
+            switchMap(() => {
+                return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
+            }),
+            map((resp: IMarketRates[]) => resp)
         );
 
         // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin
