@@ -1,5 +1,5 @@
 {
-  "name": "ts1",
+  "name": "bnb.background",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,10 @@
   },
   "dependencies": {
     "browser-passworder": "^2.0.3",
-    "rollup-plugin-commonjs": "^10.0.1"
+    "rollup-plugin-alias": "^1.5.2",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rxjs": "^6.5.2",
+    "rxjs-compat": "^6.5.2"
   }
 }

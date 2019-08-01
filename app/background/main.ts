@@ -1,11 +1,16 @@
 import * as passworder from 'browser-passworder';
+import { timer } from "rxjs";
 
 function f() {
-    const data = {a:1};
+    const data = {a: 1};
 
-    const password ='11';
+    const password = '11';
 
-    passworder.encrypt(password, data).then( (encrypted) => {
+    timer(0, 2000).subscribe(() => {
+        console.log('1123');
+    });
+
+    passworder.encrypt(password, data).then((encrypted) => {
         console.log(encrypted);
         debugger;
     });
@@ -16,7 +21,6 @@ function f() {
         x.json().then((obj) => {
             debugger
         })
-
     })
 }
 
