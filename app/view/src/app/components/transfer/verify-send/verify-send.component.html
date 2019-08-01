@@ -10,7 +10,7 @@
             </div>
 
             <div style="grid-column: 2;grid-row: 1">
-                <h5>{{sendObj.Amount}} {{sendObj.Symbol}} </h5>
+                <h5>{{tx.Amount}} {{tx.Symbol}} </h5>
                 <h5 style="margin-top: -1em">
                     <small>${{(fiatAmount$ | async) || 'pending'}} USD</small>
                 </h5>

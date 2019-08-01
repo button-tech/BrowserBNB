@@ -1,13 +1,8 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ITransaction, StateService} from "../../../../../services/state.service";
-import {combineLatest, Observable, of} from "rxjs";
-import {map, switchMap} from "rxjs/operators";
-
-interface ICurrency {
-    symbol: string;
-    name: string;
-}
+import {Observable, of} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
     selector: 'app-amount-input',
@@ -24,11 +19,13 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     secondaryName: Observable<string>;
     rate2usd: Observable<number>;
     isSwapped: boolean;
+    isNotAllowed: boolean;
 
     // @ts-ignore
     @ViewChild('sum') rawSum: ElementRef;
 
     constructor(private stateService: StateService) {
+
         this.stateService.currentTransaction.subscribe((x: ITransaction) => {
             this.baseSymbol = of(x.Symbol);
             this.secondaryName = of('USD');
@@ -39,7 +36,14 @@ export class AmountInputComponent implements OnInit, OnDestroy {
             } else {
                 this.rate2usd = of(x.rate2usd);
             }
-        })
+            if (x.rate2usd === 0) {
+                this.secondaryName = of('');
+                this.isNotAllowed = true;
+            } else {
+                this.secondaryName = of('USD');
+                this.isNotAllowed = false;
+            }
+        });
     }
 
 
@@ -61,27 +65,38 @@ export class AmountInputComponent implements OnInit, OnDestroy {
                 this.calculatedSum = this.rate2usd.pipe(
                     map((rate: number) => {
                         const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
+                        if (rate * sum === 0) {
+                            return 0;
+                        } 
                         return 1 / rate * sum;
                     }),
                     map((sum: number) => {
-                        return +sum.toFixed(2)
+                        return +sum.toFixed(2);
                     })
                 )
             })
         }
-
+        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
+        const newTx = this.stateService.currentTransaction.getValue();
+        newTx.Amount = sum;
+        this.stateService.currentTransaction.next(newTx);
     }
 
     swapCurrencies() {
-        this.isSwapped = !this.isSwapped;
-        const temp = this.baseSymbol;
-        this.baseSymbol = this.secondaryName;
-        this.secondaryName = temp;
+        if (!this.isNotAllowed) {
+            this.isSwapped = !this.isSwapped;
+            const temp = this.baseSymbol;
+            this.baseSymbol = this.secondaryName;
+            this.secondaryName = temp;
+        }
     }
 
     beautifyName(name: Observable<string>): Observable<string> {
         return name.pipe(map((x: string) => {
-            return x.substring(0, 7);
+            if (x.length > 7) {
+                return x.substring(0, 4) + '...';
+            }
+            return x;
         }))
     }
 

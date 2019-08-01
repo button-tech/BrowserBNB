@@ -26,11 +26,9 @@ export class AddressInputComponent implements OnDestroy {
         const addressValue = (this.addressElem.nativeElement as HTMLInputElement).value;
         this.isValid = validateAddress(addressValue, this.stateService.selectedNetwork$.getValue().networkPrefix);
 
-        if (this.isValid && addressValue !== '') {
-            const newTx = this.stateService.currentTransaction.getValue();
-            newTx.AddressTo = addressValue;
-            this.stateService.currentTransaction.next(newTx);
-        }
+        const newTx = this.stateService.currentTransaction.getValue();
+        newTx.AddressTo = addressValue;
+        this.stateService.currentTransaction.next(newTx);
     }
 
     ngOnDestroy(): void {

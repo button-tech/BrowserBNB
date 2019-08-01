@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { StorageService } from '../../../services/storage.service';
 import { validateAddress } from '../../../services/binance-crypto';
 import { Observable, Subscription, timer } from 'rxjs';
+import {StateService} from "../../../services/state.service";
 
 @Component({
     selector: 'app-send',
@@ -13,31 +14,21 @@ export class SendComponent implements OnDestroy {
 
     isValidToNextPage: boolean;
     fee: Observable<number>;
-    subscription: Subscription;
 
-    constructor(private location: Location) {
-
-        this.subscription = timer(0, 500)
-            .subscribe(() => {
-                this.checkForm();
-            });
+    constructor(private location: Location, private stateService: StateService) {
+        this.stateService.currentTransaction.subscribe((tx) => {
+            const {Symbol, Amount, AddressTo} = tx;
+            const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
+            this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
+        })
     }
-
 
     goBack() {
         this.location.back();
     }
 
-    checkForm(): void {
-        // const {Symbol, Amount, AddressTo} = this.storage.currentTransaction;
-        // const networkPrefix = this.storage.selectedNetwork$.getValue().networkPrefix;
-        // this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
-    }
-
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
     }
-
 
 }
 

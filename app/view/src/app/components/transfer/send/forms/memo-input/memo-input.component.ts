@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {StorageService} from '../../../../../services/storage.service';
 import {FormControl} from '@angular/forms';
+import {StateService} from "../../../../../services/state.service";
 
 @Component({
     selector: 'app-memo-input',
@@ -9,14 +10,16 @@ import {FormControl} from '@angular/forms';
 })
 export class MemoInputComponent implements OnInit {
 
-    constructor() {
+    constructor(private stateService: StateService) {
     }
 
     ngOnInit() {
     }
 
     save(memo: string): void {
-        // this.storage.currentTransaction.Memo = memo;
+        const nexTx = this.stateService.currentTransaction.getValue();
+        nexTx.Memo = memo;
+        this.stateService.currentTransaction.next(nexTx);
     }
 
     memoFormControl = new FormControl('', []);

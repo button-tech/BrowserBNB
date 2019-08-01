@@ -54,9 +54,10 @@ export class BinanceService {
     constructor(private http: HttpClient) {
     }
 
-    async sendTransaction(sum: number, addressTo: string,
-                          networkType: NetworkType,
-                          endpoint: NETWORK_ENDPOINT_MAPPING,
+    async sendTransaction(sum: number,
+                          addressTo: string,
+                          networkType: string,
+                          endpoint: string,
                           networkPrefix: string,
                           coin: string,
                           privateKey: string,
@@ -64,12 +65,20 @@ export class BinanceService {
 
 
         try {
+            console.log(`Sum ${sum}`);
+            console.log(`addressTo ${addressTo}`);
+            console.log(`networkType ${networkType}`);
+            console.log(`endpoint ${endpoint}`);
+            console.log(`networkPrefix ${networkPrefix}`);
+            console.log(`coin ${coin}`);
+            console.log(`privateKey ${privateKey}`);
+            console.log(`message ${message}`);
 
-            const client = await Binance.initClient(endpoint);
-            await client.chooseNetwork(networkType === 'bnb' ? 'mainnet' : 'testnet');
+            const client = await Binance.initClient(endpoint, networkType);
+            await client.chooseNetwork(networkType);
             await client.initChain();
             await client.setPrivateKey(privateKey);
-            const addressFrom = getAddressFromPrivateKey(privateKey, networkType);
+            const addressFrom = getAddressFromPrivateKey(privateKey, networkPrefix);
 
             const url = `${endpoint}api/v1/account/${addressFrom}`;
             const account = await this.http.get(url).toPromise<any>();

@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {ClipboardService} from "../../../../services/clipboard.service";
 import {map, subscribeOn, take, takeUntil} from "rxjs/operators";
-import {Observable, timer} from "rxjs";
+import {Observable, of, timer} from "rxjs";
 import {ChromeApiService} from "../../../../services/chrome-api.service";
 import {rawTokensImg} from "../../../../constants";
 import {StateService} from "../../../../services/state.service";
@@ -41,7 +41,11 @@ export class HistoryDetailsComponent implements OnInit {
             map((symbol: any) => {
                 if (symbol.txAsset) {
                     const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol.txAsset);
-                    return result.mappedAsset;
+                    if (result) {
+                        return result.mappedAsset;
+                    } else {
+                        return symbol.txAsset
+                    }
                 }
                 return symbol.txAsset
             }),

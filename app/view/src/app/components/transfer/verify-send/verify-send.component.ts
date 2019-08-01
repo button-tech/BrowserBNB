@@ -11,8 +11,7 @@ import {ITransaction, StateService} from '../../../services/state.service';
     styleUrls: ['./verify-send.component.css']
 })
 export class VerifySendComponent {
-
-    sendObj: ITransaction;
+    tx = this.stateService.currentTransaction.getValue();
     simpleFee$: Observable<number>;
     fiatFee$: Observable<string>;
     fiatAmount$: Observable<string>;
@@ -49,7 +48,7 @@ export class VerifySendComponent {
             switchMap(() => {
                 return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
             }),
-            map((resp: any) => resp.USD)
+            map((resp: any) => this.stateService.currentTransaction.getValue().rate2usd)
         );
 
         const rawFiatFee$ = combineLatest([bnb2usdRate$, this.simpleFee$]).pipe(
@@ -67,7 +66,7 @@ export class VerifySendComponent {
 
         const rawFiatAmount$ = bnb2usdRate$.pipe(
             map(rate => {
-                return rate * this.sendObj.Amount;
+                return rate * this.tx.Amount;
             })
         );
 
@@ -79,7 +78,7 @@ export class VerifySendComponent {
 
         this.totalAmount$ = this.simpleFee$.pipe(
             map((fee) => {
-                return fee + this.sendObj.Amount;
+                return fee + this.tx.Amount;
             })
         );
         this.fiatTotal$ = combineLatest([rawFiatAmount$, rawFiatFee$]).pipe(
@@ -91,16 +90,27 @@ export class VerifySendComponent {
     }
 
     verify() {
-        // TODO: FIX privateKey
-        // const privateKey = '';
-        // return this.bncService.sendTransaction(
-        //     this.sendObj.Amount,
-        //     this.sendObj.AddressTo,
-        //     network.val,
-        //     network.networkPrefix,
-        //     this.sendObj.Symbol,
-        //     privateKey,
-        //     this.sendObj.Memo);
+        const tx = this.tx;
+        const network = this.stateService.selectedNetwork$.getValue();
+        const privateKey = this.stateService.uiState.currentAccount.privateKey;
+        return this.bncService.sendTransaction(
+            tx.Amount,
+            tx.AddressTo,
+            network.label,
+            network.val,
+            network.networkPrefix,
+            tx.Symbol,
+            privateKey,
+            tx.Memo);
     }
+
+    //                             sum: number,
+    //                           addressTo: string,
+    //                           networkType: string,
+    //                           endpoint: string,
+    //                           networkPrefix: string,
+    //                           coin: string,
+    //                           privateKey: string,
+    //                           message?: string
 
 }

@@ -74756,9 +74756,9 @@ export function initBNB() {
     return BNB.BNB;
 }
 
-export async function initClient(network) {
+export async function initClient(network, label) {
     const client = await new BNB.BNB(network);
-    await client.chooseNetwork('testnet');
+    await client.chooseNetwork(label);
     // client.useDefaultSigningDelegate();
     // client.useDefaultBroadcastDelegate();
     await client.initChain();

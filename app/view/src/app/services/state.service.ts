@@ -76,7 +76,7 @@ const emptyState: IUiState = Object.freeze({
 });
 
 const basicNetworkSttate: IMenuItem = Object.freeze({
-    val: ' https://dex.binance.org',
+    val: 'https://dex.binance.org',
     networkPrefix: 'bnb',
     label: 'mainnet',
 });
@@ -393,8 +393,10 @@ export class StateService {
             };
         });
 
-        const val = data.selectedNetworkEndpoint;
         const networkPrefix = data.selectedNetwork;
+        const val = networkPrefix === 'bnb'
+            ? NETWORK_ENDPOINT_MAPPING.MAINNET
+            : NETWORK_ENDPOINT_MAPPING.TESTNET;
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,
@@ -484,7 +486,6 @@ export class StateService {
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
 
-
         const newUiState = {
             ...this.uiState,
             currentAccount: toAccount,
@@ -501,8 +502,10 @@ export class StateService {
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
 
-        const val = this.uiState.storageData.selectedNetworkEndpoint;
         const networkPrefix = network;
+        const val = networkPrefix === 'bnb'
+            ? NETWORK_ENDPOINT_MAPPING.MAINNET
+            : NETWORK_ENDPOINT_MAPPING.TESTNET;
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,
