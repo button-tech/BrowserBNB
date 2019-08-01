@@ -11,32 +11,29 @@
 
 <div class="row">
     <div style="margin-top: -1em" class="col-12">
-        <h4 align="center" style="font-weight: bolder; color: rgb(33, 40, 51); font-size: 22px">Your address</h4>
+        <h4 align="center" style="font-weight: bold; color: rgb(33, 40, 51); font-size: 22px">Your address</h4>
     </div>
-    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 5.75em; margin-bottom: 1em !important">
-        <qrcode [qrdata]="myAngularxQrCode" [size]="170" [level]="'M'"></qrcode>
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 6.79em; margin-bottom: 1.3em !important">
+        <qrcode [qrdata]="qrCode" [size]="130" [level]="'M'"></qrcode>
     </div>
-    <div class="text-center"
-         style="padding-bottom: 2.5em; padding-right: 0; padding-left: 0em; margin-left: 0; margin-right: 0">
-        <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; margin-left: 4em; box-shadow: none; border-radius: 2px"
+    <div class="col-12 text-center"
+         style="padding-bottom: 1.5em; padding-right: 0; padding-left: 0em; margin-left: 0; margin-right: 0">
+        <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93);
+         font-size: 10px; box-shadow: none;"
                 [satPopoverAnchor]="p"
                 (mouseenter)="p.open()"
                 (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
-                (click)="this.copyAddress();" class="button-qr btn btn-default">
-            {{'bnb16ynltur5r4ap7n52fvlfjjrpuuxc0q855jqeqe'}}
-            <fa id="copyButton" name="copy" size="sm"></fa>
+                (click)="this.copyAddress();" class="button-qr btn btn-default">{{this.address$ | async}}
+            <fa id="copyButton" name="copy" size="sm">
+            </fa>
         </button>
     </div>
-    <div style="border-top:  0.0625rem solid rgba(234, 236, 239, 0.5);" class="text-center">
-        <div style="margin-left: 4em">
-            <button (click)="this.openTab(address$, 'mainnet')" style="width: 250px" class="btn-binance-outline btn-lg">
+    <div class="col-12 text-center">
+        <div>
+            <button (click)="this.openTab(address$, 'mainnet')"
+                    class="btn btn-binance btn-lg">
                 View on explorer
             </button>
-            <br>
-            <br>
-            <!--            <button style="width: 250px" class="btn-binance-outline btn-lg">-->
-            <!--                Buy BNB-->
-            <!--            </button>-->
         </div>
 
     </div>

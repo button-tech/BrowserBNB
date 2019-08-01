@@ -8,7 +8,6 @@
         </button>
     </div>
 </div>
-
 <div *ngIf="(tokens$ | async)" style="margin-top: 0.2em">
     <div style="display: grid; margin-left: 0em; border-bottom: 0.0625rem solid rgba(234, 236, 239, 0.5);"
          *ngFor="let token of (tokens$ | async)">
@@ -27,7 +26,7 @@
             </p>
             <p align="left"
                style="font-weight: bolder;grid-row: 3; grid-column: 2;  margin-left: 0.8em; font-size: 16px; margin-bottom: 8em; color: rgb(132, 142, 156)"
-            >{{token.balance2usd ? ('$' + token.balance2usd.toFixed(2)+ ' USD') : ''}}
+            >{{token.balance2usd ? ('$' + token.balance2usd.toFixed(2) + ' USD') : ''}}
             </p>
         </div>
     </div>
@@ -36,7 +35,6 @@
     <div class="row">
         <div class="col-12 text-center">
             <loaders-css [loader]="loader" [scale]="2" [bgColor]="bgColor" [color]="color"></loaders-css>
-            <!--            <p style="font-size: 24px; font-weight: bold; color: rgb(33, 40, 51); margin-top: 1em;">Loading...</p>-->
         </div>
     </div>
 </div>

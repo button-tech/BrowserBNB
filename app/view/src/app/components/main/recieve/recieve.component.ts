@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {map, take, takeUntil} from "rxjs/operators";
-import {of, Subscription, timer} from "rxjs";
+import {Observable, of, Subscription, timer} from "rxjs";
 import {ClipboardService} from "../../../services/clipboard.service";
 import {ChromeApiService} from "../../../services/chrome-api.service";
+import {StateService} from "../../../services/state.service";
 
 @Component({
     selector: 'app-recieve',
@@ -12,18 +13,19 @@ import {ChromeApiService} from "../../../services/chrome-api.service";
 })
 export class RecieveComponent implements OnInit {
     subscription: Subscription;
-    address$ = of('bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu');
+    address$: Observable<string>;
     copyMessage = 'Copy to clipboard';
-    myAngularxQrCode: string = null;
+    qrCode: string;
 
-    constructor(private location: Location, private clipboardService: ClipboardService, private  chrome: ChromeApiService) {
+    constructor(private location: Location, private clipboardService: ClipboardService, private  chrome: ChromeApiService, private stateService: StateService) {
+        this.address$ = this.stateService.currentAddress$;
         this.subscription = this.address$.pipe(
             map((address) => {
-                this.myAngularxQrCode = address;
+                this.qrCode = address;
             })
         ).subscribe();
     }
-    
+
     ngOnInit() {
     }
 
@@ -32,7 +34,6 @@ export class RecieveComponent implements OnInit {
     }
 
     copyAddress() {
-        // // TODO: probable better to do that without observables, by just assiging address to MainComponent field
         this.address$.pipe(
             takeUntil(timer(100)),
             take(1),

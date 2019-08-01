@@ -5,6 +5,10 @@
 <sat-popover #menuUsers horizontalAlign="center" verticalAlign="center" hasBackdrop>
     <div class="menu-wrapper-users col-12">
         <div id="users-wrapper">
+            <button (click)="menuUsers.close()" style="color: white!important; border: none!important"
+                    class="btn btn-sm btn-just-icon btn-round btn-binance-outline">
+                <fa name="times"></fa>
+            </button>
             <div id="AccountsHeader">My Accounts</div>
             <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
                 Log out
@@ -12,7 +16,6 @@
         </div>
         <hr class="pop-hr">
         <div id="scrollableUsers">
-
             <div class="item-of" *ngFor="let item of (accounts$ | async); let i = index;"
                  (click)="switchAccount(item);menuUsers.close()"
                  style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
@@ -29,7 +32,7 @@
                 <div style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
                     {{item.name}}
                 </div>
-                <div style="grid-row: 2; grid-column: 2; color: whitesmoke; font-size: 12px; margin-top: -1.8em;  margin-left: -0.4em">
+                <div style="grid-row: 2; grid-column: 2; color: whitesmoke; font-weight: 400; font-size: 12px; margin-top: -1.8em;  margin-left: -0.4em">
                     {{item.shortAddress}}
                 </div>
 
