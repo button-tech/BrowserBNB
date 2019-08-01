@@ -2,19 +2,20 @@
     <div class="form-row">
         <div class="form-group col-md-12">
             <ng-select [searchable]="true" [clearable]="false" labelForId="heroId" class="custom"
-                       formControlName="heroId" class="someClass someClass1" (change)="this.chosenCurrency = this.heroForm.getRawValue().heroId;">
+                       formControlName="heroId" class="someClass someClass1"
+                       (change)="selectCoin(this.heroForm.getRawValue().heroId)">
                 <ng-option value="BNB">
                     <div style="display: flex;flex-direction: row; align-items: center">
                         <img style="height: 28px" src="../../../../../../assets/icons/icon128.png"/>
                         <div style="display: flex;flex-direction: column; padding: 5px 10px;">
                             <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">Binance Coin</strong>
                             <div style="font-size: 12px">{{(bnb$ | async) | fmtPipe : 'BNB'}}</div>
-                             <!--{{(fiat$ | async) || 'pending'}}-->
                         </div>
                     </div>
                 </ng-option>
 
-                <ng-option *ngFor="let token of (tokens$ | async)" value="{{token.symbol}}">
+                <ng-option *ngFor="let token of (tokens$ | async)"
+                           value="{{ ({mappedName: token.mappedName, name: token.name, symbol: token.symbol, rate2usd:token.rate2usd }) | json }}">
                     <div style="display: flex;flex-direction: row; align-items: center">
                         <img style="height: 28px"
                              src="{{token.image || '../../../../../../assets/icons/default.png'}}"/>

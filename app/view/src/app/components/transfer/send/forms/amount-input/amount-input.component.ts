@@ -1,9 +1,8 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { StorageService } from '../../../../../services/storage.service';
-import { Subscription, timer } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {ITransaction, StateService} from "../../../../../services/state.service";
+import {combineLatest, Observable, of} from "rxjs";
+import {map, switchMap} from "rxjs/operators";
 
 interface ICurrency {
     symbol: string;
@@ -18,98 +17,78 @@ interface ICurrency {
 })
 export class AmountInputComponent implements OnInit, OnDestroy {
 
-    // TODO: for tokens and fiat
-    fiatList = [
-        {
-            'symbol': '$',
-            'name': 'USD'
-        }
-    ];
-
-    cryptoList = [
-        {
-            'symbol': '',
-            'name': 'BNB'
-        }
-    ];
-
-    currentBaseCurrency = {
-        'symbol': '',
-        'name': 'BNB'
-    };
-
-    currentSecondaryCurrency = {
-        'symbol': '$',
-        'name': 'USD'
-    };
-
     emailFormControl = new FormControl('', []);
-
-    currentSum: number;
-    currentSumsecondary: number;
+    baseSymbol: Observable<string>;
+    secondarySymbol: Observable<string>;
+    calculatedSum: Observable<number>;
+    secondaryName: Observable<string>;
+    rate2usd: Observable<number>;
     isSwapped: boolean;
-    rate = 0;
 
-    subscription: Subscription;
+    // @ts-ignore
+    @ViewChild('sum') rawSum: ElementRef;
 
-    constructor(private storage: StorageService, private http: HttpClient) {
-        // TODO get rates from state service
-        this.subscription = timer(0, 60000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            tap((resp: any) => {
-                this.rate = resp.USD;
-            }),
-        ).subscribe();
+    constructor(private stateService: StateService) {
+        this.stateService.currentTransaction.subscribe((x: ITransaction) => {
+            this.baseSymbol = of(x.Symbol);
+            this.secondaryName = of('USD');
+            this.secondarySymbol = of('');
+            this.calculatedSum = of(0);
+            if (x.Symbol === 'BNB') {
+                this.rate2usd = this.stateService.bnb2usdRate$;
+            } else {
+                this.rate2usd = of(x.rate2usd);
+            }
+        })
+    }
+
+
+    calcSums() {
+        if (!this.isSwapped) {
+            this.stateService.currentTransaction.subscribe((x: ITransaction) => {
+                this.calculatedSum = this.rate2usd.pipe(
+                    map((rate: number) => {
+                        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
+                        return rate * sum;
+                    }),
+                    map((sum: number) => {
+                        return +sum.toFixed(2)
+                    })
+                )
+            })
+        } else {
+            this.stateService.currentTransaction.subscribe((x: ITransaction) => {
+                this.calculatedSum = this.rate2usd.pipe(
+                    map((rate: number) => {
+                        const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
+                        return 1 / rate * sum;
+                    }),
+                    map((sum: number) => {
+                        return +sum.toFixed(2)
+                    })
+                )
+            })
+        }
+
     }
 
     swapCurrencies() {
         this.isSwapped = !this.isSwapped;
-        const tmp = this.currentBaseCurrency;
-        this.currentBaseCurrency = this.currentSecondaryCurrency;
-        this.currentSecondaryCurrency = tmp;
-        this.calcSums();
+        const temp = this.baseSymbol;
+        this.baseSymbol = this.secondaryName;
+        this.secondaryName = temp;
     }
 
-
-    getCurrencyRates(base, secondary: string): number {
-        if (base === 'BNB') {
-            return this.rate;
-        } else {
-            return 1 / this.rate;
-        }
-    }
-
-    save() {
-        const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
-        if (!this.isSwapped) {
-            this.currentSum = Number(sum.toFixed(8));
-        } else if (this.isSwapped) {
-            this.currentSum = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(8));
-        }
-
-        // this.storage.currentTransaction.Amount = this.currentSum;
-    }
-
-    calcSums() {
-        if (this.isSwapped) {
-            const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
-            this.currentSumsecondary = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(8));
-        } else if (!this.isSwapped) {
-            const sum = Number(((document.getElementById('sum') as HTMLInputElement).value) as unknown as string);
-            this.currentSumsecondary = Number((this.getCurrencyRates(this.currentBaseCurrency.name, this.currentSecondaryCurrency.name) * sum).toFixed(2));
-        }
-
-
+    beautifyName(name: Observable<string>): Observable<string> {
+        return name.pipe(map((x: string) => {
+            return x.substring(0, 7);
+        }))
     }
 
     ngOnInit() {
-        this.calcSums();
     }
 
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+    ngOnDestroy() {
     }
 
 }

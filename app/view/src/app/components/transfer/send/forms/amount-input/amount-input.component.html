@@ -1,20 +1,29 @@
 <div style="border: 1px solid #cbcbcb; border-radius: 4px; height: 55px;margin-left: 22px;" class="wrap text-center">
     <mat-form-field class="example-full-width form-group">
         <div style="display: flex">
-            <div style="display: grid; grid-template: 1fr 1fr / 1fr 1fr; grid-column-gap: 5px">
-                <input id="sum"
-                       style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
-                       class="form-control" matInput
-                       [formControl]="emailFormControl" (change)="calcSums()" (input)="calcSums(); save()"
-                       value=0>
-                <strong style="margin-top: 0.35em; font-weight: bolder; font-size: 16px">{{this.currentBaseCurrency.name}}</strong>
-                <div style="font-size: 12px; margin-top: -0.5em; max-width: 90px; white-space: nowrap">
-                    {{this.currentSecondaryCurrency.symbol}} {{this.currentSumsecondary}}
+            <div style="display: grid; grid-template: 1fr 1fr / 90px 60px 1fr; grid-column-gap: 0px; width: 100% !important">
+                <div style="grid-column: 1; grid-row: 1">
+                    <input #sum
+                           style="margin-bottom: -0.7em !important; font-weight: bolder; font-size: 16px !important; width: 110px"
+                           class="form-control" matInput
+                           [formControl]="emailFormControl" value="0"
+                           (change)="this.calcSums()" (input)="this.calcSums()">
+                    <!--                       value=0>-->
                 </div>
-                <div style="font-size: 12px;  margin-top: -0.5em">{{this.currentSecondaryCurrency.name}}</div>
+                <div style="grid-column: 2; grid-row: 1; margin-top: 0.35em;">
+                    <strong style="font-weight: bolder; font-size: 13px">{{(this.beautifyName(baseSymbol))|async}}</strong>
+                </div>
+
+                <div style="grid-column: 1; grid-row: 2;font-size: 12px; margin-top: -1em; max-width: 90px; white-space: nowrap; ">
+                    {{calculatedSum |async}} {{secondarySymbol|async}}
+                </div>
+                <div style="grid-column: 2; grid-row: 2;font-size: 12px;  margin-top: -1em">{{ (this.beautifyName(secondaryName)) | async}}</div>
+                <div (click)="swapCurrencies(); calcSums()" style="grid-column: 3; grid-row: 1/2; ">
+                    <i class="fa fa-exchange fa-rotate-90"
+                       style="margin-right: 30px; margin-top: -0.5em; margin-top: 1em; margin-left: 1em;"></i>
+                </div>
             </div>
-            <i class="fa fa-exchange fa-rotate-90" style="margin-right: 30px;margin-left: -8px;
-    margin-top: -0.5em;" (click)="swapCurrencies()"></i>
+
         </div>
     </mat-form-field>
 </div>
