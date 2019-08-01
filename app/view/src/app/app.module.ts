@@ -37,7 +37,7 @@ import {AddressInputComponent} from './components/transfer/send/forms/address-in
 import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
-import {SettingsComponent} from './components/main/settings/settings.component';
+import {SettingsComponent} from './components/main/menu-top/settings/settings.component';
 import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
 import {AccountsComponent} from './components/main/menu-top/accounts/accounts.component';
 import {RecieveComponent} from './components/main/recieve/recieve.component';

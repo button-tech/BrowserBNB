@@ -28,7 +28,6 @@ export class HistoryComponentComponent implements OnDestroy {
     constructor(private stateService: StateService, private router: Router, public temp: TemporaryService) {
         this.subscription = this.stateService.history$.pipe(
             tap((history: IHistoryTx[]) => {
-                console.log('--refresh--');
                 this.history = history;
                 this.isEmpty = !this.history.length;
                 this.isLoaded = true;
@@ -37,7 +36,6 @@ export class HistoryComponentComponent implements OnDestroy {
 
         this.stateService.showHistoryLoadingIndicator$.subscribe((x) => {
             this.isLoaded = !x;
-            console.log(this.isLoaded);
         });
     }
 

@@ -3,7 +3,19 @@ import {IStorageAccount, IStorageData, NetworkType, StorageService} from './stor
 import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {distinctUntilChanged, map, mapTo, mergeAll, pluck, shareReplay, startWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
+import {
+    distinctUntilChanged,
+    map,
+    mapTo,
+    mergeAll,
+    pluck,
+    shareReplay,
+    startWith,
+    switchMap,
+    switchMapTo,
+    take,
+    tap
+} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 
@@ -48,6 +60,12 @@ const emptyState: IUiState = Object.freeze({
     storageData: null
 });
 
+const basicNetworkSttate: IMenuItem = Object.freeze({
+    val: ' https://dex.binance.org',
+    networkPrefix: 'bnb',
+    label: 'mainnet',
+});
+
 export interface IUiBalance {
     bnb: string;
     bnbFiat: string;
@@ -78,6 +96,7 @@ export interface IMarketRates {
     quoteVolume: string;
     count: number;
 }
+
 export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
@@ -87,7 +106,7 @@ export class StateService {
 
     private password = '';
 
-    selectedNetwork$: BehaviorSubject<IMenuItem>;
+    selectedNetwork$: BehaviorSubject<IMenuItem> = new BehaviorSubject(basicNetworkSttate);
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
     allBalances$: Observable<IBalance[]>;
@@ -136,6 +155,15 @@ export class StateService {
             };
         });
 
+        const val = data.selectedNetworkEndpoint;
+        const networkPrefix = data.selectedNetwork;
+        const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
+        const newSelectedNetwork: IMenuItem = {
+            networkPrefix,
+            val,
+            label
+        };
+
         const currentAccount = accounts.find((account) => {
             return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
         });
@@ -148,6 +176,7 @@ export class StateService {
 
         this.uiState$.next(uiState);
         this.password = password;
+        this.selectedNetwork$.next(newSelectedNetwork);
     }
 
     resetState() {
@@ -236,6 +265,16 @@ export class StateService {
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
 
+        const val = this.uiState.storageData.selectedNetworkEndpoint;
+        const networkPrefix = network;
+        const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
+        const newSelectedNetwork: IMenuItem = {
+            networkPrefix,
+            val,
+            label
+        };
+
+        this.selectedNetwork$.next(newSelectedNetwork);
 
         const newAccounts = this.uiState.accounts.map((account) => {
             const newAddress = network === 'bnb'

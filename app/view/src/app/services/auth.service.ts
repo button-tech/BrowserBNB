@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, Subject, Subscription} from 'rxjs';
-import {catchError, map, startWith, take} from 'rxjs/operators';
+import {Observable, of, Subject} from 'rxjs';
+import {catchError, map, startWith} from 'rxjs/operators';
 import {IStorageData, StorageService} from './storage.service';
-import {getSHA3hashSum} from './binance-crypto';
 import {StateService} from './state.service';
 import {Router} from '@angular/router';
 

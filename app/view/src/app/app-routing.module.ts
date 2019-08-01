@@ -14,7 +14,7 @@ import {RepeatPasswordComponent} from './components/registration/repeat-password
 import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
-import {SettingsComponent} from "./components/main/settings/settings.component";
+import {SettingsComponent} from "./components/main/menu-top/settings/settings.component";
 import {RecieveComponent} from "./components/main/recieve/recieve.component";
 import {HistoryDetailsComponent} from "./components/main/history-component/history-details/history-details.component";
 

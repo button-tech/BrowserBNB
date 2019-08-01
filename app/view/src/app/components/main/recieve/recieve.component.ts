@@ -16,11 +16,13 @@ export class RecieveComponent implements OnInit {
     address$: Observable<string>;
     copyMessage = 'Copy to clipboard';
     qrCode: string;
-
+    network: string;
     constructor(private location: Location, private clipboardService: ClipboardService, private  chrome: ChromeApiService, private stateService: StateService) {
         this.address$ = this.stateService.currentAddress$;
+
         this.subscription = this.address$.pipe(
             map((address) => {
+                this.network = this.stateService.selectedNetwork$.getValue().label.toLocaleLowerCase();
                 this.qrCode = address;
             })
         ).subscribe();
@@ -43,9 +45,9 @@ export class RecieveComponent implements OnInit {
         });
     }
 
-    openTab(address$: any, network: string) {
+    openTab(address$: any) {
         let url;
-        switch (network) {
+        switch (this.network) {
             case 'mainnet':
                 url = 'https://explorer.binance.org/address/';
                 break;
