@@ -4,6 +4,14 @@ import {ITransaction, StateService} from "../../../../../services/state.service"
 import {Observable, of} from "rxjs";
 import {map} from "rxjs/operators";
 
+interface IAmounts {
+    baseSymbol: string;
+    secondarySymbol: string;
+    secondaryName: string;
+    calculatedSum: number;
+    rate2usd: number;
+}
+
 @Component({
     selector: 'app-amount-input',
     templateUrl: './amount-input.component.html',
@@ -13,36 +21,41 @@ import {map} from "rxjs/operators";
 export class AmountInputComponent implements OnInit, OnDestroy {
 
     emailFormControl = new FormControl('', []);
-    baseSymbol: Observable<string>;
-    secondarySymbol: Observable<string>;
-    calculatedSum: Observable<number>;
-    secondaryName: Observable<string>;
-    rate2usd: Observable<number>;
+    currentState$: Observable<IAmounts>;
     isSwapped: boolean;
     isNotAllowed: boolean;
 
     // @ts-ignore
     @ViewChild('sum') rawSum: ElementRef;
 
-    constructor(private stateService: StateService) {
+    constructor( private stateService: StateService ) {
 
-        this.stateService.currentTransaction.subscribe((x: ITransaction) => {
-            this.baseSymbol = of(x.Symbol);
-            this.secondaryName = of('USD');
-            this.secondarySymbol = of('');
-            this.calculatedSum = of(0);
+        this.stateService.currentTransaction.subscribe(( x: ITransaction ) => {
+            let rate2usd = x.rate2usd;
+            let secondaryName = 'USD';
             if (x.Symbol === 'BNB') {
-                this.rate2usd = this.stateService.bnb2usdRate$;
+                this.stateService.bnb2usdRate$.subscribe(( r ) => {
+                    rate2usd = r;
+                });
             } else {
-                this.rate2usd = of(x.rate2usd);
+                rate2usd = x.rate2usd;
             }
             if (x.rate2usd === 0) {
-                this.secondaryName = of('');
+                secondaryName = '';
                 this.isNotAllowed = true;
             } else {
-                this.secondaryName = of('USD');
+                secondaryName = 'USD';
                 this.isNotAllowed = false;
             }
+            const symbol =
+                x.Symbol.length >= 7 ? x.Symbol.substring(0, 4) + '...' : x.Symbol;
+            this.currentState$ = of({
+                'baseSymbol': symbol,
+                'secondaryName': secondaryName,
+                'secondarySymbol': '',
+                'calculatedSum': 0,
+                'rate2usd': rate2usd
+            });
         });
     }
 
@@ -50,32 +63,33 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     calcSums() {
         const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
         if (!this.isSwapped) {
-            this.stateService.currentTransaction.subscribe((x: ITransaction) => {
-                this.calculatedSum = this.rate2usd.pipe(
-                    map((rate: number) => {
-                        return rate * sum;
-                    }),
-                    // tslint:disable-next-line:no-shadowed-variable
-                    map((x: number) => {
-                        return +x.toFixed(2);
-                    })
-                );
-            });
+            console.log(1);
+            this.currentState$ = this.currentState$.pipe(
+                map(( am: IAmounts ) => {
+                    const newAm = {
+                        'baseSymbol': am.baseSymbol,
+                        'secondaryName': am.secondaryName,
+                        'secondarySymbol': '',
+                        'calculatedSum': +(am.rate2usd * sum).toFixed(2),
+                        'rate2usd': am.rate2usd
+                    };
+                    return newAm;
+                })
+            );
         } else {
-            this.stateService.currentTransaction.subscribe((x: ITransaction) => {
-                this.calculatedSum = this.rate2usd.pipe(
-                    map((rate: number) => {
-                        if (rate * sum === 0) {
-                            return 0;
-                        }
-                        return 1 / rate * sum;
-                    }),
-                    // tslint:disable-next-line:no-shadowed-variable
-                    map((x: number) => {
-                        return +x.toFixed(2);
-                    })
-                );
-            });
+            console.log(2);
+            this.currentState$ = this.currentState$.pipe(
+                map(( am: IAmounts ) => {
+                    const newAm = {
+                        'baseSymbol': am.secondaryName,
+                        'secondaryName': am.baseSymbol,
+                        'secondarySymbol': '',
+                        'calculatedSum': +(1 / (am.rate2usd * sum)).toFixed(2),
+                        'rate2usd': am.rate2usd
+                    };
+                    return newAm;
+                })
+            );
         }
         const newTx = this.stateService.currentTransaction.getValue();
         newTx.Amount = sum;
@@ -83,21 +97,10 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     }
 
     swapCurrencies() {
+
         if (!this.isNotAllowed) {
             this.isSwapped = !this.isSwapped;
-            const temp = this.baseSymbol;
-            this.baseSymbol = this.secondaryName;
-            this.secondaryName = temp;
         }
-    }
-
-    beautifyName(name: Observable<string>): Observable<string> {
-        return name.pipe(map((x: string) => {
-            if (x.length > 7) {
-                return x.substring(0, 4) + '...';
-            }
-            return x;
-        }));
     }
 
     ngOnInit() {

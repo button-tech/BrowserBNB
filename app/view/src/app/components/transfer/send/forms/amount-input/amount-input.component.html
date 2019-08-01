@@ -11,13 +11,13 @@
                     <!--                       value=0>-->
                 </div>
                 <div style="grid-column: 2; grid-row: 1; margin-top: 0.35em;">
-                    <strong style="font-weight: bolder; font-size: 13px">{{(this.beautifyName(baseSymbol))|async}}</strong>
+                    <strong style="font-weight: bolder; font-size: 13px">{{(currentState$|async).baseSymbol || ''}}</strong>
                 </div>
 
                 <div style="grid-column: 1; grid-row: 2;font-size: 12px; margin-top: -1em; max-width: 90px; white-space: nowrap; ">
-                    {{calculatedSum |async}} {{secondarySymbol|async}}
+                    {{(currentState$ |async).calculatedSum || 0}} {{(currentState$|async).secondarySymbol || ''}}
                 </div>
-                <div style="grid-column: 2; grid-row: 2;font-size: 12px;  margin-top: -1em">{{ (this.beautifyName(secondaryName)) | async}}</div>
+                <div style="grid-column: 2; grid-row: 2;font-size: 12px;  margin-top: -1em">{{(currentState$|async).secondaryName || ''}}</div>
                 <div (click)="swapCurrencies(); calcSums()" style="grid-column: 3; grid-row: 1/2; ">
                     <i class="fa fa-exchange fa-rotate-90"
                        style="margin-right: 30px; margin-top: -0.5em; margin-top: 1em; margin-left: 1em;"></i>
