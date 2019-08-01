@@ -13,6 +13,18 @@
                         </div>
                     </div>
                 </ng-option>
+
+                <ng-option *ngFor="let token of (tokens$ | async)" value="{{token.symbol}}">
+                    <div style="display: flex;flex-direction: row; align-items: center">
+                        <img style="height: 28px"
+                             src="{{token.image || '../../../../../../assets/icons/default.png'}}"/>
+                        <div style="display: flex;flex-direction: column; padding: 5px 10px;">
+                            <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">{{token.mappedName}}</strong>
+                            <div style="font-size: 12px">{{token.balance}} {{token.symbol}}</div>
+                            <!--{{(fiat$ | async) || 'pending'}}-->
+                        </div>
+                    </div>
+                </ng-option>
                 <!--<ng-option value="BEC">-->
                     <!--<div style="display: flex;flex-direction: row; align-items: center">-->
                         <!--<img style="height: 28px" src="../../assets/icons/default.png"/>-->

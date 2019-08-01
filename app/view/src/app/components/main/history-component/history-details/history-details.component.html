@@ -11,42 +11,43 @@
     </div>
     <div class="row">
         <div class="col-12 text-center">
-            <p style="font-weight: bolder; font-size: 20px">{{((this.temp.details$ | async).txType).replace('_', ' ')}}</p>
+            <p style="font-weight: bolder; font-size: 20px">{{((this.stateService.historyDetails$ | async).txType).replace('_', ' ')}}</p>
             <p style="font-size: 12px; color: rgb(73,77,88); margin-top: -1.35em;"
-               *ngIf="(this.temp.details$ | async).timeStamp"> {{((this.temp.details$ | async).timeStamp | date :'medium')}} </p>
+               *ngIf="(this.stateService.historyDetails$ | async).timeStamp"> {{((this.stateService.historyDetails$ | async).timeStamp | date :'medium')}} </p>
         </div>
-        <div style="margin-top: -0.9em" *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value"
+        <div style="margin-top: -0.9em"
+             *ngIf="(this.stateService.historyDetails$ | async).txAsset||(this.stateService.historyDetails$ | async).value"
              class="col-8 offset-2">
             <hr class="unusualHr">
         </div>
         <div style="display: grid; grid-template: 1fr 1fr / 1fr 3fr; margin-left: 3.5em; margin-bottom: -0.5em"
              class="col-12">
-            <div *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value"
+            <div *ngIf="(this.stateService.historyDetails$ | async).txAsset||(this.stateService.historyDetails$ | async).value"
                  style="grid-column: 1;">
                 Sum
             </div>
             <div style="grid-column: 2"
-                 *ngIf="(this.temp.details$ | async).txAsset||(this.temp.details$ | async).value">
-                {{(this.temp.details$ | async).value}} {{this.findMappedName(this.temp.details$) | async}}
+                 *ngIf="(this.stateService.historyDetails$ | async).txAsset||(this.stateService.historyDetails$ | async).value">
+                {{(this.stateService.historyDetails$ | async).value}} {{this.findMappedName(this.stateService.historyDetails$) | async}}
             </div>
-            <div style="grid-column: 1" *ngIf="(this.temp.details$ | async).txFee > 0">Fee
+            <div style="grid-column: 1" *ngIf="(this.stateService.historyDetails$ | async).txFee > 0">Fee
             </div>
-            <div style="grid-column: 2" *ngIf="(this.temp.details$ | async).txFee > 0">
-                {{ (this.temp.details$ | async).txFee + ' BNB'}}
+            <div style="grid-column: 2" *ngIf="(this.stateService.historyDetails$ | async).txFee > 0">
+                {{ (this.stateService.historyDetails$ | async).txFee + ' BNB'}}
             </div>
             <div style="grid-column: 1; font-weight: bolder;"
-                 *ngIf="(this.temp.details$ | async).txFee > 0 && (this.temp.details$ | async).txAsset && (this.temp.details$ | async).value">
+                 *ngIf="(this.stateService.historyDetails$ | async).txFee > 0 && (this.stateService.historyDetails$ | async).txAsset && (this.stateService.historyDetails$ | async).value">
                 Total
             </div>
             <div style="grid-column: 2;  font-weight: bolder; "
-                 *ngIf="(this.temp.details$ | async).txFee > 0 && (this.temp.details$ | async).txAsset && (this.temp.details$ | async).value ">
-                {{ this.sum((this.temp.details$ | async).txFee, (this.temp.details$ | async).value) + ' BNB'}}
+                 *ngIf="(this.stateService.historyDetails$ | async).txFee > 0 && (this.stateService.historyDetails$ | async).txAsset && (this.stateService.historyDetails$ | async).value ">
+                {{ this.sum((this.stateService.historyDetails$ | async).txFee, (this.stateService.historyDetails$ | async).value) + ' BNB'}}
             </div>
         </div>
         <div class="col-8 offset-2">
             <hr class="unusualHr">
         </div>
-        <div *ngIf="(this.temp.details$ | async).fromAddr && (this.temp.details$ | async).toAddr "
+        <div *ngIf="(this.stateService.historyDetails$ | async).fromAddr && (this.stateService.historyDetails$ | async).toAddr "
              style="display: inline-flex; font-weight: bolder; font-size: 18px; margin-left: 0.55em"
              class="fromTo col-12 text-center">
             <div>
@@ -55,8 +56,9 @@
                         [satPopoverAnchor]="p2"
                         (mouseenter)="p2.open()"
                         (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.temp.details$, 'fromAddr');" class="button-qr btn btn-default">
-                    {{toShortAddress((this.temp.details$ | async).fromAddr)}}
+                        (click)="this.copyAddress(this.stateService.historyDetails$, 'fromAddr');"
+                        class="button-qr btn btn-default">
+                    {{toShortAddress((this.stateService.historyDetails$ | async).fromAddr)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
                 <sat-popover #p2 horizontalAlign="center" openTransition="100ms ease-out"
@@ -76,8 +78,9 @@
                         [satPopoverAnchor]="p3"
                         (mouseenter)="p3.open()"
                         (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.temp.details$, 'toAddr');" class="button-qr btn btn-default">
-                    {{toShortAddress((this.temp.details$ | async).toAddr)}}
+                        (click)="this.copyAddress(this.stateService.historyDetails$, 'toAddr');"
+                        class="button-qr btn btn-default">
+                    {{toShortAddress((this.stateService.historyDetails$ | async).toAddr)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
                 <sat-popover #p3 horizontalAlign="center" openTransition="100ms ease-out"
@@ -102,8 +105,9 @@
                         (mouseenter)="p.open()"
                         (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';"
                         id="addressButton"
-                        (click)="this.copyAddress(this.temp.details$, 'txHash');" class="button-qr btn btn-default">
-                    {{toShortAddress((this.temp.details$ | async).txHash)}}
+                        (click)="this.copyAddress(this.stateService.historyDetails$, 'txHash');"
+                        class="button-qr btn btn-default">
+                    {{toShortAddress((this.stateService.historyDetails$ | async).txHash)}}
                     <fa id="copyButton" name="copy" size="sm"></fa>
                 </button>
                 <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out"
@@ -115,7 +119,7 @@
                 </sat-popover>
             </div>
         </div>
-        <div *ngIf="(this.temp.details$ | async).memo"
+        <div *ngIf="(this.stateService.historyDetails$ | async).memo"
              style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 4.5em" class="col-12">
             <div>
                 <h6 style="margin-bottom: -0.5em">MEMO</h6>
@@ -125,8 +129,9 @@
                         [satPopoverAnchor]="p4"
                         (mouseenter)="p4.open()"
                         (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.temp.details$, 'memo');" class="button-qr btn btn-default">
-                    {{((this.temp.details$ | async).memo).substring(0, 20)}}
+                        (click)="this.copyAddress(this.stateService.historyDetails$, 'memo');"
+                        class="button-qr btn btn-default">
+                    {{((this.stateService.historyDetails$ | async).memo).substring(0, 20)}}
                     <fa name="copy" size="sm"></fa>
                 </button>
                 <sat-popover #p4 horizontalAlign="center" openTransition="100ms ease-out"
@@ -139,7 +144,7 @@
             </div>
         </div>
         <div style="margin-top: 1em" class="col-12  text-center">
-            <button (click)="this.openTab(this.temp.details$, 'mainnet')" style="width: 250px"
+            <button (click)="this.openTab(this.stateService.historyDetails$, 'mainnet')" style="width: 250px"
                     class="btn-binance-outline btn-sm">
                 View on explorer
             </button>

@@ -9,7 +9,7 @@ import {FormControl} from '@angular/forms';
 })
 export class MemoInputComponent implements OnInit {
 
-    constructor(private storage: StorageService) {
+    constructor() {
     }
 
     ngOnInit() {

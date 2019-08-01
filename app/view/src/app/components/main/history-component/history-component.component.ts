@@ -1,8 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Observable, of, Subscription, timer} from 'rxjs';
-import {map, startWith, switchMap, tap} from 'rxjs/operators';
-import {HttpClient} from '@angular/common/http';
-import {TemporaryService} from '../../../services/temporary.service';
+import {Component, OnDestroy} from '@angular/core';
+import {of, Subscription} from 'rxjs';
+import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
@@ -25,7 +23,7 @@ export class HistoryComponentComponent implements OnDestroy {
     private subscription: Subscription;
     public isEmpty: boolean;
 
-    constructor(private stateService: StateService, private router: Router, public temp: TemporaryService) {
+    constructor(private stateService: StateService, private router: Router) {
         this.subscription = this.stateService.history$.pipe(
             tap((history: IHistoryTx[]) => {
                 this.history = history;
@@ -58,7 +56,7 @@ export class HistoryComponentComponent implements OnDestroy {
     }
 
     goToDetails(tx: any) {
-        this.temp.details$ = of(tx);
+        this.stateService.historyDetails$ = of(tx);
         this.router.navigate(['/details']);
     }
 

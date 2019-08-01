@@ -54,7 +54,6 @@ export function getAddressFromPrivateKey(privateKey: string, networkType: string
     return crypto.getAddressFromPublicKey(publicKey, networkType);
 }
 
-// Commented since we don't user it yet
 export function getPublicKeyFromPrivateKey(privateKey: string): string {
     return crypto.getPublicKeyFromPrivateKey(privateKey);
 }
@@ -67,8 +66,7 @@ export function getPublicKeyFromPrivateKey(privateKey: string): string {
 //     return crypto.getAddressFromPublicKey(publicKey, networkType);
 // }
 
-// // Commented since we don't user it yet
 export function validateAddress(address: string, networkType: string = 'bnb'): boolean {
-    console.assert(isNotEmptyString(address));
-    return crypto.checkAddress(address, networkType);
+    if (isNotEmptyString(address))
+        return crypto.checkAddress(address, networkType);
 }

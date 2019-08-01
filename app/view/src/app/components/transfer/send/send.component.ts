@@ -15,7 +15,7 @@ export class SendComponent implements OnDestroy {
     fee: Observable<number>;
     subscription: Subscription;
 
-    constructor(private location: Location, private storage: StorageService) {
+    constructor(private location: Location) {
 
         this.subscription = timer(0, 500)
             .subscribe(() => {

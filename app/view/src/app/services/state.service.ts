@@ -18,6 +18,7 @@ import {
 } from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
+import {rawTokensImg} from "../constants";
 
 export interface ITransaction {
     Amount: number;
@@ -25,6 +26,16 @@ export interface ITransaction {
     AddressFrom: string;
     Memo: string;
     Symbol: string;
+}
+
+export interface ITokenInfo {
+    balance: string,
+    balance2usd: number,
+    balance2usdStr: string,
+    image: string,
+    mappedName: string,
+    name: string,
+    symbol: string,
 }
 
 export interface IMenuItem {
@@ -65,6 +76,13 @@ const basicNetworkSttate: IMenuItem = Object.freeze({
     networkPrefix: 'bnb',
     label: 'mainnet',
 });
+const basicTransactionState: ITransaction = {
+    Amount: 0,
+    AddressTo: '',
+    AddressFrom: '',
+    Memo: '',
+    Symbol: '',
+};
 
 export interface IUiBalance {
     bnb: string;
@@ -116,13 +134,17 @@ export class StateService {
 
     currentAddress$: Observable<string>;
     currentAddress: string;
-
     currentAddressShort$: Observable<string>;
+
+    tokens$: Observable<ITokenInfo[]>;
 
     currentEndpoint$: Observable<NETWORK_ENDPOINT_MAPPING>;
     currentEndpoint: NETWORK_ENDPOINT_MAPPING;
 
     history$: Observable<any>;
+    historyDetails$: Observable<any>;
+
+    currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
 
     getBalancePipeline$(address: string): Observable<IUiBalance> {
         return of({
@@ -449,5 +471,89 @@ export class StateService {
         //     shareReplay(1)
         // );
         //
+        this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, bnb2usdRate$])
+            .pipe(
+                map((x: any[]) => {
+                    const [balances, marketRates, bnb2usd] = x;
+                    const imagesUrls = JSON.parse(rawTokensImg);
+                    let finalBalances = [];
+                    balances.forEach((token) => {
+                        const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
+                        const tokensDetailsForCurrentToken = imagesUrls.find(o => o.symbol === token.symbol);
+                        const isOk =
+                            marketTickerForCurrentToken !== undefined
+                            && tokensDetailsForCurrentToken !== undefined
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
+                            && token.symbol !== 'BNB';
+
+                        if (isOk) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': Number(marketTickerForCurrentToken.lastPrice) * bnb2usd * Number(token.free),
+                                'balance': Number(token.free),
+                                'image': tokensDetailsForCurrentToken.image,
+                                'name': tokensDetailsForCurrentToken.name,
+                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
+                            });
+                        } else if (token.symbol !== 'BNB'
+                            && tokensDetailsForCurrentToken
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
+                        ) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': tokensDetailsForCurrentToken.name,
+                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
+                            });
+                        } else if (tokensDetailsForCurrentToken &&
+                            tokensDetailsForCurrentToken.name === undefined &&
+                            tokensDetailsForCurrentToken.mappedAsset !== undefined) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': '',
+                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
+                            });
+                        } else if (tokensDetailsForCurrentToken
+                            && tokensDetailsForCurrentToken.name !== undefined
+                            && tokensDetailsForCurrentToken.mappedAsset === undefined) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': tokensDetailsForCurrentToken.name,
+                                'mappedName': '',
+                            });
+                        } else if (!tokensDetailsForCurrentToken) {
+                            finalBalances.push({
+                                'symbol': token.symbol,
+                                'balance2usd': 0,
+                                'balance': Number(token.free),
+                                'image': '',
+                                'name': token.symbol,
+                                'mappedName': token.symbol,
+                            });
+                        }
+                    });
+                    return finalBalances.sort((a, b) => {
+                        const usdBalanceDiff = b.balance2usd - a.balance2usd;
+                        if (usdBalanceDiff === 0) {
+                            const balanceDiff = b.balance - a.balance;
+                            if (balanceDiff === 0) {
+                                return a.symbol > b.symbol ? 1 : -1;
+                            }
+                            return balanceDiff;
+                        }
+                        return usdBalanceDiff;
+                    });
+                }),
+                shareReplay(1));
     }
 }

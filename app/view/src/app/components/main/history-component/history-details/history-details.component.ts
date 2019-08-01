@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {TemporaryService} from "../../../../services/temporary.service";
 import {Location} from "@angular/common";
 import {ClipboardService} from "../../../../services/clipboard.service";
 import {map, subscribeOn, take, takeUntil} from "rxjs/operators";
 import {Observable, timer} from "rxjs";
 import {ChromeApiService} from "../../../../services/chrome-api.service";
 import {rawTokensImg} from "../../../../constants";
+import {StateService} from "../../../../services/state.service";
 
 @Component({
     selector: 'app-history-details',
@@ -15,7 +15,7 @@ import {rawTokensImg} from "../../../../constants";
 export class HistoryDetailsComponent implements OnInit {
     copyMessage = 'Copy to clipboard';
 
-    constructor(public temp: TemporaryService, private location: Location, private clipboardService: ClipboardService, public chrome: ChromeApiService) {
+    constructor(private location: Location, private clipboardService: ClipboardService, public chrome: ChromeApiService, public stateService: StateService) {
 
     }
 
