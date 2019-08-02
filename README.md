@@ -4,8 +4,7 @@
 
 MetaMask like widget for Binance Chain ❤️
     
-![DEMO](https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif)
-
+<img src="https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif" alt="" data-canonical-src="https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif" width="250" height="450" />
 
 ## Step 1 (Registration or Import) 
 
