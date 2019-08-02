@@ -20,8 +20,6 @@ interface IAmounts {
 export class AmountInputComponent implements OnInit, OnDestroy {
 
 
-    emailFormControl = new FormControl('', []);
-    // currentState$: Subject<IAmounts> = new Subject();
     currentState$: Observable<IAmounts>;
 
     userInput$: BehaviorSubject<number> = new BehaviorSubject(0);
@@ -111,76 +109,18 @@ export class AmountInputComponent implements OnInit, OnDestroy {
         });
     }
 
-
-    calcSums() {
-        // const sum = +((this.rawSum.nativeElement as HTMLInputElement).value);
-        // if (!this.isSwapped) {
-        //
-        //     // const a = this.currentState$.pipe(..);
-        //     // const b = a.pipe(...);
-        //     // const c = b.pipe(...);
-        //
-        //     this.currentState$ = of({
-        //         'baseSymbol': am.baseSymbol,
-        //         'secondaryName': am.secondaryName,
-        //         'secondarySymbol': '',
-        //         'calculatedSum': +(am.rate2usd * sum).toFixed(2),
-        //         'rate2usd': am.rate2usd
-        //     });
-        //
-        //     this.currentState$ = this.currentState$.pipe(
-        //         map((am: IAmounts) => {
-        //             console.log(1);
-        //             const newAm = {
-        //                 'baseSymbol': am.baseSymbol,
-        //                 'secondaryName': am.secondaryName,
-        //                 'secondarySymbol': '',
-        //                 'calculatedSum': +(am.rate2usd * sum).toFixed(2),
-        //                 'rate2usd': am.rate2usd
-        //             };
-        //             return newAm;
-        //         })
-        //     );
-        // } else {
-        //
-        //     this.currentState$ = this.currentState$.pipe(
-        //         map((am: IAmounts) => {
-        //             console.log(2);
-        //             const newAm = {
-        //                 'baseSymbol': am.secondaryName,
-        //                 'secondaryName': am.baseSymbol,
-        //                 'secondarySymbol': '',
-        //                 'calculatedSum': +(1 / (am.rate2usd * sum)).toFixed(2),
-        //                 'rate2usd': am.rate2usd
-        //             };
-        //             return newAm;
-        //         })
-        //     );
-        // }
-        // const newTx = this.stateService.currentTransaction.getValue();
-        // newTx.Amount = sum;
-        // this.stateService.currentTransaction.next(newTx);
-    }
-
     nextValue() {
         const value = this.inputElement.nativeElement.value;
         this.userInput$.next(value);
+
+        const newTx = this.stateService.currentTransaction.getValue();
+        newTx.Amount = value;
+        this.stateService.currentTransaction.next(newTx);
     }
 
     swapCurrencies() {
-
         const doSwap = this.swapCurrencies$.getValue();
         this.swapCurrencies$.next(!doSwap);
-
-        // console.log(this.currentState.baseSymbol);
-        //
-        // const nextValue = this.currentState.baseSymbol === 'USD'
-        //     ? this.currentState.baseSymbol
-        //     : 'USD';
-        //
-        // console.log(nextValue);
-
-        //this.currencyOfUserInput$.next(nextValue);
     }
 
     ngOnInit() {

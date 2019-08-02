@@ -17,7 +17,8 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     tokens$: Observable<ITokenInfo[]>;
     bnb2usdRate$: Observable<number>;
 
-    subscription: Subscription;
+    subscription1: Subscription;
+    subscription2: Subscription;
 
     constructor(private fb: FormBuilder, public stateService: StateService) {
 
@@ -25,14 +26,16 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
         this.tokens$ = this.stateService.tokens$;
         this.bnb2usdRate$ = this.stateService.bnb2usdRate$;
 
-        // TODO: subscribe
-        this.stateService.selectedNetwork$.subscribe(() => {
+        this.subscription1 = this.stateService.selectedNetwork$.subscribe(() => {
             this.heroForm = this.fb.group({
                 heroId: 'BNB',
                 agree: null
             });
             const newTx = this.stateService.currentTransaction.getValue();
+
+
             const rate$ = this.stateService.bnb2usdRate$;
+            // TODO: subscription3
             rate$.pipe(
                 map((rate: number) => {
                     newTx.mapppedName = 'BNB';
@@ -42,17 +45,17 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
                     this.stateService.currentTransaction.next(newTx);
                 })
             ).subscribe();
-        })
+        });
     }
 
     selectCoin(rawCoin: any) {
         const newTx = this.stateService.currentTransaction.getValue();
 
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+        if (this.subscription2) {
+            this.subscription2.unsubscribe();
         }
 
-        this.subscription = this.bnb2usdRate$.pipe(
+        this.subscription2 = this.bnb2usdRate$.pipe(
             map((rate: number) => {
                 if (rawCoin && rawCoin === 'BNB') {
                     newTx.mapppedName = 'BNB';
@@ -79,6 +82,12 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        if (this.subscription1) {
+            this.subscription1.unsubscribe();
+        }
+
+        if (this.subscription2) {
+            this.subscription2.unsubscribe();
+        }
     }
 }
