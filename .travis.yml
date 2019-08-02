@@ -16,6 +16,3 @@ script:
 - cd app/view
 - npm i
 - npm run build --prod --aot
-- cd ../background
-- npm i
-- npm run build
