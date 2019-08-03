@@ -35,7 +35,7 @@ export class ImportMnemonicComponent {
         }
 
         if (this.importSingleKey) {
-            this.stateService.addAccountFromSeed(mnemonic);
+            this.stateService.addAccountFromSeed(mnemonic, 0);
             this.router.navigate(['/main']);
             return;
         }
