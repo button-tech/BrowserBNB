@@ -415,6 +415,22 @@ export class StateService {
         this.password = '';
     }
 
+    renameAccount(accountIdx: number, newName: string): void {
+
+        this.uiState.storageData.accounts[accountIdx].name = newName;
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+        };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        this.uiState.accounts[accountIdx].name = newName;
+        const newUiState = {
+            ...this.uiState,
+            storageData: newStorageState
+        };
+        this.uiState$.next(newUiState);
+    }
+
     addAccount(): void {
         const seedPhrase = this.uiState.storageData.seedPhrase;
         this.addAccountFromSeed(seedPhrase);

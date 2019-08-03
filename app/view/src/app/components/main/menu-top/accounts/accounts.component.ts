@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { map, pluck } from 'rxjs/operators';
-import { AuthService } from '../../../../services/auth.service';
-import { IUiAccount, StateService } from '../../../../services/state.service';
-import { Observable } from 'rxjs';
-import { Router } from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {map, pluck} from 'rxjs/operators';
+import {AuthService} from '../../../../services/auth.service';
+import {IUiAccount, StateService} from '../../../../services/state.service';
+import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-accounts',
@@ -21,7 +21,7 @@ export class AccountsComponent {
     }
 
     renameAccount(name: any, index: number): void {
-
+        this.stateService.renameAccount(index, name);
     }
 
     switchAccount(account: IUiAccount): void {
