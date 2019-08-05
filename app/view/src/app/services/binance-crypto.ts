@@ -4,7 +4,7 @@ const isNotEmptyString = (str: string | any): boolean => {
     return !!str && (typeof str === 'string' || str instanceof String);
 };
 
-const binanceInstance = Binance.BNB;
+const binanceInstance = Binance.initBNB();
 const crypto = binanceInstance.crypto;
 const utils = binanceInstance.utils;
 
@@ -67,7 +67,6 @@ export function getPublicKeyFromPrivateKey(privateKey: string): string {
 // }
 
 export function validateAddress(address: string, networkType: string = 'bnb'): boolean {
-    if (isNotEmptyString(address)) {
+    if (isNotEmptyString(address))
         return crypto.checkAddress(address, networkType);
-    }
 }

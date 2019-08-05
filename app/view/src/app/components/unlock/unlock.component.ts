@@ -4,7 +4,6 @@ import {StorageService} from '../../services/storage.service';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
 import {ChromeApiService} from "../../services/chrome-api.service";
-import {BinanceService} from "../../services/binance.service";
 
 @Component({
     selector: 'app-unlock',
@@ -18,8 +17,7 @@ export class UnlockComponent implements OnInit {
                 private router: Router,
                 private storage: StorageService,
                 public alert: AlertsService,
-                private chrome: ChromeApiService,
-                private binance: BinanceService
+                private chrome: ChromeApiService
     ) {
     }
 

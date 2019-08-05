@@ -26,10 +26,12 @@
             "styles": [
               "src/styles.css",
               "src/assets/bootstrap/css/custom.css",
-              "src/assets/bootstrap/css/material-kit.css",
+             "src/assets/bootstrap/css/material-kit.css",
               "node_modules/font-awesome/css/font-awesome.css"
             ],
             "scripts": [
+              "src/assets/bootstrap/js/bootstrap-material-design.min.js",
+              "src/assets/bootstrap/js/popper.min.js",
               "src/assets/binance/bnbSDK.js"
             ]
           },
