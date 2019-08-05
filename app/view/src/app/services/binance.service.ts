@@ -1,12 +1,9 @@
 import {Injectable} from '@angular/core';
 import * as Binance from '../../assets/binance/bnbSDK.js';
 import {getAddressFromPrivateKey} from './binance-crypto';
-import {from, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {catchError, map, pluck, switchMap, tap} from 'rxjs/operators';
-import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {NetworkType} from './storage.service';
-
+import {catchError, map} from 'rxjs/operators';
 
 export interface IBalance {
     free: string;
@@ -74,21 +71,19 @@ export class BinanceService {
             console.log(`privateKey ${privateKey}`);
             console.log(`message ${message}`);
 
-            const client = await Binance.initClient(endpoint, networkType);
-            await client.chooseNetwork(networkType);
-            await client.initChain();
-            await client.setPrivateKey(privateKey);
             const addressFrom = getAddressFromPrivateKey(privateKey, networkPrefix);
-
             const url = `${endpoint}api/v1/account/${addressFrom}`;
             const account = await this.http.get(url).toPromise<any>();
             const sequence = account.result && account.result.sequence;
-            return await client.transfer(addressFrom, addressTo, sum, coin, message, sequence);
 
+            const client = await new Binance.BNB(endpoint);
+            await client.chooseNetwork(networkType);
+            await client.initChain();
+            await client.setPrivateKey(privateKey);
+            return await client.transfer(addressFrom, addressTo, sum, coin, message, sequence);
         } catch (e) {
             console.log(e);
         }
-
     }
 
 
