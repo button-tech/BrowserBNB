@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, merge, Observable, Observer, of, Subject, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {
@@ -154,6 +154,7 @@ export class StateService {
     bnbBalanceInUsd$: Observable<number>;
     marketRates$: Observable<IMarketRates[]>;
     bnb2usdRate$: Observable<number>;
+    bnb2usdRateWs$: Observable<number>;
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
@@ -168,6 +169,8 @@ export class StateService {
 
     transferFees$: Observable<any>;
     simpleFee$: Observable<any>;
+
+    ws: WebSocket;
 
     currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
@@ -274,7 +277,7 @@ export class StateService {
             shareReplay(1)
         );
 
-        this.bnb2usdRate$ = bnb2usdRate$;
+        this.bnb2usdRate$ = this.bnb2usdRateWs$;
 
         this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, bnb2usdRate$]).pipe(
             map((arr: any[]) => {
@@ -405,6 +408,23 @@ export class StateService {
                 shareReplay(1));
     }
 
+    createObservableSocket(url: string): Observable<any> {
+        this.ws = new WebSocket(url);
+
+        return new Observable(
+            observer => {
+
+                this.ws.onmessage = (event) => observer.next(event.data);
+
+                this.ws.onerror = (event) => observer.error(event);
+
+                this.ws.onclose = () => observer.complete();
+
+                return () => this.ws.close(1000, "The user disconnected");
+            }
+        );
+    }
+
     getBalancePipeline$(address: string): Observable<IUiBalance> {
         return of({
             bnb: 'pending',
@@ -457,6 +477,19 @@ export class StateService {
         this.uiState$.next(uiState);
         this.password = password;
         this.selectedNetwork$.next(newSelectedNetwork);
+
+        this.bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
+            .pipe(
+                map((wsData: any) => {
+                    return Number(JSON.parse(wsData).bnbPrice2USD);
+                })
+            );
+
+        this.bnb2usdRateWs$.subscribe(
+            bnbPrice2USD => {},
+            err => console.log('err'),
+            () =>  console.log( 'The observable stream is complete')
+        );
     }
 
     resetState() {

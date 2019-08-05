@@ -5,6 +5,8 @@ import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
 import {ChromeApiService} from "../../services/chrome-api.service";
 import {BinanceService} from "../../services/binance.service";
+import {Subscription} from "rxjs";
+import {StateService} from "../../services/state.service";
 
 @Component({
     selector: 'app-unlock',
@@ -19,8 +21,9 @@ export class UnlockComponent implements OnInit {
                 private storage: StorageService,
                 public alert: AlertsService,
                 private chrome: ChromeApiService,
-                private binance: BinanceService
     ) {
+
+
     }
 
     unlock() {
