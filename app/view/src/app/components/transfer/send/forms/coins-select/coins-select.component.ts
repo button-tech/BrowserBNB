@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {StateService, ITokenInfo, ITransaction} from '../../../../../services/state.service';
-import { Observable, Subscription } from 'rxjs';
-import {debounceTime, map, shareReplay, take} from "rxjs/operators";
+import {combineLatest, Observable, Subscription, timer} from 'rxjs';
+import {debounceTime, distinctUntilChanged, map, shareReplay, switchMap, take} from "rxjs/operators";
 
 
 @Component({
@@ -12,43 +12,26 @@ import {debounceTime, map, shareReplay, take} from "rxjs/operators";
 })
 export class CoinsSelectComponent implements OnInit, OnDestroy {
 
-    bnb$: Observable<number>;
+
     heroForm: FormGroup;
     tokens$: Observable<ITokenInfo[]>;
-    bnb2usdRate$: Observable<number>;
 
     subscription1: Subscription;
     subscription2: Subscription;
 
+
     constructor(private fb: FormBuilder, public stateService: StateService) {
-
-        this.bnb$ = this.stateService.bnbBalance$;
-        this.tokens$ = this.stateService.tokens$;
-        this.bnb2usdRate$ = this.stateService.bnb2usdRate$;
-
-        this.subscription1 = this.stateService.selectedNetwork$.subscribe(() => {
-            this.heroForm = this.fb.group({
-                heroId: 'BNB',
-                agree: null
+        this.subscription1 = this.stateService.selectedNetwork$
+            .pipe(
+                distinctUntilChanged()
+            ).subscribe(() => {
+                this.heroForm = this.fb.group({
+                    heroId: 'BNB',
+                    agree: null
+                });
             });
-            const newTx = this.stateService.currentTransaction.getValue();
 
-
-            const rate$ = this.stateService.bnb2usdRate$;
-            // TODO: subscription3
-            rate$.pipe(
-                map((rate: number) => {
-                    newTx.mapppedName = 'BNB';
-                    newTx.name = 'Bianance coin';
-                    newTx.Symbol = 'BNB';
-                    newTx.rate2usd = rate;
-                    this.stateService.currentTransaction.next(newTx);
-                }),
-                    shareReplay(1),
-                    debounceTime(500),
-             
-            ).subscribe();
-        });
+        this.tokens$ = this.stateService.tokens$;
     }
 
     selectCoin(rawCoin: any) {
@@ -58,11 +41,11 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
             this.subscription2.unsubscribe();
         }
 
-        this.subscription2 = this.bnb2usdRate$.pipe(
+        this.subscription2 = this.stateService.bnb2usdRate$.pipe(
             map((rate: number) => {
                 if (rawCoin && rawCoin === 'BNB') {
                     newTx.mapppedName = 'BNB';
-                    newTx.name = 'Bianance coin';
+                    newTx.name = 'Binance coin';
                     newTx.Symbol = 'BNB';
                     newTx.rate2usd = rate;
                 } else {
@@ -85,6 +68,7 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+
         if (this.subscription1) {
             this.subscription1.unsubscribe();
         }
@@ -92,5 +76,6 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
         if (this.subscription2) {
             this.subscription2.unsubscribe();
         }
+
     }
 }

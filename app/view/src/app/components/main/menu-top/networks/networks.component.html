@@ -7,8 +7,7 @@
     </div>
 </sat-popover>
 <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
-        class="btn btn-link btn-outline  btn-sm"
-        href="/main" id="networkBtn">
+        class="btn btn-link btn-outline btn-sm" id="networkBtn">
     <strong id="NetworkWord">Network:</strong> {{ this.selectedNetworkLabel$ |async}}
     <fa name="caret-down" size="sm"></fa>
 </button>

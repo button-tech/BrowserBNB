@@ -28,6 +28,7 @@ export class SendComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 
 }

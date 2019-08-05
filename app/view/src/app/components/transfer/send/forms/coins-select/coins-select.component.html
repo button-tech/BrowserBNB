@@ -9,7 +9,7 @@
                         <img style="height: 28px" src="../../../../../../assets/icons/icon128.png"/>
                         <div style="display: flex;flex-direction: column; padding: 5px 10px;">
                             <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">Binance Coin</strong>
-                            <div style="font-size: 12px">{{(bnb$ | async) | fmtPipe : 'BNB'}}</div>
+                            <div style="font-size: 12px">{{(this.stateService.bnbBalance$ | async) | fmtPipe : 'BNB'}}</div>
                         </div>
                     </div>
                 </ng-option>
@@ -22,28 +22,9 @@
                         <div style="display: flex;flex-direction: column; padding: 5px 10px;">
                             <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">{{token.mappedName}}</strong>
                             <div style="font-size: 12px">{{token.balance}} {{token.symbol}}</div>
-                            <!--{{(fiat$ | async) || 'pending'}}-->
                         </div>
                     </div>
                 </ng-option>
-                <!--<ng-option value="BEC">-->
-                    <!--<div style="display: flex;flex-direction: row; align-items: center">-->
-                        <!--<img style="height: 28px" src="../../assets/icons/default.png"/>-->
-                        <!--<div style="display: flex;flex-direction: column; padding: 5px 10px;">-->
-                            <!--<strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">BEC Coin</strong>-->
-                            <!--<div style="font-size: 12px">1 BEC / $14499 USD</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</ng-option>-->
-                <!--<ng-option value="BTC">-->
-                    <!--<div style="display: flex;flex-direction: row; align-items: center">-->
-                        <!--<img style="height: 28px" src="../../assets/icons/default.png"/>-->
-                        <!--<div style="display: flex;flex-direction: column; padding: 5px 10px;">-->
-                            <!--<strong style="margin-bottom: -5px;margin-top: 3px; font-size: 16px">Bitcoin</strong>-->
-                            <!--<div style="font-size: 12px">1 BTC / $14400 USD</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</ng-option>-->
             </ng-select>
         </div>
     </div>
