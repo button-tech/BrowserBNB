@@ -13,6 +13,8 @@ compiler:
   - gcc
 
 script:
-- cd app/view
+- cd utils
+- sh build.sh
+- cd ../app/view
 - npm i
 - npm run build --prod --aot
