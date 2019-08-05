@@ -1,0 +1,27 @@
+{
+  "name": "bnb-to-browser",
+  "version": "0.0.1",
+  "description": "Converts BNB SDK to Browser verison via Browserify ",
+  "main": "convert.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/button-tech/BrowserBNB.git"
+  },
+  "keywords": [
+    "BNB",
+    "SDK"
+  ],
+  "author": "nk@buttonwallet.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/button-tech/BrowserBNB/issues"
+  },
+  "homepage": "https://github.com/button-tech/BrowserBNB#readme",
+  "dependencies": {
+    "@binance-chain/javascript-sdk": "^2.14.5",
+    "browserify": "^16.3.0"
+  }
+}
