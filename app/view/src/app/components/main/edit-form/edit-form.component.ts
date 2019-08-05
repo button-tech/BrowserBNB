@@ -6,11 +6,13 @@ import {SatPopover} from '@ncstate/sat-popover';
     templateUrl: './edit-form.component.html',
     styleUrls: ['./edit-form.component.css']
 })
-export class EditFormComponent implements OnInit {
+export class EditFormComponent {
 
-    @Input() value = '';
+    @Input()
+    value = '';
 
-    @Output() update = new EventEmitter<string>();
+    @Output()
+    update = new EventEmitter<string>();
 
     constructor(@Optional() @Host() public popover: SatPopover) {
     }
@@ -18,8 +20,5 @@ export class EditFormComponent implements OnInit {
     onSubmit() {
         this.update.next(this.value);
         this.popover.close();
-    }
-
-    ngOnInit() {
     }
 }

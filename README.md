@@ -4,8 +4,7 @@
 
 MetaMask like widget for Binance Chain ❤️
     
-![DEMO](https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif)
-
+<img src="https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif" alt="" data-canonical-src="https://github.com/button-tech/BrowserBNB/raw/master/docs/img/previewgit.gif" width="250" height="450" />
 
 ## Step 1 (Registration or Import) 
 
@@ -46,14 +45,14 @@ Navigation
  - [x] Add BIP44 Derivation support
  
  ## Step 3 (Final Beta Public)
-  - [] Forms to Rx forms
-  - [] Background logic 
-  - [] WalletConnect + DEX support 
-  - [] Settings support 
-  - [] Free from boostrap + material wastes 
-  - [] Pending tx / notifiactions on background
-  - [] Custom alerts service + UI
-  - [] Linting of project
-  - [] Fix wrappers over JS SDK
-  - [] Make docs + wiki
-  - [] Integration tests + BNB SDK tests
+  - [ ] Forms to Rx forms
+  - [ ] Background logic 
+  - [ ] WalletConnect + DEX support 
+  - [ ] Settings support 
+  - [ ] Free from boostrap + material wastes 
+  - [ ] Pending tx / notifiactions on background
+  - [ ] Custom alerts service + UI
+  - [ ] Linting of project
+  - [ ] Fix wrappers over JS SDK
+  - [ ] Make docs + wiki
+  - [ ] Integration tests + BNB SDK tests

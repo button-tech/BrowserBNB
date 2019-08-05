@@ -16,7 +16,8 @@ export class AddressInputComponent implements OnDestroy {
     addressFormControl = new FormControl('', []);
 
     // @ts-ignore
-    @ViewChild('addressElem') addressElem: ElementRef;
+    @ViewChild('addressElem')
+    addressElem: ElementRef;
 
     constructor(private stateService: StateService) {
     }

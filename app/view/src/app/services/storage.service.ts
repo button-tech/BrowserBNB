@@ -1,12 +1,12 @@
 /// <reference types="chrome"/>
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { map, switchMap } from 'rxjs/operators';
-import { from, Observable, Subject } from 'rxjs';
-import { BinanceService } from './binance.service';
+import {Injectable} from '@angular/core';
+import {environment} from '../../environments/environment';
+import {map, switchMap} from 'rxjs/operators';
+import {from, Observable, Subject} from 'rxjs';
+import {BinanceService} from './binance.service';
 import * as passworder from 'browser-passworder';
-import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
-import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
+import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 
 
 export type NetworkType = 'bnb' | 'tbnb' | null;
@@ -15,7 +15,8 @@ export interface IStorageAccount {
     addressMainnet: string;
     addressTestnet: string;
     privateKey: string;
-    index: number
+    index: number | null, // null in address was imported (not derived from main seed)
+    name: string,
 }
 
 export interface IStorageData {
@@ -24,17 +25,7 @@ export interface IStorageData {
     selectedAddress: string | null;
     selectedNetwork: NetworkType;
     selectedNetworkEndpoint: string | null;
-    address2name: { [address: string]: string }
 }
-
-// const emptyStorage: IStorageData = {
-//     seedPhrase: null,
-//     accounts: [],
-//     selectedAddress: null,
-//     selectedNetwork: null,
-//     selectedNetworkEndpoint: null,
-//     address2name: {}
-// };
 
 const STORAGE_KEY = 'all';
 
@@ -53,12 +44,12 @@ export class StorageService {
         if (environment.production) {
 
             const port = chrome.runtime.connect({
-                name: "Sample Communication"
+                name: 'Sample Communication'
             });
 
-            port.postMessage("Hi BackGround");
+            port.postMessage('Hi BackGround');
             port.onMessage.addListener(function (msg) {
-                console.log("message recieved" + msg);
+                console.log('message recieved' + msg);
             });
         }
 
@@ -180,11 +171,6 @@ export class StorageService {
         const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
         const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
 
-        const address2name = {
-            [addressMainnet]: `Account 1`,
-            [addressTestnet]: `Account 1`
-        };
-
         //
         const data: IStorageData = {
             seedPhrase,
@@ -193,13 +179,13 @@ export class StorageService {
                     addressMainnet,
                     addressTestnet,
                     privateKey,
-                    index: 0
+                    index: 0,
+                    name: 'Account 1',
                 }
             ],
             selectedAddress: addressMainnet,
             selectedNetwork: 'bnb',
-            selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
-            address2name
+            selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET
         };
 
         // Promise result ignored by intend

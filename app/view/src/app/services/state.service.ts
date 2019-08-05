@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { IStorageAccount, IStorageData, NetworkType, StorageService } from './storage.service';
-import { BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer } from 'rxjs';
-import { BinanceService, IBalance } from './binance.service';
-import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
+import {Injectable} from '@angular/core';
+import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
+import {BehaviorSubject, combineLatest, concat, merge, Observable, of, Subject, timer} from 'rxjs';
+import {BinanceService, IBalance} from './binance.service';
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {
     distinctUntilChanged,
     map,
@@ -10,9 +10,9 @@ import {
     switchMap,
     tap
 } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
-import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
-import { rawTokensImg } from "../constants";
+import {HttpClient} from '@angular/common/http';
+import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
+import {rawTokensImg} from '../constants';
 
 export interface ITransaction {
     Amount: number;
@@ -419,9 +419,6 @@ export class StateService {
     initState(data: IStorageData, password: string) {
 
         const accounts = data.accounts.map((account) => {
-
-            const name = data.address2name[account.addressMainnet];
-
             const address = data.selectedNetwork === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -430,7 +427,6 @@ export class StateService {
 
             return {
                 ...account,
-                name,
                 address,
                 shortAddress
             };
@@ -440,6 +436,7 @@ export class StateService {
         const val = networkPrefix === 'bnb'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
+
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,
@@ -467,41 +464,54 @@ export class StateService {
         this.password = '';
     }
 
+    renameAccount(accountIdx: number, newName: string): void {
+
+        this.uiState.storageData.accounts[accountIdx].name = newName;
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+        };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        this.uiState.accounts[accountIdx].name = newName;
+        const newUiState = {
+            ...this.uiState,
+            storageData: newStorageState
+        };
+        this.uiState$.next(newUiState);
+    }
+
     addAccount(): void {
         const seedPhrase = this.uiState.storageData.seedPhrase;
         this.addAccountFromSeed(seedPhrase);
     }
 
-    addAccountFromSeed(seedPhrase: string): void {
+    // UI, index and logical index...
+    addAccountFromSeed(seedPhrase: string, hdWalletIndex?: number): void {
 
-        const indexes = this.uiState.storageData.accounts.map(a => a.index);
-        const index = Math.max(...indexes) + 1;
+        if (hdWalletIndex === undefined) {
+            const indexes = this.uiState.storageData.accounts.map(a => a.index);
+            hdWalletIndex = Math.max(...indexes) + 1;
+        }
 
         // Prepare account
-        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, index);
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, hdWalletIndex);
 
         // tslint:disable-next-line:max-line-length
         // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
         const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
         const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
 
-        const name = `Account ${index + 1}`;
-        const address2name = {
-            [addressMainnet]: name,
-            [addressTestnet]: name
-        };
+        const maxUiIndex = this.uiState.storageData.accounts.length;
+        const name = `Account ${maxUiIndex + 1}`;
 
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
-            address2name: {
-                ...this.uiState.storageData.address2name,
-                ...address2name
-            },
             accounts: [...this.uiState.storageData.accounts, {
                 addressMainnet,
                 addressTestnet,
                 privateKey,
-                index
+                index: hdWalletIndex,
+                name
             }]
         };
 
@@ -519,7 +529,7 @@ export class StateService {
             addressMainnet,
             addressTestnet,
             privateKey,
-            index,
+            index: hdWalletIndex,
         });
 
         this.uiState$.next(this.uiState);
@@ -553,6 +563,7 @@ export class StateService {
         const val = networkPrefix === 'bnb'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
+
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,

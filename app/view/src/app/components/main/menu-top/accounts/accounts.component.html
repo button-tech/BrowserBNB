@@ -24,9 +24,9 @@
                     <button class="btn btn-just-icon btn-round btn-binance-outline-two"> #{{(1 + i)}}</button>
                 </div>
 
-                <sat-popover openTransition="0ms ease-out"
-                             closeTransition="0ms ease-in" #name hasBackdrop forceAlignment>
-                    <app-edit-form (update)="renameAccount($event, i)"></app-edit-form>
+                <sat-popover #name openTransition="0ms ease-out" closeTransition="0ms ease-in"
+                             hasBackdrop forceAlignment>
+                    <app-edit-form [value]="item.name" (update)="renameAccount($event, i)"></app-edit-form>
                 </sat-popover>
 
                 <div style="grid-row: 1; grid-column: 2; color: whitesmoke; margin-left: -0.3em; font-weight: bolder !important; margin-top: 0.4em; font-size: 18px">
