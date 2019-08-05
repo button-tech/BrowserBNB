@@ -1,10 +1,10 @@
 <div *ngIf="isLoaded && history.length > 0" style="margin-top: -2.4em;">
-    <div (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of history">
+    <div (click)="goToDetails(tx)" class="container-fluid histcomp" *ngFor="let tx of history; let i = index">
         <div style="display: grid; grid-template: 1fr 5fr 5fr / 1fr 4fr 2fr 1fr; height: 30px; align-content: center;">
             <div style="grid-column: 2/3; grid-row: 1; margin-bottom: -0.3em">
                 <small class="time"
                        style="font-size: 12px !important; font-weight: 500; color: rgb(132, 142, 156);margin-left: 0.1em">
-                    {{tx.timeStamp | date: 'dd/MM/yyyy' || ''}}
+                    {{'#'+ (i+1 | number) + ' '}} {{tx.timeStamp | date: 'dd/MM/yyyy' || ''}}
                 </small>
             </div>
             <div style="grid-column: 1; grid-row: 1/3 !important; align-self: center;
@@ -12,9 +12,9 @@
                 <img src="{{findMappedImage(tx.txAsset)}}" alt="info" width="25" height="25">
             </div>
             <div style="font-size: 15px; font-weight: bold" class="type">
-                {{tx.txType.replace('_', ' ') }}
+                {{checkType(tx)}}
             </div>
-            <div style="grid-column: 2; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
+            <div class="overflow-ellipsis" style="grid-column: 2/3; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
                 <small style="font-size: 14px" class="sums">
                     {{tx.value || ''}} {{this.findMappedName(tx.txAsset) || ''}}
                 </small>

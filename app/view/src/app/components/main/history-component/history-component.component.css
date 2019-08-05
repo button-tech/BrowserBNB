@@ -41,3 +41,9 @@
     padding-top: 1.4em;
     border-radius: 2px
 }
+
+.overflow-ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

@@ -1,11 +1,11 @@
 import {Component, OnDestroy} from '@angular/core';
-import {of, Subscription} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {Observable, of, Subscription} from 'rxjs';
+import {map, take, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
 import {IHistoryTx} from '../../../services/binance.service';
-import {StateService} from '../../../services/state.service';
+import {StateService, ITransaction} from '../../../services/state.service';
 
 @Component({
     selector: 'app-history-component',
@@ -37,10 +37,21 @@ export class HistoryComponentComponent implements OnDestroy {
         });
     }
 
+    checkType(tx: IHistoryTx): string {
+        if (tx.txType.toLocaleLowerCase() === "transfer") {
+            if (tx.fromAddr === this.stateService.currentAddress) {
+                return tx.txType.replace('_', ' ');
+            } else {
+                return 'RECEIVED';
+            }
+        }
+        return tx.txType.replace('_', ' ');
+    }
+
     findMappedName(symbol: string): string {
         if (symbol) {
             const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
-            return result && result.mappedAsset;
+            return result && result.mappedAsset ? result.mappedAsset : symbol;
         }
         return symbol;
     }
