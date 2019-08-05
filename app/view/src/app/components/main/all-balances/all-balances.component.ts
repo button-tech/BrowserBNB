@@ -23,7 +23,7 @@ export class AllBalancesComponent {
                 private location: Location,
                 private http: HttpClient,
                 private stateService: StateService) {
-        this.tokens$ = this.stateService.tokens$
+        this.tokens$ = this.stateService.tokens$;
     }
 
     goBack() {

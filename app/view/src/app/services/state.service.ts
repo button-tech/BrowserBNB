@@ -70,7 +70,7 @@ const emptyState: IUiState = Object.freeze({
 });
 
 const basicNetworkSttate: IMenuItem = Object.freeze({
-    val: 'https://dex.binance.org',
+    val: 'https://dex.binance.org/',
     networkPrefix: 'bnb',
     label: 'mainnet',
 });
@@ -116,6 +116,27 @@ export interface IMarketRates {
     count: number;
 }
 
+export interface IFixedFeeParams {
+    msg_type: string;
+    fee: number;
+    fee_for: number;
+}
+
+export interface IDexFeeField {
+    fee_name: string;
+    fee_value: number;
+}
+
+export interface ITransferFees {
+    msg_type: string;
+    fee: number;
+    fee_for: number;
+    fixed_fee_params: IFixedFeeParams;
+    multi_transfer_fee?: number;
+    lower_limit_as_multi?: number;
+    dex_fee_fields: IDexFeeField[];
+}
+
 export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
@@ -144,6 +165,9 @@ export class StateService {
 
     history$: Observable<any>;
     historyDetails$: Observable<any>;
+
+    transferFees$: Observable<any>;
+    simpleFee$: Observable<any>;
 
     currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
@@ -217,7 +241,32 @@ export class StateService {
             shareReplay(1)
         );
 
-        const bnb2usdRate$ = timer(0, 10000).pipe(
+        const timerFees$ = timer(0, 120000);
+
+        this.transferFees$ = combineLatest([this.selectedNetwork$, timerFees$]).pipe(
+            switchMap((x: any[]) => {
+                const [networkMenuItem] = x;
+                const endpoint = networkMenuItem.val;
+                return this.http.get(`${endpoint}api/v1/fees`);
+            }),
+            shareReplay(1)
+        );
+
+        const pluckFee = (response: ITransferFees[]) => {
+            const item = response.find((x) => x.multi_transfer_fee >= 0);
+            return item.fixed_fee_params.fee / 100000000;
+        };
+
+        this.simpleFee$ = this.transferFees$.pipe(
+            map((response: ITransferFees[]) => {
+                return pluckFee(response);
+            }),
+            shareReplay(1)
+        );
+        // TODO: think about using it 
+        this.simpleFee$.subscribe();
+
+        const bnb2usdRate$ = timer(0, 24000).pipe(
             switchMap(() => {
                 return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
             }),
@@ -236,7 +285,7 @@ export class StateService {
             shareReplay(1)
         );
 
-        this.marketRates$ = timer(0, 12000).pipe(
+        this.marketRates$ = timer(0, 24000).pipe(
             switchMap(() => {
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
             }),

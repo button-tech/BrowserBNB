@@ -13,6 +13,8 @@ export class MemoInputComponent implements OnInit {
     constructor(private stateService: StateService) {
     }
 
+    memoFormControl = new FormControl('', []);
+
     ngOnInit() {
     }
 
@@ -21,6 +23,4 @@ export class MemoInputComponent implements OnInit {
         nexTx.Memo = memo;
         this.stateService.currentTransaction.next(nexTx);
     }
-
-    memoFormControl = new FormControl('', []);
 }

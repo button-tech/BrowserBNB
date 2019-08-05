@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { StateService, ITokenInfo } from '../../../../../services/state.service';
+import {StateService, ITokenInfo, ITransaction} from '../../../../../services/state.service';
 import { Observable, Subscription } from 'rxjs';
-import { map, take } from "rxjs/operators";
+import {debounceTime, map, shareReplay, take} from "rxjs/operators";
 
 
 @Component({
@@ -43,7 +43,10 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
                     newTx.Symbol = 'BNB';
                     newTx.rate2usd = rate;
                     this.stateService.currentTransaction.next(newTx);
-                })
+                }),
+                    shareReplay(1),
+                    debounceTime(500),
+             
             ).subscribe();
         });
     }

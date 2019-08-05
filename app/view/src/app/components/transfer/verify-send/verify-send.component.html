@@ -10,18 +10,18 @@
             </div>
 
             <div style="grid-column: 2;grid-row: 1">
-                <h5>{{tx.Amount}} {{tx.Symbol}} </h5>
+                <h5>{{(tx | async).Amount || ''}} {{(tx | async).mapppedName || ''}} </h5>
                 <h5 style="margin-top: -1em">
-                    <small>${{(fiatAmount$ | async) || 'pending'}} USD</small>
+                    <small>${{(txDetails | async).SumInFiat || 'pending'}} USD</small>
                 </h5>
             </div>
             <div style="grid-column: 1; grid-row: 2">
                 <h5><strong>Fee: </strong></h5>
             </div>
             <div style="grid-column: 2;grid-row: 2">
-                <h5>{{(simpleFee$ | async) || 'pending'}} BNB </h5>
+                <h5>{{(txDetails | async).FeeInBNB || 'pending'}} BNB </h5>
                 <h5 style="margin-top: -1em">
-                    <small>${{(fiatFee$ | async) || 'pending'}} USD</small>
+                    <small>${{(txDetails | async).FeeInFiat || 'pending'}} USD</small>
                 </h5>
             </div>
         </div>
@@ -31,9 +31,9 @@
                 <h5><strong>Total: </strong></h5>
             </div>
             <div style="grid-column: 2">
-                <h5>{{(totalAmount$| async) || 'pending'}} BNB </h5>
+                <h5>{{(txDetails | async).TotalSumInToken || 'pending'}}</h5>
                 <h5 style="margin-top: -1em">
-                    <small>${{(fiatTotal$ | async) || 'pending'}} USD</small>
+                    <small>${{(txDetails | async).TotalSumInFiat || 'pending'}} USD</small>
                 </h5>
             </div>
         </div>
