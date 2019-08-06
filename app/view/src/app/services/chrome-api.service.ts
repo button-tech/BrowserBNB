@@ -1,9 +1,9 @@
 /// <reference types="chrome"/>
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, NgZone } from '@angular/core';
 import { environment } from "../../environments/environment";
-import { Observable, of, Subject } from "rxjs";
+import { Observable, of, Subject, timer } from "rxjs";
 import Port = chrome.runtime.Port;
-import { map, switchMap, take, tap } from "rxjs/operators";
+import { filter, map, switchMap, take, tap } from "rxjs/operators";
 
 
 interface MessageFromPage {
@@ -20,7 +20,6 @@ interface MessageFromBackground {
 
 @Injectable({
     providedIn: 'root',
-    // useClass: environment.production ? ChromeApiRealService : ChromeApiMockService,
     useClass: getImplementation(),
     deps: []
 })
@@ -58,10 +57,14 @@ export class ChromeApiMockService extends ChromeApiService {
 @Injectable()
 export class ChromeApiRealService extends ChromeApiService {
 
-    port: Port;
-    msgFromBackground$ = new Subject<MessageFromBackground>();
+    password = '';
+    msg: MessageFromBackground;
+    // password2: string;
 
-    constructor() {
+    port: Port;
+    msgFromBackground$: Observable<MessageFromBackground>; // = new Subject<MessageFromBackground>();
+
+    constructor(private ngZone: NgZone) {
         super();
         this.port = chrome.runtime.connect();
 
@@ -75,17 +78,51 @@ export class ChromeApiRealService extends ChromeApiService {
         //     }
         // };
 
-        this.msgFromBackground$.asObservable().pipe(
-            tap((msg: MessageFromBackground) => {
-                console.log('tap: ', msg);
+        this.msgFromBackground$ = timer(0, 250).pipe(
+            // tap((msg: MessageFromBackground) => {
+            //     console.log('tap: ', msg);
+            // }),
+
+            map(() => {
+                // console.log('timer=', this.msg);
+                return this.msg;
+            }),
+            filter((msg: MessageFromBackground) => {
+                // console.log('msg --->', msg);
+                // console.log('1-', msg, '2-', this.msg);
+                const x = msg && msg.password !== this.password;
+
+                if (x) {
+                    this.password = msg.password;
+                }
+                // console.log('!pass!', msg);
+                // return x;
+                return x;
+            }),
+            map((msg: MessageFromBackground) => {
+                console.log('restoreSession --> ', msg.password);
+                return {
+                    type: 'restoreSession',
+                    password: msg.password
+                } as MessageFromBackground;
             })
-        ).subscribe();
+        );
+
+        // this.msgFromBackground$
+        //     .subscribe((msg: MessageFromBackground) => {});
+
+        // this.msgFromBackground$.asObservable().pipe().subscribe();
 
 
+        // this.ngZone.runOutsideAngular(() => {
         this.port.onMessage.addListener((msg: MessageFromBackground) => {
             console.log('next=', msg);
-            this.msgFromBackground$.next(msg);
+            // this.msgFromBackground$.next(msg);
+            // this.password = msg.password;
+            this.msg = msg;
+            console.log('this.msg=', this.msg);
         });
+        // });
     }
 
 
@@ -99,13 +136,13 @@ export class ChromeApiRealService extends ChromeApiService {
         };
 
         this.port.postMessage(msg);
-        return this.msgFromBackground$.asObservable().pipe(
+        return this.msgFromBackground$.pipe(
             tap((x) => {
                 console.log('msgFromBackground$=', x);
             }),
             take(1),
             map((reponse: MessageFromBackground) => {
-                return reponse.password || '';
+                return (reponse && reponse.password) || '';
             })
         );
     }
@@ -115,10 +152,10 @@ export class ChromeApiRealService extends ChromeApiService {
         const msg: MessageFromPage = {
             type: 'startSession',
             password,
-            timeout: 20000 // 10 seconds keep alive
+            timeout: 30000 // 10 seconds keep alive
         };
-        this.port.postMessage(msg);
 
+        this.port.postMessage(msg);
         // TODO: start keep alive
     }
 

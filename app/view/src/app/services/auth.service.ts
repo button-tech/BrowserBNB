@@ -37,11 +37,26 @@ export class AuthService {
         );
 
         console.log('try to restorePassword');
-        this.chromeApiService.restorePassword().pipe(
+
+        of('abc').pipe(
             switchMap((password: string) => {
                 return password ? this.login(password) : of(false);
             }),
         ).subscribe((isLoggedIn: boolean) => {
+            if (isLoggedIn) {
+                this.router.navigate(['/main']);
+            }
+        });
+
+        // this.chromeApiService.restorePassword()
+
+        this.chromeApiService.restorePassword().pipe(
+            switchMap((password: string) => {
+                console.log('hi 1!');
+                return password ? this.login(password) : of(false);
+            }),
+        ).subscribe((isLoggedIn: boolean) => {
+            console.log('hi 2!');
             if (isLoggedIn) {
                 this.router.navigate(['/main']);
             }

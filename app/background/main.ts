@@ -68,8 +68,9 @@ class MessageProcessor {
         console.log('1');
         if (msg.type === 'startSession') {
 
+            console.log('background: msg.password=', msg.password);
             this.password = msg.password;
-            console.log('this.password=', this.password);
+            console.log('background: this.password=', this.password);
             // const timeout$ = timeout(msg.timeout);
 
             this.keepAlive$.pipe(
@@ -108,8 +109,9 @@ class MessageProcessor {
 
         console.log('4');
         if (msg.type === 'restoreSession') {
+            // debugger
 
-            console.log('5');
+            console.log('5!', this);
             const response: MessageFromBackground = {
                 password: this.password,
                 type: 'restoreSession'
@@ -125,10 +127,10 @@ class MessageProcessor {
 
 function f() {
 
+    const processor = new MessageProcessor();
+
     chrome.runtime.onConnect.addListener((port) => {
         console.log('onConnect');
-
-        const processor = new MessageProcessor();
 
         port.onMessage.addListener((msg: MessageFromPage) => {
 

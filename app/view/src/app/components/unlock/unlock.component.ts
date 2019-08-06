@@ -27,18 +27,18 @@ export class UnlockComponent implements OnInit {
 
         // message
 
-        const password = '';
-        const login$ = of(1);
-        const ping$ = of(1);
-
-        const TIMEOUT = 10 * 1000; // 10 sec
-        const z$ = ping$.pipe(
-            timeout(TIMEOUT)
-        );
-
-        login$.pipe(
-            switchMapTo(z$)
-        );
+        // const password = '';
+        // const login$ = of(1);
+        // const ping$ = of(1);
+        //
+        // const TIMEOUT = 10 * 1000; // 10 sec
+        // const z$ = ping$.pipe(
+        //     timeout(TIMEOUT)
+        // );
+        //
+        // login$.pipe(
+        //     switchMapTo(z$)
+        // );
 
         // const seconds = interval(1000);
         //
