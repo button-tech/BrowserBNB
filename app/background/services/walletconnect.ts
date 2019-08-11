@@ -8,11 +8,12 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import {IConnector} from '@walletconnect/types'
-import {WalletConnect} from '@walletconnect/browser'
 import {signTransaction, getAddressFromPrivateKey} from "./binancecrypto";
 import {ISignedTransaction} from '../models';
+import WalletConnect from "@walletconnect/browser/lib";
+// import {WalletConnect} from '@walletconnect/browser'
 
-class WalletConnectController {
+export class WalletConnectController {
     private instance: IConnector;
     private bnbAddress: string;
 
@@ -23,12 +24,15 @@ class WalletConnectController {
     }
 
     private async initInstance(connectionUrl: string) {
-        this.instance = new WalletConnect({connectionUrl});
+        this.instance = new WalletConnect({
+            uri: connectionUrl
+        });
+
         if (!this.instance.connected) {
             await this.instance.createSession();
         } else {
             this.instance.killSession();
-            this.instance._removeStorageSession();
+            // this.instance._removeStorageSession();
         }
         this.subscribeToEvents();
     }
@@ -37,33 +41,35 @@ class WalletConnectController {
         const walletConnector = this.instance;
 
         if (walletConnector) {
-            walletConnector.on("session_request", (error, payload) => {
-                if (error) {
-                    throw error;
-                }
-                this.approveSession();
-            });
 
-            walletConnector.on("call_request", (error, payload) => {
-                if (error) {
-                    throw error;
-                }
-
-                if (payload.method === "bnb_sign") {
-                    this.approveRequestCall(payload)
-                }
-            });
-
-            walletConnector.on("disconnect", (error, payload) => {
-                if (error) {
-                    throw error;
-                }
-                this.disconnect()
-            });
+            // walletConnector.on("session_request", (error, payload) => {
+            //     if (error) {
+            //         throw error;
+            //     }
+            //     this.approveSession();
+            // });
+            //
+            // walletConnector.on("call_request", (error, payload) => {
+            //     if (error) {
+            //         throw error;
+            //     }
+            //
+            //     if (payload.method === "bnb_sign") {
+            //         this.approveRequestCall(payload)
+            //     }
+            // });
+            //
+            // walletConnector.on("disconnect", (error, payload) => {
+            //     if (error) {
+            //         throw error;
+            //     }
+            //     this.disconnect()
+            // });
         }
     }
 
     public async approveSession() {
+        debugger
         const walletConnector = this.instance;
         if (walletConnector) {
             walletConnector.approveSession({
