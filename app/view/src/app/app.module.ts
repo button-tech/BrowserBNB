@@ -47,6 +47,7 @@ import {FmtPipe} from './fmt.pipe';
 import {NgxLoadersCssModule} from 'ngx-loaders-css';
 import {GeneralComponent} from './components/main/menu-top/settings/general/general.component';
 import { AdvancedComponent } from './components/main/menu-top/settings/advanced/advanced.component';
+import { SecurityPrivacyComponent } from './components/main/menu-top/settings/security-privacy/security-privacy.component';
 
 
 @NgModule({
@@ -77,7 +78,8 @@ import { AdvancedComponent } from './components/main/menu-top/settings/advanced/
         HistoryDetailsComponent,
         FmtPipe,
         GeneralComponent,
-        AdvancedComponent
+        AdvancedComponent,
+        SecurityPrivacyComponent
     ],
     imports: [
         BrowserModule,

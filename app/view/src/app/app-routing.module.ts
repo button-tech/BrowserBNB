@@ -19,6 +19,7 @@ import {RecieveComponent} from "./components/main/recieve/recieve.component";
 import {HistoryDetailsComponent} from "./components/main/history-component/history-details/history-details.component";
 import {GeneralComponent} from "./components/main/menu-top/settings/general/general.component";
 import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/advanced.component";
+import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/security-privacy/security-privacy.component";
 
 const routes: Routes = [
     {
@@ -49,6 +50,11 @@ const routes: Routes = [
     {
         path: 'advanced',
         component: AdvancedComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'securitynprivacy',
+        component: SecurityPrivacyComponent,
         canActivate: [AuthGuard]
     },
     {
