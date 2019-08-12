@@ -7,19 +7,19 @@
     *
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import {IConnector} from '@walletconnect/types'
-import {signTransaction, getAddressFromPrivateKey} from "./binancecrypto";
-import {ISignedTransaction} from '../models';
+import { IConnector } from '@walletconnect/types'
+import { signTransaction, getAddressFromPrivateKey } from "./binancecrypto";
+import { ISignedTransaction } from '../models';
 import WalletConnect from "@walletconnect/browser/lib";
-// import {WalletConnect} from '@walletconnect/browser'
 
 export class WalletConnectController {
-    private instance: IConnector;
+    private instance: WalletConnect;
     private bnbAddress: string;
 
     constructor(private privateKey: string, private connectionUrl: string) {
         // create instance of Wallet Connect using URL
         this.bnbAddress = getAddressFromPrivateKey(privateKey, 'bnb');
+        console.log(this.bnbAddress);
         this.initInstance(connectionUrl);
     }
 
@@ -29,54 +29,172 @@ export class WalletConnectController {
         });
 
         if (!this.instance.connected) {
+            console.log('a1');
             await this.instance.createSession();
+            console.log('a2');
         } else {
             this.instance.killSession();
-            // this.instance._removeStorageSession();
+            (this.instance as any)._removeStorageSession();
         }
         this.subscribeToEvents();
     }
 
+    // subscribeToEvents() {
+    //     const { walletConnector } = this;
+    //     const tabId = this.tabId;
+    //
+    //     if (walletConnector) {
+    //         walletConnector.on("session_request", (error, payload) => {
+    //             console.log('walletConnector.on("session_request")');
+    //
+    //             if (error) {
+    //                 throw error;
+    //             }
+    //
+    //             const { peerMeta } = payload.params[0];
+    //             this.state.peerMeta = peerMeta;
+    //             this.state.isLoadingWalletConnect = false;
+    //
+    //             // auto approve
+    //             this.approveSession();
+    //         });
+    //
+    //         walletConnector.on("session_update", (error, payload) => {
+    //             console.log('walletConnector.on("session_update")'); // tslint:disable-line
+    //
+    //             if (error) {
+    //                 throw error;
+    //             }
+    //         });
+    //
+    //         walletConnector.on("call_request", (error, payload) => {
+    //             console.log('walletConnector.on("call_request")', payload); // tslint:disable-line
+    //
+    //             if (error) {
+    //                 throw error;
+    //             }
+    //             if (payload.method === "bnb_sign") {
+    //                 this.state.displayRequest = payload;
+    //
+    //                 chrome.tabs.sendMessage(
+    //                   tabId,
+    //                   {
+    //                       showConfirmation: true,
+    //                   },
+    //                   result => {
+    //                       console.log("result ->>>>>", result);
+    //
+    //                       if (result) {
+    //                           this.approveRequest(payload);
+    //                       } else {
+    //                           this.rejectRequest(payload);
+    //                       }
+    //
+    //                       chrome.tabs.sendMessage(tabId, {
+    //                           hideConfirmation: true,
+    //                       });
+    //                   }
+    //                 );
+    //             }
+    //         });
+    //
+    //         walletConnector.on("connect", (error, payload) => {
+    //             console.log('walletConnector.on("connect")'); // tslint:disable-line
+    //
+    //             if (error) {
+    //                 throw error;
+    //             }
+    //
+    //             this.state.connected = true;
+    //         });
+    //
+    //         walletConnector.on("disconnect", (error, payload) => {
+    //             console.log('walletConnector.on("disconnect")', walletConnector); // tslint:disable-line
+    //
+    //             if (error) {
+    //                 throw error;
+    //             }
+    //             this.state.connected = false;
+    //             this.state.displayRequest = null;
+    //             this.state.peerMeta = null;
+    //             this.initWallet();
+    //             this.startScanQrCode = false;
+    //         });
+    //
+    //         if (walletConnector.connected) {
+    //             const { chainId, accounts } = walletConnector;
+    //             const address = accounts[0];
+    //
+    //             this.state.connected = true;
+    //             this.state.address = address;
+    //             this.state.chainId = chainId;
+    //         } else {
+    //             this.state.connected = false;
+    //             this.state.displayRequest = null;
+    //             this.state.peerMeta = null;
+    //         }
+    //
+    //         this.walletConnector = walletConnector;
+    //     }
+    // }
+
     public subscribeToEvents(): void {
         const walletConnector = this.instance;
 
-        if (walletConnector) {
+        if (!walletConnector)
+            return;
 
-            // walletConnector.on("session_request", (error, payload) => {
-            //     if (error) {
-            //         throw error;
-            //     }
-            //     this.approveSession();
-            // });
-            //
-            // walletConnector.on("call_request", (error, payload) => {
-            //     if (error) {
-            //         throw error;
-            //     }
-            //
-            //     if (payload.method === "bnb_sign") {
-            //         this.approveRequestCall(payload)
-            //     }
-            // });
-            //
-            // walletConnector.on("disconnect", (error, payload) => {
-            //     if (error) {
-            //         throw error;
-            //     }
-            //     this.disconnect()
-            // });
-        }
+        walletConnector.on("session_request", (error, payload) => {
+            console.log("session_request", error, payload);
+            if (error) {
+                throw error;
+            }
+            this.approveSession();
+        });
+
+        walletConnector.on("call_request", (error, payload) => {
+            console.log("call_request", error, payload);
+            if (error) {
+                throw error;
+            }
+
+            if (payload.method === "bnb_sign") {
+                this.approveRequestCall(payload)
+            }
+        });
+
+        walletConnector.on("connect", (error, payload) => {
+            console.log("connect", error, payload);
+            if (error) {
+                throw error;
+            }
+            this.disconnect()
+        });
+
+        walletConnector.on("disconnect", (error, payload) => {
+            console.log("disconnect", error, payload);
+            console.log("disconnect");
+            if (error) {
+                throw error;
+            }
+            // this.disconnect()
+        });
+
     }
 
     public async approveSession() {
-        debugger
+
         const walletConnector = this.instance;
-        if (walletConnector) {
-            walletConnector.approveSession({
-                chainId: 1,
-                accounts: [this.bnbAddress],
-            });
+        if (!walletConnector) {
+            return;
         }
+
+        //debugger
+        walletConnector.approveSession({
+            chainId: 1,
+            accounts: [this.bnbAddress],
+        });
+        console.log("approveSession", this.bnbAddress);
     }
 
     public rejectSession() {
@@ -107,7 +225,32 @@ export class WalletConnectController {
         if (walletConnector) {
             walletConnector.killSession();
         }
+        this.initWallet();
     }
+
+    /**
+     * Init walletConnect from localStorage.
+     *
+     */
+    initWallet() {
+        const local = localStorage ? localStorage.getItem("walletconnect") : null;
+
+        if (local) {
+            let session;
+
+            try {
+                session = JSON.parse(local);
+            } catch (error) {
+                throw error;
+            }
+
+            const walletConnector = new WalletConnect({ session });
+
+            walletConnector.killSession();
+            (walletConnector as any)._removeStorageSession();
+        }
+    }
+
 
     private signTransaction(rawTransaction: any): ISignedTransaction {
         return signTransaction(this.privateKey, rawTransaction);
