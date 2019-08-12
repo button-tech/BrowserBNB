@@ -45,6 +45,8 @@ import {HistoryDetailsComponent} from './components/main/history-component/histo
 import {StateService} from './services/state.service';
 import {FmtPipe} from './fmt.pipe';
 import {NgxLoadersCssModule} from 'ngx-loaders-css';
+import {GeneralComponent} from './components/main/menu-top/settings/general/general.component';
+import { AdvancedComponent } from './components/main/menu-top/settings/advanced/advanced.component';
 
 
 @NgModule({
@@ -73,7 +75,9 @@ import {NgxLoadersCssModule} from 'ngx-loaders-css';
         AccountsComponent,
         RecieveComponent,
         HistoryDetailsComponent,
-        FmtPipe
+        FmtPipe,
+        GeneralComponent,
+        AdvancedComponent
     ],
     imports: [
         BrowserModule,

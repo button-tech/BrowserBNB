@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {AlertsService} from "../../../../services/alerts.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-settings',
@@ -9,7 +10,7 @@ import {AlertsService} from "../../../../services/alerts.service";
 })
 export class SettingsComponent implements OnInit {
 
-    constructor(private location: Location, public alert: AlertsService) {
+    constructor(private location: Location, public alert: AlertsService, private router: Router) {
     }
 
     ngOnInit() {
@@ -18,8 +19,12 @@ export class SettingsComponent implements OnInit {
     goBack() {
         this.location.back();
     }
+
     showInfo() {
         this.alert.showError('Not ready', 'Will be soon');
     }
 
+    navigate(path: string) {
+        this.router.navigate(['/' + path]);
+    }
 }

@@ -17,6 +17,8 @@ import {AllBalancesComponent} from "./components/main/all-balances/all-balances.
 import {SettingsComponent} from "./components/main/menu-top/settings/settings.component";
 import {RecieveComponent} from "./components/main/recieve/recieve.component";
 import {HistoryDetailsComponent} from "./components/main/history-component/history-details/history-details.component";
+import {GeneralComponent} from "./components/main/menu-top/settings/general/general.component";
+import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/advanced.component";
 
 const routes: Routes = [
     {
@@ -45,8 +47,18 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'advanced',
+        component: AdvancedComponent,
+        canActivate: [AuthGuard]
+    },
+    {
         path: 'verify_send',
         component: VerifySendComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'general',
+        component: GeneralComponent,
         canActivate: [AuthGuard]
     },
     {
@@ -60,6 +72,7 @@ const routes: Routes = [
     {
         path: 'settings',
         component: SettingsComponent,
+        canActivate: [AuthGuard],
     },
     {
         path: 'registration',
