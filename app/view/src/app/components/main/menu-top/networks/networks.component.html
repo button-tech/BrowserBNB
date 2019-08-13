@@ -1,6 +1,6 @@
 <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
     <div class="menu-wrapper" tabIndex="0">
-        <button *ngFor="let item of networkMenu" class="menu-item"
+        <button *ngFor="let item of networkMenu" class="menu-item" style="cursor:pointer"
                 (click)="selectNetwork(item.networkPrefix); menuNetwork.toggle()">
             {{ item.label }}
         </button>
