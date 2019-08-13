@@ -4,7 +4,6 @@ import { WalletConnectController } from "./services/walletconnect";
 
 // async function f() {
 //
-//
 //     chrome.runtime.onConnect.addListener(function (port) {
 //         //console.log("Connected .....");
 //         port.onMessage.addListener(function (msg) {
@@ -34,7 +33,7 @@ import { WalletConnectController } from "./services/walletconnect";
 // }
 
 
-const wcSession = 'wc:aa3adeaa-01c4-4c56-9175-ed2e92e7e6b7@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=f67503f6a6296115c7d007332bfb3e97e84e376513c76f402af166cbc67f2a87';
+const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
 const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
 const wc = new WalletConnectController(privateKey, wcSession);
 
