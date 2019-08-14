@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup --config ./rollup.config.js",
+    "watch": "rollup --config ./rollup.config.js -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +14,7 @@
   "devDependencies": {
     "@walletconnect/browser": "^1.0.0-beta.32",
     "@walletconnect/types": "^1.0.0-beta.32",
+    "chokidar": "^3.0.2",
     "rollup": "^1.18.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",

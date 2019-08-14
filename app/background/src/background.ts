@@ -1,6 +1,6 @@
-import * as passworder from 'browser-passworder';
-import { timer } from "rxjs";
-import { WalletConnectController } from "./services/walletconnect";
+// import * as passworder from 'browser-passworder';
+// import { timer } from "rxjs";
+import { WalletConnectController } from "../services/walletconnect";
 
 // async function f() {
 //
@@ -33,9 +33,15 @@ import { WalletConnectController } from "./services/walletconnect";
 // }
 
 
+
+export const s = 5;
+
+
 const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
+
 const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
 const wc = new WalletConnectController(privateKey, wcSession);
+console.log(wc);
 
 // setTimeout(() => {wc.approveSession();}, 2000);
 

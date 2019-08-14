@@ -29,9 +29,10 @@
         "https://www.binance.org/*/*"
       ],
       "js": [
-        "inject.js"
+        "content-script.js",
+        "content-script.js.map"
       ],
-      "run_at": "document_start",
+      "run_at": "document_idle",
       "all_frames": true
     }
   ]
