@@ -7,7 +7,7 @@
     *
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-import { IConnector } from '@walletconnect/types'
+// import { IConnector } from '@walletconnect/types'
 import { signTransaction, getAddressFromPrivateKey } from "./binancecrypto";
 import { ISignedTransaction } from '../models';
 import WalletConnect from "@walletconnect/browser/lib";
@@ -16,28 +16,36 @@ export class WalletConnectController {
     private instance: WalletConnect;
     private bnbAddress: string;
 
-    constructor(private privateKey: string, private connectionUrl: string) {
+    constructor(private privateKey: string, connectionUrl: string) {
         // create instance of Wallet Connect using URL
-        this.bnbAddress = getAddressFromPrivateKey(privateKey, 'bnb');
+        this.bnbAddress = getAddressFromPrivateKey(this.privateKey, 'bnb');
         console.log(this.bnbAddress);
-        this.initInstance(connectionUrl);
-    }
-
-    private async initInstance(connectionUrl: string) {
         this.instance = new WalletConnect({
             uri: connectionUrl
         });
 
-        if (!this.instance.connected) {
-            console.log('a1');
-            await this.instance.createSession();
-            console.log('a2');
-        } else {
-            this.instance.killSession();
-            (this.instance as any)._removeStorageSession();
-        }
-        this.subscribeToEvents();
+
+        debugger
+        this.instance.createSession().then(() => {
+            this.subscribeToEvents();
+        })
     }
+
+    // private async initInstance(connectionUrl: string) {
+    //     this.instance = new WalletConnect({
+    //         uri: connectionUrl
+    //     });
+    //
+    //     if (!this.instance.connected) {
+    //         console.log('a1');
+    //         await this.instance.createSession();
+    //         console.log('a2');
+    //     } else {
+    //         this.instance.killSession();
+    //         (this.instance as any)._removeStorageSession();
+    //     }
+    //     this.subscribeToEvents();
+    // }
 
     // subscribeToEvents() {
     //     const { walletConnector } = this;
@@ -149,6 +157,7 @@ export class WalletConnectController {
             if (error) {
                 throw error;
             }
+            console.log("session_request");
             this.approveSession();
         });
 
@@ -168,7 +177,7 @@ export class WalletConnectController {
             if (error) {
                 throw error;
             }
-            this.disconnect()
+            // this.disconnect()
         });
 
         walletConnector.on("disconnect", (error, payload) => {
@@ -244,7 +253,7 @@ export class WalletConnectController {
                 throw error;
             }
 
-            const walletConnector = new WalletConnect({ session });
+            const walletConnector = new WalletConnect({session});
 
             walletConnector.killSession();
             (walletConnector as any)._removeStorageSession();

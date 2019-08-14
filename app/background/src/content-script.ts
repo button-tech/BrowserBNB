@@ -1,38 +1,36 @@
-console.log("Hi");
-
+// console.log("Hi");
+// TODO: we can simplify logic since we have match restriction in the manifest
+//
 const re = /https:\/\/www\.binance.org\/..\/unlock/;
 if (re.test(window.location.href)) {
 
-    // const div = document.createElement('script');
     const script = document.createElement('script');
     script.type = "text/javascript";
-    script.innerHTML = ` 
-       function test() {
-            setInterval(() => {console.log(2);}, 1000);
-            alert(1);
+    script.innerHTML = `
+        const defaultLog = console.log.bind(console);
+        console.log = function () {
+            defaultLog.apply(console, arguments);
+            if(arguments[0]==='WalletConnect URI' ){
+                window.postMessage({ type: "FROM_PAGE", text: arguments[1] }, "*");
+            }
         };
-       console.log('tesssss');
-       test();
     `;
-
     document.body.appendChild(script);
 
-    //console.log("script=", script);
+    const port = chrome.runtime.connect();
+    window.addEventListener("message", function (event) {
+        console.log('received in contenet script:', event);
+        // We only accept messages from ourselves
+        if (event.source != window)
+            return;
 
+        if (event.data.type && (event.data.type == "FROM_PAGE")) {
+            console.log("Content script received: " + event.data.text);
+            // debugger
+            port.postMessage(event.data.text);
+        }
+    }, false);
 
-    // document.getElementsByTagName('head')[0].appendChild(script);
-    //
-    // defaultLog = console.log.bind(console)
-    // logs = []
-    //
-    // // debugger;
-    // console.log = function () {
-    //     // default &  console.log()
-    //     console.defaultLog.apply(console, arguments)
-    //     // new & array data
-    //     logs.push(Array.from(arguments))
-    // }
-    //
     // console.defaultLog('1', window.logs)
     //
     // const interval = setInterval(() => {
