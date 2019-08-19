@@ -7,10 +7,9 @@
  *
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
-
+// @ts-ignore
 import * as Binance from '../../../view/src/assets/binance/bnbSDK.js';
-// import * as Buffer from 'buffer'; // needs browserify https://github.com/feross/buffer
-import {ISignedTransaction} from '../models';
+import { ISignedTransaction } from "./types";
 
 const isNotEmptyString = (str: string | any): boolean => {
     return !!str && (typeof str === 'string' || str instanceof String);
@@ -68,6 +67,7 @@ export function validateAddress(address: string, networkType: string = 'bnb'): b
     if (isNotEmptyString(address)) {
         return crypto.checkAddress(address, networkType);
     }
+    return false;
 }
 
 export function signTransaction(privKey: string, rawTransaction: any): ISignedTransaction {

@@ -1,8 +1,7 @@
-// console.log("Hi");
-// TODO: we can simplify logic since we have match restriction in the manifest
-//
+// TODO: Add dev build && allow localshot only in dev build
+// TODO: remove localhost from manifest
 const re = /https:\/\/www\.binance.org\/..\/unlock/;
-if (re.test(window.location.href)) {
+if (re.test(window.location.href) || window.location.href.startsWith('http:http://localhost:4200')) {
 
     const script = document.createElement('script');
     script.type = "text/javascript";
@@ -18,18 +17,32 @@ if (re.test(window.location.href)) {
     document.body.appendChild(script);
 
     const port = chrome.runtime.connect();
-    window.addEventListener("message", function (event) {
+    window.addEventListener("message", (event) => {
         console.log('received in contenet script:', event);
+
         // We only accept messages from ourselves
         if (event.source != window)
             return;
 
-        if (event.data.type && (event.data.type == "FROM_PAGE")) {
+        if (event.data.type && (event.data.type === "FROM_PAGE")) {
             console.log("Content script received: " + event.data.text);
             // debugger
             port.postMessage(event.data.text);
         }
+
+        // TODO: Move this to dev build, security gap
+        if (event.data.type && (event.data.type === "TO_BG")) {
+            console.log("TO_BG: " + event.data);
+            port.postMessage(event.data.msg);
+        }
     }, false);
+
+    // TODO: Move this to dev build, security gap
+    port.onMessage.addListener((msg: Event) => {
+        console.log('to page:', msg);
+        window.postMessage({type: 'TO_PAGE', msg}, "*");
+    });
+
 
     // console.defaultLog('1', window.logs)
     //
@@ -83,5 +96,3 @@ if (re.test(window.location.href)) {
     // //       window.postMessage({ type: "FROM_PAGE", text: "Hello from the webpage!" }, "*");
     // //   }, false);
 }
-
-

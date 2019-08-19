@@ -1,17 +1,3 @@
-// import * as passworder from 'browser-passworder';
-// import { timer } from "rxjs";
-import { WalletConnectController } from "./services/walletconnect";
-
-
-function approveSession(wcSessionEndpoint: string) {
-    // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
-
-    const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
-    const wc = new WalletConnectController(privateKey, wcSessionEndpoint);
-    // wc.approveSession();
-    console.log(wc);
-}
-
 // function f() {
 //
 //     // const data = {a: 1};
@@ -31,13 +17,33 @@ function approveSession(wcSessionEndpoint: string) {
 //     //     })
 //     // })
 // }
+import { approveSession } from "./walletconnect/walletconnect";
+import { Session } from "./session/session";
 
-chrome.runtime.onConnect.addListener(function (port) {
-    //console.log("Connected .....");
-    port.onMessage.addListener(function (msg) {
-        console.log("message recieved" + msg);
-        approveSession(msg);
+console.log('Hi!');
 
-        // port.postMessage("Hi Popup.js");
+const session = new Session();
+
+chrome.runtime.onConnect.addListener((port) => {
+
+    console.log('port connected');
+    port.onMessage.addListener((msg: MessageBase) => {
+
+        // TODO: check message type, call widget and give widget ability to approve.
+        console.log("message received:" + msg);
+        // approveSession(msg);
+
+        if (msg && msg.type) {
+
+            if (msg.type === 'initWalletConnectSession') {
+                const link = (msg as FromContent2BackgroundMsg).wcDeepLink;
+                approveSession(link);
+            } else {
+                const response = session.processMessageFromPage(msg as FromPage2BackgroundMsg);
+                if (response) {
+                    port.postMessage(response);
+                }
+            }
+        }
     });
 });

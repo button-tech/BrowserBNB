@@ -1,41 +1,53 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, Subject} from 'rxjs';
-import {catchError, map, startWith} from 'rxjs/operators';
+import { BehaviorSubject, interval, Observable, of, Subject } from 'rxjs';
+import { catchError, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
 import {IStorageData, StorageService} from './storage.service';
 import {StateService} from './state.service';
 import {Router} from '@angular/router';
+import {ChromeApiService} from "./chrome-api.service";
 
 @Injectable()
 export class AuthService {
 
-    private subject$ = new Subject<boolean>();
-    private _isLoggedIn: boolean = false;
+    private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
+
+    get isLoggedIn$(): Observable<boolean> {
+        return this._isLoggedIn$.asObservable();
+    }
 
     get isLoggedIn(): boolean {
-        return this._isLoggedIn;
+        return this._isLoggedIn$.getValue();
     }
 
-    set isLoggedIn(value: boolean) {
-        this._isLoggedIn = value;
-        this.subject$.next(value);
-    }
+    constructor(private storage: StorageService,
+                private router: Router,
+                private stateService: StateService,
+                private chromeApiService: ChromeApiService) {
 
-    public isLoggedIn$: Observable<boolean>;
+        this.isLoggedIn$.pipe(
+          switchMap((isLoggedIn) => {
 
-    // subscription: Subscription;
+              if(isLoggedIn)
+                  return interval(2500).pipe(map( () => true));
 
-    constructor(private storage: StorageService, private router: Router, private stateService: StateService) {
-        this.isLoggedIn$ = this.subject$.asObservable().pipe(
-            startWith(this.isLoggedIn)
-        );
+              return of(false);
+          }),
+          filter( (x) => x),
+          tap( () => {
+              this.chromeApiService.sendKeepAlive()
+          })
+        ).subscribe();
     }
 
     login(password: string): Observable<boolean> {
 
+        console.log('login with', password);
+
         return this.storage.getFromStorage(password).pipe(
             map((data: IStorageData) => {
-                this.isLoggedIn = true;
+                this._isLoggedIn$.next(true);
                 this.stateService.initState(data, password);
+                this.chromeApiService.savePassword(password);
                 return true;
             }),
             catchError((error) => {
@@ -44,10 +56,12 @@ export class AuthService {
         );
     }
 
+
     logout(): void {
-        this.isLoggedIn = false;
+        this.chromeApiService.dropPassword();
+        this._isLoggedIn$.next(false);
         this.router.navigate(['/unlock']).then(() => {
             this.stateService.resetState();
-        })
+        });
     }
 }

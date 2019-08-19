@@ -44,6 +44,6 @@ export class UnlockComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.chrome.connectToBackground();
+        // this.chrome.connectToBackground();
     }
 }

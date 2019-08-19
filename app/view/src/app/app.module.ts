@@ -46,8 +46,9 @@ import {StateService} from './services/state.service';
 import {FmtPipe} from './fmt.pipe';
 import {NgxLoadersCssModule} from 'ngx-loaders-css';
 import {GeneralComponent} from './components/main/menu-top/settings/general/general.component';
-import { AdvancedComponent } from './components/main/menu-top/settings/advanced/advanced.component';
-import { SecurityPrivacyComponent } from './components/main/menu-top/settings/security-privacy/security-privacy.component';
+import {AdvancedComponent} from './components/main/menu-top/settings/advanced/advanced.component';
+import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
+import { ChromeApiMockService, ChromeApiRealService, ChromeApiService } from "./services/chrome-api.service";
 
 
 @NgModule({
@@ -107,7 +108,10 @@ import { SecurityPrivacyComponent } from './components/main/menu-top/settings/se
         StateService,
         StorageService,
         ClipboardService,
-        BinanceService
+        BinanceService,
+        ChromeApiMockService,
+        ChromeApiRealService,
+        ChromeApiService,
     ],
     bootstrap: [AppComponent]
 })

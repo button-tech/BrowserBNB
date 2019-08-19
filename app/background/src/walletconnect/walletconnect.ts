@@ -4,13 +4,23 @@
 * Copyright (c) 2019 BUTTON Wallet
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-    *
+*
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-// import { IConnector } from '@walletconnect/types'
-import { signTransaction, getAddressFromPrivateKey } from "./binancecrypto";
-import { ISignedTransaction } from '../models';
+
 import WalletConnect from "@walletconnect/browser/lib";
+import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
+import { ISignedTransaction } from "./types";
+
+export function approveSession(wcSessionEndpoint: string) {
+    // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
+
+    const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
+    const wc = new WalletConnectController(privateKey, wcSessionEndpoint);
+
+    wc.approveSession();
+    console.log(wc);
+}
 
 export class WalletConnectController {
     private instance: WalletConnect;
@@ -24,8 +34,6 @@ export class WalletConnectController {
             uri: connectionUrl
         });
 
-
-        debugger
         this.instance.createSession().then(() => {
             this.subscribeToEvents();
         })

@@ -1,12 +1,12 @@
 /// <reference types="chrome"/>
-import {Injectable} from '@angular/core';
-import {environment} from '../../environments/environment';
-import {map, switchMap} from 'rxjs/operators';
-import {from, Observable, Subject} from 'rxjs';
-import {BinanceService} from './binance.service';
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { debounce, map, switchMap } from 'rxjs/operators';
+import { from, of, Observable, Subject } from 'rxjs';
+import { BinanceService } from './binance.service';
 import * as passworder from 'browser-passworder';
-import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
-import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
+import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
 
 
 export type NetworkType = 'bnb' | 'tbnb' | null;
@@ -47,7 +47,7 @@ export class StorageService {
                 name: 'Sample Communication'
             });
 
-            port.postMessage('Hi BackGround');
+            // port.postMessage('Hi BackGround');
             port.onMessage.addListener(function (msg) {
                 console.log('message recieved' + msg);
             });
@@ -81,6 +81,7 @@ export class StorageService {
     hasAccountOnce$(): Observable<boolean> {
         return from(this.getFromStorageRaw()).pipe(
             map((encryptedData) => {
+                console.log('encryptedData=', encryptedData);
                 return !!encryptedData;
             })
         );
@@ -148,9 +149,24 @@ export class StorageService {
                 return from(passworder.decrypt(password, encrypted));
             }),
             map((dectypted: any) => {
+                console.log(JSON.stringify(dectypted));
                 return dectypted as IStorageData;
             })
         );
+
+        // return of(
+        //     {
+        //         "seedPhrase":"ribbon later orchard price satisfy pill recall quiz cube infant ignore erosion hire mom desk hair rule virtual spread curve juice alley now leader",
+        //         "accounts": [
+        //             {
+        //                 "addressMainnet":"bnb15eplk74ht9tmp65qkller7l7erpqf76puuwldx",
+        //                 "addressTestnet":"tbnb15eplk74ht9tmp65qkller7l7erpqf76pjf8mdh",
+        //                 "privateKey":"cca69ca8959b928a7ccff8506a724dbe6ea3e3ed896d51cce3f6115920830cc2","index":0,"name":"Account 1"
+        //             }
+        //         ],
+        //         "selectedAddress":"bnb15eplk74ht9tmp65qkller7l7erpqf76puuwldx","selectedNetwork":"bnb","selectedNetworkEndpoint":"https://dex.binance.org/"
+        //     }
+        // );
     }
 
     async encryptAndSave(data: IStorageData, password: string): Promise<void> {
