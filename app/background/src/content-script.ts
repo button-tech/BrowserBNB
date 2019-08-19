@@ -1,7 +1,7 @@
 // TODO: Add dev build && allow localshot only in dev build
 // TODO: remove localhost from manifest
 const re = /https:\/\/www\.binance.org\/..\/unlock/;
-if (re.test(window.location.href) || window.location.href.startsWith('http:http://localhost:4200')) {
+if (re.test(window.location.href) || window.location.href.startsWith('http://localhost:4200')) {
 
     const script = document.createElement('script');
     script.type = "text/javascript";
