@@ -1,29 +1,22 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {StorageService} from '../../services/storage.service';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
-import {ChromeApiService} from "../../services/chrome-api.service";
-import {BinanceService} from "../../services/binance.service";
-import {Subscription} from "rxjs";
-import {StateService} from "../../services/state.service";
 
 @Component({
     selector: 'app-unlock',
     templateUrl: './unlock.component.html',
     styleUrls: ['./unlock.component.css']
 })
-export class UnlockComponent implements OnInit {
+export class UnlockComponent {
     keystore: any;
 
     constructor(private authService: AuthService,
                 private router: Router,
                 private storage: StorageService,
                 public alert: AlertsService,
-                private chrome: ChromeApiService,
     ) {
-
-
     }
 
     unlock() {
@@ -43,7 +36,9 @@ export class UnlockComponent implements OnInit {
         this.router.navigate(['/greeter']);
     }
 
-    ngOnInit(): void {
-        // this.chrome.connectToBackground();
+    onKeydown(event) {
+        if (event.key === "Enter") {
+            this.unlock();
+        }
     }
 }
