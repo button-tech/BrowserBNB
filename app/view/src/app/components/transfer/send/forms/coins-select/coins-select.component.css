@@ -1,0 +1,25 @@
+.coins-select-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.coins-select-option-img {
+    height: 28px;
+}
+
+.coins-select-option-info {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+}
+
+.coins-select-option-title {
+    margin-bottom: -5px;
+    margin-top: 3px;
+    font-size: 16px;
+}
+
+.coins-select-option-sum {
+    font-size: 12px;
+}

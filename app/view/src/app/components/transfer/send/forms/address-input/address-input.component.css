@@ -6,4 +6,8 @@
     border: 1px solid #cbcbcb;
 }
 
-
+.send-input {
+    border: 1px solid #cbcbcb;
+    border-radius: 4px;
+    height: 55px;
+}
