@@ -27,6 +27,12 @@ export class ImportMnemonicComponent {
         this.importSingleKey = !!this.route.snapshot.queryParamMap.get('importSingleKey');
     }
 
+    onKeydown(event) {
+        if (event.key === "Enter") {
+            this.next();
+        }
+    }
+
     next() {
         const mnemonic = this.mnemonic.nativeElement.value;
         if (!isValidMnemonic(mnemonic)) {

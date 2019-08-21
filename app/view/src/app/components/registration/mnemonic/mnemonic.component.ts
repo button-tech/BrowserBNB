@@ -24,6 +24,12 @@ export class MnemonicComponent implements OnInit {
         this.mnemonic = (this.regSvc.hasMnemonic && this.regSvc.mnemonic) || this.regSvc.generateMnemonic();
     }
 
+    onKeydown(event) {
+        if (event.key === "Enter") {
+            this.next();
+        }
+    }
+
     next() {
         if (!this.theCheckbox) {
             this.alert.showError('Please, confirm that you have copied mnemonic', 'Error');

@@ -11,7 +11,16 @@ import {Router} from '@angular/router';
     styleUrls: ['./password.component.css']
 })
 export class PasswordComponent {
-    constructor(private regSvc: RegistrationService, private authService: AuthService, private router: Router, private alert: AlertsService) {
+    constructor(private regSvc: RegistrationService,
+                private authService: AuthService,
+                private router: Router,
+                private alert: AlertsService) {
+    }
+
+    onKeydown(event) {
+        if (event.key === "Enter") {
+            this.next();
+        }
     }
 
     next() {

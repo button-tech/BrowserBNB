@@ -38,7 +38,7 @@
     <loaders-css [loader]="loader" [scale]="1" [bgColor]="bgColor" [color]="color"></loaders-css>
 </div>
 
-<div *ngIf="isEmpty" style="margin-top: -1.4em;">
+<div *ngIf="isEmpty && isLoaded" style="margin-top: -1.4em;">
     <div class="row">
         <div class="col-12 text-center">
             <p style="color: rgb(132, 142, 156); font-size: 14px;">You have no transactions</p>

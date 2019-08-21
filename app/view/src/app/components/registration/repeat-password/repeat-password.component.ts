@@ -19,6 +19,12 @@ export class RepeatPasswordComponent {
                 private router: Router) {
     }
 
+    onKeydown(event) {
+        if (event.key === "Enter") {
+            this.next();
+        }
+    }
+
     next(): void {
         const passwordRepeat = (document.getElementById('password') as HTMLInputElement).value;
 

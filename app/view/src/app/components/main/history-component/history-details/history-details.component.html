@@ -144,7 +144,7 @@
             </div>
         </div>
         <div style="margin-top: 1em" class="col-12  text-center">
-            <button (click)="this.openTab(this.stateService.historyDetails$, 'mainnet')" style="width: 250px"
+            <button (click)="this.openTab(this.stateService.historyDetails$, this.stateService.selectedNetwork$.getValue().label)" style="width: 250px"
                     class="btn-binance-outline btn-sm">
                 View on explorer
             </button>

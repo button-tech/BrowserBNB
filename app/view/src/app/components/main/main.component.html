@@ -35,7 +35,7 @@
             <h4 id="fiat">
                 {{(bnbInUsd$  | async) | fmtPipe : 'USD'}}
             </h4>
-            <a routerLink="/balances" id="more">More balances</a>
+            <a *ngIf="(allBalances$ | async)" routerLink="/balances" id="more">More balances</a>
         </div>
 
         <div id="buttonsDiv" class="col-12">
