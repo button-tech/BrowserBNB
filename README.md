@@ -46,13 +46,13 @@ Navigation
  
  ## Step 3 (Final Beta Public)
   - [ ] Forms to Rx forms
-  - [ ] Background logic 
+  - [x] Background logic 
   - [ ] WalletConnect + DEX support 
-  - [ ] Settings support 
+  - [x] Settings support 
   - [ ] Free from boostrap + material wastes 
   - [ ] Pending tx / notifiactions on background
   - [ ] Custom alerts service + UI
   - [ ] Linting of project
-  - [ ] Fix wrappers over JS SDK
+  - [x] Fix wrappers over JS SDK
   - [ ] Make docs + wiki
   - [ ] Integration tests + BNB SDK tests
