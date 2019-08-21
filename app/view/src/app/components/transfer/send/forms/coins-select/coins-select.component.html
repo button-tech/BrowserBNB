@@ -1,27 +1,29 @@
-<form style="margin-top: 1.8em; margin-bottom: -0.4em;" [formGroup]="heroForm" novalidate>
+<form [formGroup]="heroForm" novalidate class="mb-0">
     <div class="form-row">
-        <div class="form-group col-md-12">
-            <ng-select [searchable]="true" [clearable]="false" labelForId="heroId" class="custom"
-                       formControlName="heroId" class="someClass someClass1"
+        <div class="col-md-12">
+            <ng-select [searchable]="true" [clearable]="false" labelForId="heroId" class="custom send-input"
+                       formControlName="heroId"
                        (change)="selectCoin(this.heroForm.getRawValue().heroId)">
                 <ng-option value="BNB">
-                    <div style="display: flex;flex-direction: row; align-items: center">
-                        <img style="height: 28px" src="../../../../../../assets/icons/icon128.png"/>
-                        <div style="display: flex;flex-direction: column; padding: 5px 10px;">
-                            <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">Binance Coin</strong>
-                            <div style="font-size: 12px">{{(this.stateService.bnbBalance$ | async) | fmtPipe : 'BNB'}}</div>
+                    <div class="coins-select-option">
+                        <img class="coins-select-option-img" src="../../../../../../assets/icons/icon128.png"/>
+                        <div class="coins-select-option-info">
+                            <span class="coins-select-option-title">Binance Coin</span>
+                            <div class="coins-select-option-sum">
+                                {{(this.stateService.bnbBalance$ | async) | fmtPipe : 'BNB'}}
+                            </div>
                         </div>
                     </div>
                 </ng-option>
 
                 <ng-option *ngFor="let token of (tokens$ | async)"
                            value="{{ ({mappedName: token.mappedName, name: token.name, symbol: token.symbol, rate2usd:token.rate2usd }) | json }}">
-                    <div style="display: flex;flex-direction: row; align-items: center">
-                        <img style="height: 28px"
+                    <div class="coins-select-option">
+                        <img class="coins-select-option-img"
                              src="{{token.image || '../../../../../../assets/icons/default.png'}}"/>
-                        <div style="display: flex;flex-direction: column; padding: 5px 10px;">
-                            <strong style="margin-bottom: -5px; margin-top: 3px; font-size: 16px">{{token.mappedName}}</strong>
-                            <div style="font-size: 12px">{{token.balance}} {{token.symbol}}</div>
+                        <div class="coins-select-option-info">
+                            <span class="coins-select-option-title">{{token.mappedName}}</span>
+                            <div class="coins-select-option-sum">{{token.balance}} {{token.symbol}}</div>
                         </div>
                     </div>
                 </ng-option>

@@ -26,3 +26,12 @@
     color: rgb(33, 40, 51);
 
 }
+
+.send-row {
+    margin-bottom: 20px;
+}
+
+.send-input-title {
+    font-weight: bolder;
+    margin-top: 0.75em;
+}
