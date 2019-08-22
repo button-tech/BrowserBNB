@@ -154,7 +154,6 @@ export class StateService {
     bnbBalanceInUsd$: Observable<number>;
     marketRates$: Observable<IMarketRates[]>;
     bnb2usdRate$: Observable<number>;
-    bnb2usdRateWs$: Observable<number>;
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
@@ -266,20 +265,36 @@ export class StateService {
             }),
             shareReplay(1)
         );
-        // TODO: think about using it 
+        // TODO: think about using it
         this.simpleFee$.subscribe();
 
-        const bnb2usdRate$ = timer(0, 24000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            map((resp: any) => resp.USD),
-            shareReplay(1)
+        //
+        // Rates that we get using poling
+        //
+        // const bnb2usdRate$ = timer(0, 24000).pipe(
+        //     switchMap(() => {
+        //         return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
+        //     }),
+        //     map((resp: any) => resp.USD),
+        //     shareReplay(1)
+        // );
+
+        const bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
+          .pipe(
+            map((wsData: any) => {
+                return Number(JSON.parse(wsData).bnbPrice2USD);
+            })
+          );
+
+        this.bnb2usdRate$ = bnb2usdRateWs$;
+
+        this.bnb2usdRate$.subscribe(
+          bnbPrice2USD => {},
+          err => console.log('err'),
+          () =>  console.log( 'The observable stream is complete')
         );
 
-        this.bnb2usdRate$ = this.bnb2usdRateWs$;
-
-        this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, bnb2usdRate$]).pipe(
+        this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, this.bnb2usdRate$]).pipe(
             map((arr: any[]) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
@@ -317,15 +332,17 @@ export class StateService {
             shareReplay(1)
         );
 
-        this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, bnb2usdRate$])
+        this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, this.bnb2usdRate$])
             .pipe(
                 map((x: any[]) => {
                     const [balances, marketRates, bnb2usd] = x;
                     const imagesUrls = JSON.parse(rawTokensImg);
                     let finalBalances = [];
+
                     balances.forEach((token) => {
                         const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
                         const tokensDetailsForCurrentToken = imagesUrls.find(o => o.symbol === token.symbol);
+
                         const isOk =
                             marketTickerForCurrentToken !== undefined
                             && tokensDetailsForCurrentToken !== undefined
@@ -393,6 +410,7 @@ export class StateService {
                             });
                         }
                     });
+
                     return finalBalances.sort((a, b) => {
                         const usdBalanceDiff = b.balance2usd - a.balance2usd;
                         if (usdBalanceDiff === 0) {
@@ -478,18 +496,6 @@ export class StateService {
         this.password = password;
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        this.bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
-            .pipe(
-                map((wsData: any) => {
-                    return Number(JSON.parse(wsData).bnbPrice2USD);
-                })
-            );
-
-        this.bnb2usdRateWs$.subscribe(
-            bnbPrice2USD => {},
-            err => console.log('err'),
-            () =>  console.log( 'The observable stream is complete')
-        );
     }
 
     resetState() {
