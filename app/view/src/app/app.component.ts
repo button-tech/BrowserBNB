@@ -3,7 +3,7 @@ import { AuthService } from './services/auth.service';
 import { StorageService } from './services/storage.service';
 import { map, switchMap } from 'rxjs/operators';
 import { of, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChromeApiService } from "./services/chrome-api.service";
 import {LoadersCSS} from "ngx-loaders-css";
 
@@ -19,9 +19,10 @@ export class AppComponent {
     color = 'rgb(239, 184, 11) ';
 
     subscription: Subscription;
-    isLoaded = false;
+    isLoaded: boolean = false;
 
     constructor(private router: Router,
+                private activatedRoute: ActivatedRoute,
                 private authService: AuthService,
                 private chromeApiService: ChromeApiService,
                 private storageService: StorageService
@@ -31,9 +32,8 @@ export class AppComponent {
 
         this.subscription = this.storageService.hasAccountOnce$().pipe(
           switchMap((hasAccount: boolean) => {
-              if (!hasAccount) {
+              if (!hasAccount)
                   return of('/greeter');
-              }
 
               return this.chromeApiService.restorePassword().pipe(
                 switchMap((password) => {
@@ -45,7 +45,7 @@ export class AppComponent {
                       map((isLoggedIn: boolean) => {
                           return isLoggedIn ? '/main' : '/unlock';
                       })
-                    );
+                    )
                 })
               );
           })

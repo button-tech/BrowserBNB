@@ -1,53 +1,46 @@
 <div class="container-fluid">
     <app-menu-top></app-menu-top>
-    <div class="row">
-        <div class="col-12 text-center mt-2 mb-4 ml-0">
-            <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
-                <fa name="arrow-left" size="sm"></fa>
-            </button>
+</div>
+<div class="row">
+    <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
+        <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
+            <fa name="arrow-left" size="sm"></fa>
+        </button>
+    </div>
+</div>
+<div style="margin-left: 1em; margin-right:0.2em; margin-top: -1em;" class="row">
+    <div style="display: grid; grid-template: 1fr 1fr 1fr 1fr / 1fr 4fr;  align-items: center; height: 320px" class="container text-center">
+        <div class="fromText" style="grid-column: 1; grid-row: 1;">
+            <h5 align="left" style="font-weight: bolder; margin-top: 0.75em">Asset:</h5>
+        </div>
+        <div style="text-align: left !important; grid-column: 2/4; grid-row: 1; margin-left: 1.2em;"
+             class="fromInfo">
+            <app-coins-select></app-coins-select>
+        </div>
+        <div class="fromText" style="grid-column: 1; grid-row: 2;">
+            <h5  align="left"  style="font-weight: bolder; margin-top: 0.75em">Amount:</h5>
+        </div>
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 2;">
+            <app-amount-input></app-amount-input>
+        </div>
+        <div class="fromText" style="grid-column: 1; grid-row: 3;">
+            <h5  align="left"  style="font-weight: bolder; margin-top: 0.75em">Address:</h5>
+        </div>
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 3;">
+            <!-- TODO: make that componet dummy -->
+           <app-address-input (value)="x1"></app-address-input>
+        </div>
+        <div class="fromText" style="grid-column: 1; grid-row: 4;">
+            <h5  align="left"  style="font-weight: bolder; margin-top: 0.75em">Memo:</h5>
+        </div>
+        <div class="fromInfo" style="grid-column: 2/4; grid-row: 4/4;">
+          <app-memo-input></app-memo-input>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Asset:</h5>
-                </div>
-                <div class="col-9">
-                    <app-coins-select></app-coins-select>
-                </div>
-            </div>
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Amount:</h5>
-                </div>
-                <div class="col-9">
-                    <app-amount-input></app-amount-input>
-                </div>
-            </div>
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Address:</h5>
-                </div>
-                <div class="col-9">
-                    <!-- TODO: make that componet dummy -->
-                    <app-address-input></app-address-input>
-                </div>
-            </div>
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Memo:</h5>
-                </div>
-                <div class="col-9">
-                    <app-memo-input></app-memo-input>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 text-center mt-1" id="buttonsDiv">
-            <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
-            <button [disabled]="!isValidToNextPage"
-                    routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next</button>
-        </div>
+    <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
+        <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
+        <button [disabled]="!isValidToNextPage"
+                routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next</button>
     </div>
 </div>
 

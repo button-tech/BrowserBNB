@@ -20,6 +20,7 @@ export class UnlockComponent {
     }
 
     unlock() {
+        //window.postMessage({type: "TO_BG", msg:{empty: true}}, "*");
         const password = (document.getElementById('password') as HTMLInputElement).value;
         this.authService.login(password)
             .subscribe((x) => {

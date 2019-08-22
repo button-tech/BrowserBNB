@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import {validateAddress} from '../../../../../services/binance-crypto';
 import {FormControl} from "@angular/forms";
 import {ITransaction, StateService} from "../../../../../services/state.service";
@@ -10,6 +10,10 @@ import {ITransaction, StateService} from "../../../../../services/state.service"
     styleUrls: ['./address-input.component.css']
 })
 export class AddressInputComponent implements OnDestroy {
+
+    @Input('value')
+    value: string;
+
 
     isValid: boolean;
     touched: boolean;
@@ -29,6 +33,7 @@ export class AddressInputComponent implements OnDestroy {
 
         const newTx = this.stateService.currentTransaction.getValue();
         newTx.AddressTo = addressValue;
+
         this.stateService.currentTransaction.next(newTx);
     }
 

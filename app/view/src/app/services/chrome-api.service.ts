@@ -68,8 +68,9 @@ export class ChromeApiMockService implements IChromeApiService {
         };
 
         setTimeout(() => {
+            console.log('111');
             window.postMessage({type: "TO_BG", msg}, "*");
-        }, 1);
+        }, 1000);
 
         return this.msgFromBackground$.pipe(
           tap((x) => {

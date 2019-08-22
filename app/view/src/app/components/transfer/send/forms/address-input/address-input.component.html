@@ -1,14 +1,19 @@
 <div [ngClass]="{'red-border': touched && !isValid, 'normal-border': !touched || isValid}"
-     class="wrap text-center send-input">
-    <mat-form-field class="form-group send-field">
-        <div>
-            <input autocomplete="off" #addressElem class="form-control"
-                   (input)="validate();"
-                   (focus)="touched = true"
-                   placeholder="BNB address"
-                   spellcheck="false">
-            <!--//for future-->
-            <!--<i class="fa fa-qrcode" style="margin-top: 0; font-size: 25px;"></i>-->
+     style="border-radius: 4px; height: 55px;margin-left: 22px;"
+     class="wrap text-center">
+    <mat-form-field class="example-full-width form-group">
+        <div style="display: flex">
+            <div style="display: grid; grid-template: 1fr / 1fr; grid-column-gap: 5px; margin-top: 10px; align-items: center;">
+
+                <input  autocomplete="off" #addressElem class="form-control"
+                       style="background-image: none!important; grid-column: 1/1; width: 180px"
+                       (input)="validate();"
+                       (focus)="touched = true"
+                       placeholder="BNB address"
+                       spellcheck="false">
+                <!--//for future-->
+                <!--<i class="fa fa-qrcode" style="margin-top: 0; font-size: 25px;"></i>-->
+            </div>
         </div>
         <!-- just a qucik fix for layout and mat-form-field complaining -->
         <input matInput style="display: none">
