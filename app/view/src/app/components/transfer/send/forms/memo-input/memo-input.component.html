@@ -1,13 +1,10 @@
-<div style="height: 55px;" class="wrap text-center send-input">
+<div class="wrap text-center send-input">
     <mat-form-field class="example-full-width form-group send-field">
         <div>
-            <div style="width: 100%">
-                <input  autocomplete="off" #addressElem class="form-control"
-                       style="background-image: none!important;"
-                       (input)="save(addressElem.value)"
-                       placeholder="Optional memo"
-                       spellcheck="false">
-            </div>
+            <input autocomplete="off" #addressElem class="form-control"
+                   (input)="save(addressElem.value)"
+                   placeholder="Optional memo"
+                   spellcheck="false">
         </div>
         <input matInput style="display: none">
     </mat-form-field>
