@@ -48,18 +48,18 @@ chrome.runtime.onConnect.addListener((port) => {
     });
 });
 
-setTimeout(() => {
-    chrome.tabs.create({url:"index.html?#/registration/import"});
-
-    // //const extensionId = chrome.runtime.id;
-    // //const url = `chrome-extension://${extensionId}/greeter`;
-    // const url = `index.html?state="registration/import"`;
-    //
-    // // host: "dfiibgbgnmgilhfanmbhcgbfoadmmadd"
-    // // hostname: "dfiibgbgnmgilhfanmbhcgbfoadmmadd"
-    // // href: "chrome-extension://dfiibgbgnmgilhfanmbhcgbfoadmmadd/registration/import"
-    // // origin: "chrome-extension://dfiibgbgnmgilhfanmbhcgbfoadmmadd"
-    // // pathname: "/registration/import"
-    //
-    // window.open(url, "extension_popup", "width=350,height=590,status=no,scrollbars=yes,resizable=no");
-}, 300);
+// setTimeout(() => {
+//     //chrome.tabs.create({url:"index.html?#/registration/import"});
+//
+//     // //const extensionId = chrome.runtime.id;
+//     // //const url = `chrome-extension://${extensionId}/greeter`;
+//     // const url = `index.html?state="registration/import"`;
+//     //
+//     // // host: "dfiibgbgnmgilhfanmbhcgbfoadmmadd"
+//     // // hostname: "dfiibgbgnmgilhfanmbhcgbfoadmmadd"
+//     // // href: "chrome-extension://dfiibgbgnmgilhfanmbhcgbfoadmmadd/registration/import"
+//     // // origin: "chrome-extension://dfiibgbgnmgilhfanmbhcgbfoadmmadd"
+//     // // pathname: "/registration/import"
+//     //
+//     // window.open(url, "extension_popup", "width=350,height=590,status=no,scrollbars=yes,resizable=no");
+// }, 300);

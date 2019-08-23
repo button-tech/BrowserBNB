@@ -271,22 +271,22 @@ export class StateService {
         //
         // Rates that we get using poling
         //
-        // const bnb2usdRate$ = timer(0, 24000).pipe(
-        //     switchMap(() => {
-        //         return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-        //     }),
-        //     map((resp: any) => resp.USD),
-        //     shareReplay(1)
-        // );
+        this.bnb2usdRate$ = timer(0, 24000).pipe(
+            switchMap(() => {
+                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
+            }),
+            map((resp: any) => resp.USD),
+            shareReplay(1)
+        );
 
-        const bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
-          .pipe(
-            map((wsData: any) => {
-                return Number(JSON.parse(wsData).bnbPrice2USD);
-            })
-          );
-
-        this.bnb2usdRate$ = bnb2usdRateWs$;
+        // const bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
+        //   .pipe(
+        //     map((wsData: any) => {
+        //         return Number(JSON.parse(wsData).bnbPrice2USD);
+        //     })
+        //   );
+        //
+        // this.bnb2usdRate$ = bnb2usdRateWs$;
 
         this.bnb2usdRate$.subscribe(
           bnbPrice2USD => {},
