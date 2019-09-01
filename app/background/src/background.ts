@@ -17,8 +17,7 @@
 //     //     })
 //     // })
 // }
-import { approveSession } from "./walletconnect/walletconnect";
-import { Session } from "./session/session";
+import {Session} from "./session/session";
 
 console.log('Hi!');
 

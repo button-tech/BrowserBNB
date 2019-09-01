@@ -9,7 +9,7 @@
  */
 // @ts-ignore
 import * as Binance from '../../../view/src/assets/binance/bnbSDK.js';
-import { ISignedTransaction } from "./types";
+import {ISignedTransaction} from "./types";
 
 const isNotEmptyString = (str: string | any): boolean => {
     return !!str && (typeof str === 'string' || str instanceof String);

@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
-import { AuthService } from './services/auth.service';
-import { StorageService } from './services/storage.service';
-import { map, switchMap } from 'rxjs/operators';
-import { of, Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ChromeApiService } from "./services/chrome-api.service";
+import {Component} from '@angular/core';
+import {AuthService} from './services/auth.service';
+import {StorageService} from './services/storage.service';
+import {map, switchMap} from 'rxjs/operators';
+import {of, Subscription} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ChromeApiService} from "./services/chrome-api.service";
 import {LoadersCSS} from "ngx-loaders-css";
+import {environment} from "../environments/environment.prod";
 
 @Component({
     selector: 'app-root',
@@ -19,7 +20,7 @@ export class AppComponent {
     color = 'rgb(239, 184, 11) ';
 
     subscription: Subscription;
-    isLoaded: boolean = false;
+    isLoaded = false;
 
     constructor(private router: Router,
                 private activatedRoute: ActivatedRoute,
@@ -29,31 +30,44 @@ export class AppComponent {
     ) {
 
         console.log('AppComponent: try to restorePassword');
+        if (!environment.production) {
 
-        this.subscription = this.storageService.hasAccountOnce$().pipe(
-          switchMap((hasAccount: boolean) => {
-              if (!hasAccount)
-                  return of('/greeter');
 
-              return this.chromeApiService.restorePassword().pipe(
-                switchMap((password) => {
-                    if (!password) {
-                        return of('/unlock');
+            this.subscription = this.storageService.hasAccountOnce$().pipe(
+                switchMap((hasAccount: boolean) => {
+                    if (!hasAccount) {
+                        return of('/greeter');
                     }
 
-                    return this.authService.login(password).pipe(
-                      map((isLoggedIn: boolean) => {
-                          return isLoggedIn ? '/main' : '/unlock';
-                      })
-                    )
-                })
-              );
-          })
-        ).subscribe((route) => {
-            this.isLoaded = true;
-            this.router.navigate([route]);
-        });
-    }
+                    return this.chromeApiService.restorePassword().pipe(
+                        switchMap((password) => {
+                            if (!password) {
+                                return of('/unlock');
+                            }
 
+                            return this.authService.login(password).pipe(
+                                map((isLoggedIn: boolean) => {
+                                    return isLoggedIn ? '/main' : '/unlock';
+                                })
+                            );
+                        })
+                    );
+                })
+            ).subscribe((route) => {
+                this.isLoaded = true;
+                this.router.navigate([route]);
+            });
+        } else {
+            this.subscription = this.storageService.hasAccountOnce$().pipe(
+                switchMap((hasAccount: boolean) => {
+                    this.isLoaded = true;
+                    return of('/unlock');
+                })
+            ).subscribe((route) => {
+                this.router.navigate([route]);
+            });
+        }
+
+    }
 }
 

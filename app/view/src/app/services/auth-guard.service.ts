@@ -1,11 +1,11 @@
 // src/app/auth/auth-guard.service.ts
-import { Injectable } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
-import { AuthService } from './auth.service';
-import { StorageService } from './storage.service';
-import { combineLatest, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { ChromeApiService } from "./chrome-api.service";
+import {Injectable} from '@angular/core';
+import {CanActivate, Router} from '@angular/router';
+import {AuthService} from './auth.service';
+import {StorageService} from './storage.service';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {ChromeApiService} from "./chrome-api.service";
 
 @Injectable()
 export class AuthGuardService implements CanActivate {

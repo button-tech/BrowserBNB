@@ -1,11 +1,9 @@
 import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import {RouterModule, Routes} from '@angular/router';
 import {FirstPageComponent} from './components/first-page/first-page.component';
 import {MainComponent} from './components/main/main.component';
 import {UnlockComponent} from './components/unlock/unlock.component';
-import {
-    AuthGuardService as AuthGuard
-} from './services/auth-guard.service';
+import {AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import {RegistrationComponent} from './components/registration/registration.component';
 import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';

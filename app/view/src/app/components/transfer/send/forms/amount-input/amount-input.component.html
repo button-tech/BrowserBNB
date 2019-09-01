@@ -1,26 +1,27 @@
 <div class="wrap text-center send-amount-row">
     <mat-form-field class="example-full-width form-group send-field">
-        <div [ngClass]="{
-          'amount-field-grid': currentState.rate2usd,
-          'amount-field-block': !currentState.rate2usd
-          }">
+<!--        <div [ngClass]="{-->
+<!--          'amount-field-grid': currentState.rate2usd,-->
+<!--          'amount-field-block': !currentState.rate2usd-->
+<!--          }">-->
+        <div class="amount-field-grid">
             <div class="amount-field-input">
                 <input autocomplete="off" #sum class="form-control" matInput value="0" (input)="this.nextValue()">
             </div>
 
             <div class="overflow-ellipsis amount-field-currency-main">
-                {{currentState.baseSymbol || ''}}
+                {{(currentState$ | async).baseSymbol  || 'BNB'}}
             </div>
 
-            <div *ngIf="currentState.rate2usd" class="amount-field-secondary-sum overflow-ellipsis">
-                {{currentState.calculatedSum || 0}}
+            <div *ngIf="(currentState$ | async).rate2usd" class="amount-field-secondary-sum overflow-ellipsis">
+                {{(currentState$ | async).calculatedSum || 0 }}
             </div>
 
             <div class="amount-field-currency-second">
-                {{currentState.secondarySymbol || '' }}
+                {{(currentState$ | async).secondarySymbol || 'USD' }}
             </div>
 
-            <div *ngIf="currentState.rate2usd" (click)="swapCurrencies();" class="amount-field-switch">
+            <div *ngIf="(currentState$ | async).rate2usd" (click)="swapCurrencies();" class="amount-field-switch">
                 <i class="fa fa-exchange fa-rotate-90"></i>
             </div>
         </div>

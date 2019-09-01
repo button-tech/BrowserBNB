@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { createMnemonic, getSHA3hashSum } from './binance-crypto';
-import { StorageService } from './storage.service';
-import { StateService } from './state.service';
+import {Injectable} from '@angular/core';
+import {createMnemonic, getSHA3hashSum} from './binance-crypto';
+import {StorageService} from './storage.service';
+import {StateService} from './state.service';
 
 @Injectable()
 export class RegistrationService {

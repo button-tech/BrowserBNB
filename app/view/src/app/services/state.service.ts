@@ -1,15 +1,9 @@
 import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, concat, merge, Observable, Observer, of, Subject, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, Observable, of, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {
-    distinctUntilChanged,
-    map,
-    shareReplay,
-    switchMap,
-    tap
-} from 'rxjs/operators';
+import {distinctUntilChanged, map, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {rawTokensImg} from '../constants';
@@ -224,7 +218,7 @@ export class StateService {
                     ? [currentAccount.addressMainnet, NETWORK_ENDPOINT_MAPPING.MAINNET]
                     : [currentAccount.addressTestnet, NETWORK_ENDPOINT_MAPPING.TESTNET];
 
-                return timer(0, 5000).pipe(
+                return timer(0, 10000).pipe(
                     switchMap(() => {
                         return this.bncService.getBalance$(address, endpoint);
                     })
@@ -288,11 +282,11 @@ export class StateService {
         //
         // this.bnb2usdRate$ = bnb2usdRateWs$;
 
-        this.bnb2usdRate$.subscribe(
-          bnbPrice2USD => {},
-          err => console.log('err'),
-          () =>  console.log( 'The observable stream is complete')
-        );
+        // this.bnb2usdRate$.subscribe(
+        //   bnbPrice2USD => {},
+        //   err => console.log('err'),
+        //   () =>  console.log( 'The observable stream is complete')
+        // );
 
         this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, this.bnb2usdRate$]).pipe(
             map((arr: any[]) => {

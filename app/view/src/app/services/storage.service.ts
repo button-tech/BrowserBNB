@@ -1,12 +1,12 @@
 /// <reference types="chrome"/>
-import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { debounce, map, switchMap } from 'rxjs/operators';
-import { from, of, Observable, Subject } from 'rxjs';
-import { BinanceService } from './binance.service';
+import {Injectable} from '@angular/core';
+import {environment} from '../../environments/environment';
+import {map, switchMap} from 'rxjs/operators';
+import {from, Observable, Subject} from 'rxjs';
+import {BinanceService} from './binance.service';
 import * as passworder from 'browser-passworder';
-import { getAddressFromPrivateKey, getPrivateKeyFromMnemonic } from './binance-crypto';
-import { NETWORK_ENDPOINT_MAPPING } from './network_endpoint_mapping';
+import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
+import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 
 
 export type NetworkType = 'bnb' | 'tbnb' | null;

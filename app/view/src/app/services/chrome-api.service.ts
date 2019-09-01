@@ -1,9 +1,9 @@
 /// <reference types="chrome"/>
-import { Injectable, Injector, NgZone } from '@angular/core';
-import { environment } from "../../environments/environment";
-import { fromEvent, Observable, of, Subject, timer } from "rxjs";
+import {Injectable, Injector} from '@angular/core';
+import {environment} from "../../environments/environment";
+import {Observable, Subject, timer} from "rxjs";
+import {distinctUntilChanged, filter, map, shareReplay, take, tap} from "rxjs/operators";
 import Port = chrome.runtime.Port;
-import { distinctUntilChanged, filter, map, shareReplay, switchMap, take, tap } from "rxjs/operators";
 
 // TODO: move to shared resource and implement watch
 type FromPage2BackgroundMsg = {

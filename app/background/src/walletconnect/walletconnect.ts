@@ -9,8 +9,8 @@
 */
 
 import WalletConnect from "@walletconnect/browser/lib";
-import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
-import { ISignedTransaction } from "./types";
+import {getAddressFromPrivateKey, signTransaction} from "./binancecrypto";
+import {ISignedTransaction} from "./types";
 
 export function approveSession(wcSessionEndpoint: string) {
     // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';

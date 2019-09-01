@@ -15,11 +15,6 @@ export class SendComponent implements OnDestroy {
     fee: Observable<number>;
     subscription: Subscription;
 
-    public x1 = '11';
-
-    formData: {
-        address: string
-    };
 
     constructor(private router: Router, private stateService: StateService) {
         this.subscription = timer(0, 500).subscribe(() => {

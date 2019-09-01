@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import { BehaviorSubject, interval, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, map, startWith, switchMap, tap } from 'rxjs/operators';
+import {BehaviorSubject, interval, Observable, of} from 'rxjs';
+import {catchError, filter, map, switchMap, tap} from 'rxjs/operators';
 import {IStorageData, StorageService} from './storage.service';
 import {StateService} from './state.service';
 import {Router} from '@angular/router';
@@ -27,14 +27,15 @@ export class AuthService {
         this.isLoggedIn$.pipe(
           switchMap((isLoggedIn) => {
 
-              if(isLoggedIn)
+              if (isLoggedIn) {
                   return interval(2500).pipe(map( () => true));
+              }
 
               return of(false);
           }),
           filter( (x) => x),
           tap( () => {
-              this.chromeApiService.sendKeepAlive()
+              this.chromeApiService.sendKeepAlive();
           })
         ).subscribe();
     }

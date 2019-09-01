@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ITransaction, StateService} from "../../../../../services/state.service";
-import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
+import {BehaviorSubject, combineLatest, Observable, of} from "rxjs";
 import {map, shareReplay, switchMap} from "rxjs/operators";
 
 interface IAmounts {
@@ -18,32 +18,24 @@ interface IAmounts {
 })
 export class AmountInputComponent implements OnInit, OnDestroy {
 
-
     currentState$: Observable<IAmounts>;
 
     userInput$: BehaviorSubject<number> = new BehaviorSubject(0);
-    // currencyOfUserInput$: BehaviorSubject<string> = new BehaviorSubject('BNB');
     swapCurrencies$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-
-    currentState = {
-        'baseSymbol': '',
-        'secondarySymbol': '',
-        'calculatedSum': 0,
-        'rate2usd': 0
-    };
 
     // @ts-ignore
     @ViewChild('sum')
     inputElement: ElementRef;
 
-    subscription: Subscription;
-
     constructor(private stateService: StateService) {
+        const cuTx$ = this.stateService.currentTransaction;
 
-        const selectedToken$ = this.stateService.currentTransaction.pipe(
+        const selectedToken$ = cuTx$.pipe(
             switchMap((x: ITransaction) => {
+                if (x.Symbol === '') {
+                    x.Symbol = 'BNB';
+                }
                 if (x.Symbol === 'BNB') {
-                    // return this.stateService.bnb2usdRate$
                     return this.stateService.bnb2usdRate$.pipe(
                         map((rate2usd) => {
                             return {
@@ -57,9 +49,6 @@ export class AmountInputComponent implements OnInit, OnDestroy {
             }),
             map((x: ITransaction) => {
                 const secondarySymbol = x.rate2usd === 0 ? '' : 'USD';
-                // const symbol = x.Symbol.length >= 7 && (x.rate2usd !== 0)
-                //     ? x.Symbol.substring(0, 4) + '...'
-                //     : x.Symbol;
 
                 return {
                     'baseSymbol': x.Symbol,
@@ -103,9 +92,6 @@ export class AmountInputComponent implements OnInit, OnDestroy {
             shareReplay(1)
         );
 
-        this.subscription = this.currentState$.subscribe((x) => {
-            this.currentState = x;
-        });
     }
 
     nextValue() {
@@ -119,13 +105,12 @@ export class AmountInputComponent implements OnInit, OnDestroy {
 
     swapCurrencies() {
         const doSwap = this.swapCurrencies$.getValue();
-        this.swapCurrencies$.next(!doSwap);
+        return this.swapCurrencies$.next(!doSwap);
     }
 
     ngOnInit() {
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
     }
 }

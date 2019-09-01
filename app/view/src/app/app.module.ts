@@ -30,9 +30,7 @@ import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {CoinsSelectComponent} from './components/transfer/send/forms/coins-select/coins-select.component';
 import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
-import {
-    MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,
-} from '@angular/material';
+import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,} from '@angular/material';
 import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
 import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
@@ -48,7 +46,7 @@ import {NgxLoadersCssModule} from 'ngx-loaders-css';
 import {GeneralComponent} from './components/main/menu-top/settings/general/general.component';
 import {AdvancedComponent} from './components/main/menu-top/settings/advanced/advanced.component';
 import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
-import { ChromeApiMockService, ChromeApiRealService, ChromeApiService } from "./services/chrome-api.service";
+import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
 
 
 @NgModule({
