@@ -1,9 +1,9 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { RegistrationService } from '../../../services/registration.service';
-import { AlertsService } from '../../../services/alerts.service';
-import { isValidMnemonic } from '../../../services/binance-crypto';
-import { StateService } from "../../../services/state.service";
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {RegistrationService} from '../../../services/registration.service';
+import {AlertsService} from '../../../services/alerts.service';
+import {isValidMnemonic} from '../../../services/binance-crypto';
+import {StateService} from "../../../services/state.service";
 
 @Component({
     selector: 'app-import-mnemonic',

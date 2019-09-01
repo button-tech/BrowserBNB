@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {Location} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {LoadersCSS} from 'ngx-loaders-css';
-import {StateService, ITokenInfo} from "../../../services/state.service";
+import {ITokenInfo, StateService} from "../../../services/state.service";
 
 @Component({
     selector: 'app-all-balances',

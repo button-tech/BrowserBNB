@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {StateService, ITokenInfo, ITransaction} from '../../../../../services/state.service';
-import {combineLatest, Observable, Subscription, timer} from 'rxjs';
-import {debounceTime, distinctUntilChanged, map, shareReplay, switchMap, take} from "rxjs/operators";
+import {ITokenInfo, StateService} from '../../../../../services/state.service';
+import {Observable, Subscription} from 'rxjs';
+import {distinctUntilChanged, map} from "rxjs/operators";
 
 
 @Component({

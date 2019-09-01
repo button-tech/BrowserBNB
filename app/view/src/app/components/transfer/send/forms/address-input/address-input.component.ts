@@ -1,7 +1,7 @@
-import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, ViewChild} from '@angular/core';
 import {validateAddress} from '../../../../../services/binance-crypto';
 import {FormControl} from "@angular/forms";
-import {ITransaction, StateService} from "../../../../../services/state.service";
+import {StateService} from "../../../../../services/state.service";
 
 
 @Component({

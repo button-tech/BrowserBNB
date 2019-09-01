@@ -1,11 +1,11 @@
 import {Component, OnDestroy} from '@angular/core';
-import {Observable, of, Subscription} from 'rxjs';
-import {map, take, tap} from 'rxjs/operators';
+import {of, Subscription} from 'rxjs';
+import {tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
 import {IHistoryTx} from '../../../services/binance.service';
-import {StateService, ITransaction} from '../../../services/state.service';
+import {StateService} from '../../../services/state.service';
 
 @Component({
     selector: 'app-history-component',

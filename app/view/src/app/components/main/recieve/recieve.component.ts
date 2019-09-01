@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {map, take, takeUntil} from "rxjs/operators";
-import {Observable, of, Subscription, timer} from "rxjs";
+import {Observable, Subscription, timer} from "rxjs";
 import {ClipboardService} from "../../../services/clipboard.service";
 import {ChromeApiService} from "../../../services/chrome-api.service";
 import {StateService} from "../../../services/state.service";

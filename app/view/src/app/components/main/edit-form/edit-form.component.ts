@@ -1,4 +1,4 @@
-import {EventEmitter, Component, Input, Output, Optional, Host, OnInit} from '@angular/core';
+import {Component, EventEmitter, Host, Input, Optional, Output} from '@angular/core';
 import {SatPopover} from '@ncstate/sat-popover';
 
 @Component({

@@ -4,7 +4,7 @@ import {AlertsService} from '../../../services/alerts.service';
 import {AuthService} from '../../../services/auth.service';
 import {RegistrationService} from '../../../services/registration.service';
 import {timer} from 'rxjs';
-import {switchMap, take, tap} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 
 @Component({
     selector: 'app-register-repeat-password',

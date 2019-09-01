@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {NetworkType} from '../../../../services/storage.service';
 import {NETWORK_ENDPOINT_MAPPING} from '../../../../services/network_endpoint_mapping';
 import {IUiState, StateService} from '../../../../services/state.service';
-import {pluck, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 @Component({

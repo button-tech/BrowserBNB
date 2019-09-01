@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {map, pluck} from 'rxjs/operators';
+import {Component} from '@angular/core';
+import {pluck} from 'rxjs/operators';
 import {AuthService} from '../../../../services/auth.service';
 import {IUiAccount, StateService} from '../../../../services/state.service';
 import {Observable} from 'rxjs';
