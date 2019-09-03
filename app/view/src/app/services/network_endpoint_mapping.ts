@@ -6,4 +6,4 @@ export enum NETWORK_ENDPOINT_MAPPING {
     'TESTNET' = 'https://testnet-dex.binance.org/',
     'TESTNET_ASIA' = 'https://testnet-dex-asiapacific.binance.org/',
     'TESTNET_ATLANTIC' = 'https://testnet-dex-atlantic.binance.org/'
-};
+}

@@ -15,7 +15,9 @@
                 Language: 
             </h4>
             <h4>
-                Engilsh (new languages will be soon)
+                <ng-select [clearable]="false" [items]="languagesList"
+                           [(ngModel)]="selectedLanguage">
+                </ng-select>
             </h4>
         </div>
         <div class="col-12">
@@ -23,7 +25,9 @@
                 Currency:
             </h4>
             <h4>
-                USD (new currencies will be soon)
+                <ng-select [clearable]="false" [items]="currenciesList"
+                           [(ngModel)]="selectedCurrency">
+                </ng-select>
             </h4>
         </div>
     </div>
