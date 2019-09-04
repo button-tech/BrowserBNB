@@ -18,6 +18,7 @@ import {HistoryDetailsComponent} from "./components/main/history-component/histo
 import {GeneralComponent} from "./components/main/menu-top/settings/general/general.component";
 import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/advanced.component";
 import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/security-privacy/security-privacy.component";
+import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
 
 const routes: Routes = [
     {
@@ -53,6 +54,11 @@ const routes: Routes = [
     {
         path: 'securitynprivacy',
         component: SecurityPrivacyComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'networks',
+        component: CustomNetworksComponent,
         canActivate: [AuthGuard]
     },
     {

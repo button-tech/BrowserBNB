@@ -36,7 +36,14 @@ export class NetworksComponent {
         this.selectedNetworkLabel$ = stateService.uiState$.pipe(
             map((uiState: IUiState) => {
                 const network = uiState.storageData.selectedNetwork;
-                return network === 'bnb' ? 'MAINNET' : 'TESTNET';
+                switch (network) {
+                    case 'bnb':
+                        return 'MAINNET';
+                    case 'tbnb':
+                        return 'TESTNET';
+                    default:
+                        return 'MAINNET';
+                }
             })
         );
     }

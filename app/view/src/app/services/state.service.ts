@@ -331,7 +331,7 @@ export class StateService {
                 map((x: any[]) => {
                     const [balances, marketRates, bnb2usd] = x;
                     const imagesUrls = JSON.parse(rawTokensImg);
-                    let finalBalances = [];
+                    const finalBalances = [];
 
                     balances.forEach((token) => {
                         const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
@@ -598,6 +598,56 @@ export class StateService {
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
+        const newSelectedNetwork: IMenuItem = {
+            networkPrefix,
+            val,
+            label
+        };
+
+        this.selectedNetwork$.next(newSelectedNetwork);
+
+        const newAccounts = this.uiState.accounts.map((account) => {
+            const newAddress = network === 'bnb'
+                ? account.addressMainnet
+                : account.addressTestnet;
+
+            return {
+                ...account,
+                address: newAddress,
+                shortAddress: toShortAddress(newAddress)
+            };
+        });
+
+        const currentAccount = newAccounts.find((account) => {
+            return account.addressMainnet === this.uiState.storageData.selectedAddress ||
+                account.addressTestnet === this.uiState.storageData.selectedAddress;
+        });
+
+        const newUiState: IUiState = {
+            ...this.uiState,
+            accounts: newAccounts,
+            currentAccount,
+            storageData: newStorageState
+        };
+
+        this.uiState$.next(newUiState);
+    }
+    switchNetworkCustom(network: NetworkType, val: string): void {
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            selectedNetwork: network,
+            selectedNetworkEndpoint: val
+        };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        const networkPrefix = network;
+        let label;
+        if (network === 'bnb') {
+           label = 'mainnet';
+        } else if (network === 'tbnb') {
+            label = 'testnet';
+        }
+        
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,
             val,

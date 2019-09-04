@@ -9,14 +9,14 @@ import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-cry
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 
 
-export type NetworkType = 'bnb' | 'tbnb' | null;
+export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
 
 export interface IStorageAccount {
     addressMainnet: string;
     addressTestnet: string;
     privateKey: string;
-    index: number | null, // null in address was imported (not derived from main seed)
-    name: string,
+    index: number | null; // null in address was imported (not derived from main seed)
+    name: string;
 }
 
 export interface IStorageData {
@@ -153,20 +153,7 @@ export class StorageService {
                 return dectypted as IStorageData;
             })
         );
-
-        // return of(
-        //     {
-        //         "seedPhrase":"ribbon later orchard price satisfy pill recall quiz cube infant ignore erosion hire mom desk hair rule virtual spread curve juice alley now leader",
-        //         "accounts": [
-        //             {
-        //                 "addressMainnet":"bnb15eplk74ht9tmp65qkller7l7erpqf76puuwldx",
-        //                 "addressTestnet":"tbnb15eplk74ht9tmp65qkller7l7erpqf76pjf8mdh",
-        //                 "privateKey":"cca69ca8959b928a7ccff8506a724dbe6ea3e3ed896d51cce3f6115920830cc2","index":0,"name":"Account 1"
-        //             }
-        //         ],
-        //         "selectedAddress":"bnb15eplk74ht9tmp65qkller7l7erpqf76puuwldx","selectedNetwork":"bnb","selectedNetworkEndpoint":"https://dex.binance.org/"
-        //     }
-        // );
+        
     }
 
     async encryptAndSave(data: IStorageData, password: string): Promise<void> {
@@ -212,7 +199,7 @@ export class StorageService {
     reset(): void {
         if (environment.production) {
             chrome.storage.local.clear(() => {
-                let error = chrome.runtime.lastError;
+                const error = chrome.runtime.lastError;
                 if (error) {
                     console.error(error);
                 }

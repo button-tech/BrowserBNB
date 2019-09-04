@@ -47,6 +47,7 @@ import {GeneralComponent} from './components/main/menu-top/settings/general/gene
 import {AdvancedComponent} from './components/main/menu-top/settings/advanced/advanced.component';
 import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
 import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
+import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
 
 
 @NgModule({
@@ -78,7 +79,8 @@ import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./se
         FmtPipe,
         GeneralComponent,
         AdvancedComponent,
-        SecurityPrivacyComponent
+        SecurityPrivacyComponent,
+        CustomNetworksComponent
     ],
     imports: [
         BrowserModule,

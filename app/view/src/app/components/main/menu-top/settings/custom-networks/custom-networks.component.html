@@ -1,0 +1,24 @@
+<div class="container header">
+    <div style="margin-top: 0px;padding-bottom: 0em; height: 67px" class="row">
+        <div class="col-12 text-center">
+            <button style="color: rgb(255,255,255); margin-top: 0.5em;" (click)="goBack()"
+                    class="btn btn-just-icon btn-back btn-round">
+                <fa name="arrow-left" size="sm"></fa>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h4 style="font-weight: bolder; color: rgb(33, 40, 51);">
+                Networks:
+            </h4>
+            <h4>
+                <ng-select [clearable]="false" [searchable]="false" [items]="networksList"
+                           [(ngModel)]="selectedNetwork" (change)="selectNetwork()">
+                </ng-select>
+            </h4>
+        </div>
+    </div>
+</div>
