@@ -19,6 +19,7 @@ import {GeneralComponent} from "./components/main/menu-top/settings/general/gene
 import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/advanced.component";
 import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/security-privacy/security-privacy.component";
 import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
+import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
 
 const routes: Routes = [
     {
@@ -59,6 +60,11 @@ const routes: Routes = [
     {
         path: 'networks',
         component: CustomNetworksComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'about',
+        component: AboutComponent,
         canActivate: [AuthGuard]
     },
     {

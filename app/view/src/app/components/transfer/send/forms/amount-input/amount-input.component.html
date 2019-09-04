@@ -18,7 +18,7 @@
             </div>
 
             <div class="amount-field-currency-second">
-                {{(currentState$ | async).secondarySymbol || 'USD' }}
+                {{(currentState$ | async).secondarySymbol || '' }}
             </div>
 
             <div *ngIf="(currentState$ | async).rate2usd" (click)="swapCurrencies();" class="amount-field-switch">
