@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {AlertsService} from "../../../../services/alerts.service";
 import {Router} from "@angular/router";
+import {ChromeApiService} from "../../../../services/chrome-api.service";
 
 @Component({
     selector: 'app-settings',
@@ -10,7 +11,10 @@ import {Router} from "@angular/router";
 })
 export class SettingsComponent implements OnInit {
 
-    constructor(private location: Location, public alert: AlertsService, private router: Router) {
+    constructor(private location: Location,
+                public alert: AlertsService,
+                private router: Router,
+                private chrome: ChromeApiService) {
     }
 
     ngOnInit() {
@@ -18,6 +22,10 @@ export class SettingsComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    sendToFeedBack() {
+        this.chrome.openNewTab(`https://forms.gle/nQ3atMNb9AZtZmPB9`);
     }
 
     showInfo() {

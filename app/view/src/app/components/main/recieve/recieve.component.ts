@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {map, take, takeUntil} from "rxjs/operators";
 import {Observable, Subscription, timer} from "rxjs";
@@ -11,13 +11,17 @@ import {StateService} from "../../../services/state.service";
     templateUrl: './recieve.component.html',
     styleUrls: ['./recieve.component.css']
 })
-export class RecieveComponent implements OnInit {
+export class RecieveComponent implements OnInit, OnDestroy {
     subscription: Subscription;
     address$: Observable<string>;
     copyMessage = 'Copy to clipboard';
     qrCode: string;
     network: string;
-    constructor(private location: Location, private clipboardService: ClipboardService, private  chrome: ChromeApiService, private stateService: StateService) {
+
+    constructor(private location: Location,
+                private clipboardService: ClipboardService,
+                private  chrome: ChromeApiService,
+                private stateService: StateService) {
         this.address$ = this.stateService.currentAddress$;
 
         this.subscription = this.address$.pipe(
@@ -56,10 +60,10 @@ export class RecieveComponent implements OnInit {
         }
         address$.pipe(
             map((address: any) => {
-                this.chrome.openNewTab(`${url}${address}`)
+                this.chrome.openNewTab(`${url}${address}`);
             }),
             take(1)
-        ).subscribe()
+        ).subscribe();
     }
 
     goBack() {

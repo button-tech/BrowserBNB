@@ -585,17 +585,19 @@ export class StateService {
     }
 
     switchNetwork(network: NetworkType): void {
-
-        const newStorageState: IStorageData = {
-            ...this.uiState.storageData,
-            selectedNetwork: network
-        };
-        this.storageService.encryptAndSave(newStorageState, this.password);
-
+        
         const networkPrefix = network;
         const val = networkPrefix === 'bnb'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
+
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            selectedNetwork: network,
+            selectedNetworkEndpoint: val
+        };
+
+        this.storageService.encryptAndSave(newStorageState, this.password);
 
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: IMenuItem = {
