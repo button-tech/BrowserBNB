@@ -1,0 +1,8 @@
+.confirmation-form-img img {
+    width: 70px;
+}
+
+.reject-btn:hover {
+    background: #f44336;
+    color: white;
+}

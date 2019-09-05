@@ -20,6 +20,7 @@ import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/ad
 import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/security-privacy/security-privacy.component";
 import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
 import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
+import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
 
 const routes: Routes = [
     {
@@ -30,6 +31,11 @@ const routes: Routes = [
     {
         path: 'main',
         component: MainComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'wc-approve',
+        component: WcSessionApproveComponent,
         canActivate: [AuthGuard]
     },
     {
@@ -112,7 +118,7 @@ const routes: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(routes, {
         onSameUrlNavigation: 'reload',
-        //useHash: true
+        // useHash: true
     })],
     exports: [RouterModule]
 })
