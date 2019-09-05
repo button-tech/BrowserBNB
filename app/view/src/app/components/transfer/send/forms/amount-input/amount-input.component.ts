@@ -28,9 +28,6 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     inputElement: ElementRef;
 
     constructor(private stateService: StateService) {
-
-
-
     }
 
     nextValue() {

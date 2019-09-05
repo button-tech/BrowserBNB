@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map} from 'rxjs/operators';
@@ -11,7 +11,7 @@ import {IBalance} from "../../services/binance.service";
     templateUrl: './main.component.html',
     styleUrls: ['./main.component.css']
 })
-export class MainComponent {
+export class MainComponent implements OnInit {
 
     bnb$: Observable<number>;
     bnbInUsd$: Observable<number>;
@@ -21,11 +21,14 @@ export class MainComponent {
     allBalances$: Observable<any>;
     copyMessage = 'Copy to clipboard';
 
+    // @ts-ignore
+    @ViewChild('alphaAlert')
+    alphaAlert: ElementRef;
+
     constructor(public stateService: StateService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
     ) {
-
         this.accountName$ = this.stateService.uiState$.pipe(
             map((uiState: IUiState) => {
                 return uiState.currentAccount.name;
@@ -40,12 +43,23 @@ export class MainComponent {
                 return balances.length > 0;
             })
         );
+    }
 
+    ngOnInit() {
+        const resultAlert = localStorage.getItem('alert');
+        if (resultAlert && resultAlert === 'yes' &&  this.alphaAlert) {
+            this.alphaAlert.nativeElement.style.display = 'none';
+        }
     }
 
     copyAddress() {
         const currentAddress = this.stateService.currentAddress;
         this.clipboardService.copyToClipboard(currentAddress);
         this.copyMessage = 'Copied ✔';
+    }
+
+    closeAlphaAlert() {
+        this.alphaAlert.nativeElement.style.display = 'none';
+        localStorage.setItem('alert', 'yes');
     }
 }
