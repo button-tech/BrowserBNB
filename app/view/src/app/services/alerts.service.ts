@@ -1,20 +1,15 @@
 import {Injectable} from '@angular/core';
-import {ToastrManager} from "ng6-toastr-notifications";
+import {ToastrService} from "ngx-toastr";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AlertsService {
 
-    constructor(public toastr: ToastrManager) {
+    constructor(private toastr: ToastrService) {
     }
 
     showError(message: string, title: string) {
-        this.toastr.errorToastr(message, title, {
-            position: 'top-full-width',
-            maxShown: 1,
-            showCloseButton: true,
-            toastTimeout: 5000
-        });
+        this.toastr.error(message, title);
     }
 }
