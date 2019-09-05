@@ -49,6 +49,7 @@ import {SecurityPrivacyComponent} from './components/main/menu-top/settings/secu
 import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
 import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
 import {AboutComponent} from './components/main/menu-top/settings/about/about.component';
+import { ApproveComponent } from './components/approve/approve.component';
 
 
 @NgModule({
@@ -82,7 +83,8 @@ import {AboutComponent} from './components/main/menu-top/settings/about/about.co
         AdvancedComponent,
         SecurityPrivacyComponent,
         CustomNetworksComponent,
-        AboutComponent
+        AboutComponent,
+        ApproveComponent
     ],
     imports: [
         BrowserModule,
