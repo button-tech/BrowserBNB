@@ -1,7 +1,7 @@
 <form [formGroup]="heroForm" novalidate class="mb-0">
     <div class="form-row">
         <div class="col-md-12">
-            <ng-select [searchable]="true" [clearable]="false" labelForId="heroId" class="custom send-input"
+            <ng-select [searchable]="false" [clearable]="false" labelForId="heroId" class="custom send-input"
                        formControlName="heroId"
                        (change)="selectCoin(this.heroForm.getRawValue().heroId)">
                 <ng-option value="BNB">
