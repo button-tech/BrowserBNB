@@ -66,7 +66,11 @@
 }
 
 .amount-field-block {
+    display: grid;
     height: 55px;
+    grid-template: 1fr / 120px 60px 20px;
+    grid-column-gap: 0;
+    width: 100%;
 }
 
 .amount-field-block .amount-field-input {
@@ -76,4 +80,10 @@
 .amount-field-block input {
     height: 55px;
     margin-top: 0;
+}
+
+.amount-field-block .amount-field-currency-main {
+    height: 55px;
+    margin: 0;
+    line-height: 55px;
 }

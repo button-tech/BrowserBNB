@@ -27,7 +27,7 @@ body {
     background: none !important;
     font-weight: bold !important;
     box-shadow: none !important;
-    border-radius: 100px !important;
+    border-radius: 6px !important;
 }
 
 .btn-binance-outline-two:hover {
@@ -44,6 +44,20 @@ body {
 .btn-binance-outline:not([disabled]):hover {
     color: rgb(255, 255, 255) !important;
     background: linear-gradient(90deg, rgb(239, 184, 11) 0%, rgb(251, 218, 60) 100%) !important;
+}
+
+.btn-outline-danger {
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+}
+
+.btn-outline-danger:hover,
+.btn-outline-danger:focus {
+    background: #e52d27;
+    background: -webkit-linear-gradient(to right, #b31217, #e52d27);
+    background: linear-gradient(to right, #b31217, #e52d27);
+    color: #fff !important;
 }
 
 .btn-infos {
