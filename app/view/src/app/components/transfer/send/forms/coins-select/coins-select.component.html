@@ -1,9 +1,12 @@
 <form [formGroup]="heroForm" novalidate class="mb-0">
     <div class="form-row">
         <div class="col-md-12">
-            <ng-select [searchable]="false" [clearable]="false" labelForId="heroId" class="custom send-input"
+            <ng-select  #select [searchable]="false" [clearable]="false" labelForId="heroId" class="custom send-input"
                        formControlName="heroId"
                        (change)="selectCoin(this.heroForm.getRawValue().heroId)">
+                <ng-template ng-header-tmp>
+                    <input style="width: 100%; line-height: 14px; height: 24px !important;" placeholder="Search for tokens" type="text" (input)="select.filter($event.target.value)"/>
+                </ng-template>
                 <ng-option value="BNB">
                     <div class="coins-select-option">
                         <img class="coins-select-option-img" src="../../../../../../assets/icons/icon128.png"/>
