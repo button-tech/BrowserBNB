@@ -4,7 +4,6 @@ import {NETWORK_ENDPOINT_MAPPING} from "../../../../../services/network_endpoint
 import {IUiState, StateService} from "../../../../../services/state.service";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
-import {NetworkType} from "../../../../../services/storage.service";
 
 @Component({
     selector: 'app-custom-networks',

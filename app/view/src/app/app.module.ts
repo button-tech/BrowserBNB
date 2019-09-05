@@ -1,7 +1,7 @@
 import {QRCodeModule} from 'angularx-qrcode';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import { ToastrModule } from 'ngx-toastr';
+import {ToastrModule} from 'ngx-toastr';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {FirstPageComponent} from './components/first-page/first-page.component';
@@ -48,7 +48,7 @@ import {AdvancedComponent} from './components/main/menu-top/settings/advanced/ad
 import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
 import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
 import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
-import { AboutComponent } from './components/main/menu-top/settings/about/about.component';
+import {AboutComponent} from './components/main/menu-top/settings/about/about.component';
 
 
 @NgModule({
