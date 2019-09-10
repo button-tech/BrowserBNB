@@ -19,7 +19,6 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
     subscription1: Subscription;
     subscription2: Subscription;
 
-
     constructor(private fb: FormBuilder, public stateService: StateService) {
         this.subscription1 = this.stateService.selectedNetwork$
             .pipe(

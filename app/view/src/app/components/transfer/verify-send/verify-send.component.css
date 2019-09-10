@@ -8,3 +8,22 @@
 .bd-da {
     box-shadow: none !important;
 }
+.verify-send-container {
+    border: solid 1px #ccc;
+    border-radius: 6px;
+}
+
+.verify-send-row-title {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.verify-send-row-sum {
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+.verify-send-row-sub-sum {
+    font-size: 13px;
+    margin-bottom: 0;
+}

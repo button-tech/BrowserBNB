@@ -1,46 +1,69 @@
 <div class="container-fluid">
     <app-menu-top></app-menu-top>
 </div>
-<div style="margin-top: 1em" class="row">
-    <div class="col-11 offset-1">
-        <div style="display: grid; grid-template: 1fr 1fr / 1fr 3fr; align-items: start ">
-            <br>
-            <div style="grid-column: 1; grid-row: 1">
-                <h5><strong>Sum:</strong></h5>
-            </div>
-
-            <div style="grid-column: 2;grid-row: 1">
-                <h5>{{(tx | async).Amount || ''}} {{(tx | async).mapppedName || ''}} </h5>
-                <h5 style="margin-top: -1em">
-                    <small>${{(txDetails | async).SumInFiat || 'pending'}} USD</small>
-                </h5>
-            </div>
-            <div style="grid-column: 1; grid-row: 2">
-                <h5><strong>Fee: </strong></h5>
-            </div>
-            <div style="grid-column: 2;grid-row: 2">
-                <h5>{{(txDetails | async).FeeInBNB || 'pending'}} BNB </h5>
-                <h5 style="margin-top: -1em">
-                    <small>${{(txDetails | async).FeeInFiat || 'pending'}} USD</small>
-                </h5>
-            </div>
-        </div>
-        <hr style="margin-right: 2em">
-        <div style="display: grid; grid-template-columns: 1fr 3fr; align-items: start; ">
-            <div style="grid-column: 1;">
-                <h5><strong>Total: </strong></h5>
-            </div>
-            <div style="grid-column: 2">
-                <h5>{{(txDetails | async).TotalSumInToken || 'pending'}}</h5>
-                <h5 style="margin-top: -1em">
-                    <small>${{(txDetails | async).TotalSumInFiat || 'pending'}} USD</small>
-                </h5>
+<div class="container-fluid">
+    <div class="verify-send-container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-10 mt-3">
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <p class="verify-send-row-title">Sum:</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="verify-send-row-sum">
+                            {{(tx | async).Amount || ''}} {{(tx | async).mapppedName || ''}}
+                        </p>
+                        <p class="verify-send-row-sub-sum">
+                            ${{(txDetails | async).SumInFiat || 'pending'}} USD
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <p class="verify-send-row-title">Fee:</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="verify-send-row-sum">
+                            {{(txDetails | async).FeeInBNB || 'pending'}} BNB
+                        </p>
+                        <p class="verify-send-row-sub-sum">
+                            ${{(txDetails | async).FeeInFiat || 'pending'}} USD
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div style="margin-top: 1em" id="buttonsDiv" class="col-12 text-center">
-        <button routerLink="/main" class="btn btn-outline-danger btn-lg main-btn bd-da">Reject
-        </button>
-        <button routerLink="/main" (click)="verify()" class="btn btn-binance-outline btn-lg main-btn">Verify</button>
+        <div class="row">
+            <div class="col-12">
+                <hr class="w-100 mb-4">
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-3">
+                        <p class="verify-send-row-title">Total:</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="verify-send-row-sum">
+                            {{(txDetails | async).TotalSumInToken || 'pending'}} BNB
+                        </p>
+                        <p class="verify-send-row-sub-sum">
+                            ${{(txDetails | async).TotalSumInFiat || 'pending'}} USD
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mt-3 mb-3 text-center">
+                <button routerLink="/main" class="btn btn-outline-danger btn-lg mr-1">
+                    Reject
+                </button>
+                <button routerLink="/main" (click)="verify()" class="btn btn-binance-outline btn-lg">
+                    Verify
+                </button>
+            </div>
+        </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 import {QRCodeModule} from 'angularx-qrcode';
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {ToastrModule} from 'ng6-toastr-notifications';
+import {ToastrModule} from 'ngx-toastr';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {FirstPageComponent} from './components/first-page/first-page.component';
@@ -30,7 +30,7 @@ import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {CoinsSelectComponent} from './components/transfer/send/forms/coins-select/coins-select.component';
 import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
-import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule} from '@angular/material';
+import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,} from '@angular/material';
 import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
 import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
@@ -48,7 +48,8 @@ import {AdvancedComponent} from './components/main/menu-top/settings/advanced/ad
 import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
 import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
 import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
-import { AboutComponent } from './components/main/menu-top/settings/about/about.component';
+import { ApproveComponent } from './components/approve/approve.component';
+import { AboutComponent } from './components/main/menu-top/settings/about/about.component'
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
 
 
@@ -84,14 +85,20 @@ import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-se
         SecurityPrivacyComponent,
         CustomNetworksComponent,
         AboutComponent,
-        WcSessionApproveComponent
+        WcSessionApproveComponent,
+        AboutComponent,
+        ApproveComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         AngularFontAwesomeModule,
         BrowserAnimationsModule,
-        ToastrModule.forRoot(),
+        ToastrModule.forRoot({
+            timeOut: 10000,
+            positionClass: 'toast-top-center',
+            preventDuplicates: true,
+        }),
         HttpClientModule,
         FormsModule,
         MatInputModule,

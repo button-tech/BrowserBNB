@@ -28,9 +28,24 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     inputElement: ElementRef;
 
     constructor(private stateService: StateService) {
-        const cuTx$ = this.stateService.currentTransaction;
+    }
 
-        const selectedToken$ = cuTx$.pipe(
+    nextValue() {
+        const value = this.inputElement.nativeElement.value;
+        this.userInput$.next(value);
+
+        const newTx = this.stateService.currentTransaction.getValue();
+        newTx.Amount = value;
+        this.stateService.currentTransaction.next(newTx);
+    }
+
+    swapCurrencies() {
+        const doSwap = this.swapCurrencies$.getValue();
+        return this.swapCurrencies$.next(!doSwap);
+    }
+
+    ngOnInit() {
+        const selectedToken$ = this.stateService.currentTransaction.pipe(
             switchMap((x: ITransaction) => {
                 if (x.Symbol === '') {
                     x.Symbol = 'BNB';
@@ -91,24 +106,6 @@ export class AmountInputComponent implements OnInit, OnDestroy {
             }),
             shareReplay(1)
         );
-
-    }
-
-    nextValue() {
-        const value = this.inputElement.nativeElement.value;
-        this.userInput$.next(value);
-
-        const newTx = this.stateService.currentTransaction.getValue();
-        newTx.Amount = value;
-        this.stateService.currentTransaction.next(newTx);
-    }
-
-    swapCurrencies() {
-        const doSwap = this.swapCurrencies$.getValue();
-        return this.swapCurrencies$.next(!doSwap);
-    }
-
-    ngOnInit() {
     }
 
     ngOnDestroy() {
