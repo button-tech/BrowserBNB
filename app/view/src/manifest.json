@@ -4,12 +4,12 @@
   "description": "Online wallet for Binance Chain",
   "version": "0.0.4",
   "icons": {
-    "16": "assets/icons/BNB 16.png",
-    "48": "assets/icons/BNB 48.png",
-    "128": "assets/icons/BNB 128.png"
+    "16": "assets/icons/bnb_browser_16.png",
+    "48": "assets/icons/bnb_browser_48.png",
+    "128": "assets/icons/bnb_browser_128.png"
   },
   "browser_action": {
-    "default_icon": "assets/icons/BNB 128.png",
+    "default_icon": "assets/icons/bnb_browser_128.png",
     "default_popup": "index.html"
   },
   "permissions": [
