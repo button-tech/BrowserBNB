@@ -7,7 +7,7 @@ import {distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, ta
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {rawTokensImg} from '../constants';
-import {CoursesService, CurrencySymbols} from "../courses.service";
+import {CoursesService, CurrencySymbols} from "./courses.service";
 
 export interface ITransaction {
     Amount: number;
@@ -282,7 +282,8 @@ export class StateService {
              map((uiState) => {
                  return uiState.storageData.baseFiatCurrency;
              }),
-            startWith(CurrencySymbols.USD)
+            startWith(CurrencySymbols.USD),
+            shareReplay(1),
          );
 
         this.bnb2fiatRate$ =

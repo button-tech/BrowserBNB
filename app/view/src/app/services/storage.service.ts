@@ -7,7 +7,7 @@ import {BinanceService} from './binance.service';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {CurrencySymbols} from "../courses.service";
+import {CurrencySymbols} from "./courses.service";
 
 
 export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
