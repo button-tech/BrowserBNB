@@ -40,19 +40,19 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
             this.subscription2.unsubscribe();
         }
 
-        this.subscription2 = this.stateService.bnb2usdRate$.pipe(
+        this.subscription2 = this.stateService.bnb2fiatRate$.pipe(
             map((rate: number) => {
                 if (rawCoin && rawCoin === 'BNB') {
                     newTx.mapppedName = 'BNB';
                     newTx.name = 'Binance coin';
                     newTx.Symbol = 'BNB';
-                    newTx.rate2usd = rate;
+                    newTx.rate2fiat = rate;
                 } else {
                     const coin = JSON.parse(rawCoin);
                     newTx.mapppedName = coin.mappedName;
                     newTx.name = coin.name;
                     newTx.Symbol = coin.symbol;
-                    newTx.rate2usd = coin.rate2usd;
+                    newTx.rate2fiat = coin.rate2usd;
                 }
                 this.stateService.currentTransaction.next(newTx);
             })

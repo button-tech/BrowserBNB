@@ -20,7 +20,7 @@
                 </ng-option>
 
                 <ng-option *ngFor="let token of (tokens$ | async)"
-                           value="{{ ({mappedName: token.mappedName, name: token.name, symbol: token.symbol, rate2usd:token.rate2usd }) | json }}">
+                           value="{{ ({mappedName: token.mappedName, name: token.name, symbol: token.symbol, rate2usd:token.rate2fiat }) | json }}">
                     <div class="coins-select-option">
                         <img class="coins-select-option-img"
                              src="{{token.image || '../../../../../../assets/icons/default.png'}}"/>

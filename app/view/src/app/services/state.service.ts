@@ -3,10 +3,11 @@ import {IStorageAccount, IStorageData, NetworkType, StorageService} from './stor
 import {BehaviorSubject, combineLatest, concat, Observable, of, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {distinctUntilChanged, map, shareReplay, switchMap, tap} from 'rxjs/operators';
+import {distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {rawTokensImg} from '../constants';
+import {CoursesService, CurrencySymbols} from "../courses.service";
 
 export interface ITransaction {
     Amount: number;
@@ -16,7 +17,7 @@ export interface ITransaction {
     Symbol: string;
     name: string;
     mapppedName: string;
-    rate2usd: number;
+    rate2fiat: number;
 }
 
 export interface ITokenInfo {
@@ -27,7 +28,7 @@ export interface ITokenInfo {
     mappedName: string;
     name: string;
     symbol: string;
-    rate2usd: number;
+    rate2fiat: number;
 }
 
 export interface IMenuItem {
@@ -76,7 +77,7 @@ const basicTransactionState: ITransaction = {
     Symbol: 'BNB',
     name: 'Binance Coin',
     mapppedName: 'BNB',
-    rate2usd: 0
+    rate2fiat: 0
 };
 
 export interface IUiBalance {
@@ -131,7 +132,7 @@ export interface ITransferFees {
     dex_fee_fields: IDexFeeField[];
 }
 
-export function toShortAddress(address: string): string {
+export function toShortAddress( address: string ): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
 
@@ -139,15 +140,16 @@ export function toShortAddress(address: string): string {
 export class StateService {
 
     private password = '';
+    baseCurrency$: Observable<CurrencySymbols>;
 
     selectedNetwork$: BehaviorSubject<IMenuItem> = new BehaviorSubject(basicNetworkSttate);
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
     allBalances$: Observable<IBalance[]>;
     bnbBalance$: Observable<number>;
-    bnbBalanceInUsd$: Observable<number>;
+    bnbBalanceInFiat$: Observable<number>;
     marketRates$: Observable<IMarketRates[]>;
-    bnb2usdRate$: Observable<number>;
+    bnb2fiatRate$: Observable<number>;
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
@@ -168,36 +170,39 @@ export class StateService {
     currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
 
-    constructor(private storageService: StorageService, private bncService: BinanceService, private http: HttpClient) {
+    constructor( private storageService: StorageService,
+                 private bncService: BinanceService,
+                 private http: HttpClient,
+                 private courses: CoursesService ) {
 
         this.currentAddress$ = this.uiState$.pipe(
-            map((uiState: IUiState) => {
+            map(( uiState: IUiState ) => {
                 const {currentAccount, storageData} = uiState;
 
                 return storageData.selectedNetwork === 'bnb'
                     ? currentAccount.addressMainnet
                     : currentAccount.addressTestnet;
             }),
-            tap((value) => {
+            tap(( value ) => {
                 this.currentAddress = value;
             }),
             shareReplay(1)
         );
 
         this.currentEndpoint$ = this.uiState$.pipe(
-            map((uiState: IUiState) => {
+            map(( uiState: IUiState ) => {
                 return uiState.storageData.selectedNetwork === 'bnb'
                     ? NETWORK_ENDPOINT_MAPPING.MAINNET
                     : NETWORK_ENDPOINT_MAPPING.TESTNET;
             }),
-            tap((value) => {
+            tap(( value ) => {
                 this.currentEndpoint = value;
             }),
             shareReplay(1)
         );
 
         this.currentAddressShort$ = this.currentAddress$.pipe(
-            map((address: string) => {
+            map(( address: string ) => {
                 return toShortAddress(address);
             }),
             shareReplay(1)
@@ -206,12 +211,12 @@ export class StateService {
         // Array balances of different tokens for current account
         this.allBalances$ = this.uiState$.pipe(
             // TODO: simplify using current address and current endpoint
-            distinctUntilChanged((a: IUiState, b: IUiState) => {
+            distinctUntilChanged(( a: IUiState, b: IUiState ) => {
                 const sameAccount = (a.currentAccount === b.currentAccount);
                 const sameNetwork = (a.storageData.selectedNetwork === b.storageData.selectedNetwork);
                 return sameAccount && sameNetwork;
             }),
-            switchMap((uiState: IUiState) => {
+            switchMap(( uiState: IUiState ) => {
                 const {currentAccount, storageData} = uiState;
 
                 const [address, endpoint] = storageData.selectedNetwork === 'bnb'
@@ -227,20 +232,20 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckBalance = (balances: IBalance[], coinSymbol: string) => {
-            const item = balances.find((x) => x.symbol === coinSymbol);
+        const pluckBalance = ( balances: IBalance[], coinSymbol: string ) => {
+            const item = balances.find(( x ) => x.symbol === coinSymbol);
             return item ? +item.free : 0;
         };
 
         this.bnbBalance$ = this.allBalances$.pipe(
-            map((response) => pluckBalance(response, 'BNB')),
+            map(( response ) => pluckBalance(response, 'BNB')),
             shareReplay(1)
         );
 
         const timerFees$ = timer(0, 120000);
 
         this.transferFees$ = combineLatest([this.selectedNetwork$, timerFees$]).pipe(
-            switchMap((x: any[]) => {
+            switchMap(( x: any[] ) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
                 return this.http.get(`${endpoint}api/v1/fees`);
@@ -248,13 +253,13 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckFee = (response: ITransferFees[]) => {
-            const item = response.find((x) => x.multi_transfer_fee >= 0);
+        const pluckFee = ( response: ITransferFees[] ) => {
+            const item = response.find(( x ) => x.multi_transfer_fee >= 0);
             return item.fixed_fee_params.fee / 100000000;
         };
 
         this.simpleFee$ = this.transferFees$.pipe(
-            map((response: ITransferFees[]) => {
+            map(( response: ITransferFees[] ) => {
                 return pluckFee(response);
             }),
             shareReplay(1)
@@ -265,13 +270,35 @@ export class StateService {
         //
         // Rates that we get using poling
         //
-        this.bnb2usdRate$ = timer(0, 24000).pipe(
-            switchMap(() => {
-                return this.http.get('https://min-api.cryptocompare.com/data/price?fsym=BNB&tsyms=USD');
-            }),
-            map((resp: any) => resp.USD),
-            shareReplay(1)
-        );
+
+        // if (this.uiState$.getValue().storageData === null) {
+        //     this.baseCurrency.next(CurrencySymbols.USD);
+        // } else {
+        //     this.baseCurrency.next(this.uiState$.getValue().storageData.baseFiatCurrency);
+        // }
+        //
+        this.baseCurrency$ = this.uiState$.pipe(
+             filter((uiState) => uiState.storageData !== null),
+             map((uiState) => {
+                 return uiState.storageData.baseFiatCurrency;
+             }),
+            startWith(CurrencySymbols.USD)
+         );
+
+        this.bnb2fiatRate$ =
+            combineLatest(
+                [timerFees$,
+                   this.baseCurrency$])
+                .pipe(
+                    switchMap((x: any[]) => {
+                        const [_, baseCurrency] = x;
+                        return this.courses.getBinanceRate$(baseCurrency);
+                    }),
+                    map(( rawRate: string ) => {
+                        return +rawRate;
+                    }),
+                    shareReplay(1),
+                );
 
         // const bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
         //   .pipe(
@@ -280,16 +307,16 @@ export class StateService {
         //     })
         //   );
         //
-        // this.bnb2usdRate$ = bnb2usdRateWs$;
+        // this.bnb2fiatRate$ = bnb2usdRateWs$;
 
-        // this.bnb2usdRate$.subscribe(
+        // this.bnb2fiatRate$.subscribe(
         //   bnbPrice2USD => {},
         //   err => console.log('err'),
         //   () =>  console.log( 'The observable stream is complete')
         // );
 
-        this.bnbBalanceInUsd$ = combineLatest([this.bnbBalance$, this.bnb2usdRate$]).pipe(
-            map((arr: any[]) => {
+        this.bnbBalanceInFiat$ = combineLatest([this.bnbBalance$, this.bnb2fiatRate$]).pipe(
+            map(( arr: any[] ) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
                 return +((Math.floor(fiat * 100) / 100).toFixed(2));
@@ -301,14 +328,14 @@ export class StateService {
             switchMap(() => {
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
             }),
-            map((resp: IMarketRates[]) => resp)
+            map(( resp: IMarketRates[] ) => resp)
         );
 
         this.history$ = combineLatest([this.currentAddress$, this.currentEndpoint$]).pipe(
             tap(() => {
                 this.showHistoryLoadingIndicator$.next(true);
             }),
-            switchMap((x) => {
+            switchMap(( x ) => {
                 const [address, endpoint] = x;
                 return concat(
                     bncService.getHistory$(address, endpoint).pipe(
@@ -326,14 +353,14 @@ export class StateService {
             shareReplay(1)
         );
 
-        this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, this.bnb2usdRate$])
+        this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, this.bnb2fiatRate$])
             .pipe(
-                map((x: any[]) => {
+                map(( x: any[] ) => {
                     const [balances, marketRates, bnb2usd] = x;
                     const imagesUrls = JSON.parse(rawTokensImg);
                     const finalBalances = [];
 
-                    balances.forEach((token) => {
+                    balances.forEach(( token ) => {
                         const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
                         const tokensDetailsForCurrentToken = imagesUrls.find(o => o.symbol === token.symbol);
 
@@ -405,7 +432,7 @@ export class StateService {
                         }
                     });
 
-                    return finalBalances.sort((a, b) => {
+                    return finalBalances.sort(( a, b ) => {
                         const usdBalanceDiff = b.balance2usd - a.balance2usd;
                         if (usdBalanceDiff === 0) {
                             const balanceDiff = b.balance - a.balance;
@@ -420,15 +447,15 @@ export class StateService {
                 shareReplay(1));
     }
 
-    createObservableSocket(url: string): Observable<any> {
+    createObservableSocket( url: string ): Observable<any> {
         this.ws = new WebSocket(url);
 
         return new Observable(
             observer => {
 
-                this.ws.onmessage = (event) => observer.next(event.data);
+                this.ws.onmessage = ( event ) => observer.next(event.data);
 
-                this.ws.onerror = (event) => observer.error(event);
+                this.ws.onerror = ( event ) => observer.error(event);
 
                 this.ws.onclose = () => observer.complete();
 
@@ -437,7 +464,7 @@ export class StateService {
         );
     }
 
-    getBalancePipeline$(address: string): Observable<IUiBalance> {
+    getBalancePipeline$( address: string ): Observable<IUiBalance> {
         return of({
             bnb: 'pending',
             bnbFiat: 'pending'
@@ -448,9 +475,9 @@ export class StateService {
         return this.uiState$.getValue();
     }
 
-    initState(data: IStorageData, password: string) {
+    initState( data: IStorageData, password: string ) {
 
-        const accounts = data.accounts.map((account) => {
+        const accounts = data.accounts.map(( account ) => {
             const address = data.selectedNetwork === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -476,7 +503,7 @@ export class StateService {
             label
         };
 
-        const currentAccount = accounts.find((account) => {
+        const currentAccount = accounts.find(( account ) => {
             return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
         });
 
@@ -497,7 +524,20 @@ export class StateService {
         this.password = '';
     }
 
-    renameAccount(accountIdx: number, newName: string): void {
+    selectBaseFiatCurrency( baseFiatCurrency: CurrencySymbols ) {
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            baseFiatCurrency
+        };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+        const newUiState = {
+            ...this.uiState,
+            storageData: newStorageState
+        };
+        this.uiState$.next(newUiState);
+    }
+
+    renameAccount( accountIdx: number, newName: string ): void {
 
         this.uiState.storageData.accounts[accountIdx].name = newName;
         const newStorageState: IStorageData = {
@@ -519,7 +559,7 @@ export class StateService {
     }
 
     // UI, index and logical index...
-    addAccountFromSeed(seedPhrase: string, hdWalletIndex?: number): void {
+    addAccountFromSeed( seedPhrase: string, hdWalletIndex?: number ): void {
 
         if (hdWalletIndex === undefined) {
             const indexes = this.uiState.storageData.accounts.map(a => a.index);
@@ -568,7 +608,7 @@ export class StateService {
         this.uiState$.next(this.uiState);
     }
 
-    switchAccount(toAccount: IUiAccount): void {
+    switchAccount( toAccount: IUiAccount ): void {
 
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
@@ -584,8 +624,8 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    switchNetwork(network: NetworkType): void {
-        
+    switchNetwork( network: NetworkType ): void {
+
         const networkPrefix = network;
         const val = networkPrefix === 'bnb'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
@@ -608,7 +648,7 @@ export class StateService {
 
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        const newAccounts = this.uiState.accounts.map((account) => {
+        const newAccounts = this.uiState.accounts.map(( account ) => {
             const newAddress = network === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -620,7 +660,7 @@ export class StateService {
             };
         });
 
-        const currentAccount = newAccounts.find((account) => {
+        const currentAccount = newAccounts.find(( account ) => {
             return account.addressMainnet === this.uiState.storageData.selectedAddress ||
                 account.addressTestnet === this.uiState.storageData.selectedAddress;
         });
@@ -634,7 +674,8 @@ export class StateService {
 
         this.uiState$.next(newUiState);
     }
-    switchNetworkCustom(network: NetworkType, val: string): void {
+
+    switchNetworkCustom( network: NetworkType, val: string ): void {
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
             selectedNetwork: network,
@@ -645,11 +686,11 @@ export class StateService {
         const networkPrefix = network;
         let label;
         if (network === 'bnb') {
-           label = 'mainnet';
+            label = 'mainnet';
         } else if (network === 'tbnb') {
             label = 'testnet';
         }
-        
+
         const newSelectedNetwork: IMenuItem = {
             networkPrefix,
             val,
@@ -658,7 +699,7 @@ export class StateService {
 
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        const newAccounts = this.uiState.accounts.map((account) => {
+        const newAccounts = this.uiState.accounts.map(( account ) => {
             const newAddress = network === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -670,7 +711,7 @@ export class StateService {
             };
         });
 
-        const currentAccount = newAccounts.find((account) => {
+        const currentAccount = newAccounts.find(( account ) => {
             return account.addressMainnet === this.uiState.storageData.selectedAddress ||
                 account.addressTestnet === this.uiState.storageData.selectedAddress;
         });

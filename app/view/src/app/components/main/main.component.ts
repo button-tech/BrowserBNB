@@ -40,7 +40,7 @@ export class MainComponent implements OnInit {
         this.address$ = this.stateService.currentAddress$;
         this.shortAddress$ = this.stateService.currentAddressShort$;
         this.bnb$ = this.stateService.bnbBalance$;
-        this.bnbInUsd$ = this.stateService.bnbBalanceInUsd$;
+        this.bnbInUsd$ = this.stateService.bnbBalanceInFiat$;
         this.allBalances$ = this.stateService.allBalances$.pipe(
             map((balances: IBalance[]) => {
                 return balances.length > 0;
