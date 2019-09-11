@@ -22,7 +22,7 @@ const basicTransactionState: ITransaction = {
     Symbol: 'BNB',
     name: 'Binance Coin',
     mapppedName: 'BNB',
-    rate2usd: 0
+    rate2fiat: 0
 };
 
 @Component({
@@ -54,7 +54,7 @@ export class VerifySendComponent implements OnDestroy, OnInit {
             }
         });
 
-        const bnb2usdRate$ = this.stateService.bnb2usdRate$;
+        const bnb2usdRate$ = this.stateService.bnb2fiatRate$;
         const bnbTransferFee$ = this.stateService.simpleFee$;
 
         this.txDetails = combineLatest([bnb2usdRate$, bnbTransferFee$]).pipe(
@@ -64,10 +64,10 @@ export class VerifySendComponent implements OnDestroy, OnInit {
                 const totalSumInTokenIfNotBNB = tx.Amount + ' ' + tx.mapppedName + ' and ' + fee.toString() + ' BNB';
                 const totalSumInTokenIfBNB = Number(tx.Amount) + Number(fee);
                 const totalSumInToken = tx.Symbol === 'BNB' ? totalSumInTokenIfBNB.toString() : totalSumInTokenIfNotBNB;
-                const TotalFiatSum = (Number(fee) * Number(rate) + (tx.Amount * tx.rate2usd)).toFixed(2);
+                const TotalFiatSum = (Number(fee) * Number(rate) + (tx.Amount * tx.rate2fiat)).toFixed(2);
                 const txDetails: ITransactionDetails = {
                     SumInToken: tx.Amount.toString(),
-                    SumInFiat: (tx.Amount * tx.rate2usd).toFixed(2),
+                    SumInFiat: (tx.Amount * tx.rate2fiat).toFixed(2),
                     FeeInBNB: fee.toString(),
                     FeeInFiat: (Number(fee) * Number(rate)).toFixed(2),
                     TotalSumInToken: totalSumInToken,
@@ -103,7 +103,7 @@ export class VerifySendComponent implements OnDestroy, OnInit {
             Symbol: '',
             name: '',
             mapppedName: '',
-            rate2usd: 0,
+            rate2fiat: 0,
         });
     }
 }

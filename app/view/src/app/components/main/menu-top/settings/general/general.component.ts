@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
+import {StateService} from "../../../../../services/state.service";
 
 
 export enum CurrencySymbols {
@@ -191,20 +192,27 @@ export class GeneralComponent implements OnInit {
 
     currenciesList = [
         {value: 1, label: CurrencySymbols.USD},
-        {value: 2, label: CurrencySymbols.EUR, disabled: true},
-        {value: 3, label: CurrencySymbols.RUB, disabled: true},
+        {value: 2, label: CurrencySymbols.EUR},
+        {value: 3, label: CurrencySymbols.RUB},
+        {value: 4, label: CurrencySymbols.CNY},
     ];
 
     selectedLanguage = null;
     selectedCurrency = null;
 
-    constructor(private location: Location) {
+    constructor(private location: Location, private state: StateService) {
 
     }
 
+    select() {
+        this.state.selectBaseFiatCurrency(this.selectedCurrency.label);
+    }
+
+
     ngOnInit() {
         this.selectedLanguage = this.languagesList[0];
-        this.selectedCurrency = this.currenciesList[0];
+        this.selectedCurrency = this.currenciesList
+                .find((Val) => Val.label === this.state.uiState$.getValue().storageData.baseFiatCurrency);
     }
 
     goBack() {

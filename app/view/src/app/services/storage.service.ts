@@ -7,6 +7,7 @@ import {BinanceService} from './binance.service';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
+import {CurrencySymbols} from "../courses.service";
 
 
 export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
@@ -25,6 +26,8 @@ export interface IStorageData {
     selectedAddress: string | null;
     selectedNetwork: NetworkType;
     selectedNetworkEndpoint: string | null;
+    baseFiatCurrency: CurrencySymbols;
+    customNetworkEndpoints: string[];
 }
 
 const STORAGE_KEY = 'all';
@@ -188,7 +191,9 @@ export class StorageService {
             ],
             selectedAddress: addressMainnet,
             selectedNetwork: 'bnb',
-            selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET
+            selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
+            baseFiatCurrency: CurrencySymbols.USD,
+            customNetworkEndpoints: []
         };
 
         // Promise result ignored by intend

@@ -22,6 +22,7 @@ export class AmountInputComponent implements OnInit, OnDestroy {
 
     userInput$: BehaviorSubject<number> = new BehaviorSubject(0);
     swapCurrencies$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    swapped = false;
 
     // @ts-ignore
     @ViewChild('sum')
@@ -40,6 +41,7 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     }
 
     swapCurrencies() {
+        this.swapped = true;
         const doSwap = this.swapCurrencies$.getValue();
         return this.swapCurrencies$.next(!doSwap);
     }
@@ -51,11 +53,11 @@ export class AmountInputComponent implements OnInit, OnDestroy {
                     x.Symbol = 'BNB';
                 }
                 if (x.Symbol === 'BNB') {
-                    return this.stateService.bnb2usdRate$.pipe(
-                        map((rate2usd) => {
+                    return this.stateService.bnb2fiatRate$.pipe(
+                        map((rate2fiat) => {
                             return {
                                 ...x,
-                                rate2usd
+                                rate2fiat
                             };
                         })
                     );
@@ -63,13 +65,13 @@ export class AmountInputComponent implements OnInit, OnDestroy {
                 return of(x);
             }),
             map((x: ITransaction) => {
-                const secondarySymbol = x.rate2usd === 0 ? '' : 'USD';
+                const secondarySymbol = x.rate2fiat === 0 ? '' : this.stateService.uiState$.getValue().storageData.baseFiatCurrency;
 
                 return {
                     'baseSymbol': x.Symbol,
                     'secondarySymbol': secondarySymbol,
                     'calculatedSum': 0,
-                    'rate2usd': x.rate2usd
+                    'rate2usd': x.rate2fiat
                 };
             })
         );
@@ -92,7 +94,7 @@ export class AmountInputComponent implements OnInit, OnDestroy {
                 const [selectedToken, amount] = x;
 
                 let calculatedSum = 0;
-                if (selectedToken.baseSymbol === 'USD') {
+                if (this.swapped) {
                     calculatedSum = +((1 / selectedToken.rate2usd) * amount).toFixed(4);
                 } else {
                     calculatedSum = +(selectedToken.rate2usd * amount).toFixed(2);

@@ -26,7 +26,7 @@
             </h4>
             <h4>
                 <ng-select [clearable]="false" [items]="currenciesList"
-                           [(ngModel)]="selectedCurrency">
+                           [(ngModel)]="selectedCurrency" (click)="select()">
                 </ng-select>
             </h4>
         </div>
