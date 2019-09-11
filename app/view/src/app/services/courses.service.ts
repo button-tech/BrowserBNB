@@ -1,7 +1,20 @@
-import {Component, OnInit} from '@angular/core';
-import {Location} from "@angular/common";
-import {StateService} from "../../../../../services/state.service";
+import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+import {map, shareReplay} from "rxjs/operators";
+import {Observable} from 'rxjs';
 
+export interface Rate {
+    0x00000000000000000000000000000000000002ca: string;
+}
+
+export interface Datum {
+    currency: string;
+    rates: Rate[];
+}
+
+export interface ResponseFromCoursesApi {
+    data: Datum[];
+}
 
 export enum CurrencySymbols {
     AED = "AED",
@@ -174,48 +187,36 @@ export enum CurrencySymbols {
     ZWL = "ZWL"
 }
 
-@Component({
-    selector: 'app-general',
-    templateUrl: './general.component.html',
-    styleUrls: ['./general.component.css']
+@Injectable({
+    providedIn: 'root'
 })
-export class GeneralComponent implements OnInit {
+export class CoursesService {
 
-    languagesList = [
-        {value: 1, label: 'English'},
-        {value: 2, label: 'Russian', disabled: true},
-        {value: 3, label: 'French', disabled: true},
-        {value: 4, label: 'Chinese Traditional', disabled: true}
-    ];
-
-
-
-    currenciesList = [
-        {value: 1, label: CurrencySymbols.USD},
-        {value: 2, label: CurrencySymbols.EUR},
-        {value: 3, label: CurrencySymbols.RUB},
-        {value: 4, label: CurrencySymbols.CNY, disabled: true},
-    ];
-
-    selectedLanguage = null;
-    selectedCurrency = null;
-
-    constructor(private location: Location, private state: StateService) {
-
+    constructor( private http: HttpClient ) {
+        // this.getBinanceRate(CurrencySymbols.USD).subscribe((res) => {console.log(res)});
     }
 
-    select() {
-        this.state.selectBaseFiatCurrency(this.selectedCurrency.label);
-    }
+    getBinanceRate$( baseCurrency: CurrencySymbols ): Observable<string> {
+        const url = '';
+        const body = {
+            "tokens": [
+                "0x00000000000000000000000000000000000002ca"
+            ],
+            "currencies": [
+                baseCurrency
+            ],
+            "change": "0",
+            "api": "cmc"
+        };
 
-
-    ngOnInit() {
-        this.selectedLanguage = this.languagesList[0];
-        this.selectedCurrency = this.currenciesList
-                .find((Val) => Val.label === this.state.uiState$.getValue().storageData.baseFiatCurrency);
-    }
-
-    goBack() {
-        this.location.back();
+        return this.http.post(url, body).pipe(
+            map(( response: ResponseFromCoursesApi ) => {
+                const currency = response.data.find(( obj ) => obj.currency === baseCurrency);
+                const raw = currency.rates[0]["0x00000000000000000000000000000000000002ca"];
+                return Number(raw).toFixed(2);
+            }),
+            shareReplay(1)
+        );
     }
 }
+

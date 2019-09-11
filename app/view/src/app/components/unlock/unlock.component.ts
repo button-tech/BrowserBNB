@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {StorageService} from '../../services/storage.service';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
-import {CoursesService} from "../../courses.service";
+
 
 @Component({
     selector: 'app-unlock',
@@ -17,7 +17,6 @@ export class UnlockComponent {
                 private router: Router,
                 private storage: StorageService,
                 public alert: AlertsService,
-                private courses: CoursesService
     ) {
     }
 
