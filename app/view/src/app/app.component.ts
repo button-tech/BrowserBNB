@@ -35,9 +35,9 @@ export class AppComponent {
                   return of('/greeter');
               }
 
-              console.log('1');
               return this.chromeApiService.restorePassword().pipe(
                 switchMap((password) => {
+
                     if (!password) {
                         return of('/unlock');
                     }

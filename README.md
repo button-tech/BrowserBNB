@@ -45,14 +45,16 @@ Navigation
  - [x] Add BIP44 Derivation support
  
  ## Step 3 (Final Beta Public)
-  - [ ] Forms to Rx forms
   - [x] Background logic 
-  - [ ] WalletConnect + DEX support 
   - [x] Settings support 
-  - [ ] Free from boostrap + material wastes 
-  - [ ] Pending tx / notifiactions on background
-  - [ ] Custom alerts service + UI
-  - [ ] Linting of project
+  - [x] Custom alerts service + UI
+  - [x] Linting of project
   - [x] Fix wrappers over JS SDK
-  - [ ] Make docs + wiki
+  - [x] Multiple fiat currencies support
+  - [x] Multiple network support
+  - [ ] Multiple languages support
   - [ ] Integration tests + BNB SDK tests
+  - [ ] Repo update
+  - [ ] Free from bootstrap + material wastes 
+  - [ ] WalletConnect + DEX support 
+  - [ ] Forms to Rx forms

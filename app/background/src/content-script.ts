@@ -30,11 +30,12 @@ if (re.test(window.location.href) || window.location.href.startsWith('http://loc
             port.postMessage(event.data.text);
         }
 
-        // TODO: Move this to dev build, security gap
-        if (event.data.type && (event.data.type === "TO_BG")) {
-            console.log("TO_BG: " + event.data);
-            port.postMessage(event.data.msg);
-        }
+        // // TODO: Move this to dev build, security gap
+        // if (event.data.type && (event.data.type === "TO_BG")) {
+        //     console.log("TO_BG: " + event.data);
+        //     port.postMessage(event.data.msg);
+        // }
+
     }, false);
 
 
