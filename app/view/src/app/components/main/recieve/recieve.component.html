@@ -8,25 +8,27 @@
         </button>
     </div>
 </div>
-
 <div class="row">
     <div style="margin-top: -1em" class="col-12">
         <h4 align="center" style="font-weight: bold; color: rgb(33, 40, 51); font-size: 22px">Your address</h4>
+        <h6 style="color: rgb(132, 142, 156); font-weight: bold; padding-right: 3em; padding-left: 3em" align="center">Scan QR code or copy your address and send BNB to it</h6>
     </div>
     <div class="col-12 text-center" style="margin-top: 10px; margin-left: 6.79em; margin-bottom: 1.3em !important">
         <qrcode [qrdata]="qrCode" [size]="130" [level]="'M'"></qrcode>
     </div>
     <div class="col-12 text-center"
          style="padding-bottom: 1.5em; padding-right: 0; padding-left: 0em; margin-left: 0; margin-right: 0">
+        <p style="font-weight: bolder; color: rgb(33, 40, 51)">{{this.address$ | async}}
         <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93);
          font-size: 10px; box-shadow: none;"
                 [satPopoverAnchor]="p"
                 (mouseenter)="p.open()"
                 (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
-                (click)="this.copyAddress();" class="button-qr btn btn-default">{{this.address$ | async}}
+                (click)="this.copyAddress();" class="button-qr btn btn-default">
             <fa id="copyButton" name="copy" size="sm">
             </fa>
         </button>
+        </p>
     </div>
     <div class="col-12 text-center">
         <div>
@@ -35,7 +37,6 @@
                 View on explorer
             </button>
         </div>
-
     </div>
     <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
                  verticalAlign="below">

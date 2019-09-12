@@ -26,10 +26,24 @@
 
             <div class="text-center"
                  style="grid-column: 4; grid-row: 3; margin-top: -0.9em; margin-right: 0; margin-bottom: 0.2em">
-                <button (click)="goToDetails(tx)" class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
+                <button [satPopoverAnchor]="details"
+                        (mouseenter)="details.open();"
+                        (mouseleave)="details.close();" (click)="goToDetails(tx)" class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
                     <fa align="center" class="infos-fa" style="color: #FFFFFF" name="info" size="sm"></fa>
                 </button>
             </div>
+            <sat-popover #details horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
+                         verticalAlign="below">
+                <div id="popup" class="tooltip-wrapper">
+                    It is about
+                    <br>
+                    {{(calculateSumInFiat(+tx.value) | async) || 'pending' }}
+                    <br>
+                    {{this.stateService.uiState$.getValue().storageData.baseFiatCurrency}}
+                </div>
+                <div class="arrow">
+                </div>
+            </sat-popover>
         </div>
     </div>
 </div>
