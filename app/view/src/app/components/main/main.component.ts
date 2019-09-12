@@ -43,7 +43,7 @@ export class MainComponent implements OnInit {
         
         this.allBalances$ = this.stateService.allBalances$.pipe(
             map((balances: IBalance[]) => {
-                return balances.length > 0;
+                return balances.length > 1;
             })
         );
     }
