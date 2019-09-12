@@ -26,11 +26,9 @@ export class AuthService {
 
         this.isLoggedIn$.pipe(
           switchMap((isLoggedIn) => {
-
               if (isLoggedIn) {
                   return interval(2500).pipe(map( () => true));
               }
-
               return of(false);
           }),
           filter( (x) => x),
