@@ -1,6 +1,6 @@
 import {Component, OnDestroy} from '@angular/core';
-import {of, Subscription} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {Observable, of, Subscription} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
@@ -64,6 +64,14 @@ export class HistoryComponentComponent implements OnDestroy {
 
         const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
         return (result && result.image) || defaultImg;
+    }
+
+    calculateSumInFiat(amount: number): Observable<string> {
+        return this.stateService.bnb2fiatRate$.pipe(
+            map((rate: number) => {
+                return (amount * rate).toFixed(2);
+            })
+        );
     }
 
     goToDetails(tx: any) {
