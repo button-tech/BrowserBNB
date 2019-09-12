@@ -27,7 +27,7 @@ export default [
         }
     },
     {
-        input: './src/content-script.ts',
+        input: './src/content-script-2.ts',
         plugins: [
             typescript()
         ],

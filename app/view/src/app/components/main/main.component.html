@@ -1,8 +1,19 @@
-<div #alphaAlert (click)="closeAlphaAlert()" class="text-center" style="height: 24px; width: 100%; background: red; color: white; font-weight: bold; font-size: 14px">
-    <p>ALPHA VERSION - USE ON YOUR OWN RISK <fa name="times" size="sm"></fa></p>
+<div #alphaAlert (click)="closeAlphaAlert()" class="text-center"
+     style="height: 24px; width: 100%; background: red; color: white; font-weight: bold; font-size: 14px">
+    <p>ALPHA VERSION - USE ON YOUR OWN RISK
+        <fa name="times" size="sm"></fa>
+    </p>
 </div>
-<div class="container">
+
+<app-wc-session-approve *ngIf="showApprove" [sessionRequest]="sessionRequest"
+                        (isApproved)="approveWalletConnectSession($event)">
+    <!-- click approve session here -->
+</app-wc-session-approve>
+
+<div class="container" *ngIf="!showApprove">
     <app-menu-top></app-menu-top>
+
+
 
     <div class="row text-center">
         <div class="col-12">
@@ -42,7 +53,8 @@
 
         <div id="buttonsDiv" class="col-12">
             <button routerLink="/receive" class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
-            <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
+            <!--            <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>-->
+            <button (click)="showApprove = true" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
         </div>
     </div>
 
@@ -57,4 +69,5 @@
             <app-history-component></app-history-component>
         </div>
     </div>
+
 </div>

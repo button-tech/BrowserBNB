@@ -8,9 +8,61 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import { Observable, Subject } from "rxjs";
 import WalletConnect from "@walletconnect/browser/lib";
-import {getAddressFromPrivateKey, signTransaction} from "./binancecrypto";
-import {ISignedTransaction} from "./types";
+import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
+import { ISignedTransaction } from "./types";
+
+export class ReactiveWc {
+
+    private _sessionRequest$ = new Subject<any>();
+    sessionRequest$: Observable<any> = this._sessionRequest$.asObservable();
+
+    // callRequest$: Observable<any>;
+    // connect$: Observable<any>;
+    // connect$: Observable<any>;
+
+    constructor(public instance: WalletConnect) {
+        // debugger;
+        console.log(this.instance);
+        this.subscribeToEvents();
+    }
+
+    public subscribeToEvents(): void {
+
+        this.instance.on("session_request", (error, payload) => {
+            console.log(error, payload);
+            // debugger
+            if (error) {
+                this._sessionRequest$.error(error);
+            }
+            this._sessionRequest$.next(payload);
+        });
+
+        // walletConnector.on("call_request", (error, payload) => {
+        //     console.log("call_request", error, payload);
+        //     if (error) {
+        //         throw error;
+        //     }
+        // });
+        //
+        // walletConnector.on("connect", (error, payload) => {
+        //     console.log("connect", error, payload);
+        //     if (error) {
+        //         throw error;
+        //     }
+        // });
+        //
+        // walletConnector.on("disconnect", (error, payload) => {
+        //     console.log("disconnect", error, payload);
+        //     console.log("disconnect");
+        //     if (error) {
+        //         throw error;
+        //     }
+        // });
+
+    }
+}
 
 export function approveSession(wcSessionEndpoint: string) {
     // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';

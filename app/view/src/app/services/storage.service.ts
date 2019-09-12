@@ -38,7 +38,6 @@ const STORAGE_KEY = 'all';
 export class StorageService {
 
     // hasAccount$: Observable<boolean>;
-
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
 
@@ -46,14 +45,14 @@ export class StorageService {
 
         if (environment.production) {
 
-            const port = chrome.runtime.connect({
-                name: 'Sample Communication'
-            });
-
-            // port.postMessage('Hi BackGround');
-            port.onMessage.addListener(function (msg) {
-                console.log('message recieved' + msg);
-            });
+            // const port = chrome.runtime.connect({
+            //     name: 'widget-port'
+            // });
+            //
+            // // port.postMessage('Hi BackGround');
+            // port.onMessage.addListener(function (msg) {
+            //     console.log('message received' + msg);
+            // });
         }
 
         // const initial$ = of(1).pipe(
@@ -156,7 +155,7 @@ export class StorageService {
                 return dectypted as IStorageData;
             })
         );
-        
+
     }
 
     async encryptAndSave(data: IStorageData, password: string): Promise<void> {
