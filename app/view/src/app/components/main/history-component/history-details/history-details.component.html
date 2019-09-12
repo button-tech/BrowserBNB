@@ -48,19 +48,19 @@
             <hr class="unusualHr">
         </div>
         <div *ngIf="(this.stateService.historyDetails$ | async).fromAddr && (this.stateService.historyDetails$ | async).toAddr "
-             style="display: inline-flex; font-weight: bolder; font-size: 18px; margin-left: 0.55em"
              class="fromTo col-12 text-center">
             <div>
-                <p>From</p>
-                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
-                        [satPopoverAnchor]="p2"
-                        (mouseenter)="p2.open()"
-                        (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.stateService.historyDetails$, 'fromAddr');"
-                        class="button-qr btn btn-default">
-                    {{toShortAddress((this.stateService.historyDetails$ | async).fromAddr)}}
-                    <fa name="copy" size="sm"></fa>
-                </button>
+                <h6>Recipient</h6>
+                <p style="margin-top: -1.3em">{{toShortAddress((this.stateService.historyDetails$ | async).fromAddr)}}
+                    <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                            [satPopoverAnchor]="p2"
+                            (mouseenter)="p2.open()"
+                            (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
+                            (click)="this.copyAddress(this.stateService.historyDetails$, 'fromAddr');"
+                            class="btn btn-default">
+                        <fa name="copy" size="sm"></fa>
+                    </button>
+                </p>
                 <sat-popover #p2 horizontalAlign="center" openTransition="100ms ease-out"
                              closeTransition="150ms ease-in"
                              verticalAlign="below">
@@ -69,20 +69,25 @@
                     </div>
                 </sat-popover>
             </div>
-            <div>
-                <fa name="chevron-right" size="sm"></fa>
+            <div style="margin-top: -0.5em; font-size: 23px;">
+                <fa name="arrow-down" size="sm"></fa>
             </div>
+        </div>
+        <div *ngIf="(this.stateService.historyDetails$ | async).fromAddr && (this.stateService.historyDetails$ | async).toAddr "
+             class=" col-12 text-center">
             <div>
-                <p>To</p>
-                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
-                        [satPopoverAnchor]="p3"
-                        (mouseenter)="p3.open()"
-                        (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.stateService.historyDetails$, 'toAddr');"
-                        class="button-qr btn btn-default">
-                    {{toShortAddress((this.stateService.historyDetails$ | async).toAddr)}}
-                    <fa name="copy" size="sm"></fa>
-                </button>
+                <h6>Receiver</h6>
+                <p style="margin-top: -1.3em">{{toShortAddress((this.stateService.historyDetails$ | async).toAddr)}}
+                    <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                            [satPopoverAnchor]="p3"
+                            (mouseenter)="p3.open()"
+                            (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
+                            (click)="this.copyAddress(this.stateService.historyDetails$, 'toAddr');"
+                            class="btn btn-default">
+                        <fa name="copy" size="sm"></fa>
+                    </button>
+                </p>
+
                 <sat-popover #p3 horizontalAlign="center" openTransition="100ms ease-out"
                              closeTransition="150ms ease-in"
                              verticalAlign="below">
@@ -92,24 +97,28 @@
                 </sat-popover>
             </div>
         </div>
+
         <div sclass="col-8 offset-2">
             <hr class="unusualHr">
         </div>
-        <div style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 4.5em" class="col-12">
+        <div class="col-12 text-center">
             <div>
-                <h6 style="margin-bottom: -0.5em">HASH</h6>
+                <h6 style="margin-bottom: -0.5em">Transaction Hash</h6>
             </div>
             <div>
-                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
-                        [satPopoverAnchor]="p"
-                        (mouseenter)="p.open()"
-                        (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';"
-                        id="addressButton"
-                        (click)="this.copyAddress(this.stateService.historyDetails$, 'txHash');"
-                        class="button-qr btn btn-default">
-                    {{toShortAddress((this.stateService.historyDetails$ | async).txHash)}}
-                    <fa id="copyButton" name="copy" size="sm"></fa>
-                </button>
+                <p> {{toShortAddress((this.stateService.historyDetails$ | async).txHash)}}
+                    <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                            [satPopoverAnchor]="p"
+                            (mouseenter)="p.open()"
+                            (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';"
+                            id="addressButton"
+                            (click)="this.copyAddress(this.stateService.historyDetails$, 'txHash');"
+                            class="button-qr btn btn-default">
+
+                        <fa id="copyButton" name="copy" size="sm"></fa>
+                    </button>
+                </p>
+
                 <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out"
                              closeTransition="150ms ease-in"
                              verticalAlign="below">
@@ -119,21 +128,21 @@
                 </sat-popover>
             </div>
         </div>
-        <div *ngIf="(this.stateService.historyDetails$ | async).memo"
-             style="display: inline-grid; grid-template-columns: 1fr 4fr; margin-left: 4.5em" class="col-12">
+        <div *ngIf="(this.stateService.historyDetails$ | async).memo" class="col-12 text-center">
             <div>
-                <h6 style="margin-bottom: -0.5em">MEMO</h6>
+                <h6 style="margin-bottom: -0.5em">Transaction Memo</h6>
             </div>
             <div>
-                <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
-                        [satPopoverAnchor]="p4"
-                        (mouseenter)="p4.open()"
-                        (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
-                        (click)="this.copyAddress(this.stateService.historyDetails$, 'memo');"
-                        class="button-qr btn btn-default">
-                    {{((this.stateService.historyDetails$ | async).memo).substring(0, 20)}}
-                    <fa name="copy" size="sm"></fa>
-                </button>
+                <p> {{((this.stateService.historyDetails$ | async).memo).substring(0, 20)}}
+                    <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93); font-size: 10px; box-shadow: none; border-radius: 2px"
+                            [satPopoverAnchor]="p4"
+                            (mouseenter)="p4.open()"
+                            (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
+                            (click)="this.copyAddress(this.stateService.historyDetails$, 'memo');"
+                            class="button-qr btn btn-default">
+                        <fa name="copy" size="sm"></fa>
+                    </button>
+                </p>
                 <sat-popover #p4 horizontalAlign="center" openTransition="100ms ease-out"
                              closeTransition="150ms ease-in"
                              verticalAlign="below">
@@ -144,7 +153,8 @@
             </div>
         </div>
         <div style="margin-top: 1em" class="col-12  text-center">
-            <button (click)="this.openTab(this.stateService.historyDetails$, this.stateService.selectedNetwork$.getValue().label)" style="width: 250px"
+            <button (click)="this.openTab(this.stateService.historyDetails$, this.stateService.selectedNetwork$.getValue().label)"
+                    style="width: 250px"
                     class="btn-binance-outline btn-sm">
                 View on explorer
             </button>
