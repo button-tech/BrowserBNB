@@ -20,6 +20,8 @@ export class MainComponent implements OnInit {
     accountName$: Observable<string>;
     allBalances$: Observable<any>;
     copyMessage = 'Copy to clipboard';
+    walletConnected = false;
+    walletConnectMessage = "Connect to Binance DEX";
 
     // @ts-ignore
     @ViewChild('alphaAlert')
@@ -38,6 +40,7 @@ export class MainComponent implements OnInit {
         this.shortAddress$ = this.stateService.currentAddressShort$;
         this.bnb$ = this.stateService.bnbBalance$;
         this.bnbInUsd$ = this.stateService.bnbBalanceInFiat$;
+        
         this.allBalances$ = this.stateService.allBalances$.pipe(
             map((balances: IBalance[]) => {
                 return balances.length > 0;
@@ -61,5 +64,15 @@ export class MainComponent implements OnInit {
     closeAlphaAlert() {
         this.alphaAlert.nativeElement.style.display = 'none';
         localStorage.setItem('alert', 'yes');
+    }
+
+    connect() {
+        this.walletConnected = true;
+        this.walletConnectMessage = 'Disconnect from DEX';
+    }
+
+    disconnect() {
+        this.walletConnected = false;
+        this.walletConnectMessage = 'Connect to Binance DEX';
     }
 }

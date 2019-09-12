@@ -1,11 +1,16 @@
-<div #alphaAlert (click)="closeAlphaAlert()" class="text-center" style="height: 24px; width: 100%; background: red; color: white; font-weight: bold; font-size: 14px">
-    <p>ALPHA VERSION - USE ON YOUR OWN RISK <fa name="times" size="sm"></fa></p>
+<div #alphaAlert (click)="closeAlphaAlert()" class="text-center"
+     style="height: 24px; width: 100%; background: red; color: white; font-weight: bold; font-size: 14px">
+    <p>ALPHA VERSION - USE ON YOUR OWN RISK
+        <fa name="times" size="sm"></fa>
+    </p>
 </div>
-<div class="container">
+<div class="container-fluid">
     <app-menu-top></app-menu-top>
 
     <div class="row text-center">
-        <div class="col-12">
+        <div class="col-2">
+        </div>
+        <div class="col-6">
             <button style="margin-top: 0.3em; margin-bottom: 1.2em; color: rgb(132, 142, 156);" [satPopoverAnchor]="p"
                     (mouseenter)="p.open()"
                     (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
@@ -19,7 +24,33 @@
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
         </div>
+        <div class="col-3">
+            <button *ngIf="!walletConnected" [satPopoverAnchor]="wc"
+                    (mouseenter)="wc.open();"
+                    (mouseleave)="wc.close();"
+                    (click)="connect()"
+                    style="margin-left: 2.3em; margin-top: 0.5em;" class="btn btn-outline-warning btn-sm btn-just-icon btn-round">
+                <img width="15" height="15" style="margin-bottom: 15px" alt="wc"
+                     src="../../../assets/icons/icon128.png"/>
+            </button>
 
+            <button *ngIf="walletConnected" [satPopoverAnchor]="wc"
+                    (mouseenter)="wc.open();"
+                    (mouseleave)="wc.close();"
+                    (click)="disconnect()"
+                    style="margin-left: 2.3em; margin-top: 0.5em;" class="btn btn-danger btn-sm btn-just-icon btn-round">
+                <fa name="times" size="sm"></fa>
+            </button>
+        </div>
+
+        <sat-popover #wc horizontalAlign="before" openTransition="150ms ease-out" closeTransition="150ms ease-in"
+                     verticalAlign="below">
+            <div id="popup2" class="tooltip-wrapper">
+                {{this.walletConnectMessage}}
+            </div>
+            <div class="arrow">
+            </div>
+        </sat-popover>
         <sat-popover #p horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                      verticalAlign="below">
             <div id="popup" class="tooltip-wrapper">
