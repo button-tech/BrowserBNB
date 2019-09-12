@@ -151,7 +151,8 @@
     font-size: 16px !important
 }
 
-#more {
+.grayscale { filter: grayscale(100%); }
+.more {
     font-weight: bold;
     color: rgb(132, 142, 156);
     margin-top: 0em;
