@@ -2,7 +2,7 @@ export class Session {
 
     password: string = '';
 
-    login(password: string, timeoutInMilliseconds: number) {
+    login(password: string) {
         this.password = password;
     };
 
@@ -12,7 +12,7 @@ export class Session {
 
     processMessageFromPage(msg: FromPage2BackgroundMsg): FromBackgroundToPageMsg | undefined {
         if (msg.type === 'startExtensionSession') {
-            this.login(msg.password, msg.timeout);
+            this.login(msg.password);
         } else if (msg.type === 'dropExtensionSession') {
             this.logout();
         } else if (msg.type === 'restoreExtensionSessionRequest') {
@@ -22,12 +22,11 @@ export class Session {
                 password: this.password || '',
                 isExpired: !this.password
             };
-            
+
             return response;
         }
     }
 }
-
 
 // export class Session {
 //

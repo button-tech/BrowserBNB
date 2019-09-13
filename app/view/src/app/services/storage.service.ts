@@ -1,14 +1,13 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import {map, switchMap} from 'rxjs/operators';
-import {from, Observable, Subject} from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { from, NEVER, Observable, Subject } from 'rxjs';
 import {BinanceService} from './binance.service';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {CurrencySymbols} from "./courses.service";
-
 
 export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
 
@@ -38,7 +37,6 @@ const STORAGE_KEY = 'all';
 export class StorageService {
 
     // hasAccount$: Observable<boolean>;
-
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
 
@@ -46,14 +44,14 @@ export class StorageService {
 
         if (environment.production) {
 
-            const port = chrome.runtime.connect({
-                name: 'Sample Communication'
-            });
-
-            // port.postMessage('Hi BackGround');
-            port.onMessage.addListener(function (msg) {
-                console.log('message recieved' + msg);
-            });
+            // const port = chrome.runtime.connect({
+            //     name: 'widget-port'
+            // });
+            //
+            // // port.postMessage('Hi BackGround');
+            // port.onMessage.addListener(function (msg) {
+            //     console.log('message received' + msg);
+            // });
         }
 
         // const initial$ = of(1).pipe(
@@ -148,6 +146,10 @@ export class StorageService {
 
     public getFromStorage(password: string): Observable<IStorageData> {
         return from(this.getFromStorageRaw()).pipe(
+            catchError((err) => {
+                console.log(err);
+                return NEVER;
+            }),
             switchMap((encrypted: any) => {
                 return from(passworder.decrypt(password, encrypted));
             }),
@@ -156,7 +158,6 @@ export class StorageService {
                 return dectypted as IStorageData;
             })
         );
-        
     }
 
     async encryptAndSave(data: IStorageData, password: string): Promise<void> {

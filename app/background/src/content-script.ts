@@ -18,7 +18,7 @@ if (re.test(window.location.href) || window.location.href.startsWith('http://loc
 
     const port = chrome.runtime.connect();
     window.addEventListener("message", (event) => {
-        console.log('received in contenet script:', event);
+        console.log('received in content script:', event);
 
         // We only accept messages from ourselves
         if (event.source != window)
@@ -30,18 +30,20 @@ if (re.test(window.location.href) || window.location.href.startsWith('http://loc
             port.postMessage(event.data.text);
         }
 
-        // TODO: Move this to dev build, security gap
-        if (event.data.type && (event.data.type === "TO_BG")) {
-            console.log("TO_BG: " + event.data);
-            port.postMessage(event.data.msg);
-        }
+        // // TODO: Move this to dev build, security gap
+        // if (event.data.type && (event.data.type === "TO_BG")) {
+        //     console.log("TO_BG: " + event.data);
+        //     port.postMessage(event.data.msg);
+        // }
+
     }, false);
 
-    // TODO: Move this to dev build, security gap
-    port.onMessage.addListener((msg: Event) => {
-        console.log('to page:', msg);
-        window.postMessage({type: 'TO_PAGE', msg}, "*");
-    });
+
+    // // TODO: Move this to dev build, security gap
+    // port.onMessage.addListener((msg: Event) => {
+    //     console.log('to page:', msg);
+    //     window.postMessage({type: 'TO_PAGE', msg}, "*");
+    // });
 
 
     // console.defaultLog('1', window.logs)

@@ -24,6 +24,7 @@ export class HistoryComponentComponent implements OnDestroy {
     public isEmpty: boolean;
 
     constructor(private stateService: StateService, private router: Router) {
+
         this.subscription = this.stateService.history$.pipe(
             tap((history: IHistoryTx[]) => {
                 this.history = history;

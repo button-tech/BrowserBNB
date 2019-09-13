@@ -4,7 +4,13 @@
         <fa name="times" size="sm"></fa>
     </p>
 </div>
-<div class="container-fluid">
+
+<app-wc-session-approve *ngIf="showApprove" [sessionRequest]="sessionRequest"
+                        (isApproved)="approveWalletConnectSession($event)">
+    <!-- click approve session here -->
+</app-wc-session-approve>
+
+<div class="container-fluid" *ngIf="!showApprove">
     <app-menu-top></app-menu-top>
 
     <div class="row text-center">
@@ -61,7 +67,7 @@
         </sat-popover>
 
         <hr id="unusualHr">
-       
+
         <div class="col-12">
             <img id="imageBNB" draggable="false" width="68" src="../../../assets/icons/BNB Diamond Yellow 128.png">
             <h3 class="bold">{{(bnb$ | async) | fmtPipe : 'BNB'}}</h3>

@@ -18,8 +18,6 @@ export class AppComponent {
     loader: LoadersCSS = 'line-scale';
     bgColor = 'white';
     color = 'rgb(239, 184, 11) ';
-
-    subscription: Subscription;
     isLoaded = false;
 
     constructor(private router: Router,
@@ -30,43 +28,71 @@ export class AppComponent {
     ) {
 
         console.log('AppComponent: try to restorePassword');
-        if (!environment.production) {
 
+        this.storageService.hasAccountOnce$().pipe(
+          switchMap((hasAccount: boolean) => {
+              if (!hasAccount) {
+                  return of('/greeter');
+              }
 
-            this.subscription = this.storageService.hasAccountOnce$().pipe(
-                switchMap((hasAccount: boolean) => {
-                    if (!hasAccount) {
-                        return of('/greeter');
+              return this.chromeApiService.restorePassword().pipe(
+                switchMap((password) => {
+
+                    if (!password) {
+                        return of('/unlock');
                     }
 
-                    return this.chromeApiService.restorePassword().pipe(
-                        switchMap((password) => {
-                            if (!password) {
-                                return of('/unlock');
-                            }
-
-                            return this.authService.login(password).pipe(
-                                map((isLoggedIn: boolean) => {
-                                    return isLoggedIn ? '/main' : '/unlock';
-                                })
-                            );
-                        })
+                    return this.authService.login(password).pipe(
+                      map((isLoggedIn: boolean) => {
+                          return isLoggedIn ? '/main' : '/unlock';
+                      })
                     );
                 })
-            ).subscribe((route) => {
-                this.isLoaded = true;
-                this.router.navigate([route]);
-            });
-        } else {
-            this.subscription = this.storageService.hasAccountOnce$().pipe(
-                switchMap(() => {
-                    this.isLoaded = true;
-                    return of('/unlock');
-                })
-            ).subscribe((route) => {
-                this.router.navigate([route]);
-            });
-        }
+              );
+          })
+        ).subscribe((route) => {
+            this.isLoaded = true;
+            this.router.navigate([route]);
+        });
+
+        // if (!environment.production) {
+        //
+        //     this.storageService.hasAccountOnce$().pipe(
+        //         switchMap((hasAccount: boolean) => {
+        //             if (!hasAccount) {
+        //                 return of('/greeter');
+        //             }
+        //
+        //             return this.chromeApiService.restorePassword().pipe(
+        //                 switchMap((password) => {
+        //                     if (!password) {
+        //                         return of('/unlock');
+        //                     }
+        //
+        //                     return this.authService.login(password).pipe(
+        //                         map((isLoggedIn: boolean) => {
+        //                             return isLoggedIn ? '/main' : '/unlock';
+        //                         })
+        //                     );
+        //                 })
+        //             );
+        //         })
+        //     ).subscribe((route) => {
+        //         this.isLoaded = true;
+        //         this.router.navigate([route]);
+        //     });
+        //
+        // } else {
+        //     // Work once - no need to unsubscribe
+        //     this.storageService.hasAccountOnce$().pipe(
+        //         switchMap((hasAccount: boolean) => {
+        //             this.isLoaded = true;
+        //             return of('/unlock');
+        //         })
+        //     ).subscribe((route) => {
+        //         this.router.navigate([route]);
+        //     });
+        // }
 
     }
 }

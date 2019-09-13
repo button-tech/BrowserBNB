@@ -46,10 +46,13 @@ import {NgxLoadersCssModule} from 'ngx-loaders-css';
 import {GeneralComponent} from './components/main/menu-top/settings/general/general.component';
 import {AdvancedComponent} from './components/main/menu-top/settings/advanced/advanced.component';
 import {SecurityPrivacyComponent} from './components/main/menu-top/settings/security-privacy/security-privacy.component';
-import {ChromeApiMockService, ChromeApiRealService, ChromeApiService} from "./services/chrome-api.service";
+import {ChromeApiService} from "./services/chrome-api.service";
 import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
-import {AboutComponent} from './components/main/menu-top/settings/about/about.component';
-import {ApproveComponent} from './components/approve/approve.component';
+import { ApproveComponent } from './components/approve/approve.component';
+import { AboutComponent } from './components/main/menu-top/settings/about/about.component'
+import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
+import { ChromeApiMockService } from "./services/chrome-api-mock.service";
+import { ChromeApiRealService } from "./services/chrome-api-real.service";
 
 
 @NgModule({
@@ -83,6 +86,8 @@ import {ApproveComponent} from './components/approve/approve.component';
         AdvancedComponent,
         SecurityPrivacyComponent,
         CustomNetworksComponent,
+        AboutComponent,
+        WcSessionApproveComponent,
         AboutComponent,
         ApproveComponent
     ],
