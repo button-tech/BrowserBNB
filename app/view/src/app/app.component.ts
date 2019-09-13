@@ -59,7 +59,7 @@ export class AppComponent {
             });
         } else {
             this.subscription = this.storageService.hasAccountOnce$().pipe(
-                switchMap((hasAccount: boolean) => {
+                switchMap(() => {
                     this.isLoaded = true;
                     return of('/unlock');
                 })

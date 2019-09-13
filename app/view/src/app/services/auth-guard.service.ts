@@ -12,8 +12,7 @@ export class AuthGuardService implements CanActivate {
 
     constructor(private auth: AuthService,
                 private storageService: StorageService,
-                private router: Router,
-                private chromeApiService: ChromeApiService) {
+                private router: Router) {
     }
 
     canActivate(): Observable<boolean> {

@@ -6,25 +6,25 @@ import {distinctUntilChanged, filter, map, shareReplay, take, tap} from "rxjs/op
 import Port = chrome.runtime.Port;
 
 // TODO: move to shared resource and implement watch
-type FromPage2BackgroundMsg = {
-    type: 'startExtensionSession' | 'dropExtensionSession' | 'keepAlive' | 'restoreExtensionSessionRequest'
+interface FromPage2BackgroundMsg {
+    type: 'startExtensionSession' | 'dropExtensionSession' | 'keepAlive' | 'restoreExtensionSessionRequest';
     password?: string;
     timeout?: number;
 }
 
-type FromContent2BackgroundMsg = {
-    type: 'initWalletConnectSession'
-    wcDeepLink: string
+interface FromContent2BackgroundMsg {
+    type: 'initWalletConnectSession';
+    wcDeepLink: string;
 }
 
-type FromBackgroundToPageMsg = {
-    type: 'restoreSessionResponse'
+interface FromBackgroundToPageMsg {
+    type: 'restoreSessionResponse';
     isExpired: boolean;
     password: string;
 }
 
 interface MessageBase {
-    type: string
+    type: string;
 }
 
 export interface IChromeApiService {
@@ -54,7 +54,7 @@ export class ChromeApiMockService implements IChromeApiService {
             const msg = evt.data.msg as any as FromBackgroundToPageMsg;
             console.log(msg);
             this.msgFromBackground$.next(msg);
-        })
+        });
     }
 
     openNewTab(url: string) {

@@ -9,7 +9,7 @@ import {StorageService} from '../../services/storage.service';
 })
 export class FirstPageComponent {
 
-    constructor(private router: Router, public storage: StorageService) {
+    constructor(public storage: StorageService) {
 
     }
 
