@@ -49,7 +49,7 @@ export class AuthService {
                 this.chromeApiService.savePassword(password);
                 return true;
             }),
-            catchError((error) => {
+            catchError(() => {
                 return of(false);
             })
         );

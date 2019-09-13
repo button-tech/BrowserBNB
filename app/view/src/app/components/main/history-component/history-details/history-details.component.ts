@@ -15,8 +15,10 @@ import {StateService} from "../../../../services/state.service";
 export class HistoryDetailsComponent implements OnInit {
     copyMessage = 'Copy to clipboard';
 
-    constructor(private location: Location, private clipboardService: ClipboardService, public chrome: ChromeApiService, public stateService: StateService) {
-
+    constructor(private location: Location,
+                private clipboardService: ClipboardService,
+                public chrome: ChromeApiService,
+                public stateService: StateService) {
     }
 
     openTab(txHash$: any, network: string) {
@@ -30,10 +32,10 @@ export class HistoryDetailsComponent implements OnInit {
         }
         txHash$.pipe(
             map((transaction: any) => {
-                this.chrome.openNewTab(`${url}${transaction.txHash}`)
+                this.chrome.openNewTab(`${url}${transaction.txHash}`);
             }),
             take(1)
-        ).subscribe()
+        ).subscribe();
     }
 
     findMappedName(symbol$: any): Observable<string> {
@@ -44,13 +46,13 @@ export class HistoryDetailsComponent implements OnInit {
                     if (result) {
                         return result.mappedAsset;
                     } else {
-                        return symbol.txAsset
+                        return symbol.txAsset;
                     }
                 }
-                return symbol.txAsset
+                return symbol.txAsset;
             }),
             take(1)
-        )
+        );
     }
 
 

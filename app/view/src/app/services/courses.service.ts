@@ -193,11 +193,10 @@ export enum CurrencySymbols {
 export class CoursesService {
 
     constructor( private http: HttpClient ) {
-        // this.getBinanceRate(CurrencySymbols.USD).subscribe((res) => {console.log(res)});
     }
 
     getBinanceRate$( baseCurrency: CurrencySymbols ): Observable<string> {
-        const url = '';
+        const url = 'https://node.buttonwallet.tech/courses/v1/prices';
         const body = {
             "tokens": [
                 "0x00000000000000000000000000000000000002ca"

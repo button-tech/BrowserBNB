@@ -11,6 +11,7 @@ import {StateService} from "../../../../../services/state.service";
 })
 export class AddressInputComponent implements OnDestroy {
 
+    // tslint:disable-next-line:no-input-rename
     @Input('value')
     value: string;
 

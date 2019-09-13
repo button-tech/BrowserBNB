@@ -40,7 +40,7 @@ export class StorageService {
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
 
-    constructor(private bncService: BinanceService) {
+    constructor() {
 
         if (environment.production) {
 
@@ -118,7 +118,7 @@ export class StorageService {
 
         console.log('Save to storage:', value);
 
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
             if (environment.production) {
                 const cmd = {
                     [STORAGE_KEY]: value
@@ -134,7 +134,7 @@ export class StorageService {
     }
 
     private getFromStorageRaw(): Promise<string> {
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<any>((resolve) => {
             if (environment.production) {
                 chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
             } else {

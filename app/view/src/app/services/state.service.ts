@@ -471,6 +471,7 @@ export class StateService {
             bnbFiat: 'pending'
         });
     }
+    
 
     get uiState(): IUiState {
         return this.uiState$.getValue();
