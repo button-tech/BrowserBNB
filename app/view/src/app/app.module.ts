@@ -53,6 +53,7 @@ import { AboutComponent } from './components/main/menu-top/settings/about/about.
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
 import { ChromeApiMockService } from "./services/chrome-api-mock.service";
 import { ChromeApiRealService } from "./services/chrome-api-real.service";
+import { WcCallRequestApproveComponent } from "./components/wc-call-request-approve/wc-call-request-approve.component";
 
 
 @NgModule({
@@ -87,6 +88,7 @@ import { ChromeApiRealService } from "./services/chrome-api-real.service";
         SecurityPrivacyComponent,
         CustomNetworksComponent,
         AboutComponent,
+        WcCallRequestApproveComponent,
         WcSessionApproveComponent,
         AboutComponent,
         ApproveComponent

@@ -1,10 +1,11 @@
-import { from, Observable, Subject } from "rxjs";
-import { filter, map, switchMap, take, tap } from "rxjs/operators";
+import { combineLatest, from, Observable, Subject } from "rxjs";
+import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
 import { ReactiveWc } from "./walletconnect/walletconnect";
-import Port = chrome.runtime.Port;
 import { fromMessages, openWidget, PortAndMessage, portConnections$ } from "./backgroud-common";
 import { handlePasswordConnections } from "./backgroud-port-password";
+import { signTransaction } from "./walletconnect/binancecrypto";
+import Port = chrome.runtime.Port;
 
 // import Port = chrome.runtime.Port;
 // let a = "https://dex.binance.org/api/v1/account/bnb1hgm0p7khfk85zpz5v0j8wnej3a90w709vhkdfu";
@@ -15,7 +16,7 @@ import { handlePasswordConnections } from "./backgroud-port-password";
 // })
 //
 
-console.log('Hi!');
+console.log('background.ts !');
 
 handlePasswordConnections();
 
@@ -28,7 +29,8 @@ const walletConnectPort$: Observable<any> = portConnections$.pipe(
   }),
   tap(() => {
       console.log('port-wallet-connect !!!');
-  })
+  }),
+  shareReplay(1)
 );
 
 
@@ -62,7 +64,7 @@ const reactiveWc$: Observable<ReactiveWc> = wcLinkFromContentScript$.pipe(
   }),
 );
 
-const awaitOfApprovalOrRejection = reactiveWc$.pipe(
+const privateKey$ = reactiveWc$.pipe(
   switchMap((reactiveWc: ReactiveWc) => {
 
       const fromUi$ = reactiveWc.sessionRequest$.pipe(
@@ -86,22 +88,101 @@ const awaitOfApprovalOrRejection = reactiveWc$.pipe(
             const {message} = responseFromUi;
             return message.isApproved;
         }),
-        tap((responseFromUi: PortAndMessage) => {
-            const {bnbAddress} = responseFromUi.message;
+        map((responseFromUi: PortAndMessage) => {
+
+            const {bnbAddress, privateKey} = responseFromUi.message;
             reactiveWc.instance.approveSession({
                 chainId: 1,
                 accounts: [bnbAddress],
             });
+
+            debugger
+            return {reactiveWc, privateKey};
         })
       )
   }),
 );
 
-awaitOfApprovalOrRejection.subscribe((data: any) => {
+// const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
+// const zz = JSON.parse('{"id":1,"jsonrpc":"2.0","method":"bnb_sign","params":[{"account_number":"260658","chain_id":"Binance-Chain-Tigris","data":null,"memo":"","msgs":[{"id":"8BCB4071024E9B57F8F79ACB81E4195BB1F6066A-2","ordertype":2,"price":169607,"quantity":5800000000,"sender":"bnb13095qugzf6d4078hnt9creqetwclvpn2htdccj","side":1,"symbol":"PYN-C37_BNB","timeinforce":1}],"sequence":"1","source":"0"}]}');
+// const [rawTransaction] = zz.params;
+// const signed = signTransaction(privateKey, rawTransaction);
+// console.log(signed);
+// debugger
+
+const x$ = privateKey$.pipe(
+  switchMap((x: any) => {
+      const {reactiveWc, privateKey} = x;
+      debugger
+
+      // const txSign = await this.signTransaction(rawTx);
+      // await walletConnector.approveRequest({
+      //     id: payload.id,
+      //     result: JSON.stringify(txSign),
+      // });
+
+      // public async approveRequestCall(payload: any) {
+      //     const walletConnector = this.instance;
+      //
+      //     if (payload.method === "bnb_sign") {
+      //         const [rawTx] = payload.params;
+      //         const txSign = await this.signTransaction(rawTx);
+      //         await walletConnector.approveRequest({
+      //             id: payload.id,
+      //             result: JSON.stringify(txSign),
+      //         });
+      //     }
+      // }
+
+      return combineLatest([reactiveWc.callRequest$, walletConnectPort$]).pipe(
+        tap((x: any[]) => {
+            console.log(x);
+            debugger
+        }),
+        takeUntil(reactiveWc.disconnect$),
+        filter((x: any[]) => {
+
+            debugger
+            const [callRequest] = x;
+            return callRequest.method === 'bnb_sign';
+        }),
+        switchMap((x: any[]) => {
+
+            debugger
+
+            // Send to UI
+            const [callRequest, port] = x;
+            port.postMessage({
+                callRequest
+            });
+
+            return fromMessages(port).pipe(
+              take(1),
+              filter((responseFromUi: PortAndMessage) => {
+                  const {message} = responseFromUi;
+                  return message.isOrderApproved;
+              }),
+              tap(() => {
+                  debugger
+                  const [rawTransaction] = callRequest.params;
+                  const txSign = signTransaction(privateKey, rawTransaction);
+
+                  reactiveWc.instance.approveRequest({
+                      id: callRequest.id,
+                      result: JSON.stringify(txSign),
+                  });
+              })
+            );
+
+        }),
+      );
+  })
+);
+
+x$.subscribe((data: any) => {
     const {port, message} = data;
     console.log(port, message);
 });
-
 
 // chrome.runtime.onConnect.addListener((port: Port) => {
 //
