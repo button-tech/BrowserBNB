@@ -21,6 +21,8 @@ import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/secu
 import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
 import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
+import {ApproveComponent} from "./components/approve/approve.component";
+import {SeedComponent} from "./components/main/menu-top/settings/security-privacy/seed/seed.component";
 
 const routes: Routes = [
     {
@@ -74,6 +76,10 @@ const routes: Routes = [
         canActivate: [AuthGuard]
     },
     {
+        path: 'approve/:operation',
+        component: ApproveComponent
+    },
+    {
         path: 'verify_send',
         component: VerifySendComponent,
         canActivate: [AuthGuard]
@@ -81,6 +87,11 @@ const routes: Routes = [
     {
         path: 'general',
         component: GeneralComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'seed',
+        component: SeedComponent,
         canActivate: [AuthGuard]
     },
     {

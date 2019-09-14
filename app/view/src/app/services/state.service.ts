@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, concat, Observable, of, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, Observable, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
@@ -278,20 +278,20 @@ export class StateService {
         // }
         //
         this.baseCurrency$ = this.uiState$.pipe(
-             filter((uiState) => uiState.storageData !== null),
-             map((uiState) => {
-                 return uiState.storageData.baseFiatCurrency;
-             }),
+            filter(( uiState ) => uiState.storageData !== null),
+            map(( uiState ) => {
+                return uiState.storageData.baseFiatCurrency;
+            }),
             startWith(CurrencySymbols.USD),
             shareReplay(1),
-         );
+        );
 
         this.bnb2fiatRate$ =
             combineLatest(
                 [timerFees$,
-                   this.baseCurrency$])
+                    this.baseCurrency$])
                 .pipe(
-                    switchMap((x: any[]) => {
+                    switchMap(( x: any[] ) => {
                         const [_, baseCurrency] = x;
                         return this.courses.getBinanceRate$(baseCurrency);
                     }),
@@ -465,14 +465,6 @@ export class StateService {
         );
     }
 
-    getBalancePipeline$( address: string ): Observable<IUiBalance> {
-        return of({
-            bnb: 'pending',
-            bnbFiat: 'pending'
-        });
-    }
-    
-
     get uiState(): IUiState {
         return this.uiState$.getValue();
     }
@@ -555,6 +547,42 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
+    removeAccount( account: IUiAccount ): void {
+
+        if (this.uiState.accounts.length > 0) {
+        const newAccounts = this.uiState.storageData.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
+        const newAccountsUI = this.uiState.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
+        let accountToPick = 0;
+        if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
+           accountToPick = 1;
+        } else if (this.uiState.storageData.accounts.length <= 1) {
+            this.storageService.reset();
+            return;
+        }
+
+        const newStorageData: IStorageData = {
+            seedPhrase: this.uiState.storageData.seedPhrase,
+            accounts: newAccounts,
+            selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
+            selectedNetwork: this.uiState.storageData.selectedNetwork,
+            selectedNetworkEndpoint:   this.uiState.storageData.selectedNetworkEndpoint,
+            baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
+            customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints
+        };
+
+        const newUiState: IUiState = {
+                accounts: newAccountsUI,
+                currentAccount: this.uiState.accounts[accountToPick],
+                storageData: newStorageData
+        };
+
+        this.storageService.encryptAndSave(newStorageData, this.password);
+        this.uiState$.next(newUiState);
+        } else {
+            this.storageService.reset();
+        }
+    }
+
     addAccount(): void {
         const seedPhrase = this.uiState.storageData.seedPhrase;
         this.addAccountFromSeed(seedPhrase);
@@ -571,8 +599,6 @@ export class StateService {
         // Prepare account
         const privateKey = getPrivateKeyFromMnemonic(seedPhrase, hdWalletIndex);
 
-        // tslint:disable-next-line:max-line-length
-        // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
         const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
         const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
 

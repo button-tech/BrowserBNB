@@ -7,8 +7,17 @@
             </button>
         </div>
     </div>
-    <div class="col-12 text-center">
-        <h3>Are you sure?</h3>
-        <p>We will remove all current data about accounts for forever. You can access them with backed up mnemonic phrase</p>
+
+</div>
+<div class="container">
+    <div class="col-12 text-center mt-4">
+        <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
+            class="card-title">Are you sure?</h3>
+        <p style="font-weight: bolder; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">{{message}}</p>
     </div>
+    <div id="buttonsDiv" class="col-12 text-center">
+        <button (click)="goBack()" class="btn btn-outline-danger btn-lg main-btn">BACK</button>
+        <button (click)="action()" class="btn btn-binance-outline btn-lg main-btn">YES</button>
+    </div>
+
 </div>

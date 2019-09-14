@@ -1,0 +1,34 @@
+<div class="container header">
+    <div style="margin-top: 0px;padding-bottom: 0em; height: 67px" class="row">
+        <div class="col-12 text-center">
+            <button style="color: rgb(255,255,255); margin-top: 0.5em;" (click)="goBack()"
+                    class="btn btn-just-icon btn-back btn-round">
+                <fa name="arrow-left" size="sm"></fa>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="text-center col-12 pt-4">
+       <h5>
+           {{mnemonic}}
+       </h5>
+    <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93);
+         font-size: 10px; box-shadow: none;"
+            [satPopoverAnchor]="p"
+            (mouseenter)="p.open()"
+            (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
+            (click)="this.copyIt();" class="button-qr btn btn-default">
+        Copy
+        <fa id="copyButton" name="copy" size="sm">
+        </fa>
+    </button>
+    <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
+                 verticalAlign="below">
+        <div id="popup" class="tooltip-wrapper">
+            {{this.copyMessage}}
+        </div>
+    </sat-popover>
+</div>
+<div class="text-center col-12 pt-4">
+<button (click)="goBack()" class="btn btn-binance-outline btn-lg main-btn">BACK</button>
+</div>
