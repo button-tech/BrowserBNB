@@ -22,6 +22,7 @@ import {CustomNetworksComponent} from "./components/main/menu-top/settings/custo
 import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
 import {ApproveComponent} from "./components/approve/approve.component";
+import {SeedComponent} from "./components/main/menu-top/settings/security-privacy/seed/seed.component";
 
 const routes: Routes = [
     {
@@ -86,6 +87,11 @@ const routes: Routes = [
     {
         path: 'general',
         component: GeneralComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'seed',
+        component: SeedComponent,
         canActivate: [AuthGuard]
     },
     {
