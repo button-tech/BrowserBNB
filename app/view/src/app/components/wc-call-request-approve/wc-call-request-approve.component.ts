@@ -40,8 +40,15 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
         this.chain_id = chain_id;
         this.price = price;
         this.quantity = quantity;
-        this.ordertype = ordertype;
+        if (ordertype === '2') {
+            this.ordertype = 'buy';
+        }  else {
+            this.ordertype = 'sell';
+        }
         this.symbol = symbol;
     }
 
+    Number( quantity: string ): number {
+        return Number(quantity);
+    }
 }
