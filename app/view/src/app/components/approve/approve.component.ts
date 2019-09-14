@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
+import {StateService} from "../../services/state.service";
 
 const removeAccountText = 'You will loose access to account. The only one option to restore access is to have mnemonic';
 const seedRevealText = 'Do not show mnemonic to anybody and keep it safe';
@@ -15,7 +16,10 @@ export class ApproveComponent implements OnInit {
 
   message: string;
 
-  constructor(private location: Location, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private location: Location,
+              private router: Router,
+              private activatedRoute: ActivatedRoute,
+              private state: StateService) { }
 
   ngOnInit() {
     const operation = this.activatedRoute.snapshot.params.operation;
@@ -37,6 +41,25 @@ export class ApproveComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  action() {
+    const operation = this.activatedRoute.snapshot.params.operation;
+    switch (operation) {
+      case 'removeaccount':
+             this.state.removeAccount(this.state.uiState.currentAccount);
+             this.router.navigate(['/main']);
+        break;
+      case 'removeall':
+        this.message = removeAllText;
+        break;
+      case 'seed':
+        this.message = seedRevealText;
+        break;
+      default:
+        this.message = seedRevealText;
+        break;
+    }
   }
 
 }

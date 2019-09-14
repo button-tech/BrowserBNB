@@ -76,8 +76,7 @@ const routes: Routes = [
     },
     {
         path: 'approve/:operation',
-        component: ApproveComponent,
-        canActivate: [AuthGuard]
+        component: ApproveComponent
     },
     {
         path: 'verify_send',

@@ -547,22 +547,36 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    removeAccount( accountIdx: number ): void {
+    removeAccount( account: IUiAccount ): void {
+
         if (this.uiState.accounts.length > 0) {
-        const account = this.uiState.storageData.accounts[accountIdx];
-        const newAccounts = this.uiState.storageData.accounts.filter(( accountToRemove ) => accountToRemove !== account);
+        const newAccounts = this.uiState.storageData.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
+        const newAccountsUI = this.uiState.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
+        let accountToPick = 0;
+        if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
+           accountToPick = 1;
+        } else if (this.uiState.storageData.accounts.length <= 1) {
+            this.storageService.reset();
+            return;
+        }
+
+        const newStorageData: IStorageData = {
+            seedPhrase: this.uiState.storageData.seedPhrase,
+            accounts: newAccounts,
+            selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
+            selectedNetwork: this.uiState.storageData.selectedNetwork,
+            selectedNetworkEndpoint:   this.uiState.storageData.selectedNetworkEndpoint,
+            baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
+            customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints
+        };
 
         const newUiState: IUiState = {
-                accounts: newAccounts,
-                currentAccount: this.uiState.accounts[0],
-                ...this.uiState
+                accounts: newAccountsUI,
+                currentAccount: this.uiState.accounts[accountToPick],
+                storageData: newStorageData
         };
 
-        const newStorageState: IStorageData = {
-            ...newUiState.storageData
-        };
-
-        this.storageService.encryptAndSave(newStorageState, this.password);
+        this.storageService.encryptAndSave(newStorageData, this.password);
         this.uiState$.next(newUiState);
         } else {
             this.storageService.reset();
