@@ -12,8 +12,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@walletconnect/browser": "^1.0.0-beta.32",
-    "@walletconnect/types": "^1.0.0-beta.32",
+    "@walletconnect/browser": "^1.0.0-beta.35",
+    "@walletconnect/types": "^1.0.0-beta.35",
     "chokidar": "^3.0.2",
     "rollup": "^1.18.0",
     "rollup-plugin-node-builtins": "^2.1.2",
