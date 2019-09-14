@@ -1,18 +1,11 @@
 <div class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
 
-    <!-- TODO: use image from sessionRequest
-     <img style="height:48px;width:48px" src="{{icon}}" alt="">
-     -->
-    <br>
-    <b style="text-align: center">price: {{price}}</b>
-    <b style="text-align: center">quantity: {{quantity}}</b>
-    <b style="text-align: center">ordertype: {{ordertype}}</b>
-    <b style="text-align: center">symbol: {{symbol}}</b>
-    <b style="text-align: center">chain_id: {{chain_id}}</b>
-    <!--
-    <a class="text-center" href="{{url}}">{{url}}</a>
-    -->
 
+     <img style="height:48px;width:48px" src="../../../assets/icons/icon128.png" alt="">
+    <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
+        class="card-title">Approve action?</h3>
+    <br>
+    <b style="text-align: center">{{'Trade ' + (Number(price) / 100000000) * (Number(quantity) / 100000000) + ' BNB for ' + (Number(quantity) / 100000000) + ' ' + symbol }}</b>
     <br>
     <div>
         <div class="col-12 text-center mt-1" id="buttonsDiv">
