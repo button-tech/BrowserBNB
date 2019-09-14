@@ -42,4 +42,8 @@ export class UnlockComponent {
             this.unlock();
         }
     }
+
+    navigateToApproval(operation: string) {
+        this.router.navigate([`/approve/${operation}`]);
+    }
 }

@@ -21,6 +21,7 @@ import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/secu
 import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
 import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
+import {ApproveComponent} from "./components/approve/approve.component";
 
 const routes: Routes = [
     {
@@ -71,6 +72,11 @@ const routes: Routes = [
     {
         path: 'about',
         component: AboutComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'approve/:operation',
+        component: ApproveComponent,
         canActivate: [AuthGuard]
     },
     {

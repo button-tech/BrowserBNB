@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-security-privacy',
@@ -8,13 +9,17 @@ import {Location} from "@angular/common";
 })
 export class SecurityPrivacyComponent implements OnInit {
 
-  constructor(private location: Location) { }
+  constructor(private location: Location, private router: Router) { }
 
   ngOnInit() {
   }
 
   goBack() {
     this.location.back();
+  }
+
+  navigateToApproval(operation: string) {
+    this.router.navigate([`/approve/${operation}`]);
   }
 
 }

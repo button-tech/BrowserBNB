@@ -49,10 +49,11 @@ import {SecurityPrivacyComponent} from './components/main/menu-top/settings/secu
 import {ChromeApiService} from "./services/chrome-api.service";
 import {CustomNetworksComponent} from './components/main/menu-top/settings/custom-networks/custom-networks.component';
 import { ApproveComponent } from './components/approve/approve.component';
-import { AboutComponent } from './components/main/menu-top/settings/about/about.component'
+import { AboutComponent } from './components/main/menu-top/settings/about/about.component';
 import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
 import { ChromeApiMockService } from "./services/chrome-api-mock.service";
 import { ChromeApiRealService } from "./services/chrome-api-real.service";
+
 
 
 @NgModule({
