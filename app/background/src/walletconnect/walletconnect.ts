@@ -8,10 +8,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { Observable, Subject } from "rxjs";
+import { merge, Observable, Subject } from "rxjs";
 import WalletConnect from "@walletconnect/browser/lib";
 import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
 import { ISignedTransaction } from "./types";
+import { map, switchMap, tap } from "rxjs/operators";
 
 
 function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> {
@@ -27,6 +28,8 @@ function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> {
         if (error) {
             subject$.error(error);
         }
+
+        console.log('next:', eventName, payload);
         subject$.next(payload);
     });
 
@@ -47,6 +50,8 @@ export class ReactiveWc {
     private _disconnect$ = new Subject<any>();
     disconnect$: Observable<any> = this._disconnect$.asObservable();
 
+    isConnected$: Observable<boolean>;
+
     constructor(public instance: WalletConnect) {
 
         this._sessionRequest$ = fromWcEvent("session_request", this.instance);
@@ -60,6 +65,12 @@ export class ReactiveWc {
 
         this._disconnect$ = fromWcEvent("disconnect", this.instance);
         this.disconnect$ = this._disconnect$.asObservable();
+
+
+        this.isConnected$ = merge(
+            this.connect$.pipe(map(() => true)),
+            this.disconnect$.pipe(map(() => false))
+        )
     }
 }
 

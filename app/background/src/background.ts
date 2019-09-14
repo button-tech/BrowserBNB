@@ -1,4 +1,4 @@
-import { combineLatest, from, Observable, Subject } from "rxjs";
+import { combineLatest, from, merge, Observable, Subject } from "rxjs";
 import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
 import { ReactiveWc } from "./walletconnect/walletconnect";
@@ -20,6 +20,9 @@ console.log('background.ts !');
 
 handlePasswordConnections();
 
+let isWcConnected = false;
+let lastWcUri = '';
+
 // const sessionRequestPayload = JSON.parse('{"id":1568231137072078,"jsonrpc":"2.0","method":"session_request","params":[{"peerId":"442662df-5f27-4555-9014-d6b4de5b027d","peerMeta":{"description":"","url":"https://www.binance.org","icons":["https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png","https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png"],"name":"Binance | Dex Trading | Decentralized Exchange | Binance.org"},"chainId":null}]}');
 // of(sessionRequestPayload);
 
@@ -33,6 +36,9 @@ const walletConnectPort$: Observable<any> = portConnections$.pipe(
   shareReplay(1)
 );
 
+walletConnectPort$.subscribe((port: any) => {
+    port.postMessage({isWcConnected});
+});
 
 const wcLinkFromContentScript$ = new Subject<string>();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -44,10 +50,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
+const manualReconnect$ = new Subject<any>();
+const manualReconnectToLastWcLink$ = manualReconnect$.pipe(
+  map(() => {
+        return lastWcUri;
+    }
+  ),
+  filter((x: string) => {
+      return !!x;
+  })
+);
 
-const reactiveWc$: Observable<ReactiveWc> = wcLinkFromContentScript$.pipe(
+const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manualReconnectToLastWcLink$).pipe(
   switchMap((wcLink: string) => {
       console.log(wcLink);
+
+      lastWcUri = wcLink;
 
       const instance = new WalletConnect({
           uri: wcLink
@@ -62,7 +80,23 @@ const reactiveWc$: Observable<ReactiveWc> = wcLinkFromContentScript$.pipe(
   map((instance: WalletConnect) => {
       return new ReactiveWc(instance);
   }),
+  shareReplay(1),
 );
+
+const wcState$ = reactiveWc$.pipe(
+  switchMap((reactiveWc: ReactiveWc) => {
+      return reactiveWc.isConnected$;
+  }),
+  switchMap((isWcConnected: boolean) => {
+      return walletConnectPort$.pipe(
+        tap((port: Port) => {
+            port.postMessage(isWcConnected);
+        })
+      )
+  })
+);
+
+wcState$.subscribe(() => {});
 
 const privateKey$ = reactiveWc$.pipe(
   switchMap((reactiveWc: ReactiveWc) => {
@@ -70,9 +104,12 @@ const privateKey$ = reactiveWc$.pipe(
       const fromUi$ = reactiveWc.sessionRequest$.pipe(
         switchMap((sessionRequest: any) => {
             openWidget();
+
             return walletConnectPort$.pipe(
               tap((port) => {
                   console.log('send sessionRequest:', sessionRequest);
+                  // Port, could be disconnected (track - onDisconnect handler, probably is need take until upstream)
+                  // be carefull we have shareReplay(1)
                   port.postMessage({sessionRequest})
               }),
               switchMap((port: Port) => {
@@ -96,60 +133,55 @@ const privateKey$ = reactiveWc$.pipe(
                 accounts: [bnbAddress],
             });
 
-            debugger
             return {reactiveWc, privateKey};
         })
       )
   }),
 );
 
+
+const abc$ = walletConnectPort$.pipe(
+  switchMap((port: Port) => {
+      return fromMessages(port);
+  }),
+  filter((msg: any) => {
+      return msg.updateConnectionState;
+  }),
+  switchMap((msg: any) => {
+      return reactiveWc$.pipe(
+        tap((reactiveWc: ReactiveWc) => {
+            msg.newState
+              ? manualReconnect$.next(true)
+              : reactiveWc.instance.killSession();
+        })
+      );
+  })
+);
+abc$.subscribe();
+
 // const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
 // const zz = JSON.parse('{"id":1,"jsonrpc":"2.0","method":"bnb_sign","params":[{"account_number":"260658","chain_id":"Binance-Chain-Tigris","data":null,"memo":"","msgs":[{"id":"8BCB4071024E9B57F8F79ACB81E4195BB1F6066A-2","ordertype":2,"price":169607,"quantity":5800000000,"sender":"bnb13095qugzf6d4078hnt9creqetwclvpn2htdccj","side":1,"symbol":"PYN-C37_BNB","timeinforce":1}],"sequence":"1","source":"0"}]}');
 // const [rawTransaction] = zz.params;
 // const signed = signTransaction(privateKey, rawTransaction);
 // console.log(signed);
-// debugger
+// deugger
 
 const x$ = privateKey$.pipe(
   switchMap((x: any) => {
       const {reactiveWc, privateKey} = x;
-      debugger
-
-      // const txSign = await this.signTransaction(rawTx);
-      // await walletConnector.approveRequest({
-      //     id: payload.id,
-      //     result: JSON.stringify(txSign),
-      // });
-
-      // public async approveRequestCall(payload: any) {
-      //     const walletConnector = this.instance;
-      //
-      //     if (payload.method === "bnb_sign") {
-      //         const [rawTx] = payload.params;
-      //         const txSign = await this.signTransaction(rawTx);
-      //         await walletConnector.approveRequest({
-      //             id: payload.id,
-      //             result: JSON.stringify(txSign),
-      //         });
-      //     }
-      // }
 
       return combineLatest([reactiveWc.callRequest$, walletConnectPort$]).pipe(
         tap((x: any[]) => {
             console.log(x);
-            debugger
         }),
+
         takeUntil(reactiveWc.disconnect$),
         filter((x: any[]) => {
-
-            debugger
             const [callRequest] = x;
             return callRequest.method === 'bnb_sign';
         }),
+
         switchMap((x: any[]) => {
-
-            debugger
-
             // Send to UI
             const [callRequest, port] = x;
             port.postMessage({
@@ -163,7 +195,6 @@ const x$ = privateKey$.pipe(
                   return message.isOrderApproved;
               }),
               tap(() => {
-                  debugger
                   const [rawTransaction] = callRequest.params;
                   const txSign = signTransaction(privateKey, rawTransaction);
 
@@ -184,30 +215,6 @@ x$.subscribe((data: any) => {
     console.log(port, message);
 });
 
-// chrome.runtime.onConnect.addListener((port: Port) => {
-//
-//     // console.log('port connected');
-//     // port.onMessage.addListener((msg: MessageBase) => {
-//     //
-//     //     // TODO: check message type, call widget awnd give widget ability to approve.
-//     //     console.log("message received:" + msg);
-//     //     // approveSession(msg);
-//     //
-//     //     if (msg && msg.type) {
-//     //
-//     //         if (msg.type === 'initWalletConnectSession') {
-//     //             // const link = (msg as FromContent2BackgroundMsg).wcDeepLink;
-//     //             // approveSession(link);
-//     //         } else {
-//     //             const response = session.processMessageFromPage(msg as FromPage2BackgroundMsg);
-//     //             if (response) {
-//     //                 port.postMessage(response);
-//     //             }
-//     //         }
-//     //     }
-//     // });
-// });
-//
 // // setTimeout(() => {
 // //     //chrome.tabs.create({url:"index.html?#/registration/import"});
 // //
