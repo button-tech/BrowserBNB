@@ -6,6 +6,7 @@ import { ClipboardService } from '../../services/clipboard.service';
 import { IUiState, StateService } from '../../services/state.service';
 import { IBalance } from "../../services/binance.service";
 import { ActivatedRoute, Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
 
 @Component({
     selector: 'app-main',
@@ -27,13 +28,18 @@ export class MainComponent implements OnInit {
     // @ts-ignore
     @ViewChild('alphaAlert')
     alphaAlert: ElementRef;
-    showApprove: boolean;
+
 
     wcPort: any; // Port
 
     sessionRequest: any;
+    showApprove: boolean;
+
+    // callRequest: any;
+    showCallRequest: boolean;
 
     // sessionRequest: any = JSON.parse('{"id":1568231137072078,"jsonrpc":"2.0","method":"session_request","params":[{"peerId":"442662df-5f27-4555-9014-d6b4de5b027d","peerMeta":{"description":"","url":"https://www.binance.org","icons":["https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png","https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png"],"name":"Binance | Dex Trading | Decentralized Exchange | Binance.org"},"chainId":null}]}');
+    callRequest: any = JSON.parse('{"id":1,"jsonrpc":"2.0","method":"bnb_sign","params":[{"account_number":"260658","chain_id":"Binance-Chain-Tigris","data":null,"memo":"","msgs":[{"id":"8BCB4071024E9B57F8F79ACB81E4195BB1F6066A-2","ordertype":2,"price":169607,"quantity":5800000000,"sender":"bnb13095qugzf6d4078hnt9creqetwclvpn2htdccj","side":1,"symbol":"PYN-C37_BNB","timeinforce":1}],"sequence":"1","source":"0"}]}');
 
     constructor(activateRoute: ActivatedRoute,
                 public stateService: StateService,
@@ -52,9 +58,9 @@ export class MainComponent implements OnInit {
         this.bnbInUsd$ = this.stateService.bnbBalanceInFiat$;
 
         this.allBalances$ = this.stateService.allBalances$.pipe(
-            map((balances: IBalance[]) => {
-                return balances.length > 1;
-            })
+          map((balances: IBalance[]) => {
+              return balances.length > 1;
+          })
         );
     }
 
@@ -64,21 +70,33 @@ export class MainComponent implements OnInit {
             this.alphaAlert.nativeElement.style.display = 'none';
         }
 
-        // port-wallet-connect
-        this.wcPort = chrome.runtime.connect({
-            name: 'port-wallet-connect'
-        });
+        if (environment.production) {
+            this.wcPort = chrome.runtime.connect({
+                name: 'port-wallet-connect'
+            });
+        } else {
+            this.wcPort = {
+                onMessage: {
+                    addListener: () => {
+                    }
+                }
+            };
+        }
 
         console.log('connected, port-wallet-connect');
         this.wcPort.onMessage.addListener((msg: any) => {
-            console.log('1');
-            console.log('msg=', msg);
-            this.sessionRequest = msg.sessionRequest;
-            this.showApprove = true;
-            console.log('2');
+            const {sessionRequest, callRequest} = msg;
+            if (sessionRequest) {
+                this.sessionRequest = sessionRequest;
+                this.showApprove = true;
+            } else if (callRequest) {
+                this.callRequest = callRequest;
+                this.showCallRequest = true;
+            }
         });
 
     }
+
 
     copyAddress() {
         const currentAddress = this.stateService.currentAddress;
@@ -105,7 +123,15 @@ export class MainComponent implements OnInit {
         this.showApprove = false;
         this.wcPort.postMessage({
             isApproved,
+            privateKey: this.stateService.uiState.currentAccount.privateKey,
             bnbAddress: this.stateService.currentAddress
+        });
+    }
+
+    approveOrder(isApproved: boolean) {
+        this.showCallRequest = false;
+        this.wcPort.postMessage({
+            isOrderApproved: isApproved
         });
     }
 }

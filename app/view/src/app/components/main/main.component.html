@@ -7,10 +7,13 @@
 
 <app-wc-session-approve *ngIf="showApprove" [sessionRequest]="sessionRequest"
                         (isApproved)="approveWalletConnectSession($event)">
-    <!-- click approve session here -->
 </app-wc-session-approve>
 
-<div class="container-fluid" *ngIf="!showApprove">
+<app-wc-call-request-approve *ngIf="showCallRequest" [callRequest]="callRequest"
+                        (isApproved)="approveOrder($event)">
+</app-wc-call-request-approve>
+
+<div class="container-fluid" *ngIf="!showApprove && !showCallRequest">
     <app-menu-top></app-menu-top>
 
     <div class="row text-center">

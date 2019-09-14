@@ -13,66 +13,65 @@ import WalletConnect from "@walletconnect/browser/lib";
 import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
 import { ISignedTransaction } from "./types";
 
+
+function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> {
+
+    const subject$ = new Subject<any>();
+
+    wc.on(eventName, (error, payload) => {
+        if (eventName === 'call_request' || eventName === 'connect' || eventName === 'disconnect') {
+            debugger
+        }
+
+        console.log(error, payload);
+        if (error) {
+            subject$.error(error);
+        }
+        subject$.next(payload);
+    });
+
+    return subject$;
+}
+
 export class ReactiveWc {
 
-    private _sessionRequest$ = new Subject<any>();
-    sessionRequest$: Observable<any> = this._sessionRequest$.asObservable();
+    private _sessionRequest$: Subject<any>;
+    sessionRequest$: Observable<any>;
 
-    // callRequest$: Observable<any>;
-    // connect$: Observable<any>;
-    // connect$: Observable<any>;
+    private _callRequest$ = new Subject<any>();
+    callRequest$: Observable<any> = this._callRequest$.asObservable();
+
+    private _connect$ = new Subject<any>();
+    connect$: Observable<any> = this._connect$.asObservable();
+
+    private _disconnect$ = new Subject<any>();
+    disconnect$: Observable<any> = this._disconnect$.asObservable();
 
     constructor(public instance: WalletConnect) {
-        // debugger;
-        console.log(this.instance);
-        this.subscribeToEvents();
-    }
 
-    public subscribeToEvents(): void {
+        this._sessionRequest$ = fromWcEvent("session_request", this.instance);
+        this.sessionRequest$ = this._sessionRequest$.asObservable();
 
-        this.instance.on("session_request", (error, payload) => {
-            console.log(error, payload);
-            // debugger
-            if (error) {
-                this._sessionRequest$.error(error);
-            }
-            this._sessionRequest$.next(payload);
-        });
+        this._callRequest$ = fromWcEvent("call_request", this.instance);
+        this.callRequest$ = this._callRequest$.asObservable();
 
-        // walletConnector.on("call_request", (error, payload) => {
-        //     console.log("call_request", error, payload);
-        //     if (error) {
-        //         throw error;
-        //     }
-        // });
-        //
-        // walletConnector.on("connect", (error, payload) => {
-        //     console.log("connect", error, payload);
-        //     if (error) {
-        //         throw error;
-        //     }
-        // });
-        //
-        // walletConnector.on("disconnect", (error, payload) => {
-        //     console.log("disconnect", error, payload);
-        //     console.log("disconnect");
-        //     if (error) {
-        //         throw error;
-        //     }
-        // });
+        this._connect$ = fromWcEvent("connect", this.instance);
+        this.connect$ = this._connect$.asObservable();
 
+        this._disconnect$ = fromWcEvent("disconnect", this.instance);
+        this.disconnect$ = this._disconnect$.asObservable();
     }
 }
 
-export function approveSession(wcSessionEndpoint: string) {
-    // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
-
-    const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
-    const wc = new WalletConnectController(privateKey, wcSessionEndpoint);
-
-    wc.approveSession();
-    console.log(wc);
-}
+// export function approveSession(wcSessionEndpoint: string) {
+//     // const wcSession = 'wc:b1548cf8-49ab-4289-abf5-1cc4cd108a6d@1?bridge=https%3A%2F%2Fwallet-bridge.binance.org&key=8057158df84cca0773fbdcdb01a6bee6739cf340a00f82834ab13d83fa0c54ff';
+//
+//     const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
+//     const wc = new WalletConnectController(privateKey, wcSessionEndpoint);
+//
+//     wc.approveSession();
+//     console.log(wc);
+// }
 
 export class WalletConnectController {
     private instance: WalletConnect;
@@ -279,6 +278,7 @@ export class WalletConnectController {
 
     public async approveRequestCall(payload: any) {
         const walletConnector = this.instance;
+
         if (payload.method === "bnb_sign") {
             const [rawTx] = payload.params;
             const txSign = await this.signTransaction(rawTx);
