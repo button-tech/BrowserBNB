@@ -85,7 +85,9 @@ export class MainComponent implements OnInit {
         }
 
         console.log('connected, port-wallet-connect');
+
         this.wcPort.onMessage.addListener((msg: any) => {
+            console.log('onMessage =', msg);
             const {sessionRequest, callRequest, isWcConnected} = msg;
             if (sessionRequest) {
                 this.sessionRequest = sessionRequest;
@@ -94,7 +96,11 @@ export class MainComponent implements OnInit {
                 this.callRequest = callRequest;
                 this.showCallRequest = true;
             } else if (isWcConnected !== undefined) {
+                console.log("isWcConnected=", isWcConnected);
                 this.walletConnected = isWcConnected;
+                this.walletConnectMessage = isWcConnected
+                  ? 'Disconnect from DEX'
+                  : 'Connect to Binance DEX';
             }
         });
     }
@@ -111,21 +117,21 @@ export class MainComponent implements OnInit {
     }
 
     connect() {
+        console.log('Connect clicked');
+
         this.wcPort.postMessage({
             updateConnectionState: true,
             newState: true
         });
-
-        this.walletConnectMessage = 'Disconnect from DEX';
     }
 
     disconnect() {
+        console.log('disconnect clicked');
+
         this.wcPort.postMessage({
             updateConnectionState: true,
             newState: false
         });
-
-        this.walletConnectMessage = 'Connect to Binance DEX';
     }
 
     approveWalletConnectSession(isApproved: boolean) {
@@ -140,6 +146,7 @@ export class MainComponent implements OnInit {
     approveOrder(isApproved: boolean) {
         this.showCallRequest = false;
         this.wcPort.postMessage({
+            orderApproveResponse: true,
             isOrderApproved: isApproved
         });
     }
