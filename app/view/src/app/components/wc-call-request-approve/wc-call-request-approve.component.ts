@@ -18,6 +18,7 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
     ordertype: string;
     symbol: string;
     chain_id: string;
+    side: number;
 
     constructor() {
     }
@@ -35,8 +36,10 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
         const jsonRpc = changes.callRequest.currentValue;
 
         const {chain_id} = jsonRpc.params[0];
-        const {price, quantity, ordertype, symbol} = jsonRpc.params[0].msgs[0];
+        const {price, quantity, ordertype, symbol, side} = jsonRpc.params[0].msgs[0];
 
+        console.log("side")
+        console.log(side)
         this.chain_id = chain_id;
         this.price = price;
         this.quantity = quantity;
@@ -46,6 +49,7 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
             this.ordertype = 'sell';
         }
         this.symbol = symbol;
+        this.side = side;
     }
 
     Number( quantity: string ): number {

@@ -41,7 +41,7 @@
             </div>
             <div style="grid-column: 2;  font-weight: bolder; "
                  *ngIf="(this.stateService.historyDetails$ | async).txFee > 0 && (this.stateService.historyDetails$ | async).txAsset && (this.stateService.historyDetails$ | async).value ">
-                {{ this.sum((this.stateService.historyDetails$ | async).txFee, (this.stateService.historyDetails$ | async).value) + ' BNB'}}
+                {{ this.sum((this.stateService.historyDetails$ | async).txFee, (this.stateService.historyDetails$ | async).value) + " " + (this.stateService.historyDetails$ | async).txAsset}}
             </div>
         </div>
         <div class="col-8 offset-2">

@@ -5,7 +5,9 @@
     <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
         class="card-title">Approve action?</h3>
     <br>
-    <b style="text-align: center">{{'Trade ' + (Number(price) / 100000000) * (Number(quantity) / 100000000) + ' BNB for ' + (Number(quantity) / 100000000) + ' ' + symbol }}</b>
+    <b style="text-align: center" *ngIf="price && quantity && side === 1">{{'Trade ' + (Number(price) / 100000000) * (Number(quantity) / 100000000) + ' BNB for ' + (Number(quantity) / 100000000) + ' ' + symbol }}</b>
+    <b style="text-align: center" *ngIf="price && quantity && side === 2">{{'Sell ' +(Number(quantity) / 100000000) + ' ' + symbol + ' for ' +  +(Number(price) / 100000000) * (Number(quantity) / 100000000) + ' BNB'}}</b>
+    <b style="text-align: center" *ngIf="!price && !quantity">{{'Cancel order'}}</b>
     <br>
     <div>
         <div class="col-12 text-center mt-1" id="buttonsDiv">
