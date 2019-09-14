@@ -12,7 +12,7 @@ import { merge, Observable, Subject } from "rxjs";
 import WalletConnect from "@walletconnect/browser/lib";
 import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
 import { ISignedTransaction } from "./types";
-import { map, switchMap, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 
 
 function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> {
