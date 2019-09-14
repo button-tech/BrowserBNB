@@ -75,6 +75,7 @@ const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manu
 
       lastWcUri = wcLink;
 
+      console.log(`new WalletConnect to uri ${wcLink}`);
       const instance = new WalletConnect({
           uri: wcLink
       });
@@ -86,6 +87,7 @@ const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manu
       );
   }),
   map((instance: WalletConnect) => {
+      console.log('new ReactiveWc(instance)');
       return new ReactiveWc(instance);
   }),
   shareReplay(1),
@@ -93,22 +95,22 @@ const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manu
 
 const wcState$ = reactiveWc$.pipe(
   switchMap((reactiveWc: ReactiveWc) => {
+      console.log('switch to: reactiveWc.isConnected$');
       return reactiveWc.isConnected$;
   }),
-  switchMap((isWcConnected: boolean) => {
-      return _walletConnectPort$.pipe(
-        tap((port: Port) => {
-            try {
-                port.postMessage(isWcConnected);
-            } catch {
-                // Do nothing, port could be closed
-            }
-        })
-      )
+  tap((isWcConnected: boolean) => {
+      console.log('isWcConnected');
+      const port = wcPortSubject$.getValue();
+      if (port) {
+          port.postMessage({
+              isWcConnected
+          });
+      }
   })
 );
 
-wcState$.subscribe(() => {
+wcState$.subscribe((isWcConnected: boolean) => {
+    console.log('wcState$.subscribe:', isWcConnected);
 });
 
 const privateKey$ = reactiveWc$.pipe(
@@ -158,20 +160,25 @@ const privateKey$ = reactiveWc$.pipe(
   }),
 );
 
-
 const wcConnectManagementFromUi$ = wcPort$.pipe(
   switchMap((port: Port | null) => {
+      console.log('wcConnectManagementFromUi$ port:', port);
       if (!port)
           return NEVER;
 
       return fromMessages(port);
   }),
   filter((msg: any) => {
+      console.log('wcConnectManagementFromUi$ filter msg:', msg);
       return msg.updateConnectionState;
   }),
   switchMap((msg: any) => {
+      console.log('wcConnectManagementFromUi$ switchMap:', msg);
       return reactiveWc$.pipe(
         tap((reactiveWc: ReactiveWc) => {
+            console.log('wcConnectManagementFromUi$ reactiveWc:', reactiveWc);
+            console.log('wcConnectManagementFromUi$ msg.newState:', msg.newState);
+
             msg.newState
               ? manualReconnect$.next(true)
               : reactiveWc.instance.killSession();
@@ -184,12 +191,14 @@ wcConnectManagementFromUi$.subscribe(() => {
     //
 });
 
+//
 // const privateKey = '90335b9d2153ad1a9799a3ccc070bd64b4164e9642ee1dd48053c33f9a3a05e9';
 // const zz = JSON.parse('{"id":1,"jsonrpc":"2.0","method":"bnb_sign","params":[{"account_number":"260658","chain_id":"Binance-Chain-Tigris","data":null,"memo":"","msgs":[{"id":"8BCB4071024E9B57F8F79ACB81E4195BB1F6066A-2","ordertype":2,"price":169607,"quantity":5800000000,"sender":"bnb13095qugzf6d4078hnt9creqetwclvpn2htdccj","side":1,"symbol":"PYN-C37_BNB","timeinforce":1}],"sequence":"1","source":"0"}]}');
 // const [rawTransaction] = zz.params;
 // const signed = signTransaction(privateKey, rawTransaction);
 // console.log(signed);
-// deugger
+// debugger
+//
 
 const x$ = privateKey$.pipe(
   switchMap((x: any) => {
@@ -203,7 +212,7 @@ const x$ = privateKey$.pipe(
         takeUntil(reactiveWc.disconnect$),
         filter((x: any[]) => {
             const [callRequest] = x;
-            return callRequest.method === 'bnb_sign';
+            return callRequest.method === 'bnb_sign'; // bnb_tx_confirmation
         }),
 
         switchMap((x: any[]) => {
@@ -211,7 +220,8 @@ const x$ = privateKey$.pipe(
             const [callRequest, port] = x;
 
             if (!port) {
-                return of({}); // Do nothing, or better wait
+                console.log('!port');
+                return NEVER; // Do nothing, or better wait
             }
 
             port.postMessage({
@@ -222,16 +232,25 @@ const x$ = privateKey$.pipe(
               take(1),
               filter((responseFromUi: PortAndMessage) => {
                   const {message} = responseFromUi;
-                  return message.isOrderApproved;
+                  return message.orderApproveResponse;
               }),
-              tap(() => {
-                  const [rawTransaction] = callRequest.params;
-                  const txSign = signTransaction(privateKey, rawTransaction);
+              tap((responseFromUi: PortAndMessage) => {
+                  const {message} = responseFromUi;
 
-                  reactiveWc.instance.approveRequest({
-                      id: callRequest.id,
-                      result: JSON.stringify(txSign),
-                  });
+                  if (message.isOrderApproved) {
+                      const [rawTransaction] = callRequest.params;
+                      const txSign = signTransaction(privateKey, rawTransaction);
+                      reactiveWc.instance.approveRequest({
+                          id: callRequest.id,
+                          result: JSON.stringify(txSign),
+                      });
+
+                  } else {
+                      reactiveWc.instance.rejectRequest({
+                          id: callRequest.id,
+                          error: {message: "Failed or Rejected Request"},
+                      });
+                  }
               })
             );
 

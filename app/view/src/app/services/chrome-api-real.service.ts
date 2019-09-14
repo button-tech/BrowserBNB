@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject } from "rxjs";
-import { filter, map } from "rxjs/operators";
+import { Observable, Subject, timer } from "rxjs";
+import { distinctUntilChanged, filter, map } from "rxjs/operators";
 import { IChromeApiService } from "./chrome-api.service";
 import { FromBackgroundToPageMsg, FromPage2BackgroundMsg } from './chrome-api-dto';
 
@@ -17,7 +17,7 @@ function fromMessages(port: Port): Observable<any> {
 @Injectable()
 export class ChromeApiRealService implements IChromeApiService {
 
-    msg: FromBackgroundToPageMsg;
+    msg: any;
     port: Port;
     msgFromBackground$: Observable<any>;
     readonly sessionTimeout: number = 10000; // 10s
@@ -30,30 +30,18 @@ export class ChromeApiRealService implements IChromeApiService {
         });
 
         console.log('B');
-        this.msgFromBackground$ = fromMessages(this.port);
+
 
         console.log('C');
 
         // port-wallet-connect
 
-        // this.msgFromBackground$ = timer(0, 100).pipe(
-        //   map(() => this.msg),
-        //   filter((msg) => !!msg),
-        //   map((msg: FromBackgroundToPageMsg) => {
-        //       return msg.password;
-        //   }),
-        //
-        //   distinctUntilChanged(),
-        //
-        //   // filter((msg: FromBackgroundToPageMsg) => {
-        //   //     const x = msg && msg.password !== this.password;
-        //   //     if (x) {
-        //   //         this.password = msg.password;
-        //   //     }
-        //   //     return x;
-        //   // }),
-        // );
-        //
+        this.msgFromBackground$ = timer(0, 100).pipe(
+          map(() => this.msg),
+          filter((msg) => !!msg),
+          distinctUntilChanged(),
+        );
+
         // this.port.onMessage.addListener((msg: FromBackgroundToPageMsg) => {
         //     console.log('next=', msg);
         //     // this.msgFromBackground$.next(msg);
@@ -61,6 +49,10 @@ export class ChromeApiRealService implements IChromeApiService {
         //     this.msg = msg;
         //     console.log('this.msg=', this.msg);
         // });
+
+        fromMessages(this.port).subscribe( (msg: any) => {
+            this.msg = msg;
+        });
     }
 
 

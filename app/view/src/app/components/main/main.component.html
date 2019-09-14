@@ -33,6 +33,7 @@
                 <fa id="copyButton" name="copy" size="sm"></fa>
             </button>
         </div>
+
         <div class="col-3">
             <button *ngIf="!walletConnected" [satPopoverAnchor]="wc"
                     (mouseenter)="wc.open();"
@@ -47,7 +48,8 @@
                     (mouseenter)="wc.open();"
                     (mouseleave)="wc.close();"
                     (click)="disconnect()"
-                    style="margin-left: 2.3em; margin-top: 0.5em; border-radius: 100px !important; color:rgb(132, 142, 156)!important; " class="btn btn-binance-outline-two btn-sm btn-just-icon btn-round">
+                    style="margin-left: 2.3em; margin-top: 0.5em; border-radius: 100px !important; color:rgb(132, 142, 156)!important; "
+                    class="btn btn-binance-outline-two btn-sm btn-just-icon btn-round">
                 <fa name="unlink" size="sm"></fa>
             </button>
         </div>

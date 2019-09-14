@@ -68,8 +68,8 @@ export class ReactiveWc {
 
 
         this.isConnected$ = merge(
-            this.connect$.pipe(map(() => true)),
-            this.disconnect$.pipe(map(() => false))
+          this.connect$.pipe(map(() => true)),
+          this.disconnect$.pipe(map(() => false))
         )
     }
 }
