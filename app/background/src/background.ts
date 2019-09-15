@@ -26,6 +26,11 @@ let lastWcUri = '';
 // const sessionRequestPayload = JSON.parse('{"id":1568231137072078,"jsonrpc":"2.0","method":"session_request","params":[{"peerId":"442662df-5f27-4555-9014-d6b4de5b027d","peerMeta":{"description":"","url":"https://www.binance.org","icons":["https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png","https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png"],"name":"Binance | Dex Trading | Decentralized Exchange | Binance.org"},"chainId":null}]}');
 // of(sessionRequestPayload);
 
+const logAndSendToPort = (port: Port, message: any, logMarker?: string ) => {
+    console.warn(`${logMarker}: ${JSON.stringify(message)}`);
+    port.postMessage(message);
+};
+
 // TODO: refactor and merge with subject below
 const _walletConnectPort$: Observable<any> = portConnections$.pipe(
   filter((port: Port) => {
@@ -41,7 +46,9 @@ _walletConnectPort$.subscribe((port: any) => {
         wcPortSubject$.next(null);
     });
 
-    port.postMessage({isWcConnected});
+    logAndSendToPort(port, {isWcConnected}, '_walletConnectPort$.subscribe(49)');
+    // port.postMessage({isWcConnected});
+
     wcPortSubject$.next(port);
 });
 
@@ -102,9 +109,10 @@ const wcState$ = reactiveWc$.pipe(
       console.log('isWcConnected');
       const port = wcPortSubject$.getValue();
       if (port) {
-          port.postMessage({
-              isWcConnected
-          });
+          logAndSendToPort(port, {isWcConnected}, 'wcState$(112)');
+          // port.postMessage({
+          //     isWcConnected
+          // });
       }
   })
 );
@@ -131,7 +139,8 @@ const privateKey$ = reactiveWc$.pipe(
                   console.log('send sessionRequest:', sessionRequest);
                   // Port, could be disconnected (track - onDisconnect handler, probably is need take until upstream)
                   // be carefull we have shareReplay(1)
-                  port.postMessage({sessionRequest})
+                  // port.postMessage({sessionRequest})
+                  logAndSendToPort(port, {sessionRequest}, 'wcState$(143)');
               }),
               switchMap((port: Port) => {
                   return fromMessages(port);
@@ -224,9 +233,10 @@ const x$ = privateKey$.pipe(
                 return NEVER; // Do nothing, or better wait
             }
 
-            port.postMessage({
-                callRequest
-            });
+            logAndSendToPort(port, {callRequest}, '_walletConnectPort$.subscribe(236)');
+            // port.postMessage({
+            //     callRequest
+            // });
 
             return fromMessages(port).pipe(
               take(1),
