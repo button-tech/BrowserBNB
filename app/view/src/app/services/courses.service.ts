@@ -204,7 +204,7 @@ export class CoursesService {
             "currencies": [
                 baseCurrency
             ],
-            "change": "0",
+            "change": "24",
             "api": "cmc"
         };
 

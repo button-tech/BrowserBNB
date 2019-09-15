@@ -14,7 +14,7 @@
                             {{(tx | async).Amount || ''}} {{(tx | async).mapppedName || ''}}
                         </p>
                         <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).SumInFiat || 'pending'}} USD
+                            ${{(txDetails | async).SumInFiat || 'pending'}} {{ + ' ' + this.stateService.uiState.storageData.baseFiatCurrency}}
                         </p>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                             {{(txDetails | async).FeeInBNB || 'pending'}} BNB
                         </p>
                         <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).FeeInFiat || 'pending'}} USD
+                            ${{(txDetails | async).FeeInFiat || 'pending'}}  {{ + ' ' + this.stateService.uiState.storageData.baseFiatCurrency}}
                         </p>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                             {{(txDetails | async).TotalSumInToken || 'pending'}} BNB
                         </p>
                         <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).TotalSumInFiat || 'pending'}} USD
+                            ${{(txDetails | async).TotalSumInFiat || 'pending'}}  {{ + ' ' + this.stateService.uiState.storageData.baseFiatCurrency}}
                         </p>
                     </div>
                 </div>
