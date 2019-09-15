@@ -1,7 +1,7 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {ITransaction, StateService} from "../../../../../services/state.service";
-import {BehaviorSubject, combineLatest, Observable, of} from "rxjs";
-import {map, shareReplay, switchMap} from "rxjs/operators";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ITransaction, StateService } from "../../../../../services/state.service";
+import { BehaviorSubject, combineLatest, Observable, of, Subscription } from "rxjs";
+import { map, shareReplay, switchMap } from "rxjs/operators";
 
 interface IAmounts {
     baseSymbol: string;
@@ -19,6 +19,7 @@ interface IAmounts {
 export class AmountInputComponent implements OnInit, OnDestroy {
 
     currentState$: Observable<IAmounts>;
+    currentStateSnapshot: IAmounts;
 
     userInput$: BehaviorSubject<number> = new BehaviorSubject(0);
     swapCurrencies$: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -28,6 +29,8 @@ export class AmountInputComponent implements OnInit, OnDestroy {
     @ViewChild('sum')
     inputElement: ElementRef;
 
+    subscription: Subscription;
+
     constructor(private stateService: StateService) {
     }
 
@@ -36,80 +39,91 @@ export class AmountInputComponent implements OnInit, OnDestroy {
         this.userInput$.next(value);
 
         const newTx = this.stateService.currentTransaction.getValue();
-        newTx.Amount = value;
+        newTx.Amount = this.inputElement.nativeElement.value;
+        newTx.IsAmountEnteredInUSD = this.swapCurrencies$.getValue();
         this.stateService.currentTransaction.next(newTx);
+        console.warn(newTx);
     }
 
     swapCurrencies() {
-        this.swapped = true;
         const doSwap = this.swapCurrencies$.getValue();
-        return this.swapCurrencies$.next(!doSwap);
+        this.swapCurrencies$.next(!doSwap);
+        this.nextValue();
     }
 
     ngOnInit() {
         const selectedToken$ = this.stateService.currentTransaction.pipe(
-            switchMap((x: ITransaction) => {
-                if (x.Symbol === '') {
-                    x.Symbol = 'BNB';
-                }
-                if (x.Symbol === 'BNB') {
-                    return this.stateService.bnb2fiatRate$.pipe(
-                        map((rate2fiat) => {
-                            return {
-                                ...x,
-                                rate2fiat
-                            };
-                        })
-                    );
-                }
-                return of(x);
-            }),
-            map((x: ITransaction) => {
-                const secondarySymbol = x.rate2fiat === 0 ? '' : this.stateService.uiState$.getValue().storageData.baseFiatCurrency;
+          switchMap((x: ITransaction) => {
+              if (x.Symbol === '') {
+                  x.Symbol = 'BNB';
+              }
 
-                return {
-                    'baseSymbol': x.Symbol,
-                    'secondarySymbol': secondarySymbol,
-                    'calculatedSum': 0,
-                    'rate2usd': x.rate2fiat
-                };
-            })
+              if (x.Symbol === 'BNB') {
+                  return this.stateService.bnb2fiatRate$.pipe(
+                    map((rate2fiat) => {
+                        return {
+                            ...x,
+                            rate2fiat
+                        };
+                    })
+                  );
+              }
+              return of(x);
+          }),
+          map((x: ITransaction) => {
+              const secondarySymbol = x.rate2fiat === 0
+                ? ''
+                : this.stateService.uiState$.getValue().storageData.baseFiatCurrency;
+
+              return {
+                  'baseSymbol': x.Symbol,
+                  'secondarySymbol': secondarySymbol,
+                  'calculatedSum': 0,
+                  'rate2usd': x.rate2fiat
+              };
+          })
         );
 
         const z$ = combineLatest([selectedToken$, this.swapCurrencies$]).pipe(
-            map((x) => {
-                const [selectedToken, doSwap] = x;
-                const {baseSymbol, secondarySymbol} = selectedToken;
-
-                return {
-                    ...selectedToken,
-                    baseSymbol: doSwap ? secondarySymbol : baseSymbol,
-                    secondarySymbol: doSwap ? baseSymbol : secondarySymbol,
-                };
-            })
+          map((x) => {
+              const [selectedToken, doSwap] = x;
+              const {baseSymbol, secondarySymbol} = selectedToken;
+              // debugger
+              return {
+                  ...selectedToken,
+                  baseSymbol: doSwap ? secondarySymbol : baseSymbol,
+                  secondarySymbol: doSwap ? baseSymbol : secondarySymbol,
+                  doSwap
+              };
+          })
         );
 
         this.currentState$ = combineLatest([z$, this.userInput$]).pipe(
-            map((x) => {
-                const [selectedToken, amount] = x;
+          map((x) => {
+              const [selectedToken, amount] = x;
 
-                let calculatedSum = 0;
-                if (this.swapped) {
-                    calculatedSum = +((1 / selectedToken.rate2usd) * amount).toFixed(4);
-                } else {
-                    calculatedSum = +(selectedToken.rate2usd * amount).toFixed(2);
-                }
+              let calculatedSum = 0;
+              if (selectedToken.doSwap) {
+                  calculatedSum = +((1 / selectedToken.rate2usd) * amount).toFixed(4);
+              } else {
+                  calculatedSum = +(selectedToken.rate2usd * amount).toFixed(2);
+              }
 
-                return {
-                    ...selectedToken,
-                    calculatedSum,
-                    rate2usd: selectedToken.rate2usd
-                };
-            }),
-            shareReplay(1)
+              return {
+                  ...selectedToken,
+                  calculatedSum,
+                  rate2usd: selectedToken.rate2usd
+              };
+          }),
+          shareReplay(1)
         );
+
+        this.subscription = this.currentState$.subscribe( (currentState: IAmounts) => {
+            this.currentStateSnapshot = currentState;
+        });
     }
 
     ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 }

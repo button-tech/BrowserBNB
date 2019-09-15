@@ -11,6 +11,8 @@ import {CoursesService, CurrencySymbols} from "./courses.service";
 
 export interface ITransaction {
     Amount: number;
+    IsAmountEnteredInUSD: boolean;
+
     AddressTo: string;
     AddressFrom: string;
     Memo: string;
@@ -71,6 +73,7 @@ const basicNetworkSttate: IMenuItem = Object.freeze({
 });
 const basicTransactionState: ITransaction = {
     Amount: 0,
+    IsAmountEnteredInUSD: false,
     AddressTo: '',
     AddressFrom: '',
     Memo: '',

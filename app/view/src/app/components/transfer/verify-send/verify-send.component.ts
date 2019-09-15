@@ -1,12 +1,15 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {BinanceService} from '../../../services/binance.service';
-import {map, shareReplay} from 'rxjs/operators';
-import {ITransaction, StateService} from '../../../services/state.service';
-import {Router} from "@angular/router";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, from, combineLatest, Observable } from 'rxjs';
+import { BinanceService } from '../../../services/binance.service';
+import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
+import { ITransaction, StateService } from '../../../services/state.service';
+import { Router } from "@angular/router";
 
 interface ITransactionDetails {
-    SumInToken: string;
+    IsBnb: boolean;
+    SumInCrypto: string;
+    SumInCryptoRaw: number;
+    CryptoName: string;
     SumInFiat: string;
     FeeInBNB: string;
     FeeInFiat: string;
@@ -16,6 +19,7 @@ interface ITransactionDetails {
 
 const basicTransactionState: ITransaction = {
     Amount: 0,
+    IsAmountEnteredInUSD: false,
     AddressTo: '',
     AddressFrom: '',
     Memo: '',
@@ -42,7 +46,6 @@ export class VerifySendComponent implements OnDestroy, OnInit {
 
     ngOnInit() {
         const txSnapshot = this.stateService.currentTransaction.getValue();
-        
         this.tx.next(txSnapshot);
 
         const selectedNetwork$ = this.stateService.selectedNetwork$;
@@ -61,47 +64,79 @@ export class VerifySendComponent implements OnDestroy, OnInit {
         const bnbTransferFee$ = this.stateService.simpleFee$;
 
         this.txDetails = combineLatest([bnb2usdRate$, bnbTransferFee$]).pipe(
-            map((x: any[]) => {
-                const [rate, fee] = x;
-                
-                const tx = this.tx.getValue();
-                const totalSumInTokenIfNotBNB = tx.Amount + ' ' + tx.mapppedName + ' and ' + fee.toString() + ' BNB';
-                const totalSumInTokenIfBNB = Number(tx.Amount) + Number(fee);
-                const totalSumInToken = tx.Symbol === 'BNB' ? totalSumInTokenIfBNB.toString() : totalSumInTokenIfNotBNB;
-                const TotalFiatSum = (Number(fee) * Number(rate) + (tx.Amount * rate)).toFixed(2);
+          map((x: any[]) => {
+              const [rate, fee] = x;
 
-                const txDetails: ITransactionDetails = {
-                    SumInToken: tx.Amount.toString(),
-                    SumInFiat: (tx.Amount * rate).toFixed(2),
-                    FeeInBNB: fee.toString(),
-                    FeeInFiat: (Number(fee) * Number(rate)).toFixed(2),
-                    TotalSumInToken: totalSumInToken,
-                    TotalSumInFiat: TotalFiatSum,
-                };
-                return txDetails;
-            }),
-            shareReplay(1)
+              const tx = this.tx.getValue();
+
+              const inUSD = tx.IsAmountEnteredInUSD;
+
+              // debugger
+              const sumInCrypto = !inUSD ? tx.Amount : tx.Amount / rate;
+              const sumInFiat = !inUSD ? (tx.Amount * rate) : tx.Amount;
+
+              const totalSumInTokenIfNotBNB = sumInCrypto + ' ' + tx.mapppedName + ' and ' + fee.toString() + ' BNB';
+              const totalSumInTokenIfBNB = Number(sumInCrypto) + Number(fee);
+              const isBnb = tx.Symbol === 'BNB';
+
+              const totalSumInToken = isBnb
+                ? totalSumInTokenIfBNB.toString()
+                : totalSumInTokenIfNotBNB;
+
+              const TotalFiatSum = +sumInFiat + (Number(fee) * Number(rate));
+
+              const txDetails: ITransactionDetails = {
+                  IsBnb: isBnb,
+                  CryptoName: isBnb ? 'BNB' : tx.mapppedName,
+                  SumInCrypto: (+sumInCrypto).toFixed(4),
+                  SumInCryptoRaw: sumInCrypto,
+                  SumInFiat: (+sumInFiat).toFixed(2),
+
+                  FeeInBNB: fee.toString(),
+                  FeeInFiat: (Number(fee) * Number(rate)).toFixed(2),
+
+                  TotalSumInToken: (+totalSumInToken).toFixed(4),
+                  TotalSumInFiat: TotalFiatSum.toFixed(2),
+              };
+              return txDetails;
+          }),
+          shareReplay(1)
         );
     }
 
     verify() {
-        const tx = this.tx.getValue();
-        const network = this.stateService.selectedNetwork$.getValue();
-        const privateKey = this.stateService.uiState.currentAccount.privateKey;
-        return this.bncService.sendTransaction(
-            tx.Amount,
-            tx.AddressTo,
-            network.label,
-            network.val,
-            network.networkPrefix,
-            tx.Symbol,
-            privateKey,
-            tx.Memo);
+
+        this.txDetails.pipe(
+          take(1),
+          switchMap((txDetails: ITransactionDetails) => {
+              const tx = this.tx.getValue();
+              const network = this.stateService.selectedNetwork$.getValue();
+              const privateKey = this.stateService.uiState.currentAccount.privateKey;
+
+
+              const p$ = this.bncService.sendTransaction(
+                +txDetails.SumInCrypto,
+                tx.AddressTo,
+                network.label,
+                network.val,
+                network.networkPrefix,
+                tx.Symbol,
+                privateKey,
+                tx.Memo
+              );
+
+              return from(p$);
+          })
+        ).subscribe((result) => {
+            console.log(result);
+        });
+
     }
 
     ngOnDestroy() {
         this.stateService.currentTransaction.next({
             Amount: 0,
+            IsAmountEnteredInUSD: false,
             AddressTo: '',
             AddressFrom: '',
             Memo: '',

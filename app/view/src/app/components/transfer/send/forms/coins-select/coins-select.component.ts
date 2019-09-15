@@ -54,6 +54,7 @@ export class CoinsSelectComponent implements OnInit, OnDestroy {
                     newTx.Symbol = coin.symbol;
                     newTx.rate2fiat = coin.rate2usd;
                 }
+
                 this.stateService.currentTransaction.next(newTx);
             })
         ).subscribe();

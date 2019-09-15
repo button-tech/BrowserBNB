@@ -1,12 +1,14 @@
 <div class="wrap text-center send-amount-row">
     <mat-form-field class="example-full-width form-group send-field">
         <div class="amount-field-grid">
+
             <div class="amount-field-input">
-                <input autocomplete="off" #sum class="form-control" type="number" step="0.00000001" matInput value=0 (input)="this.nextValue()">
+                <input autocomplete="off" #sum class="form-control" type="number" step="0.00000001" matInput value=0
+                       (input)="this.nextValue()">
             </div>
 
             <div class="overflow-ellipsis amount-field-currency-main">
-                {{(currentState$ | async).baseSymbol  || 'BNB'}}
+                {{(currentState$ | async).baseSymbol || 'BNB'}}
             </div>
 
             <div *ngIf="(currentState$ | async).rate2usd" class="amount-field-secondary-sum overflow-ellipsis">

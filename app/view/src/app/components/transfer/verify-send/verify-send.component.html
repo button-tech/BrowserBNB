@@ -12,10 +12,10 @@
                     </div>
                     <div class="col-9">
                         <p class="verify-send-row-sum">
-                            {{(tx | async).Amount || ''}} {{(tx | async).mapppedName || ''}}
+                            {{(txDetails | async)?.SumInCrypto || ''}} {{ (txDetails | async)?.CryptoName}}
                         </p>
-                        <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).SumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
+                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
+                            ${{(txDetails | async)?.SumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
                         </p>
                     </div>
                 </div>
@@ -25,10 +25,10 @@
                     </div>
                     <div class="col-9">
                         <p class="verify-send-row-sum">
-                            {{(txDetails | async).FeeInBNB || 'pending'}} BNB
+                            {{(txDetails | async)?.FeeInBNB || 'pending'}} BNB
                         </p>
-                        <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).FeeInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
+                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
+                            ${{(txDetails | async)?.FeeInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
                         </p>
                     </div>
                 </div>
@@ -49,10 +49,10 @@
                     </div>
                     <div class="col-9">
                         <p class="verify-send-row-sum">
-                            {{(txDetails | async).TotalSumInToken || 'pending'}} BNB
+                            {{(txDetails | async)?.TotalSumInToken || 'pending'}} BNB
                         </p>
-                        <p class="verify-send-row-sub-sum">
-                            ${{(txDetails | async).TotalSumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
+                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
+                            ${{(txDetails | async)?.TotalSumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
                         </p>
                     </div>
                 </div>
