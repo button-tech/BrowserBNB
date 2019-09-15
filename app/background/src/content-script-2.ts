@@ -6,8 +6,16 @@ if (hrefRe.test(window.location.href) || window.location.href.startsWith('http:/
     const script = document.createElement('script');
     script.type = "text/javascript";
 
-    // TODO: move to separate file
+    // TODO: move to and import separate js file
     script.innerHTML = `
+        var intervalId = setInterval(() => {
+        const btn = document.getElementById('Unlock_Wallet_Connect');
+            if(btn){
+                clearInterval(intervalId);
+                btn.click();
+            }
+        }, 100);
+        
         const defaultLog = console.log.bind(console);
         console.log = function () {
             defaultLog.apply(console, arguments);
@@ -33,3 +41,4 @@ if (hrefRe.test(window.location.href) || window.location.href.startsWith('http:/
         }
     }, false);
 }
+

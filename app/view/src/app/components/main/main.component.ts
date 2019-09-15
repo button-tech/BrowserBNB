@@ -72,24 +72,28 @@ export class MainComponent implements OnInit, OnDestroy {
           })
         );
 
+        // const stub: Observable<IWcState> = of({
+        //     wcPort: true, // Port
+        //     walletConnected: true,
+        //     sessionRequest: null, // JsonRpc format
+        //     callRequest: null // JsonRpc format
+        // });
 
-        const stub: Observable<IWcState> = of({
-            wcPort: true, // Port
-            walletConnected: true,
-            sessionRequest: null, // JsonRpc format
-            callRequest: null // JsonRpc format
-        });
+        this.wcApiSubscription = this.wcApi.walletConnectState$
 
-        this.wcApiSubscription = stub // this.wcApi.walletConnectState$
           .subscribe((wcState: IWcState) => {
 
               console.warn(wcState);
+              if (!wcState) {
+                  console.error('!wcState');
+                  return;
+              }
 
               this.sessionRequest = wcState.sessionRequest;
-              this.showApprove = this.sessionRequest != null;
+              this.showApprove = !!this.sessionRequest;
 
               this.callRequest = wcState.callRequest;
-              this.showCallRequest = this.showCallRequest != null;
+              this.showCallRequest = !!this.showCallRequest;
 
               this.walletConnected = wcState.walletConnected;
               this.walletConnectMessage = this.walletConnected
@@ -151,7 +155,9 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     connect() {
-        this.wcApi.connect();
+        window.open('https://www.binance.org/en/unlock', '_blank');
+        // https://www.binance.org/en/unlock
+        // this.wcApi.connect();
     }
 
     disconnect() {

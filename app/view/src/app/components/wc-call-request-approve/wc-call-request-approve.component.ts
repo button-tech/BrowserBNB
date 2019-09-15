@@ -33,6 +33,10 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
 
+        if (!changes || !changes.callRequest || !changes.callRequest.currentValue) {
+            return;
+        }
+
         const jsonRpc = changes.callRequest.currentValue;
 
         if (!jsonRpc.params[0]) {

@@ -81,9 +81,8 @@ export class ChromeApiWalletConnectService {
           map(() => this.msg),
           filter((msg) => !!msg),
           distinctUntilChanged(),
-          map((x: PortAndMessage) => {
-              const {port, message} = x;
-
+          map((message: any) => {
+              // const {port, message} = x;
               console.warn(`MESSAGE FROM WC PORT: ${JSON.stringify(message)}`);
 
               let update = {};
@@ -101,7 +100,7 @@ export class ChromeApiWalletConnectService {
               return {
                   ...prevState,
                   ...update,
-                  wcPort: port
+                  wcPort: this.port
               };
           }),
         ).subscribe((newState: IWcState) => {

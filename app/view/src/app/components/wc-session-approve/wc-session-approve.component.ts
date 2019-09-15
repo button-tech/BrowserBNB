@@ -29,6 +29,11 @@ export class WcSessionApproveComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+
+        if (!changes || !changes.sessionRequest || !changes.sessionRequest.currentValue) {
+            return;
+        }
+
         const jsonRpc = changes.sessionRequest.currentValue;
         const {url, icons, name} = jsonRpc.params[0].peerMeta;
 
