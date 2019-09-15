@@ -35,7 +35,7 @@ export class VerifySendComponent implements OnDestroy, OnInit {
     iterator = new BehaviorSubject<number>(0);
     txDetails: Observable<ITransactionDetails>;
 
-    constructor(private stateService: StateService,
+    constructor(public stateService: StateService,
                 private bncService: BinanceService,
                 private router: Router) {
     }
