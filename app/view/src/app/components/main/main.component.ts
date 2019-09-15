@@ -93,7 +93,7 @@ export class MainComponent implements OnInit, OnDestroy {
               this.showApprove = !!this.sessionRequest;
 
               this.callRequest = wcState.callRequest;
-              this.showCallRequest = !!this.showCallRequest;
+              this.showCallRequest = !!this.callRequest;
 
               this.walletConnected = wcState.walletConnected;
               this.walletConnectMessage = this.walletConnected

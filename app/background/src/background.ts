@@ -177,18 +177,20 @@ const wcConnectManagementFromUi$ = wcPort$.pipe(
 
       return fromMessages(port);
   }),
-  filter((msg: any) => {
-      console.log('wcConnectManagementFromUi$ filter msg:', msg);
-      return msg.updateConnectionState;
+  filter((x: PortAndMessage) => {
+      const { message} = x;
+      console.log('wcConnectManagementFromUi$ filter msg:', message);
+      return message.updateConnectionState;
   }),
-  switchMap((msg: any) => {
-      console.log('wcConnectManagementFromUi$ switchMap:', msg);
+  switchMap((x: PortAndMessage) => {
+      const { message} = x;
+      console.log('wcConnectManagementFromUi$ switchMap:', message);
       return reactiveWc$.pipe(
         tap((reactiveWc: ReactiveWc) => {
             console.log('wcConnectManagementFromUi$ reactiveWc:', reactiveWc);
-            console.log('wcConnectManagementFromUi$ msg.newState:', msg.newState);
+            console.log('wcConnectManagementFromUi$ msg.newState:', message.newState);
 
-            msg.newState
+            message.newState
               ? manualReconnect$.next(true)
               : reactiveWc.instance.killSession();
         })
