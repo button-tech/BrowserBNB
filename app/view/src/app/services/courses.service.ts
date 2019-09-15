@@ -204,15 +204,14 @@ export class CoursesService {
             "currencies": [
                 baseCurrency
             ],
-            "change": "24",
+            "change": "0",
             "api": "cmc"
         };
 
         return this.http.post(url, body).pipe(
             map(( response: ResponseFromCoursesApi ) => {
-                const currency = response.data.find(( obj ) => obj.currency === baseCurrency);
-                const raw = currency.rates[0]["0x00000000000000000000000000000000000002ca"];
-                return Number(raw).toFixed(2);
+                // @ts-ignore
+                return Number(response.data[0].rates[0].rate['0x00000000000000000000000000000000000002ca']).toFixed(2);
             }),
             shareReplay(1)
         );
