@@ -1,9 +1,9 @@
 /// <reference types="chrome"/>
-import { Injectable, Injector } from '@angular/core';
-import { environment } from "../../environments/environment";
-import { Observable } from "rxjs";
-import { ChromeApiMockService } from "./chrome-api-mock.service";
-import { ChromeApiRealService } from "./chrome-api-real.service";
+import {Injectable, Injector} from '@angular/core';
+import {environment} from "../../environments/environment";
+import {Observable} from "rxjs";
+import {ChromeApiMockService} from "./chrome-api-mock.service";
+import {ChromeApiRealService} from "./chrome-api-real.service";
 
 export interface IChromeApiService {
     openNewTab(url: string): void;

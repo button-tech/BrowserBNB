@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ITransaction, StateService } from "../../../../../services/state.service";
-import { BehaviorSubject, combineLatest, Observable, of, Subscription } from "rxjs";
-import { map, shareReplay, switchMap } from "rxjs/operators";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {ITransaction, StateService} from "../../../../../services/state.service";
+import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
+import {map, shareReplay, switchMap} from "rxjs/operators";
 
 interface IAmounts {
     baseSymbol: string;

@@ -1,9 +1,8 @@
 /// <reference types="chrome"/>
 import {Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { from, NEVER, Observable, Subject } from 'rxjs';
-import {BinanceService} from './binance.service';
+import {catchError, map, switchMap} from 'rxjs/operators';
+import {from, NEVER, Observable, Subject} from 'rxjs';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';

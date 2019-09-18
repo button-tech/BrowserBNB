@@ -1,12 +1,12 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Observable, of, Subscription } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { ClipboardService } from '../../services/clipboard.service';
-import { IUiState, StateService } from '../../services/state.service';
-import { IBalance } from "../../services/binance.service";
-import { ActivatedRoute } from "@angular/router";
-import { ChromeApiWalletConnectService, IWcState } from "../../services/chrome-api-wc.service";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {map} from 'rxjs/operators';
+import {ClipboardService} from '../../services/clipboard.service';
+import {IUiState, StateService} from '../../services/state.service';
+import {IBalance} from "../../services/binance.service";
+import {ActivatedRoute} from "@angular/router";
+import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api-wc.service";
 
 @Component({
     selector: 'app-main',

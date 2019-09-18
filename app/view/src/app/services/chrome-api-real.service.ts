@@ -1,9 +1,8 @@
-import { Injectable } from "@angular/core";
-import { Observable, Subject, timer } from "rxjs";
-import { distinctUntilChanged, filter, map } from "rxjs/operators";
-import { IChromeApiService } from "./chrome-api.service";
-import { FromBackgroundToPageMsg, FromPage2BackgroundMsg } from './chrome-api-dto';
-
+import {Injectable} from "@angular/core";
+import {Observable, Subject, timer} from "rxjs";
+import {distinctUntilChanged, filter, map} from "rxjs/operators";
+import {IChromeApiService} from "./chrome-api.service";
+import {FromPage2BackgroundMsg} from './chrome-api-dto';
 import Port = chrome.runtime.Port;
 
 function fromMessages(port: Port): Observable<any> {

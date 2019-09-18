@@ -5,7 +5,6 @@ import {AuthService} from './auth.service';
 import {StorageService} from './storage.service';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {ChromeApiService} from "./chrome-api.service";
 
 @Injectable()
 export class AuthGuardService implements CanActivate {

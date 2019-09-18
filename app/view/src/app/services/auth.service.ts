@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, interval, Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { IStorageData, StorageService } from './storage.service';
-import { StateService } from './state.service';
-import { Router } from '@angular/router';
-import { ChromeApiService } from "./chrome-api.service";
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
+import {IStorageData, StorageService} from './storage.service';
+import {StateService} from './state.service';
+import {Router} from '@angular/router';
+import {ChromeApiService} from "./chrome-api.service";
 
 @Injectable()
 export class AuthService {

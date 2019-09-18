@@ -2,11 +2,10 @@ import {Component} from '@angular/core';
 import {AuthService} from './services/auth.service';
 import {StorageService} from './services/storage.service';
 import {map, switchMap} from 'rxjs/operators';
-import {of, Subscription} from 'rxjs';
+import {of} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ChromeApiService} from "./services/chrome-api.service";
 import {LoadersCSS} from "ngx-loaders-css";
-import {environment} from "../environments/environment.prod";
 
 @Component({
     selector: 'app-root',

@@ -7,11 +7,11 @@ import {ChromeApiService} from "../../../services/chrome-api.service";
 import {StateService} from "../../../services/state.service";
 
 @Component({
-    selector: 'app-recieve',
-    templateUrl: './recieve.component.html',
-    styleUrls: ['./recieve.component.css']
+    selector: 'app-receive',
+    templateUrl: './receive.component.html',
+    styleUrls: ['./receive.component.css']
 })
-export class RecieveComponent implements OnInit, OnDestroy {
+export class ReceiveComponent implements OnInit, OnDestroy {
     subscription: Subscription;
     address$: Observable<string>;
     copyMessage = 'Copy to clipboard';
@@ -23,13 +23,11 @@ export class RecieveComponent implements OnInit, OnDestroy {
                 private  chrome: ChromeApiService,
                 private stateService: StateService) {
         this.address$ = this.stateService.currentAddress$;
-
         this.subscription = this.address$.pipe(
             map((address) => {
                 this.network = this.stateService.selectedNetwork$.getValue().label.toLocaleLowerCase();
                 this.qrCode = address;
-            })
-        ).subscribe();
+            })).subscribe();
     }
 
     ngOnInit() {
@@ -57,6 +55,7 @@ export class RecieveComponent implements OnInit, OnDestroy {
                 break;
             case 'testnet':
                 url = 'https://testnet-explorer.binance.org/address/';
+                break;
         }
         address$.pipe(
             map((address: any) => {

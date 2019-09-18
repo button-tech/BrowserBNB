@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, from, combineLatest, Observable } from 'rxjs';
-import { BinanceService } from '../../../services/binance.service';
-import { map, shareReplay, switchMap, take, tap } from 'rxjs/operators';
-import { ITransaction, StateService } from '../../../services/state.service';
-import { Router } from "@angular/router";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {BehaviorSubject, combineLatest, from, Observable} from 'rxjs';
+import {BinanceService} from '../../../services/binance.service';
+import {map, shareReplay, switchMap, take} from 'rxjs/operators';
+import {ITransaction, StateService} from '../../../services/state.service';
+import {Router} from "@angular/router";
 
 interface ITransactionDetails {
     IsBnb: boolean;

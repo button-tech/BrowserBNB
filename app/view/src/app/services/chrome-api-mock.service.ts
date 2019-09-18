@@ -1,8 +1,7 @@
-import { Injectable } from "@angular/core";
-import { Observable, of, Subject } from "rxjs";
-import { map, shareReplay, take, tap } from "rxjs/operators";
-import { IChromeApiService } from "./chrome-api.service";
-import { FromBackgroundToPageMsg, FromPage2BackgroundMsg } from "./chrome-api-dto";
+import {Injectable} from "@angular/core";
+import {Observable, of, Subject} from "rxjs";
+import {IChromeApiService} from "./chrome-api.service";
+import {FromBackgroundToPageMsg} from "./chrome-api-dto";
 
 @Injectable()
 export class ChromeApiMockService implements IChromeApiService {

@@ -13,14 +13,14 @@ import {SendComponent} from "./components/transfer/send/send.component";
 import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
 import {SettingsComponent} from "./components/main/menu-top/settings/settings.component";
-import {RecieveComponent} from "./components/main/recieve/recieve.component";
+import {ReceiveComponent} from "./components/main/receive/receive.component";
 import {HistoryDetailsComponent} from "./components/main/history-component/history-details/history-details.component";
 import {GeneralComponent} from "./components/main/menu-top/settings/general/general.component";
 import {AdvancedComponent} from "./components/main/menu-top/settings/advanced/advanced.component";
 import {SecurityPrivacyComponent} from "./components/main/menu-top/settings/security-privacy/security-privacy.component";
 import {CustomNetworksComponent} from "./components/main/menu-top/settings/custom-networks/custom-networks.component";
 import {AboutComponent} from "./components/main/menu-top/settings/about/about.component";
-import { WcSessionApproveComponent } from "./components/wc-session-approve/wc-session-approve.component";
+import {WcSessionApproveComponent} from "./components/wc-session-approve/wc-session-approve.component";
 import {ApproveComponent} from "./components/approve/approve.component";
 import {SeedComponent} from "./components/main/menu-top/settings/security-privacy/seed/seed.component";
 
@@ -42,7 +42,7 @@ const routes: Routes = [
     },
     {
         path: 'receive',
-        component: RecieveComponent,
+        component: ReceiveComponent,
         canActivate: [AuthGuard]
     },
     {

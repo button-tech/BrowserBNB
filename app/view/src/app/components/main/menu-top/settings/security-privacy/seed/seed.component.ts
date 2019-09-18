@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {StateService} from "../../../../../../services/state.service";
 import {ClipboardService} from "../../../../../../services/clipboard.service";
-import {take, takeUntil} from "rxjs/operators";
-import {timer} from "rxjs";
 
 @Component({
   selector: 'app-seed',

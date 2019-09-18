@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { AuthService } from "./auth.service";
-import { environment } from "../../environments/environment";
-import { BehaviorSubject, Observable, Subject, timer } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap, tap } from "rxjs/operators";
-import { PortAndMessage } from "../../../../background/src/backgroud-common";
-import { StateService } from "./state.service";
+import {Injectable} from "@angular/core";
+import {AuthService} from "./auth.service";
+import {environment} from "../../environments/environment";
+import {BehaviorSubject, Observable, Subject, timer} from "rxjs";
+import {distinctUntilChanged, filter, map, switchMap, tap} from "rxjs/operators";
+import {PortAndMessage} from "../../../../background/src/backgroud-common";
+import {StateService} from "./state.service";
 import Port = chrome.runtime.Port;
 
 const portStub = {
