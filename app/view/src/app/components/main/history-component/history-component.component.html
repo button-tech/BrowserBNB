@@ -25,12 +25,10 @@
             </div>
 
             <div class="text-center"
-                 style="grid-column: 4; grid-row: 3; margin-top: -0.9em; margin-right: 0; margin-bottom: 0.2em">
-                <button [satPopoverAnchor]="details"
-                        (mouseenter)="details.open();"
-                        (mouseleave)="details.close();" (click)="goToDetails(tx)" class="btn btn-just-icon btn-xs btn-fab-mini btn-round btn-infos">
-                    <fa align="center" class="infos-fa" style="color: #FFFFFF" name="info" size="sm"></fa>
-                </button>
+                 style="grid-column: 4; grid-row: 3; margin-top: -0.4em; margin-right: 0; margin-bottom: 0.2em">
+                    <i  [satPopoverAnchor]="details"
+                           (mouseenter)="details.open();"
+                           (mouseleave)="details.close();" (click)="goToDetails(tx)"  style="color: rgb(33, 40, 51);" class="fas fa-info-circle custom-info" aria-hidden="true"></i>
             </div>
             <sat-popover #details horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                          verticalAlign="below">

@@ -8,7 +8,6 @@ import {FirstPageComponent} from './components/first-page/first-page.component';
 import {MainComponent} from './components/main/main.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SatPopoverModule} from '@ncstate/sat-popover';
-import {AngularFontAwesomeModule} from 'angular-font-awesome';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {HistoryComponentComponent} from './components/main/history-component/history-component.component';
@@ -100,7 +99,6 @@ import { ChromeApiWalletConnectService } from './services/chrome-api-wc.service'
     imports: [
         BrowserModule,
         AppRoutingModule,
-        AngularFontAwesomeModule,
         BrowserAnimationsModule,
         ToastrModule.forRoot({
             timeOut: 10000,

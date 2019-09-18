@@ -30,10 +30,8 @@
     color: rgb(191, 204, 222) !important;
 }
 
-.histcomp:hover .btn-infos {
-    background: white !important;
-    color: rgb(34, 41, 52) !important;
-    box-shadow: none !important;
+.histcomp:hover .custom-info {
+    color: white !important;
 }
 
 .histcomp:hover .infos-fa {

@@ -68,6 +68,10 @@ body {
     background: rgb(33, 40, 51) !important;
 }
 
+.custom-info:hover {
+    color: white !important;
+}
+
 .infos-fa {
     font-size: 14px !important;
     line-height: 22px !important;

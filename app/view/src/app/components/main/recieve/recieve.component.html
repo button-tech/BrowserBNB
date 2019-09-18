@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
         <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
-            <fa name="arrow-left" size="sm"></fa>
+            <i class="fas fa-arrow-left"></i>
         </button>
     </div>
 </div>
@@ -25,8 +25,7 @@
                 (mouseenter)="p.open()"
                 (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
                 (click)="this.copyAddress();" class="button-qr btn btn-default">
-            <fa id="copyButton" name="copy" size="sm">
-            </fa>
+            <i id="copyButton" class="fas fa-copy"></i>
         </button>
         </p>
     </div>

@@ -3,7 +3,7 @@
         <div class="col-12 text-center">
             <button style="color: rgb(255,255,255); margin-top: 0.5em;" (click)="goBack()"
                     class="btn btn-just-icon btn-back btn-round">
-                <fa name="arrow-left" size="sm"></fa>
+                <i class="fas fa-arrow-left"></i>
             </button>
         </div>
     </div>
@@ -19,8 +19,7 @@
             (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
             (click)="this.copyIt();" class="button-qr btn btn-default">
         Copy
-        <fa id="copyButton" name="copy" size="sm">
-        </fa>
+        <i id="copyButton" class="fas fa-copy"></i>
     </button>
     <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
                  verticalAlign="below">

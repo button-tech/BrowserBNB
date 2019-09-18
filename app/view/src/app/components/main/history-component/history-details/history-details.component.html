@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12 text-center" style="margin-top: 10px; margin-left: 0px; margin-bottom: 1em !important">
             <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
-                <fa name="arrow-left" size="sm"></fa>
+                <i class="fas fa-arrow-left"></i>
             </button>
         </div>
     </div>
@@ -58,7 +58,7 @@
                             (mouseleave)="p2.close(); this.copyMessage='Copy to clipboard';"
                             (click)="this.copyAddress(this.stateService.historyDetails$, 'fromAddr');"
                             class="btn btn-default">
-                        <fa name="copy" size="sm"></fa>
+                        <i class="fas fa-copy"></i>
                     </button>
                 </p>
                 <sat-popover #p2 horizontalAlign="center" openTransition="100ms ease-out"
@@ -70,7 +70,7 @@
                 </sat-popover>
             </div>
             <div style="margin-top: -0.5em; font-size: 23px;">
-                <fa name="arrow-down" size="sm"></fa>
+                <i class="fas fa-arrow-down"></i>
             </div>
         </div>
         <div *ngIf="(this.stateService.historyDetails$ | async).fromAddr && (this.stateService.historyDetails$ | async).toAddr "
@@ -84,7 +84,7 @@
                             (mouseleave)="p3.close(); this.copyMessage='Copy to clipboard';"
                             (click)="this.copyAddress(this.stateService.historyDetails$, 'toAddr');"
                             class="btn btn-default">
-                        <fa name="copy" size="sm"></fa>
+                        <i class="fas fa-copy"></i>
                     </button>
                 </p>
 
@@ -115,7 +115,7 @@
                             (click)="this.copyAddress(this.stateService.historyDetails$, 'txHash');"
                             class="button-qr btn btn-default">
 
-                        <fa id="copyButton" name="copy" size="sm"></fa>
+                        <i class="fas fa-copy"></i>
                     </button>
                 </p>
 
@@ -140,7 +140,7 @@
                             (mouseleave)="p4.close(); this.copyMessage='Copy to clipboard';"
                             (click)="this.copyAddress(this.stateService.historyDetails$, 'memo');"
                             class="button-qr btn btn-default">
-                        <fa name="copy" size="sm"></fa>
+                        <i class="fas fa-copy"></i>
                     </button>
                 </p>
                 <sat-popover #p4 horizontalAlign="center" openTransition="100ms ease-out"
