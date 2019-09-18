@@ -70,21 +70,15 @@ export class VerifySendComponent implements OnDestroy, OnInit {
               const tx = this.tx.getValue();
 
               const inUSD = tx.IsAmountEnteredInUSD;
-
-              // debugger
               const sumInCrypto = !inUSD ? tx.Amount : tx.Amount / rate;
               const sumInFiat = !inUSD ? (tx.Amount * rate) : tx.Amount;
-
               const totalSumInTokenIfNotBNB = sumInCrypto + ' ' + tx.mapppedName + ' and ' + fee.toString() + ' BNB';
               const totalSumInTokenIfBNB = Number(sumInCrypto) + Number(fee);
               const isBnb = tx.Symbol === 'BNB';
-
               const totalSumInToken = isBnb
                 ? totalSumInTokenIfBNB.toString()
                 : totalSumInTokenIfNotBNB;
-
               const TotalFiatSum = +sumInFiat + (Number(fee) * Number(rate));
-
               const txDetails: ITransactionDetails = {
                   IsBnb: isBnb,
                   CryptoName: isBnb ? 'BNB' : tx.mapppedName,

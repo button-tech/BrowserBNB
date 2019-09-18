@@ -1,0 +1,14 @@
+.loader-done {
+    width: 350px !important;
+    height: 590px !important;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-undone {
+    width: 350px !important;
+    height: 590px !important;
+    border-radius: 10px
+}
