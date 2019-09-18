@@ -1,10 +1,10 @@
-import { BehaviorSubject, combineLatest, from, of, merge, Observable, Subject, NEVER } from "rxjs";
-import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import {BehaviorSubject, combineLatest, from, merge, NEVER, Observable, Subject} from "rxjs";
+import {filter, map, shareReplay, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
-import { ReactiveWc } from "./walletconnect/walletconnect";
-import { fromMessages, openWidget, PortAndMessage, portConnections$ } from "./backgroud-common";
-import { handlePasswordConnections } from "./backgroud-port-password";
-import { signTransaction } from "./walletconnect/binancecrypto";
+import {ReactiveWc} from "./walletconnect/walletconnect";
+import {fromMessages, openWidget, PortAndMessage, portConnections$} from "./backgroud-common";
+import {handlePasswordConnections} from "./backgroud-port-password";
+import {signTransaction} from "./walletconnect/binancecrypto";
 import Port = chrome.runtime.Port;
 
 // import Port = chrome.runtime.Port;

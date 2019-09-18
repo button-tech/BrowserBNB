@@ -1,4 +1,4 @@
-import { Observable, Subject } from "rxjs";
+import {Observable, Subject} from "rxjs";
 import Port = chrome.runtime.Port;
 
 export type PortAndMessage = { port: Port, message: any };

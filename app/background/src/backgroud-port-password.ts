@@ -1,8 +1,8 @@
-import { Observable } from "rxjs";
-import { Session } from "./session/session";
-import { filter, switchMap, tap } from "rxjs/operators";
+import {Observable} from "rxjs";
+import {Session} from "./session/session";
+import {filter, switchMap, tap} from "rxjs/operators";
+import {fromMessages, portConnections$} from "./backgroud-common";
 import Port = chrome.runtime.Port;
-import { fromMessages, portConnections$ } from "./backgroud-common";
 
 
 const session = new Session();

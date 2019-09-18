@@ -8,11 +8,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { merge, Observable, Subject } from "rxjs";
+import {merge, Observable, Subject} from "rxjs";
 import WalletConnect from "@walletconnect/browser/lib";
-import { getAddressFromPrivateKey, signTransaction } from "./binancecrypto";
-import { ISignedTransaction } from "./types";
-import { map } from "rxjs/operators";
+import {getAddressFromPrivateKey, signTransaction} from "./binancecrypto";
+import {ISignedTransaction} from "./types";
+import {map} from "rxjs/operators";
 
 
 function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> {
