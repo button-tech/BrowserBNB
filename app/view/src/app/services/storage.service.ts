@@ -6,7 +6,7 @@ import {from, NEVER, Observable, Subject} from 'rxjs';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import {CurrencySymbols} from "./courses.service";
+import { CurrencySymbols } from "../constants";
 
 export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
 

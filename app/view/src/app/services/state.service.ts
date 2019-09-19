@@ -6,8 +6,8 @@ import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {catchError, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
-import {rawTokensImg} from '../constants';
-import {CoursesService, CurrencySymbols} from "./courses.service";
+import { CurrencySymbols, rawTokensImg } from '../constants';
+import {CoursesService} from "./courses.service";
 
 export interface ITransaction {
     Amount: number;
