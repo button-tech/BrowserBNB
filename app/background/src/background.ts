@@ -1,10 +1,10 @@
-import {BehaviorSubject, combineLatest, from, merge, NEVER, Observable, Subject} from "rxjs";
-import {filter, map, shareReplay, switchMap, take, takeUntil, tap} from "rxjs/operators";
+import { BehaviorSubject, combineLatest, from, merge, NEVER, Observable, Subject } from "rxjs";
+import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
-import {ReactiveWc} from "./walletconnect/walletconnect";
-import {fromMessages, openWidget, PortAndMessage, portConnections$} from "./backgroud-common";
-import {handlePasswordConnections} from "./backgroud-port-password";
-import {signTransaction} from "./walletconnect/binancecrypto";
+import { ReactiveWc } from "./walletconnect/walletconnect";
+import { fromMessages, openWidget, PortAndMessage, portConnections$ } from "./backgroud-common";
+import { handlePasswordConnections } from "./backgroud-port-password";
+import { signTransaction } from "./walletconnect/binancecrypto";
 import Port = chrome.runtime.Port;
 
 // import Port = chrome.runtime.Port;
@@ -26,7 +26,7 @@ let lastWcUri = '';
 // const sessionRequestPayload = JSON.parse('{"id":1568231137072078,"jsonrpc":"2.0","method":"session_request","params":[{"peerId":"442662df-5f27-4555-9014-d6b4de5b027d","peerMeta":{"description":"","url":"https://www.binance.org","icons":["https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png","https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png"],"name":"Binance | Dex Trading | Decentralized Exchange | Binance.org"},"chainId":null}]}');
 // of(sessionRequestPayload);
 
-const logAndSendToPort = (port: Port, message: any, logMarker?: string ) => {
+const logAndSendToPort = (port: Port, message: any, logMarker?: string) => {
     console.warn(`${logMarker}: ${JSON.stringify(message)}`);
     port.postMessage(message);
 };
@@ -105,8 +105,9 @@ const wcState$ = reactiveWc$.pipe(
       console.log('switch to: reactiveWc.isConnected$');
       return reactiveWc.isConnected$;
   }),
-  tap((isWcConnected: boolean) => {
-      console.log('isWcConnected');
+  tap((isWcConnectedNewState: boolean) => {
+      console.log('isWcConnectedNewState:', isWcConnectedNewState);
+      isWcConnected = isWcConnectedNewState;
       const port = wcPortSubject$.getValue();
       if (port) {
           logAndSendToPort(port, {isWcConnected}, 'wcState$(112)');
@@ -117,8 +118,7 @@ const wcState$ = reactiveWc$.pipe(
   })
 );
 
-wcState$.subscribe((isWcConnected: boolean) => {
-    console.log('wcState$.subscribe:', isWcConnected);
+wcState$.subscribe(() => {
 });
 
 const privateKey$ = reactiveWc$.pipe(
@@ -178,12 +178,12 @@ const wcConnectManagementFromUi$ = wcPort$.pipe(
       return fromMessages(port);
   }),
   filter((x: PortAndMessage) => {
-      const { message} = x;
+      const {message} = x;
       console.log('wcConnectManagementFromUi$ filter msg:', message);
       return message.updateConnectionState;
   }),
   switchMap((x: PortAndMessage) => {
-      const { message} = x;
+      const {message} = x;
       console.log('wcConnectManagementFromUi$ switchMap:', message);
       return reactiveWc$.pipe(
         tap((reactiveWc: ReactiveWc) => {
