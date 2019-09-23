@@ -54,7 +54,7 @@ Navigation
   - [x] Multiple network support
   - [ ] Multiple languages support
   - [ ] Integration tests + BNB SDK tests
-  - [ ] Repo update
+  - [x] Repo update
   - [ ] Free from bootstrap + material wastes 
-  - [ ] WalletConnect + DEX support 
+  - [x] WalletConnect + DEX support 
   - [ ] Forms to Rx forms
