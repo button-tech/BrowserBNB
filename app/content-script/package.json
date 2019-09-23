@@ -1,0 +1,31 @@
+{
+  "name": "bnb.background",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run watch:dev",
+    "build:prod": "rollup --config ./rollup.config.js --environment BUILD:production",
+    "build:dev": "rollup --config ./rollup.config.js",
+    "watch:dev": "npm run build:dev -- -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "description": "",
+  "devDependencies": {
+    "rollup": "^1.21.4",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-string": "^3.0.0",
+    "rollup-plugin-typescript": "^1.0.1",
+    "tslib": "^1.10.0",
+    "typescript": "^3.6.3"
+  },
+  "dependencies": {
+    "@types/chrome": "0.0.88",
+    "browser-passworder": "^2.0.3",
+    "buffer": "^5.4.3",
+    "rxjs": "^6.5.3",
+    "rxjs-compat": "^6.5.3",
+    "semver": ">=6.3.0"
+  }
+}

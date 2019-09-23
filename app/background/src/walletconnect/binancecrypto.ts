@@ -12,6 +12,8 @@ import * as Binance from '../../../view/src/assets/binance/bnbSDK.js';
 import {ISignedTransaction} from "./types";
 import {Buffer} from "Buffer";
 
+// TODO: include binance crypto from from UI
+
 const isNotEmptyString = (str: string | any): boolean => {
     return !!str && (typeof str === 'string' || str instanceof String);
 };

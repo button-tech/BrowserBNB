@@ -3,9 +3,10 @@ import {AuthService} from "./auth.service";
 import {environment} from "../../environments/environment";
 import {BehaviorSubject, Observable, Subject, timer} from "rxjs";
 import {distinctUntilChanged, filter, map, switchMap, tap} from "rxjs/operators";
-import {PortAndMessage} from "../../../../background/src/backgroud-common";
 import {StateService} from "./state.service";
 import Port = chrome.runtime.Port;
+import {PortAndMessage} from "../../../../background/src/helpers";
+
 
 const portStub = {
     onMessage: {
@@ -55,54 +56,55 @@ export class ChromeApiWalletConnectService {
     constructor(private authService: AuthService, private stateService: StateService) {
 
         authService.isLoggedIn$.pipe(
-          map((isLoggedIn: boolean) => {
+            map((isLoggedIn: boolean) => {
 
-              if (!isLoggedIn) {
-                  return;
-              }
+                if (!isLoggedIn) {
+                    return;
+                }
 
-              return environment.production
-                ? chrome.runtime.connect({name: 'port-wallet-connect'})
-                : portStub;
-          }),
-          switchMap((port: Port) => {
-              return fromMessages(port);
-          }),
-          tap((x: any) => {
-              const {port, message} = x;
-              this.port = port;
-              this.msg = message;
-          }),
-        ).subscribe(() => {});
+                return environment.production
+                    ? chrome.runtime.connect({name: 'port-wallet-connect'})
+                    : portStub;
+            }),
+            switchMap((port: Port) => {
+                return fromMessages(port);
+            }),
+            tap((x: any) => {
+                const {port, message} = x;
+                this.port = port;
+                this.msg = message;
+            }),
+        ).subscribe(() => {
+        });
 
         // All this construction is a fix on ui locks when getting message from backgorund
 
         timer(0, 100).pipe(
-          map(() => this.msg),
-          filter((msg) => !!msg),
-          distinctUntilChanged(),
-          map((message: any) => {
-              // const {port, message} = x;
-              console.warn(`MESSAGE FROM WC PORT: ${JSON.stringify(message)}`);
+            map(() => this.msg),
+            filter((msg) => !!msg),
+            distinctUntilChanged(),
+            map((message: any) => {
+                // const {port, message} = x;
+                console.warn(`MESSAGE FROM WC PORT: ${JSON.stringify(message)}`);
 
-              let update = {};
-              const {sessionRequest, callRequest, isWcConnected} = message;
-              if (sessionRequest) {
-                  update = {sessionRequest};
-              } else if (callRequest) {
-                  update = {callRequest};
-              } else if (isWcConnected !== undefined) {
-                  // TODO: align naming
-                  update = {walletConnected: isWcConnected};
-              }
+                let update = {};
+                const {sessionRequest, callRequest, isWcConnected} = message;
+                if (sessionRequest) {
+                    update = {sessionRequest};
+                } else if (callRequest) {
+                    update = {callRequest};
+                } else if (isWcConnected !== undefined) {
+                    // TODO: align naming
+                    update = {walletConnected: isWcConnected};
+                }
 
-              const prevState = this._walletConnectState$.getValue();
-              return {
-                  ...prevState,
-                  ...update,
-                  wcPort: this.port
-              };
-          }),
+                const prevState = this._walletConnectState$.getValue();
+                return {
+                    ...prevState,
+                    ...update,
+                    wcPort: this.port
+                };
+            }),
         ).subscribe((newState: IWcState) => {
             // Here we aggregate latest state - like shareReplay(1)
             this._walletConnectState$.next(newState);

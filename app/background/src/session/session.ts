@@ -1,3 +1,5 @@
+import {FromBackgroundToPageMsg, FromPage2BackgroundMsg} from "../../../view/src/app/services/chrome-api-dto";
+
 export class Session {
 
     password: string = '';
@@ -12,17 +14,16 @@ export class Session {
 
     processMessageFromPage(msg: FromPage2BackgroundMsg): FromBackgroundToPageMsg | undefined {
         if (msg.type === 'startExtensionSession') {
-            this.login(msg.password);
+            this.login(msg.password || '');
         } else if (msg.type === 'dropExtensionSession') {
             this.logout();
         } else if (msg.type === 'restoreExtensionSessionRequest') {
 
-            const response: FromBackgroundToPageMsg = {
+            return {
                 type: 'restoreSessionResponse',
                 password: this.password || '',
                 isExpired: !this.password
             };
-            return response;
         }
     }
 }

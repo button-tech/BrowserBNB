@@ -1,7 +1,7 @@
 {
   "name": "bnb-to-browser",
   "version": "0.0.1",
-  "description": "Converts BNB SDK to Browser verison via Browserify ",
+  "description": "Converts BNB SDK to Browser version via Browserify",
   "main": "convert.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

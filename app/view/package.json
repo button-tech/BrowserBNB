@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod --aot",
-    "build:watch": "ng build --prod --aot --watch",
+    "build:pre-prod": "ng build --configuration=pre-production",
+    "build:watch": "npm run build:pre-prod -- --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

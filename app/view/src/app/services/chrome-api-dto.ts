@@ -1,5 +1,5 @@
 export interface FromPage2BackgroundMsg {
-    type: 'startExtensionSession' | 'dropExtensionSession' | 'keepAlive' | 'restoreExtensionSessionRequest'
+    type: 'startExtensionSession' | 'dropExtensionSession' | 'keepAlive' | 'restoreExtensionSessionRequest';
     password?: string;
     timeout?: number;
 }
