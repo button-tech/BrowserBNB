@@ -58,3 +58,31 @@ Navigation
   - [ ] Free from bootstrap + material wastes 
   - [x] WalletConnect + DEX support 
   - [ ] Forms to Rx forms
+  
+### Browser BNB TODO:
+
+### Fixes:
+- [ ] Refactor all forms in SEND
+- [ ] Fix Connect Icon (Никита)
+- [x] Fix bug: whenever WC connected or not, UI should show display  correct status. Play around on reconnect flow on seprate web page first (**CHECK**)
+- [ ] Polish UI в размных приделах
+- [ ] Make isolated demo that will illustrate bug related to communication with background (Artem)
+- [ ] Put build instructions into README.md
+
+#### Dev experience:
+- [ ] Share files common `ts` files between background and UI builds
+- [ ] Cleanup(delete) some files in background
+- [ ] Content Script that serves as proxy (dev build for chrome exension)
+- [ ] BnbSDK сборка с rollup и TreeShaking, может быть сообирать вообще все из под Angular(ранее была проблема с Zone)
+- [ ] Enable `Ivy` compiler, maybe we can avoid work arounds on communication with background.(**Check `npm run build:watch`**)
+- [ ] Sample with hot reloading of chrome extension, check is it possible with our complex build
+- [ ] Post build step in `angular.json` to rebuild background
+- [ ] Move content-script to seprate folder from background. (use `/src/(bg|content|view)`)
+
+
+### Improvements:
+- [ ] Internalization i18n (It supports extraction of tokens(`extract-i18n`), checkout here: https://medium.com/frontend-fun/angular-introduction-to-internationalization-i18n-28226a85e04e#targetText=Angular%20i18n%20tooling%20extracts%20the,application%20with%20the%20targeted%20language.)
+- [ ] Think on fullscreen layout
+- [ ] Restore session timeout, support it as a configurable feature
+- [ ] Open widget window when request comes from Binance DEX. Only when windows, doesn't open. In case window is open, try to highlite it. 
+
