@@ -17,4 +17,4 @@ script:
 - sh build.sh
 - cd ../app/view
 - npm i
-- npm run build --prod --aot
+
