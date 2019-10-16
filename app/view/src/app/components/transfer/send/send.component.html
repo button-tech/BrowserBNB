@@ -30,23 +30,33 @@
                     <h5 class="text-left send-input-title">Address:</h5>
                 </div>
                 <div class="col-9">
-                    <!-- TODO: make that componet dummy -->
                     <app-address-input></app-address-input>
                 </div>
             </div>
+
             <div class="row send-row">
                 <div class="col-3">
                     <h5 class="text-left send-input-title">Memo:</h5>
                 </div>
                 <div class="col-9">
-                    <app-memo-input></app-memo-input>
+                    <div class="wrap text-center send-input" style="border: none">
+                        <div>
+                            <input id="memoInput" style="padding-left:15px"
+                                   autocomplete="off" class="form-control"
+                                   placeholder="Optional memo"
+                                   spellcheck="false">
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
+
         <div class="col-12 text-center mt-1" id="buttonsDiv">
             <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
             <button [disabled]="!isValidToNextPage"
-                    routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next</button>
+                    routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next
+            </button>
         </div>
     </div>
 </div>

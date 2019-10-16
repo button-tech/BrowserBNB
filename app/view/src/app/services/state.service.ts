@@ -6,7 +6,7 @@ import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {catchError, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
-import { CurrencySymbols, rawTokensImg } from '../constants';
+import {CurrencySymbols, tokenDetailsList} from '../constants';
 import {CoursesService} from "./courses.service";
 
 export interface ITransaction {
@@ -135,7 +135,7 @@ export interface ITransferFees {
     dex_fee_fields: IDexFeeField[];
 }
 
-export function toShortAddress( address: string ): string {
+export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
 
@@ -173,39 +173,39 @@ export class StateService {
     currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
 
-    constructor( private storageService: StorageService,
-                 private bncService: BinanceService,
-                 private http: HttpClient,
-                 private courses: CoursesService ) {
+    constructor(private storageService: StorageService,
+                private bncService: BinanceService,
+                private http: HttpClient,
+                private courses: CoursesService) {
 
         this.currentAddress$ = this.uiState$.pipe(
-            map(( uiState: IUiState ) => {
+            map((uiState: IUiState) => {
                 const {currentAccount, storageData} = uiState;
 
                 return storageData.selectedNetwork === 'bnb'
                     ? currentAccount.addressMainnet
                     : currentAccount.addressTestnet;
             }),
-            tap(( value ) => {
+            tap((value) => {
                 this.currentAddress = value;
             }),
             shareReplay(1)
         );
 
         this.currentEndpoint$ = this.uiState$.pipe(
-            map(( uiState: IUiState ) => {
+            map((uiState: IUiState) => {
                 return uiState.storageData.selectedNetwork === 'bnb'
                     ? NETWORK_ENDPOINT_MAPPING.MAINNET
                     : NETWORK_ENDPOINT_MAPPING.TESTNET;
             }),
-            tap(( value ) => {
+            tap((value) => {
                 this.currentEndpoint = value;
             }),
             shareReplay(1)
         );
 
         this.currentAddressShort$ = this.currentAddress$.pipe(
-            map(( address: string ) => {
+            map((address: string) => {
                 return toShortAddress(address);
             }),
             shareReplay(1)
@@ -214,12 +214,12 @@ export class StateService {
         // Array balances of different tokens for current account
         this.allBalances$ = this.uiState$.pipe(
             // TODO: simplify using current address and current endpoint
-            distinctUntilChanged(( a: IUiState, b: IUiState ) => {
+            distinctUntilChanged((a: IUiState, b: IUiState) => {
                 const sameAccount = (a.currentAccount === b.currentAccount);
                 const sameNetwork = (a.storageData.selectedNetwork === b.storageData.selectedNetwork);
                 return sameAccount && sameNetwork;
             }),
-            switchMap(( uiState: IUiState ) => {
+            switchMap((uiState: IUiState) => {
                 const {currentAccount, storageData} = uiState;
 
                 const [address, endpoint] = storageData.selectedNetwork === 'bnb'
@@ -235,20 +235,20 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckBalance = ( balances: IBalance[], coinSymbol: string ) => {
-            const item = balances.find(( x ) => x.symbol === coinSymbol);
+        const pluckBalance = (balances: IBalance[], coinSymbol: string) => {
+            const item = balances.find((x) => x.symbol === coinSymbol);
             return item ? +item.free : 0;
         };
 
         this.bnbBalance$ = this.allBalances$.pipe(
-            map(( response ) => pluckBalance(response, 'BNB')),
+            map((response) => pluckBalance(response, 'BNB')),
             shareReplay(1)
         );
 
         const timerFees$ = timer(0, 120000);
 
         this.transferFees$ = combineLatest([this.selectedNetwork$, timerFees$]).pipe(
-            switchMap(( x: any[] ) => {
+            switchMap((x: any[]) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
                 return this.http.get(`${endpoint}api/v1/fees`);
@@ -256,13 +256,13 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckFee = ( response: ITransferFees[] ) => {
-            const item = response.find(( x ) => x.multi_transfer_fee >= 0);
+        const pluckFee = (response: ITransferFees[]) => {
+            const item = response.find((x) => x.multi_transfer_fee >= 0);
             return item.fixed_fee_params.fee / 100000000;
         };
 
         this.simpleFee$ = this.transferFees$.pipe(
-            map(( response: ITransferFees[] ) => {
+            map((response: ITransferFees[]) => {
                 return pluckFee(response);
             }),
             shareReplay(1)
@@ -281,8 +281,8 @@ export class StateService {
         // }
         //
         this.baseCurrency$ = this.uiState$.pipe(
-            filter(( uiState ) => uiState.storageData !== null),
-            map(( uiState ) => {
+            filter((uiState) => uiState.storageData !== null),
+            map((uiState) => {
                 return uiState.storageData.baseFiatCurrency;
             }),
             startWith(CurrencySymbols.USD),
@@ -294,36 +294,23 @@ export class StateService {
                 [timerFees$,
                     this.baseCurrency$])
                 .pipe(
-                    switchMap(( x: any[] ) => {
+                    switchMap((x: any[]) => {
                         const [_, baseCurrency] = x;
                         return this.courses.getBinanceRate$(baseCurrency);
                     }),
                     catchError(() => {
                         return NEVER;
                     }),
-                    map(( rawRate: string ) => {
+                    map((rawRate: string) => {
                         return +rawRate;
                     }),
                     shareReplay(1),
                 );
 
-        // const bnb2usdRateWs$ = this.createObservableSocket("wss://explorer.binance.org/ws/chain")
-        //   .pipe(
-        //     map((wsData: any) => {
-        //         return Number(JSON.parse(wsData).bnbPrice2USD);
-        //     })
-        //   );
-        //
-        // this.bnb2fiatRate$ = bnb2usdRateWs$;
-
-        // this.bnb2fiatRate$.subscribe(
-        //   bnbPrice2USD => {},
-        //   err => console.log('err'),
-        //   () =>  console.log( 'The observable stream is complete')
-        // );
+        // this.bnb2fiatRate$.subscribe();
 
         this.bnbBalanceInFiat$ = combineLatest([this.bnbBalance$, this.bnb2fiatRate$]).pipe(
-            map(( arr: any[] ) => {
+            map((arr: any[]) => {
                 const [bnb, rate] = arr;
                 const fiat = (bnb * rate);
                 return +((Math.floor(fiat * 100) / 100).toFixed(2));
@@ -335,14 +322,14 @@ export class StateService {
             switchMap(() => {
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
             }),
-            map(( resp: IMarketRates[] ) => resp)
+            map((resp: IMarketRates[]) => resp)
         );
 
         this.history$ = combineLatest([this.currentAddress$, this.currentEndpoint$]).pipe(
             tap(() => {
                 this.showHistoryLoadingIndicator$.next(true);
             }),
-            switchMap(( x ) => {
+            switchMap((x) => {
                 const [address, endpoint] = x;
                 return concat(
                     bncService.getHistory$(address, endpoint).pipe(
@@ -362,122 +349,115 @@ export class StateService {
 
         this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, this.bnb2fiatRate$])
             .pipe(
-                map(( x: any[] ) => {
+                map((x: any[]) => {
                     const [balances, marketRates, bnb2usd] = x;
-                    const imagesUrls = JSON.parse(rawTokensImg);
                     const finalBalances = [];
 
-                    balances.forEach(( token ) => {
-                        const marketTickerForCurrentToken = marketRates.find(o => o.baseAssetName === token.symbol);
-                        const tokensDetailsForCurrentToken = imagesUrls.find(o => o.symbol === token.symbol);
+                    balances.forEach((token) => {
 
-                        const isOk =
-                            marketTickerForCurrentToken !== undefined
-                            && tokensDetailsForCurrentToken !== undefined
-                            && tokensDetailsForCurrentToken.name !== undefined
-                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
+                        const marketTicker = marketRates.find(o => o.baseAssetName === token.symbol);
+                        const tokensDetails = tokenDetailsList.find(o => o.symbol === token.symbol);
+                        debugger
+
+                        const preset = {
+                            'symbol': token.symbol,
+                            'balance2usd': Number(marketTicker.lastPrice) * bnb2usd * Number(token.free),
+                            'balance': Number(token.free),
+                            'image': '',
+                            'name': tokensDetails.name,
+                            'mappedName': tokensDetails.mappedAsset,
+                            'rate2usd': 0,
+                        };
+
+                        let item;
+
+                        const isOk = tokensDetails.name !== undefined
+                            && tokensDetails.mappedAsset !== undefined
                             && token.symbol !== 'BNB';
 
                         if (isOk) {
-                            finalBalances.push({
-                                'symbol': token.symbol,
-                                'balance2usd': Number(marketTickerForCurrentToken.lastPrice) * bnb2usd * Number(token.free),
-                                'balance': Number(token.free),
-                                'image': tokensDetailsForCurrentToken.image,
-                                'name': tokensDetailsForCurrentToken.name,
-                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
-                                'rate2usd': Number(marketTickerForCurrentToken.lastPrice) * bnb2usd,
-                            });
+                            item = {
+                                ...preset,
+                                'image': tokensDetails.image,
+                                'name': tokensDetails.name,
+                                'mappedName': tokensDetails.mappedAsset,
+                                'rate2usd': Number(marketTicker.lastPrice) * bnb2usd,
+                            };
                         } else if (token.symbol !== 'BNB'
-                            && tokensDetailsForCurrentToken
-                            && tokensDetailsForCurrentToken.name !== undefined
-                            && tokensDetailsForCurrentToken.mappedAsset !== undefined
+                            && tokensDetails
+                            && tokensDetails.name !== undefined
+                            && tokensDetails.mappedAsset !== undefined
                         ) {
-                            finalBalances.push({
-                                'symbol': token.symbol,
+                            item = {
+                                ...preset,
                                 'balance2usd': 0,
-                                'balance': Number(token.free),
-                                'image': '',
-                                'name': tokensDetailsForCurrentToken.name,
-                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
-                                'rate2usd': 0,
-                            });
-                        } else if (tokensDetailsForCurrentToken &&
-                            tokensDetailsForCurrentToken.name === undefined &&
-                            tokensDetailsForCurrentToken.mappedAsset !== undefined) {
-                            finalBalances.push({
-                                'symbol': token.symbol,
+                            };
+                        } else if (tokensDetails &&
+                            tokensDetails.name === undefined &&
+                            tokensDetails.mappedAsset !== undefined) {
+                            item = {
+                                ...preset,
                                 'balance2usd': 0,
-                                'balance': Number(token.free),
-                                'image': '',
-                                'name': '',
-                                'mappedName': tokensDetailsForCurrentToken.mappedAsset,
-                                'rate2usd': 0,
-                            });
-                        } else if (tokensDetailsForCurrentToken
-                            && tokensDetailsForCurrentToken.name !== undefined
-                            && tokensDetailsForCurrentToken.mappedAsset === undefined) {
-                            finalBalances.push({
-                                'symbol': token.symbol,
+                                'name': ''
+                            };
+                        } else if (tokensDetails
+                            && tokensDetails.name !== undefined
+                            && tokensDetails.mappedAsset === undefined) {
+                            item = {
+                                ...preset,
                                 'balance2usd': 0,
-                                'balance': Number(token.free),
-                                'image': '',
-                                'name': tokensDetailsForCurrentToken.name,
                                 'mappedName': '',
-                                'rate2usd': 0,
-                            });
-                        } else if (!tokensDetailsForCurrentToken) {
-                            finalBalances.push({
-                                'symbol': token.symbol,
+                            };
+                        } else if (!tokensDetails) {
+                            item = {
+                                ...preset,
                                 'balance2usd': 0,
-                                'balance': Number(token.free),
-                                'image': '',
                                 'name': token.symbol,
                                 'mappedName': token.symbol,
-                                'rate2usd': 0,
-                            });
+                            };
                         }
+
+                        if (item) {
+                            finalBalances.push(item);
+                        }
+
                     });
 
-                    return finalBalances.sort(( a, b ) => {
-                        const usdBalanceDiff = b.balance2usd - a.balance2usd;
-                        if (usdBalanceDiff === 0) {
-                            const balanceDiff = b.balance - a.balance;
-                            if (balanceDiff === 0) {
-                                return a.symbol > b.symbol ? 1 : -1;
-                            }
-                            return balanceDiff;
+                    return finalBalances.sort((a, b) => {
+                        const usdDiff = b.balance2usd - a.balance2usd;
+                        if (usdDiff !== 0) {
+                            return usdDiff;
                         }
-                        return usdBalanceDiff;
+
+                        const cryptoDiff = b.balance - a.balance;
+                        return cryptoDiff !== 0
+                            ? cryptoDiff
+                            : a.symbol > b.symbol ? 1 : -1;
                     });
                 }),
                 shareReplay(1));
     }
 
-    createObservableSocket( url: string ): Observable<any> {
-        this.ws = new WebSocket(url);
-
-        return new Observable(
-            observer => {
-
-                this.ws.onmessage = ( event ) => observer.next(event.data);
-
-                this.ws.onerror = ( event ) => observer.error(event);
-
-                this.ws.onclose = () => observer.complete();
-
-                return () => this.ws.close(1000, "The user disconnected");
-            }
-        );
-    }
+    // createObservableSocket(url: string): Observable<any> {
+    //     this.ws = new WebSocket(url);
+    //
+    //     return new Observable(
+    //         observer => {
+    //             this.ws.onmessage = (event) => observer.next(event.data);
+    //             this.ws.onerror = (event) => observer.error(event);
+    //             this.ws.onclose = () => observer.complete();
+    //             return () => this.ws.close(1000, "The user disconnected");
+    //         }
+    //     );
+    // }
 
     get uiState(): IUiState {
         return this.uiState$.getValue();
     }
 
-    initState( data: IStorageData, password: string ) {
+    initState(data: IStorageData, password: string) {
 
-        const accounts = data.accounts.map(( account ) => {
+        const accounts = data.accounts.map((account) => {
             const address = data.selectedNetwork === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -503,7 +483,7 @@ export class StateService {
             label
         };
 
-        const currentAccount = accounts.find(( account ) => {
+        const currentAccount = accounts.find((account) => {
             return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
         });
 
@@ -524,7 +504,7 @@ export class StateService {
         this.password = '';
     }
 
-    selectBaseFiatCurrency( baseFiatCurrency: CurrencySymbols ) {
+    selectBaseFiatCurrency(baseFiatCurrency: CurrencySymbols) {
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
             baseFiatCurrency
@@ -537,7 +517,7 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    renameAccount( accountIdx: number, newName: string ): void {
+    renameAccount(accountIdx: number, newName: string): void {
 
         this.uiState.storageData.accounts[accountIdx].name = newName;
         const newStorageState: IStorageData = {
@@ -553,37 +533,37 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    removeAccount( account: IUiAccount ): void {
+    removeAccount(account: IUiAccount): void {
 
         if (this.uiState.accounts.length > 0) {
-        const newAccounts = this.uiState.storageData.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
-        const newAccountsUI = this.uiState.accounts.filter(( accountToRemove ) => accountToRemove.index !== account.index);
-        let accountToPick = 0;
-        if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
-           accountToPick = 1;
-        } else if (this.uiState.storageData.accounts.length <= 1) {
-            this.storageService.reset();
-            return;
-        }
+            const newAccounts = this.uiState.storageData.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
+            const newAccountsUI = this.uiState.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
+            let accountToPick = 0;
+            if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
+                accountToPick = 1;
+            } else if (this.uiState.storageData.accounts.length <= 1) {
+                this.storageService.reset();
+                return;
+            }
 
-        const newStorageData: IStorageData = {
-            seedPhrase: this.uiState.storageData.seedPhrase,
-            accounts: newAccounts,
-            selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
-            selectedNetwork: this.uiState.storageData.selectedNetwork,
-            selectedNetworkEndpoint:   this.uiState.storageData.selectedNetworkEndpoint,
-            baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
-            customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints
-        };
+            const newStorageData: IStorageData = {
+                seedPhrase: this.uiState.storageData.seedPhrase,
+                accounts: newAccounts,
+                selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
+                selectedNetwork: this.uiState.storageData.selectedNetwork,
+                selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,
+                baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
+                customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints
+            };
 
-        const newUiState: IUiState = {
+            const newUiState: IUiState = {
                 accounts: newAccountsUI,
                 currentAccount: this.uiState.accounts[accountToPick],
                 storageData: newStorageData
-        };
+            };
 
-        this.storageService.encryptAndSave(newStorageData, this.password);
-        this.uiState$.next(newUiState);
+            this.storageService.encryptAndSave(newStorageData, this.password);
+            this.uiState$.next(newUiState);
         } else {
             this.storageService.reset();
         }
@@ -595,7 +575,7 @@ export class StateService {
     }
 
     // UI, index and logical index...
-    addAccountFromSeed( seedPhrase: string, hdWalletIndex?: number ): void {
+    addAccountFromSeed(seedPhrase: string, hdWalletIndex?: number): void {
 
         if (hdWalletIndex === undefined) {
             const indexes = this.uiState.storageData.accounts.map(a => a.index);
@@ -624,9 +604,7 @@ export class StateService {
 
         this.storageService.encryptAndSave(newStorageState, this.password);
 
-        const address = this.uiState.storageData.selectedNetwork === 'bnb'
-            ? addressMainnet
-            : addressTestnet;
+        const address = this.uiState.storageData.selectedNetwork === 'bnb' ? addressMainnet : addressTestnet;
 
         this.uiState.storageData = newStorageState;
         this.uiState.accounts.push({
@@ -642,7 +620,7 @@ export class StateService {
         this.uiState$.next(this.uiState);
     }
 
-    switchAccount( toAccount: IUiAccount ): void {
+    switchAccount(toAccount: IUiAccount): void {
 
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
@@ -658,7 +636,7 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    switchNetwork( network: NetworkType ): void {
+    switchNetwork(network: NetworkType): void {
 
         const networkPrefix = network;
         const val = networkPrefix === 'bnb'
@@ -682,7 +660,7 @@ export class StateService {
 
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        const newAccounts = this.uiState.accounts.map(( account ) => {
+        const newAccounts = this.uiState.accounts.map((account) => {
             const newAddress = network === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -694,7 +672,7 @@ export class StateService {
             };
         });
 
-        const currentAccount = newAccounts.find(( account ) => {
+        const currentAccount = newAccounts.find((account) => {
             return account.addressMainnet === this.uiState.storageData.selectedAddress ||
                 account.addressTestnet === this.uiState.storageData.selectedAddress;
         });
@@ -709,7 +687,7 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    switchNetworkCustom( network: NetworkType, val: string ): void {
+    switchNetworkCustom(network: NetworkType, val: string): void {
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
             selectedNetwork: network,
@@ -733,7 +711,7 @@ export class StateService {
 
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        const newAccounts = this.uiState.accounts.map(( account ) => {
+        const newAccounts = this.uiState.accounts.map((account) => {
             const newAddress = network === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -745,7 +723,7 @@ export class StateService {
             };
         });
 
-        const currentAccount = newAccounts.find(( account ) => {
+        const currentAccount = newAccounts.find((account) => {
             return account.addressMainnet === this.uiState.storageData.selectedAddress ||
                 account.addressTestnet === this.uiState.storageData.selectedAddress;
         });

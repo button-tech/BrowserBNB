@@ -2,10 +2,10 @@ import {Component, OnDestroy} from '@angular/core';
 import {Observable, of, Subscription} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {rawTokensImg} from '../../../constants';
 import {LoadersCSS} from 'ngx-loaders-css';
 import {IHistoryTx} from '../../../services/binance.service';
 import {StateService} from '../../../services/state.service';
+import {tokenDetailsList} from "../../../constants";
 
 @Component({
     selector: 'app-history-component',
@@ -51,7 +51,7 @@ export class HistoryComponentComponent implements OnDestroy {
 
     findMappedName(symbol: string): string {
         if (symbol) {
-            const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+            const result = tokenDetailsList.find(o => o.symbol === symbol);
             return result && result.mappedAsset ? result.mappedAsset : symbol;
         }
         return symbol;
@@ -63,7 +63,7 @@ export class HistoryComponentComponent implements OnDestroy {
             return defaultImg;
         }
 
-        const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol);
+        const result = tokenDetailsList.find(o => o.symbol === symbol);
         return (result && result.image) || defaultImg;
     }
 

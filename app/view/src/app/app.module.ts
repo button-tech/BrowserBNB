@@ -31,7 +31,6 @@ import {CoinsSelectComponent} from './components/transfer/send/forms/coins-selec
 import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
 import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule} from '@angular/material';
 import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
-import {MemoInputComponent} from './components/transfer/send/forms/memo-input/memo-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
 import {SettingsComponent} from './components/main/menu-top/settings/settings.component';
@@ -75,7 +74,6 @@ import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
         CoinsSelectComponent,
         AmountInputComponent,
         AddressInputComponent,
-        MemoInputComponent,
         VerifySendComponent,
         AllBalancesComponent,
         SettingsComponent,

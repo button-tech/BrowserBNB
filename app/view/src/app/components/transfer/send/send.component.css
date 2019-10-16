@@ -3,10 +3,9 @@
     margin-right: 0.25em;
 }
 
-.grey-border{
+.grey-border {
     border: 1px solid #cbcbcb;
 }
-
 
 .btn-back {
     background: none;
@@ -34,4 +33,14 @@
 .send-input-title {
     font-weight: bolder;
     margin-top: 0.75em;
+}
+
+.inp {
+    border-color: #b3b3b3 #ccc #d9d9d9;
+}
+
+.send-input {
+    border: 1px solid #cbcbcb;
+    border-radius: 4px;
+    height: 55px;
 }
