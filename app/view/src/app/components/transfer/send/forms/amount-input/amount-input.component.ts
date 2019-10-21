@@ -1,7 +1,17 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {ITransaction, StateService} from "../../../../../services/state.service";
-import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
-import {map, shareReplay, switchMap} from "rxjs/operators";
+import {
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    SimpleChanges,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
+import {BehaviorSubject, combineLatest, Observable, Subscription} from "rxjs";
+import {map, tap} from "rxjs/operators";
+import {StateService} from "../../../../../services/state.service";
 
 interface IAmounts {
     baseSymbol: string;
@@ -10,120 +20,118 @@ interface IAmounts {
     rate2usd: number;
 }
 
+interface IMySymbol {
+    baseSymbol: string;
+    secondarySymbol: string;
+}
+
+const initialSymbols: IMySymbol = {
+    baseSymbol: 'BNB',
+    secondarySymbol: 'usd'
+};
+
 @Component({
     selector: 'app-amount-input',
     templateUrl: './amount-input.component.html',
     styleUrls: ['./amount-input.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class AmountInputComponent implements OnInit, OnDestroy {
+export class AmountInputComponent implements OnDestroy, OnChanges {
+
+    baseSymbol: string;
+    calculatedSum: number;
+
+    secondarySymbol = 'USD';
+    rate2usd: number;
 
     currentState$: Observable<IAmounts>;
-    currentStateSnapshot: IAmounts;
+    currentState: IAmounts;
 
     userInput$: BehaviorSubject<number> = new BehaviorSubject(0);
-    swapCurrencies$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    swapped = false;
+    doSwap$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
 
     // @ts-ignore
     @ViewChild('sum')
     inputElement: ElementRef;
 
+    @Input()
+    selectedToken: string;
+
+    @Output()
+    amount: number;
+
+    baseAmount = 0;
+
     subscription: Subscription;
 
-    constructor(private stateService: StateService) {
-    }
+    constructor(stateService: StateService) {
 
-    nextValue() {
-        const value = this.inputElement.nativeElement.value;
-        this.userInput$.next(value);
+        // const rate2fiat$ = stateService.bnb2fiatRate$.pipe(
+        //     map((rate: number) => {
+        //         if (rawCoin && rawCoin === 'BNB') {
+        //             newTx.mappedName = 'BNB';
+        //             newTx.name = 'Binance coin';
+        //             newTx.Symbol = 'BNB';
+        //             newTx.rate2fiat = rate;
+        //         } else {
+        //             const coin = JSON.parse(rawCoin);
+        //             newTx.mappedName = coin.mappedName;
+        //             newTx.name = coin.name;
+        //             newTx.Symbol = coin.symbol;
+        //             newTx.rate2fiat = coin.rate2usd;
+        //         }
+        //     })
+        // );
 
-        const newTx = this.stateService.currentTransaction.getValue();
-        newTx.Amount = this.inputElement.nativeElement.value;
-        newTx.IsAmountEnteredInUSD = this.swapCurrencies$.getValue();
-        this.stateService.currentTransaction.next(newTx);
-        console.warn(newTx);
-    }
+        // this.stateService.bnb2fiatRate$
 
-    swapCurrencies() {
-        const doSwap = this.swapCurrencies$.getValue();
-        this.swapCurrencies$.next(!doSwap);
-        this.nextValue();
-    }
 
-    ngOnInit() {
-        const selectedToken$ = this.stateService.currentTransaction.pipe(
-          switchMap((x: ITransaction) => {
-              if (x.Symbol === '') {
-                  x.Symbol = 'BNB';
-              }
+        const sources$ = [this.selectedToken$, stateService.bnb2fiatRate$, this.doSwap$, this.userInput$];
+        this.subscription = combineLatest(sources$).pipe(
+            tap((x) => {
+                const [selectedToken, bnb2fiatRate, doSwap, userInput] = x;
 
-              if (x.Symbol === 'BNB') {
-                  return this.stateService.bnb2fiatRate$.pipe(
-                    map((rate2fiat) => {
-                        return {
-                            ...x,
-                            rate2fiat
-                        };
-                    })
-                  );
-              }
-              return of(x);
-          }),
-          map((x: ITransaction) => {
-              const secondarySymbol = x.rate2fiat === 0
-                ? ''
-                : this.stateService.uiState$.getValue().storageData.baseFiatCurrency;
+                console.log(selectedToken);
 
-              return {
-                  'baseSymbol': x.Symbol,
-                  'secondarySymbol': secondarySymbol,
-                  'calculatedSum': 0,
-                  'rate2usd': x.rate2fiat
-              };
-          })
-        );
+                if (!userInput || (+userInput) < 0) {
+                    this.baseAmount = 0;
+                }
 
-        const z$ = combineLatest([selectedToken$, this.swapCurrencies$]).pipe(
-          map((x) => {
-              const [selectedToken, doSwap] = x;
-              const {baseSymbol, secondarySymbol} = selectedToken;
-              // debugger
-              return {
-                  ...selectedToken,
-                  baseSymbol: doSwap ? secondarySymbol : baseSymbol,
-                  secondarySymbol: doSwap ? baseSymbol : secondarySymbol,
-                  doSwap
-              };
-          })
-        );
+                const totalSumInTokenIfNotBNB = sumInCrypto + ' ' + tx.mappedName + ' and ' + fee.toString() + ' BNB';
+                const totalSumInTokenIfBNB = Number(sumInCrypto) + Number(fee);
 
-        this.currentState$ = combineLatest([z$, this.userInput$]).pipe(
-          map((x) => {
-              const [selectedToken, amount] = x;
+                // TODO: fix
+                this.rate2usd = 0.5; // ???
 
-              let calculatedSum = 0;
-              if (selectedToken.doSwap) {
-                  calculatedSum = +((1 / selectedToken.rate2usd) * amount).toFixed(4);
-              } else {
-                  calculatedSum = +(selectedToken.rate2usd * amount).toFixed(2);
-              }
+                // let calculatedSum = 0;
+                if (doSwap) {
+                    this.baseSymbol = doSwap ? 'USD' : '' + selectedToken;
+                    this.secondarySymbol = doSwap ? '' + selectedToken : 'USD';
+                    this.calculatedSum = +((1 / this.rate2usd) * (+userInput)).toFixed(4);
 
-              return {
-                  ...selectedToken,
-                  calculatedSum,
-                  rate2usd: selectedToken.rate2usd
-              };
-          }),
-          shareReplay(1)
-        );
 
-        this.subscription = this.currentState$.subscribe( (currentState: IAmounts) => {
-            this.currentStateSnapshot = currentState;
+                } else {
+                    this.baseSymbol = '' + selectedToken;
+                    this.secondarySymbol = 'USD';
+                    this.calculatedSum = +(this.rate2usd * (+userInput)).toFixed(2);
+
+                    // const sumInCrypto = !inUSD ? userInput : userInput / bnb2fiatRate;
+                    // const sumInFiat = !inUSD ? (userInput * rate) : userInput;
+                }
+            }),
+        ).subscribe(() => {
+            // next - amount
         });
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        const value = changes.selectedToken.currentValue;
+        this.selectedToken$.next(value);
+    }
+
 }

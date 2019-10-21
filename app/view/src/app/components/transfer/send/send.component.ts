@@ -17,32 +17,13 @@ export class SendComponent implements OnDestroy {
     subscription: Subscription;
 
     constructor(private router: Router, private stateService: StateService) {
+
+        // WTF ???
         this.subscription = timer(0, 500).subscribe(() => {
             const {Symbol, Amount, AddressTo} = this.stateService.currentTransaction.getValue();
             const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
             this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
         });
-
-
-        //
-        // this.stateService.bnb2fiatRate$.pipe(
-        //     map((rate: number) => {
-        //         if (rawCoin && rawCoin === 'BNB') {
-        //             newTx.mapppedName = 'BNB';
-        //             newTx.name = 'Binance coin';
-        //             newTx.Symbol = 'BNB';
-        //             newTx.rate2fiat = rate;
-        //         } else {
-        //             const coin = JSON.parse(rawCoin);
-        //             newTx.mapppedName = coin.mappedName;
-        //             newTx.name = coin.name;
-        //             newTx.Symbol = coin.symbol;
-        //             newTx.rate2fiat = coin.rate2usd;
-        //         }
-        //
-        //         this.stateService.currentTransaction.next(newTx);
-        //     })
-        // );
     }
 
     goBack() {
@@ -62,5 +43,10 @@ export class SendComponent implements OnDestroy {
     //     this.stateService.currentTransaction.next(nexTx);
     // }
 
+    myLog(value: any) {
+        debugger
+        console.log(value);
+        // coinSelected
+    }
 }
 

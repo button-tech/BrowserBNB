@@ -14,7 +14,7 @@
                     <h5 class="text-left send-input-title">Asset:</h5>
                 </div>
                 <div class="col-9">
-                    <app-coins-select></app-coins-select>
+                    <app-coins-select (coinSelected)="myLog()"></app-coins-select>
                 </div>
             </div>
             <div class="row send-row">

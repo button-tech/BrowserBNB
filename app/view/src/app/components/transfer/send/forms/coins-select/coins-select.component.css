@@ -23,3 +23,8 @@
 .coins-select-option-sum {
     font-size: 12px;
 }
+
+.send-input {
+    /*border-radius: 4px;*/
+    height: 55px;
+}

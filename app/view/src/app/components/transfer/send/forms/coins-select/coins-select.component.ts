@@ -1,8 +1,7 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {ITokenInfo, StateService} from '../../../../../services/state.service';
+import {Component, EventEmitter, Output} from '@angular/core';
+import {IMenuItem, ITokenInfo, StateService} from '../../../../../services/state.service';
 import {Observable, Subscription} from 'rxjs';
-import {distinctUntilChanged, map} from "rxjs/operators";
+
 
 
 @Component({
@@ -12,12 +11,18 @@ import {distinctUntilChanged, map} from "rxjs/operators";
 })
 export class CoinsSelectComponent {
 
-    @Input() network: string;
-    @Output() coin = new EventEmitter<string>();
+    @Output()
+    coinSelected = new EventEmitter<string>();
 
     tokens$: Observable<ITokenInfo[]> = this.stateService.tokens$;
-    selectedCoin: string;
+    selectedNetwork$: Observable<IMenuItem> = this.stateService.selectedNetwork$;
+    selectedCoin = 'BNB';
 
     constructor(public stateService: StateService) {
+        // const network = this.stateService.network;
+    }
+
+    onCoinChange(x: any) {
+        this.coinSelected.next(x);
     }
 }

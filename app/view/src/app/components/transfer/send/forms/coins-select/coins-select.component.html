@@ -1,32 +1,16 @@
 <div class="mb-0">
     <div class="form-row">
-        <div class="col-md-12">
+        <div class="col-md-12 send-input" style="height:100%">
             <ng-select #coinSelect [searchable]="false" [clearable]="false" [(ngModel)]="selectedCoin"
+                       (change)="onCoinChange($event.value)"
                        labelForId="heroId" class="custom send-input">
 
                 <ng-template ng-header-tmp>
                     <input style="width: 100%; line-height: 14px; height: 24px !important;"
-                           (change)="coinSelect.filter($event.value)"
+                           (input)="coinSelect.filter($event.target.value)"
                            placeholder="Search for tokens"
                            type="text"/>
                 </ng-template>
-
-                <!--
-                <ng-option value="BNB">
-                    <div class="coins-select-option">
-                        <img class="coins-select-option-img"
-                             src="../../../../../../assets/icons/BNB Diamond Yellow 128.png" alt="BNB"/>
-
-                        <div class="coins-select-option-info">
-                            <span class="coins-select-option-title">Binance Coin</span>
-                            <div class="coins-select-option-sum">
-                                {{(this.stateService.bnbBalance$ | async) | fmtPipe : 'BNB'}}
-                            </div>
-                        </div>
-                    </div>
-
-                </ng-option>
-                -->
 
                 <ng-option *ngFor="let token of (tokens$ | async)" value="{{token.symbol}}">
                     <div class="coins-select-option">
@@ -47,4 +31,4 @@
     </div>
 </div>
 
-<p>{{tokens$ | async | json}}</p>
+<!--<p>{{tokens$ | async | json}}</p>-->

@@ -3,23 +3,26 @@
         <div class="amount-field-grid">
 
             <div class="amount-field-input">
-                <input autocomplete="off" #sum class="form-control" type="number" step="0.00000001" matInput value=0
-                       (input)="this.nextValue()">
+                <input class="form-control" type="number" [(ngModel)]="baseAmount"
+                       (input)="userInput$.next($event.target.value)"
+                       autocomplete="off" min="0" matInput value=0>
             </div>
 
             <div class="overflow-ellipsis amount-field-currency-main">
-                {{(currentState$ | async).baseSymbol || 'BNB'}}
+                {{baseSymbol || 'BNB'}}
             </div>
 
-            <div *ngIf="(currentState$ | async).rate2usd" class="amount-field-secondary-sum overflow-ellipsis">
-                {{(currentState$ | async).calculatedSum || 0 }}
+            <div class="amount-field-secondary-sum overflow-ellipsis"
+                 [ngStyle]="{'color: gray': rate2usd}">
+                {{calculatedSum === null ? 'N/A' : calculatedSum}}
             </div>
 
-            <div class="amount-field-currency-second">
-                {{(currentState$ | async).secondarySymbol || '' }}
+            <div class="amount-field-currency-second" style="color: gray">
+                {{secondarySymbol || '' }}
             </div>
 
-            <div *ngIf="(currentState$ | async).rate2usd" (click)="swapCurrencies();" class="amount-field-switch">
+            <div class="amount-field-switch" [ngStyle]="{'color: gray': rate2usd}"
+                 (click)="rate2usd ? this.doSwap$.next(!this.doSwap$.value) : {} ">
                 <i class="fa fa-exchange fa-rotate-90"></i>
             </div>
         </div>

@@ -12,15 +12,16 @@ import {CoursesService} from "./courses.service";
 export interface ITransaction {
     Amount: number;
     IsAmountEnteredInUSD: boolean;
-
     AddressTo: string;
     AddressFrom: string;
     Memo: string;
     Symbol: string;
     name: string;
-    mapppedName: string;
+    mappedName: string;
     rate2fiat: number;
 }
+
+// mapppedName
 
 export interface ITokenInfo {
     balance: string;
@@ -30,7 +31,7 @@ export interface ITokenInfo {
     mappedName: string;
     name: string;
     symbol: string;
-    rate2fiat: number;
+    rate2usd: number;
 }
 
 export interface IMenuItem {
@@ -71,6 +72,7 @@ const basicNetworkSttate: IMenuItem = Object.freeze({
     networkPrefix: 'bnb',
     label: 'mainnet',
 });
+
 const basicTransactionState: ITransaction = {
     Amount: 0,
     IsAmountEnteredInUSD: false,
@@ -79,14 +81,9 @@ const basicTransactionState: ITransaction = {
     Memo: '',
     Symbol: 'BNB',
     name: 'Binance Coin',
-    mapppedName: 'BNB',
+    mappedName: 'BNB',
     rate2fiat: 0
 };
-
-export interface IUiBalance {
-    bnb: string;
-    bnbFiat: string;
-}
 
 export interface IMarketRates {
     symbol: string;
@@ -280,6 +277,7 @@ export class StateService {
         //     this.baseCurrency.next(this.uiState$.getValue().storageData.baseFiatCurrency);
         // }
         //
+
         this.baseCurrency$ = this.uiState$.pipe(
             filter((uiState) => uiState.storageData !== null),
             map((uiState) => {
@@ -349,93 +347,81 @@ export class StateService {
 
         this.tokens$ = combineLatest([this.allBalances$, this.marketRates$, this.bnb2fiatRate$])
             .pipe(
-                map((x: any[]) => {
+                map((x: [IBalance[], IMarketRates[], number]) => {
                     const [balances, marketRates, bnb2usd] = x;
-                    const finalBalances = [];
+                    return balances
+                        .map((token: IBalance) => {
+                            const tokenSymbol = token.symbol;
+                            const freeBalance = token.free;
+                            const marketTicker = marketRates.find(o => o.baseAssetName === tokenSymbol);
+                            const lastPrice = +(marketTicker && marketTicker.lastPrice) || 0;
 
-                    balances.forEach((token) => {
+                            return this.getTokenInfo(freeBalance, tokenSymbol, lastPrice, bnb2usd);
+                        })
+                        .filter((item: any) => {
+                            return !!item;
+                        })
+                        .sort((a, b) => {
+                            const usdDiff = b.balance2usd - a.balance2usd;
+                            if (usdDiff !== 0) {
+                                return usdDiff;
+                            }
 
-                        const marketTicker = marketRates.find(o => o.baseAssetName === token.symbol);
-                        const tokensDetails = tokenDetailsList.find(o => o.symbol === token.symbol);
-                        debugger
-
-                        const preset = {
-                            'symbol': token.symbol,
-                            'balance2usd': Number(marketTicker.lastPrice) * bnb2usd * Number(token.free),
-                            'balance': Number(token.free),
-                            'image': '',
-                            'name': tokensDetails.name,
-                            'mappedName': tokensDetails.mappedAsset,
-                            'rate2usd': 0,
-                        };
-
-                        let item;
-
-                        const isOk = tokensDetails.name !== undefined
-                            && tokensDetails.mappedAsset !== undefined
-                            && token.symbol !== 'BNB';
-
-                        if (isOk) {
-                            item = {
-                                ...preset,
-                                'image': tokensDetails.image,
-                                'name': tokensDetails.name,
-                                'mappedName': tokensDetails.mappedAsset,
-                                'rate2usd': Number(marketTicker.lastPrice) * bnb2usd,
-                            };
-                        } else if (token.symbol !== 'BNB'
-                            && tokensDetails
-                            && tokensDetails.name !== undefined
-                            && tokensDetails.mappedAsset !== undefined
-                        ) {
-                            item = {
-                                ...preset,
-                                'balance2usd': 0,
-                            };
-                        } else if (tokensDetails &&
-                            tokensDetails.name === undefined &&
-                            tokensDetails.mappedAsset !== undefined) {
-                            item = {
-                                ...preset,
-                                'balance2usd': 0,
-                                'name': ''
-                            };
-                        } else if (tokensDetails
-                            && tokensDetails.name !== undefined
-                            && tokensDetails.mappedAsset === undefined) {
-                            item = {
-                                ...preset,
-                                'balance2usd': 0,
-                                'mappedName': '',
-                            };
-                        } else if (!tokensDetails) {
-                            item = {
-                                ...preset,
-                                'balance2usd': 0,
-                                'name': token.symbol,
-                                'mappedName': token.symbol,
-                            };
-                        }
-
-                        if (item) {
-                            finalBalances.push(item);
-                        }
-
-                    });
-
-                    return finalBalances.sort((a, b) => {
-                        const usdDiff = b.balance2usd - a.balance2usd;
-                        if (usdDiff !== 0) {
-                            return usdDiff;
-                        }
-
-                        const cryptoDiff = b.balance - a.balance;
-                        return cryptoDiff !== 0
-                            ? cryptoDiff
-                            : a.symbol > b.symbol ? 1 : -1;
-                    });
+                            const cryptoDiff = Number(b.balance) - Number(a.balance);
+                            return cryptoDiff !== 0
+                                ? cryptoDiff
+                                : a.symbol > b.symbol ? 1 : -1;
+                        });
                 }),
                 shareReplay(1));
+    }
+
+    getTokenInfo(freeBalance: string, tokenSymbol: string, lastPrice: number, bnb2usd: number): ITokenInfo {
+
+        const tokensDetails = tokenDetailsList.find(o => o.symbol === tokenSymbol);
+
+        const tokenInfo: ITokenInfo = {
+            symbol: tokenSymbol,
+            // !tokensDetails -> 0
+            balance2usd: (lastPrice * bnb2usd * Number(freeBalance)) || 0,
+            balance: freeBalance,
+            image: tokensDetails ? tokensDetails.image : '',
+            name: tokensDetails ? tokensDetails.name : tokenSymbol,
+            mappedName: tokensDetails ? tokensDetails.mappedAsset : tokenSymbol,
+            rate2usd: Number(lastPrice) * bnb2usd,
+            balance2usdStr: ''
+        };
+
+        return tokenInfo;
+
+        // if (tokenSymbol === 'BNB' || !tokensDetails) {
+        //     return tokenInfo;
+        // }
+
+        // ????
+
+        // if (hasName && hasAsset &&  isNotBnb) {
+        //     return {
+        //         ...preset,
+        //         'balance2usd': 0,
+        //     };
+        // }
+
+        // if (hasName && hasAsset) {
+        //     return {
+        //         ...preset,
+        //         'balance2usd': 0,
+        //         'name': ''
+        //     };
+        // }
+
+        // if (tokensDetails && tokensDetails.name !== undefined && tokensDetails.mappedAsset === undefined) {
+        //     return {
+        //         ...preset,
+        //         'balance2usd': 0,
+        //         'mappedName': '',
+        //     };
+        // }
     }
 
     // createObservableSocket(url: string): Observable<any> {

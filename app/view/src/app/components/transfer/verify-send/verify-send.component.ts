@@ -25,7 +25,7 @@ const basicTransactionState: ITransaction = {
     Memo: '',
     Symbol: 'BNB',
     name: 'Binance Coin',
-    mapppedName: 'BNB',
+    mappedName: 'BNB',
     rate2fiat: 0
 };
 
@@ -64,63 +64,65 @@ export class VerifySendComponent implements OnDestroy, OnInit {
         const bnbTransferFee$ = this.stateService.simpleFee$;
 
         this.txDetails = combineLatest([bnb2usdRate$, bnbTransferFee$]).pipe(
-          map((x: any[]) => {
-              const [rate, fee] = x;
+            map((x: any[]) => {
+                const [rate, fee] = x;
 
-              const tx = this.tx.getValue();
+                const tx = this.tx.getValue();
+                const inUSD = tx.IsAmountEnteredInUSD;
+                const sumInCrypto = !inUSD ? tx.Amount : tx.Amount / rate;
+                const sumInFiat = !inUSD ? (tx.Amount * rate) : tx.Amount;
 
-              const inUSD = tx.IsAmountEnteredInUSD;
-              const sumInCrypto = !inUSD ? tx.Amount : tx.Amount / rate;
-              const sumInFiat = !inUSD ? (tx.Amount * rate) : tx.Amount;
-              const totalSumInTokenIfNotBNB = sumInCrypto + ' ' + tx.mapppedName + ' and ' + fee.toString() + ' BNB';
-              const totalSumInTokenIfBNB = Number(sumInCrypto) + Number(fee);
-              const isBnb = tx.Symbol === 'BNB';
-              const totalSumInToken = isBnb
-                ? totalSumInTokenIfBNB.toString()
-                : totalSumInTokenIfNotBNB;
-              const TotalFiatSum = +sumInFiat + (Number(fee) * Number(rate));
-              const txDetails: ITransactionDetails = {
-                  IsBnb: isBnb,
-                  CryptoName: isBnb ? 'BNB' : tx.mapppedName,
-                  SumInCrypto: (+sumInCrypto).toFixed(4),
-                  SumInCryptoRaw: sumInCrypto,
-                  SumInFiat: (+sumInFiat).toFixed(2),
+                const totalSumInTokenIfNotBNB = sumInCrypto + ' ' + tx.mappedName + ' and ' + fee.toString() + ' BNB';
+                const totalSumInTokenIfBNB = Number(sumInCrypto) + Number(fee);
 
-                  FeeInBNB: fee.toString(),
-                  FeeInFiat: (Number(fee) * Number(rate)).toFixed(2),
+                const isBnb = tx.Symbol === 'BNB';
+                const totalSumInToken = isBnb
+                    ? totalSumInTokenIfBNB.toString()
+                    : totalSumInTokenIfNotBNB;
 
-                  TotalSumInToken: (+totalSumInToken).toFixed(4),
-                  TotalSumInFiat: TotalFiatSum.toFixed(2),
-              };
-              return txDetails;
-          }),
-          shareReplay(1)
+                const TotalFiatSum = +sumInFiat + (Number(fee) * Number(rate));
+                const txDetails: ITransactionDetails = {
+                    IsBnb: isBnb,
+                    CryptoName: isBnb ? 'BNB' : tx.mappedName,
+                    SumInCrypto: (+sumInCrypto).toFixed(4),
+                    SumInCryptoRaw: sumInCrypto,
+                    SumInFiat: (+sumInFiat).toFixed(2),
+
+                    FeeInBNB: fee.toString(),
+                    FeeInFiat: (Number(fee) * Number(rate)).toFixed(2),
+
+                    TotalSumInToken: (+totalSumInToken).toFixed(4),
+                    TotalSumInFiat: TotalFiatSum.toFixed(2),
+                };
+                return txDetails;
+            }),
+            shareReplay(1)
         );
     }
 
     verify() {
 
         this.txDetails.pipe(
-          take(1),
-          switchMap((txDetails: ITransactionDetails) => {
-              const tx = this.tx.getValue();
-              const network = this.stateService.selectedNetwork$.getValue();
-              const privateKey = this.stateService.uiState.currentAccount.privateKey;
+            take(1),
+            switchMap((txDetails: ITransactionDetails) => {
+                const tx = this.tx.getValue();
+                const network = this.stateService.selectedNetwork$.getValue();
+                const privateKey = this.stateService.uiState.currentAccount.privateKey;
 
 
-              const p$ = this.bncService.sendTransaction(
-                +txDetails.SumInCrypto,
-                tx.AddressTo,
-                network.label,
-                network.val,
-                network.networkPrefix,
-                tx.Symbol,
-                privateKey,
-                tx.Memo
-              );
+                const p$ = this.bncService.sendTransaction(
+                    +txDetails.SumInCrypto,
+                    tx.AddressTo,
+                    network.label,
+                    network.val,
+                    network.networkPrefix,
+                    tx.Symbol,
+                    privateKey,
+                    tx.Memo
+                );
 
-              return from(p$);
-          })
+                return from(p$);
+            })
         ).subscribe((result) => {
             console.log(result);
         });
@@ -136,7 +138,7 @@ export class VerifySendComponent implements OnDestroy, OnInit {
             Memo: '',
             Symbol: '',
             name: '',
-            mapppedName: '',
+            mappedName: '',
             rate2fiat: 0,
         });
     }
