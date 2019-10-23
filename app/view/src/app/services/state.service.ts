@@ -298,7 +298,8 @@ export class StateService {
                         const [_, baseCurrency] = x;
                         return this.courses.getBinanceRate$(baseCurrency);
                     }),
-                    catchError(() => {
+                    catchError((err) => {
+                        console.log(err)
                         return NEVER;
                     }),
                     map(( rawRate: string ) => {

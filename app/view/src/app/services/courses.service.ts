@@ -40,8 +40,7 @@ export class CoursesService {
 
         return this.http.post(url, body).pipe(
             map(( response: ResponseFromCoursesApi ) => {
-                // @ts-ignore
-                return Number(response.data[0].rates[0].rate['0x00000000000000000000000000000000000002ca']).toFixed(2);
+                return Number((response.data[0].rates[0]["0x00000000000000000000000000000000000002ca"])).toFixed(2);
             }),
             shareReplay(1)
         );
