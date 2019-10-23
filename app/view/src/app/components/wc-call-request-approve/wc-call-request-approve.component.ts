@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 
+// TODO: move to wallet-connect module folder & module
 @Component({
     selector: 'app-wc-call-request-approve',
     templateUrl: './wc-call-request-approve.component.html',

@@ -13,16 +13,18 @@
             </div>
 
             <div class="amount-field-secondary-sum overflow-ellipsis"
-                 [ngStyle]="{'color: gray': rate2usd}">
-                {{calculatedSum === null ? 'N/A' : calculatedSum}}
+                 [ngClass]="{'gray-out': !exchangeRateIsAvailable}">
+                {{exchangeRateIsAvailable ? calculatedSum : 'N/A'}}
             </div>
 
-            <div class="amount-field-currency-second" style="color: gray">
+            <div class="amount-field-currency-second"
+                 [ngClass]="{'gray-out': !exchangeRateIsAvailable}">
                 {{secondarySymbol || '' }}
             </div>
 
-            <div class="amount-field-switch" [ngStyle]="{'color: gray': rate2usd}"
-                 (click)="rate2usd ? this.doSwap$.next(!this.doSwap$.value) : {} ">
+            <div class="amount-field-switch"
+                 [ngClass]="{'gray-out': !exchangeRateIsAvailable}"
+                 (click)="changeInputMode()">
                 <i class="fa fa-exchange fa-rotate-90"></i>
             </div>
         </div>

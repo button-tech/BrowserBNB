@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
-import {BehaviorSubject, combineLatest, concat, NEVER, Observable, timer} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, NEVER, Observable, of, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {catchError, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap} from 'rxjs/operators';
@@ -287,25 +287,22 @@ export class StateService {
             shareReplay(1),
         );
 
+        // Think about, maybe start with NaN
         this.bnb2fiatRate$ =
-            combineLatest(
-                [timerFees$,
-                    this.baseCurrency$])
+            combineLatest([timerFees$, this.baseCurrency$])
                 .pipe(
                     switchMap((x: any[]) => {
                         const [_, baseCurrency] = x;
                         return this.courses.getBinanceRate$(baseCurrency);
                     }),
                     catchError(() => {
-                        return NEVER;
+                        return of(NaN);
                     }),
                     map((rawRate: string) => {
                         return +rawRate;
                     }),
                     shareReplay(1),
                 );
-
-        // this.bnb2fiatRate$.subscribe();
 
         this.bnbBalanceInFiat$ = combineLatest([this.bnbBalance$, this.bnb2fiatRate$]).pipe(
             map((arr: any[]) => {
@@ -316,11 +313,17 @@ export class StateService {
             shareReplay(1)
         );
 
+
         this.marketRates$ = timer(0, 24000).pipe(
             switchMap(() => {
+                debugger // Check how fast this things fires
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
             }),
-            map((resp: IMarketRates[]) => resp)
+            catchError(() => {
+                return of(NaN);
+            }),
+            map((resp: IMarketRates[]) => resp),
+            shareReplay(1)
         );
 
         this.history$ = combineLatest([this.currentAddress$, this.currentEndpoint$]).pipe(
@@ -355,6 +358,7 @@ export class StateService {
                             const freeBalance = token.free;
                             const marketTicker = marketRates.find(o => o.baseAssetName === tokenSymbol);
                             const lastPrice = +(marketTicker && marketTicker.lastPrice) || 0;
+                            debugger
 
                             return this.getTokenInfo(freeBalance, tokenSymbol, lastPrice, bnb2usd);
                         })
