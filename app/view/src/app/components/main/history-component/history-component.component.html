@@ -32,10 +32,17 @@
             </div>
             <sat-popover #details horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                          verticalAlign="below">
-                <div id="popup" class="tooltip-wrapper">
+                <div  *ngIf="tx.txAsset == 'BNB'"  class="tooltip-wrapper">
                     It is about
                     <br>
                     {{(calculateSumInFiat(+tx.value) | async) || 'pending' }}
+                    <br>
+                    {{this.stateService.uiState$.getValue().storageData.baseFiatCurrency}}
+                </div>
+                <div  *ngIf="tx.txAsset != 'BNB'" class="tooltip-wrapper">
+                    Transaction Fee
+                    <br>
+                    {{(calculateSumInFiat(+tx.txFee) | async) || 'pending' }}
                     <br>
                     {{this.stateService.uiState$.getValue().storageData.baseFiatCurrency}}
                 </div>
