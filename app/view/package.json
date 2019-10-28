@@ -27,6 +27,7 @@
     "@binance-chain/javascript-sdk": "^2.15.0",
     "@ncstate/sat-popover": "^4.0.0",
     "@ng-select/ng-select": "^3.0.7",
+    "@uiowa/digit-only": "^1.2.1",
     "ajv": "^6.10.2",
     "angular-font-awesome": "^3.1.2",
     "angularx-qrcode": "^1.6.4",

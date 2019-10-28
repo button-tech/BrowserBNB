@@ -3,10 +3,6 @@
     margin-right: 0.25em;
 }
 
-.grey-border {
-    border: 1px solid #cbcbcb;
-}
-
 .btn-back {
     background: none;
     box-shadow: none;
@@ -26,20 +22,23 @@
 
 }
 
-.send-row {
-    margin-bottom: 20px;
+label {
+    color: rgb(60, 72, 88);
+    font-size: 1em;
+    margin: 0
 }
 
-.send-input-title {
-    font-weight: bolder;
-    margin-top: 0.75em;
+input {
+    padding-left: 15px;
+    border-radius: 4px;
+    width: 100%;
+    line-height: 1.1;
+    height: 53px;
+    font-size: 13px;
+    border: 1px solid #cbcbcb;
 }
 
-.inp {
-    border-color: #b3b3b3 #ccc #d9d9d9;
-}
-
-.send-input {
+.amount-container {
     border: 1px solid #cbcbcb;
     border-radius: 4px;
     height: 55px;

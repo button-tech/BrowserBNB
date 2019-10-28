@@ -9,44 +9,52 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <div class="row send-row">
+            <div class="row mb-4">
                 <div class="col-3">
-                    <h5 class="text-left send-input-title">Asset:</h5>
+                    <label>Asset:</label>
                 </div>
-                <div class="col-9">
-                    <app-coins-select (coinSelected)="myLog()"></app-coins-select>
-                </div>
-            </div>
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Amount:</h5>
-                </div>
-                <div class="col-9">
-                    <app-amount-input></app-amount-input>
-                </div>
-            </div>
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Address:</h5>
-                </div>
-                <div class="col-9">
-                    <app-address-input></app-address-input>
+                <div class="col-9 coin-select-container">
+                    <app-coins-select (coinSelected)="onCoinSelected($event)"></app-coins-select>
                 </div>
             </div>
 
-            <div class="row send-row">
-                <div class="col-3">
-                    <h5 class="text-left send-input-title">Memo:</h5>
+            <div class="row mb-4">
+                <div class="col-3 d-flex align-items-center">
+                    <label class="text-left send-input-title">Amount:</label>
                 </div>
                 <div class="col-9">
-                    <div class="wrap text-center send-input" style="border: none">
-                        <div>
-                            <input id="memoInput" style="padding-left:15px"
-                                   autocomplete="off" class="form-control"
-                                   placeholder="Optional memo"
-                                   spellcheck="false">
-                        </div>
+                    <div class="amount-container">
+                        <app-amount-input-single-line *ngIf="true"
+                                                      [selectedToken]="coin">
+                        </app-amount-input-single-line>
+
+                        <app-amount-input-double-line *ngIf="false"
+                                                      [selectedToken]="coin">
+                        </app-amount-input-double-line>
                     </div>
+                </div>
+            </div>
+
+
+            <div class="row mb-4">
+                <div class="col-3 d-flex align-items-center">
+                    <label for="bnbAddress">Address:</label>
+                </div>
+                <div class="col-9">
+                    <input id="bnbAddress" autocomplete="off" (input)="validateAddress($event.target.value);"
+                           placeholder="BNB address"
+                           spellcheck="false">
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-3 d-flex align-items-center">
+                    <label for="memoInput">Memo:</label>
+                </div>
+                <div class="col-9">
+                    <input id="memoInput" autocomplete="off"
+                           placeholder="Optional memo"
+                           spellcheck="false">
                 </div>
             </div>
 

@@ -28,9 +28,7 @@ import {SendComponent} from './components/transfer/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {CoinsSelectComponent} from './components/transfer/send/forms/coins-select/coins-select.component';
-import {AmountInputComponent} from './components/transfer/send/forms/amount-input/amount-input.component';
 import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule} from '@angular/material';
-import {AddressInputComponent} from './components/transfer/send/forms/address-input/address-input.component';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
 import {SettingsComponent} from './components/main/menu-top/settings/settings.component';
@@ -54,6 +52,9 @@ import {ChromeApiRealService} from "./services/chrome-api-real.service";
 import {WcCallRequestApproveComponent} from "./components/wc-call-request-approve/wc-call-request-approve.component";
 import {SeedComponent} from './components/main/menu-top/settings/security-privacy/seed/seed.component';
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
+import {AmountInputDoubleLineComponent} from "./components/transfer/send/forms/amount-input-double-line/amount-input-double-line.component";
+import {AmountInputSingleLineComponent} from "./components/transfer/send/forms/amount-input-single-line/amount-input-single-line.component";
+import {DigitOnlyModule} from "@uiowa/digit-only";
 
 
 @NgModule({
@@ -72,8 +73,8 @@ import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
         SendComponent,
         MenuTopComponent,
         CoinsSelectComponent,
-        AmountInputComponent,
-        AddressInputComponent,
+        AmountInputDoubleLineComponent,
+        AmountInputSingleLineComponent,
         VerifySendComponent,
         AllBalancesComponent,
         SettingsComponent,
@@ -104,6 +105,7 @@ import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
         }),
         HttpClientModule,
         FormsModule,
+        DigitOnlyModule,
         MatInputModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,

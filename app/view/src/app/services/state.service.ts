@@ -316,7 +316,7 @@ export class StateService {
 
         this.marketRates$ = timer(0, 24000).pipe(
             switchMap(() => {
-                debugger // Check how fast this things fires
+                // debugger // TODO: Check how fast this things fires
                 return this.http.get('https://dex.binance.org/api/v1/ticker/24hr');
             }),
             catchError(() => {
@@ -358,8 +358,7 @@ export class StateService {
                             const freeBalance = token.free;
                             const marketTicker = marketRates.find(o => o.baseAssetName === tokenSymbol);
                             const lastPrice = +(marketTicker && marketTicker.lastPrice) || 0;
-                            debugger
-
+                            // debugger
                             return this.getTokenInfo(freeBalance, tokenSymbol, lastPrice, bnb2usd);
                         })
                         .filter((item: any) => {

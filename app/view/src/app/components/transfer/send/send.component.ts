@@ -1,9 +1,8 @@
 import {Component, OnDestroy} from '@angular/core';
 import {validateAddress} from '../../../services/binance-crypto';
-import {Observable, Subscription, timer} from 'rxjs';
+import {combineLatest, Observable, Subscription, timer} from 'rxjs';
 import {StateService} from "../../../services/state.service";
 import {Router} from "@angular/router";
-import {map} from "rxjs/operators";
 
 @Component({
     selector: 'app-send',
@@ -12,6 +11,9 @@ import {map} from "rxjs/operators";
 })
 export class SendComponent implements OnDestroy {
 
+    coin: string;
+
+    isAddressValid: boolean;
     isValidToNextPage: boolean;
     fee: Observable<number>;
     subscription: Subscription;
@@ -19,20 +21,29 @@ export class SendComponent implements OnDestroy {
     constructor(private router: Router, private stateService: StateService) {
 
         // WTF ???
-        this.subscription = timer(0, 500).subscribe(() => {
-            const {Symbol, Amount, AddressTo} = this.stateService.currentTransaction.getValue();
-            const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
-            this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
-        });
+        // this.subscription = timer(0, 500).subscribe(() => {
+        //     const {Symbol, Amount, AddressTo} = this.stateService.currentTransaction.getValue();
+        //     const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
+        //     this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
+        // });
+        //
+        const {bnb2fiatRate$, marketRates$} = this.stateService;
+
+        this.subscription = combineLatest([bnb2fiatRate$, marketRates$])
+            .pipe(
+
+            ).subscribe();
+        // const bnb2fiat = this.stateService.bnb2fiatRate$;
+        // const marketRates = this.stateService.marketRates$;
     }
 
     goBack() {
         this.router.navigate(['/main']);
     }
 
-    ngOnDestroy(): void {
-        this.subscription.unsubscribe();
-    }
+    // ngOnDestroy(): void {
+    //     this.subscription.unsubscribe();
+    // }
 
     //
     // Memo input
@@ -43,10 +54,17 @@ export class SendComponent implements OnDestroy {
     //     this.stateService.currentTransaction.next(nexTx);
     // }
 
-    myLog(value: any) {
-        debugger
-        console.log(value);
-        // coinSelected
+    validateAddress(addressValue: string) {
+        const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
+        this.isAddressValid = validateAddress(addressValue, networkPrefix);
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
+
+    onCoinSelected(coin: string) {
+        console.log(coin);
     }
 }
 
