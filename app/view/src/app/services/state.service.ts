@@ -21,8 +21,6 @@ export interface ITransaction {
     rate2fiat: number;
 }
 
-// mapppedName
-
 export interface ITokenInfo {
     balance: string;
     balance2usd: number;
@@ -295,7 +293,8 @@ export class StateService {
                         const [_, baseCurrency] = x;
                         return this.courses.getBinanceRate$(baseCurrency);
                     }),
-                    catchError(() => {
+                    catchError((err) => {
+                        console.log(err);
                         return of(NaN);
                     }),
                     map((rawRate: string) => {
