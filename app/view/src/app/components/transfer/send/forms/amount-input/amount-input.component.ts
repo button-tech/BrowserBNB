@@ -9,18 +9,18 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 type InputMode = 'fiat' | 'crypto' | 'onlyCrypto';
 
 @Component({
-    selector: 'app-amount-input-single-line',
-    templateUrl: './amount-input-single-line.component.html',
-    styleUrls: ['./amount-input-single-line.component.css'],
+    selector: 'app-amount-input',
+    templateUrl: './amount-input.component.html',
+    styleUrls: ['./amount-input.component.css'],
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
-            useExisting: forwardRef(() => AmountInputSingleLineComponent),
+            useExisting: forwardRef(() => AmountInputComponent),
             multi: true
         }
     ]
 })
-export class AmountInputSingleLineComponent implements ControlValueAccessor, OnChanges {
+export class AmountInputComponent implements ControlValueAccessor, OnChanges {
 
     @Input()
     coin: string;

@@ -25,10 +25,9 @@
                 <div class="col-9">
                     <div class="amount-container"
                          [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}">
-                        <app-amount-input-single-line formControlName="amount"
-                                                      [rate2usd]="rate2usd$ | async"
-                                                      [coin]="selectedToken">
-                        </app-amount-input-single-line>
+                        <app-amount-input formControlName="amount" [coin]="selectedToken"
+                                          [rate2usd]="rate2usd$ | async">
+                        </app-amount-input>
                     </div>
                 </div>
             </div>
