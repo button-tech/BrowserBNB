@@ -33,7 +33,6 @@ export class VerifySendComponent {
     @Input()
     rate2usd: number;
 
-
     get hasRate2usd(): boolean {
         return !isNaN(this.rate2usd);
     }

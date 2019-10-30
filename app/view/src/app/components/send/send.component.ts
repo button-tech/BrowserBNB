@@ -23,13 +23,7 @@ import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/o
 })
 export class SendComponent implements OnDestroy {
     selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
-
     showVerifyForm = false;
-
-    // showVerifyForm(show: boolean) {
-    //     this.showVerifyForm = show;
-    // }
-
     // rate2usd of token that is selected now
     rate2usd = NaN;
     bnbTransferFee: number;
