@@ -18,11 +18,9 @@ export class CoinsSelectComponent {
     selectedNetwork$: Observable<IMenuItem> = this.stateService.selectedNetwork$;
 
     constructor(public stateService: StateService) {
-        // const network = this.stateService.network;
     }
 
     onCoinChange(x: any) {
-        debugger
         this.coinSelected.next(x);
     }
 }

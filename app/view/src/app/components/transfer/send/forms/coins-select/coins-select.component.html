@@ -2,7 +2,7 @@
     <div class="form-row">
         <div class="col-md-12 send-input" style="height:100%">
             <ng-select #coinSelect [searchable]="false" [clearable]="false" [(ngModel)]="selectedToken"
-                       (change)="onCoinChange($event.value)"
+                       (change)="onCoinChange($event)"
                        labelForId="heroId" class="custom send-input">
 
                 <ng-template ng-header-tmp>

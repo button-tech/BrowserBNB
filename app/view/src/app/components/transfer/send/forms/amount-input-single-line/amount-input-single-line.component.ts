@@ -4,26 +4,9 @@ import {
     Input, OnChanges,
     SimpleChange, SimpleChanges,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 type InputMode = 'fiat' | 'crypto' | 'onlyCrypto';
-
-function convert(src: number, rate2usd: number, inputMode: InputMode): number | string {
-
-    if (inputMode === 'onlyCrypto' || isNaN(rate2usd)) {
-        return 'N/A';
-    }
-
-    if (inputMode === 'crypto') {
-        return src * rate2usd;
-    }
-
-    if (inputMode === 'fiat') {
-        return src / rate2usd;
-    }
-
-    return 'N/A';
-}
 
 @Component({
     selector: 'app-amount-input-single-line',
@@ -60,11 +43,6 @@ export class AmountInputSingleLineComponent implements ControlValueAccessor, OnC
 
     registerOnChange(fn: any): void {
         this.onChange = fn;
-        // this.onChange = (userInput: string) => {
-        //     // this.value = userInput;
-        //     this.convertedAmount = convert(+userInput, this.rate2usd, this.inputMode);
-        //     fn(userInput);
-        // };
     }
 
     registerOnTouched(fn: any): void {
@@ -76,7 +54,6 @@ export class AmountInputSingleLineComponent implements ControlValueAccessor, OnC
     }
 
     writeValue(value: number): void {
-        // debugger
         this.value = value ? +value : 0;
     }
 
@@ -86,20 +63,24 @@ export class AmountInputSingleLineComponent implements ControlValueAccessor, OnC
         }
 
         this.inputMode = (this.inputMode === 'crypto') ? 'fiat' : 'crypto';
-        this.convertedAmount = convert(this.value, this.rate2usd, this.inputMode);
+        this.convert();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+
         const rate2usd: SimpleChange = changes.rate2usd;
         if (!rate2usd) {
             return;
         }
 
         if (isNaN(rate2usd.currentValue)) {
-            this.inputMode = 'onlyCrypto';
+            this.inputMode = 'onlyCrypto'; // Reset to only crypto input mode
         } else if (isNaN(rate2usd.previousValue)) {
+            // We didn't have rate before, and now we have.
+            // Let's stay in crypto but with ability to change input mode to fiat
             this.inputMode = 'crypto';
         }
+        this.convert();
     }
 
     convert(): void {
@@ -107,24 +88,15 @@ export class AmountInputSingleLineComponent implements ControlValueAccessor, OnC
         const hasRate = !isNaN(this.rate2usd);
         if (hasRate) {
             if (this.inputMode === 'crypto') {
-                this.convertedAmount = this.value * this.rate2usd;
+                this.convertedAmount = (this.value * this.rate2usd).toFixed(2);
                 return;
             } else if (this.inputMode === 'fiat') {
-                this.convertedAmount = this.value / this.rate2usd;
+                // TODO: put 4 or other number to constant (it is used in other places as well)
+                this.convertedAmount = (this.value / this.rate2usd).toFixed(4);
                 return;
             }
         }
 
         this.convertedAmount = 'N/A';
-
-        // if (this.inputMode === 'onlyCrypto' || isNaN(this.rate2usd)) {
-        //     this.convertedAmount = 'N/A';
-        // } else if (this.inputMode === 'crypto') {
-        //     this.convertedAmount = this.value * this.rate2usd;
-        // } else if (this.inputMode === 'fiat') {
-        //     this.convertedAmount = this.value / this.rate2usd;
-        // }
-
-        // return 'N/A';
     }
 }

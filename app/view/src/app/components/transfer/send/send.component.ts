@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {isAddressValid} from '../../../services/binance-crypto';
 import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge} from 'rxjs';
-import {IMenuItem, ITokenInfo, StateService} from "../../../services/state.service";
+import {IMarketRates, IMenuItem, ITokenInfo, StateService} from "../../../services/state.service";
 import {Router} from "@angular/router";
 import {
     AbstractControl,
@@ -22,9 +22,14 @@ import {distinctUntilChanged, map, switchMap, take, tap} from "rxjs/operators";
 export class SendComponent implements OnDestroy {
 
     selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
+    rate2usd$: Observable<number>;
 
     get selectedToken() {
         return this.selectedToken$.value;
+    }
+
+    set selectedToken(value: string) {
+        this.selectedToken$.next(value);
     }
 
     balance = 0;
@@ -89,13 +94,46 @@ export class SendComponent implements OnDestroy {
         this.formValidationSubscription = merge(balance$, network$)
             .subscribe();
 
-        this.subscription = combineLatest([bnb2fiatRate$, marketRates$])
-            .pipe().subscribe();
+        this.rate2usd$ = combineLatest([bnb2fiatRate$, marketRates$]).pipe(
+            map(() => {
+                return 3;
+            })
+        );
+
+        this.rate2usd$ = this.selectedToken$.pipe(
+            switchMap((selectedToken: string) => {
+                // TODO: check that marketRates$ are already available
+                return this.buildUsdPricePipeLine(selectedToken, bnb2fiatRate$, marketRates$);
+            }),
+            // take(1)
+        );
+    }
+
+    // Build on top of selectedToken
+    buildUsdPricePipeLine(selectedToken: string, bnb2fiatRate$, marketRates$): Observable<number> {
+        // Simple case for BNB
+        if (selectedToken === "BNB") {
+            return bnb2fiatRate$;
+        }
+
+        // Complicated case for tokens
+        return combineLatest([marketRates$, bnb2fiatRate$]).pipe(
+            map((x: [IMarketRates[], number]) => {
+                const [tokenRates, bnb2usd] = x;
+                const ticker = tokenRates.find(o => o.baseAssetName === selectedToken);
+                if (!ticker) {
+                    return NaN;
+                }
+
+                const lastPrice = +(ticker && ticker.lastPrice) || 0;
+                return (+lastPrice) * bnb2usd;
+            })
+        );
     }
 
     onCoinSelected(coin: string) {
         console.log(coin);
-        this.selectedToken$.next(coin);
+        this.selectedToken = coin;
     }
 
     goBack() {
@@ -104,7 +142,7 @@ export class SendComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.formValidationSubscription.unsubscribe();
-        this.subscription.unsubscribe();
+        // this.subscription.unsubscribe();
     }
 
 

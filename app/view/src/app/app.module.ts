@@ -52,7 +52,6 @@ import {ChromeApiRealService} from "./services/chrome-api-real.service";
 import {WcCallRequestApproveComponent} from "./components/wc-call-request-approve/wc-call-request-approve.component";
 import {SeedComponent} from './components/main/menu-top/settings/security-privacy/seed/seed.component';
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
-import {AmountInputDoubleLineComponent} from "./components/transfer/send/forms/amount-input-double-line/amount-input-double-line.component";
 import {AmountInputSingleLineComponent} from "./components/transfer/send/forms/amount-input-single-line/amount-input-single-line.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
 
@@ -73,7 +72,6 @@ import {DigitOnlyModule} from "@uiowa/digit-only";
         SendComponent,
         MenuTopComponent,
         CoinsSelectComponent,
-        AmountInputDoubleLineComponent,
         AmountInputSingleLineComponent,
         VerifySendComponent,
         AllBalancesComponent,
