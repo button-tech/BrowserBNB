@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" [formGroup]="formGroup">
     <app-menu-top></app-menu-top>
     <div class="row">
         <div class="col-12 text-center mt-2 mb-4 ml-0">
@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-12">
             <div class="row mb-4">
-                <div class="col-3">
+                <div class="col-3 d-flex align-items-center">
                     <label>Asset:</label>
                 </div>
                 <div class="col-9 coin-select-container">
@@ -20,30 +20,28 @@
 
             <div class="row mb-4">
                 <div class="col-3 d-flex align-items-center">
-                    <label class="text-left send-input-title">Amount:</label>
+                    <label>Amount:</label>
                 </div>
                 <div class="col-9">
-                    <div class="amount-container">
-                        <app-amount-input-single-line *ngIf="true"
-                                                      [selectedToken]="coin">
+                    <div class="amount-container"
+                         [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}">
+
+                        <app-amount-input-single-line *ngIf="true" formControlName="amount"
+                                                      [coin]="selectedToken$ | async">
                         </app-amount-input-single-line>
 
-                        <app-amount-input-double-line *ngIf="false"
-                                                      [selectedToken]="coin">
-                        </app-amount-input-double-line>
+                        <app-amount-input-double-line *ngIf="false"></app-amount-input-double-line>
                     </div>
                 </div>
             </div>
-
 
             <div class="row mb-4">
                 <div class="col-3 d-flex align-items-center">
                     <label for="bnbAddress">Address:</label>
                 </div>
                 <div class="col-9">
-                    <input id="bnbAddress" autocomplete="off" (input)="validateAddress($event.target.value);"
-                           placeholder="BNB address"
-                           spellcheck="false">
+                    <input id="bnbAddress" formControlName="address"
+                           autocomplete="off" placeholder="BNB address" spellcheck="false">
                 </div>
             </div>
 
@@ -52,19 +50,24 @@
                     <label for="memoInput">Memo:</label>
                 </div>
                 <div class="col-9">
-                    <input id="memoInput" autocomplete="off"
-                           placeholder="Optional memo"
-                           spellcheck="false">
+                    <input id="memoInput" formControlName="memo"
+                           autocomplete="off" placeholder="Optional memo" spellcheck="false">
                 </div>
             </div>
 
         </div>
 
-        <div class="col-12 text-center mt-1" id="buttonsDiv">
-            <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
-            <button [disabled]="!isValidToNextPage"
-                    routerLink="/verify_send" class="btn btn-binance-outline btn-lg main-btn">Next
+        <div id="buttonsDiv" class="col-12 text-center mt-1">
+
+            <button routerLink="/main"
+                    class="btn btn-binance-outline btn-lg main-btn">Back
+            </button>
+
+            <button routerLink="/verify_send"
+                    class="btn btn-binance-outline btn-lg main-btn"
+                    [disabled]="formGroup.invalid">Next
             </button>
         </div>
     </div>
+
 </div>

@@ -32,6 +32,7 @@ export interface ITokenInfo {
     rate2usd: number;
 }
 
+// TODO: rename to network interface
 export interface IMenuItem {
     label: string;
     val: string;

@@ -1,8 +1,18 @@
 import {Component, OnDestroy} from '@angular/core';
-import {validateAddress} from '../../../services/binance-crypto';
-import {combineLatest, Observable, Subscription, timer} from 'rxjs';
-import {StateService} from "../../../services/state.service";
+import {isAddressValid} from '../../../services/binance-crypto';
+import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge} from 'rxjs';
+import {IMenuItem, ITokenInfo, StateService} from "../../../services/state.service";
 import {Router} from "@angular/router";
+import {
+    AbstractControl,
+    FormBuilder,
+    FormControl,
+    FormGroup,
+    ValidationErrors,
+    ValidatorFn,
+    Validators
+} from "@angular/forms";
+import {distinctUntilChanged, map, switchMap, take, tap} from "rxjs/operators";
 
 @Component({
     selector: 'app-send',
@@ -11,60 +21,92 @@ import {Router} from "@angular/router";
 })
 export class SendComponent implements OnDestroy {
 
-    coin: string;
+    selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
 
-    isAddressValid: boolean;
-    isValidToNextPage: boolean;
+    get selectedToken() {
+        return this.selectedToken$.value;
+    }
+
+    balance = 0;
+    networkPrefix: string;
+
     fee: Observable<number>;
     subscription: Subscription;
+    formValidationSubscription: Subscription;
 
-    constructor(private router: Router, private stateService: StateService) {
+    public formGroup: FormGroup = this.fb.group({
+            amount: [0,
+                [
+                    Validators.required,
+                    (c: FormControl) => c.value <= 0 ? {min: true} : null,
+                    (c: FormControl) => Number(c.value) >= this.balance ? {max: true} : null,
+                ]
+            ],
+            address: ['',
+                [
+                    Validators.required,
+                    (c: FormControl) => isAddressValid(c.value, this.networkPrefix) ? null : {min: true},
+                ],
+            ],
+            memo: [''],
+        }
+    );
 
-        // WTF ???
-        // this.subscription = timer(0, 500).subscribe(() => {
-        //     const {Symbol, Amount, AddressTo} = this.stateService.currentTransaction.getValue();
-        //     const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
-        //     this.isValidToNextPage = Symbol && Amount > 0 && validateAddress(AddressTo, networkPrefix);
-        // });
-        //
-        const {bnb2fiatRate$, marketRates$} = this.stateService;
+    get amount(): AbstractControl {
+        return this.formGroup.get('amount');
+    }
+
+    get address(): AbstractControl {
+        return this.formGroup.get('address');
+    }
+
+    constructor(private fb: FormBuilder, private router: Router, private stateService: StateService) {
+
+        const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$} = this.stateService;
+
+        const balance$ = combineLatest([this.selectedToken$, tokens$]).pipe(
+            map((x: [string, ITokenInfo[]]) => {
+                const [selectedToken, tokens] = x;
+                const token = tokens.find((t: ITokenInfo) => {
+                    return t.symbol === selectedToken;
+                });
+                return (token && +token.balance) || 0;
+            }),
+            distinctUntilChanged(),
+            tap((balance) => {
+                this.balance = +balance;
+                this.amount.updateValueAndValidity();
+            })
+        );
+
+        const network$ = selectedNetwork$.pipe(
+            tap((selectedNetwork: IMenuItem) => {
+                this.networkPrefix = selectedNetwork.networkPrefix;
+                this.address.updateValueAndValidity();
+            })
+        );
+
+        this.formValidationSubscription = merge(balance$, network$)
+            .subscribe();
 
         this.subscription = combineLatest([bnb2fiatRate$, marketRates$])
-            .pipe(
+            .pipe().subscribe();
+    }
 
-            ).subscribe();
-        // const bnb2fiat = this.stateService.bnb2fiatRate$;
-        // const marketRates = this.stateService.marketRates$;
+    onCoinSelected(coin: string) {
+        console.log(coin);
+        this.selectedToken$.next(coin);
     }
 
     goBack() {
         this.router.navigate(['/main']);
     }
 
-    // ngOnDestroy(): void {
-    //     this.subscription.unsubscribe();
-    // }
-
-    //
-    // Memo input
-    //
-    // save(memo: string): void {
-    //     const nexTx = this.stateService.currentTransaction.getValue();
-    //     nexTx.Memo = memo;
-    //     this.stateService.currentTransaction.next(nexTx);
-    // }
-
-    validateAddress(addressValue: string) {
-        const networkPrefix = this.stateService.selectedNetwork$.getValue().networkPrefix;
-        this.isAddressValid = validateAddress(addressValue, networkPrefix);
-    }
-
     ngOnDestroy(): void {
+        this.formValidationSubscription.unsubscribe();
         this.subscription.unsubscribe();
     }
 
-    onCoinSelected(coin: string) {
-        console.log(coin);
-    }
+
 }
 

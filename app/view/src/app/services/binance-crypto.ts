@@ -71,3 +71,7 @@ export function validateAddress(address: string, networkType: string = 'bnb'): b
         return crypto.checkAddress(address, networkType);
     }
 }
+
+export function isAddressValid(address: string, networkType: string = 'bnb'): boolean {
+    return validateAddress(address, networkType);
+}

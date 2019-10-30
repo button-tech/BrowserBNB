@@ -36,10 +36,23 @@ input {
     height: 53px;
     font-size: 13px;
     border: 1px solid #cbcbcb;
+    text-overflow: ellipsis
+}
+
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
 }
 
 .amount-container {
     border: 1px solid #cbcbcb;
     border-radius: 4px;
     height: 55px;
+}
+
+/*.amount-container.valid {*/
+/*    border: 1px solid #cbcbcb;*/
+/*}*/
+
+.amount-container.invalid {
+    border: 1px solid red;
 }

@@ -1,37 +1,53 @@
 import {
     Component,
-    ElementRef,
+    ElementRef, forwardRef,
     Input,
     Output,
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
-import {BehaviorSubject} from "rxjs";
-
-interface IAmounts {
-    baseSymbol: string;
-    secondarySymbol: string;
-    calculatedSum: number;
-    rate2usd: number;
-}
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
     selector: 'app-amount-input-single-line',
     templateUrl: './amount-input-single-line.component.html',
     styleUrls: ['./amount-input-single-line.component.css'],
-    encapsulation: ViewEncapsulation.None
+    // encapsulation: ViewEncapsulation.None,
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => AmountInputSingleLineComponent),
+            multi: true
+        }
+    ]
 })
-export class AmountInputSingleLineComponent {
+export class AmountInputSingleLineComponent implements ControlValueAccessor {
 
     @Input()
-    selectedToken: string;
+    coin: string;
 
-    @Input()
-    max: number;
-
-    @Output()
     value: number;
 
+    onChange: (x: any) => void;
+    onTouched: () => void;
+    disabled: boolean;
+
     constructor() {
+    }
+
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
+
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
+
+    setDisabledState(isDisabled: boolean): void {
+        this.disabled = isDisabled;
+    }
+
+    writeValue(value: number): void {
+        this.value = value ? +value : 0;
     }
 }

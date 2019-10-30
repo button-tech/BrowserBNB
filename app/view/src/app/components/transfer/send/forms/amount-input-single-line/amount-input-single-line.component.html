@@ -9,11 +9,12 @@
                max="0"
                class="overflow-ellipsis"
                style="border: none"
+               (input)="onChange($event.target.value)"
+               [value]="value"
+               (blur)="onTouched()"
         />
     </div>
-
-    <!--            <div class="overflow-ellipsis amount-field-currency-main">{{selectedToken}}</div>-->
-    <div class="overflow-ellipsis amount-field-currency-main">BNB</div>
+    <div class="overflow-ellipsis amount-field-currency-main">{{coin}}</div>
 
     <!-- disabled second line input -->
     <div class="gray-out amount-field-secondary-sum overflow-ellipsis">N/A</div>
