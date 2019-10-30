@@ -24,12 +24,12 @@ import {PasswordComponent} from './components/registration/password/password.com
 import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
 import {BinanceService} from './services/binance.service';
-import {SendComponent} from './components/transfer/send/send.component';
+import {SendComponent} from './components/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
-import {CoinsSelectComponent} from './components/transfer/coins-select/coins-select.component';
+import {CoinsSelectComponent} from './components/send/coins-select/coins-select.component';
 import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule} from '@angular/material';
-import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
+import {VerifySendComponent} from './components/send/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
 import {SettingsComponent} from './components/main/menu-top/settings/settings.component';
 import {NetworksComponent} from './components/main/menu-top/networks/networks.component';
@@ -52,7 +52,7 @@ import {ChromeApiRealService} from "./services/chrome-api-real.service";
 import {WcCallRequestApproveComponent} from "./components/wc-call-request-approve/wc-call-request-approve.component";
 import {SeedComponent} from './components/main/menu-top/settings/security-privacy/seed/seed.component';
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
-import {AmountInputComponent} from "./components/transfer/amount-input/amount-input.component";
+import {AmountInputComponent} from "./components/send/amount-input/amount-input.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
 
 

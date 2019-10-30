@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
-import {isAddressValid} from '../../../services/binance-crypto';
+import {isAddressValid} from '../../services/binance-crypto';
 import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge, Subject} from 'rxjs';
-import {IMarketRates, INetworkMenuItem, ITokenInfo, ITransaction, StateService} from "../../../services/state.service";
+import {IMarketRates, INetworkMenuItem, ITokenInfo, ITransaction, StateService} from "../../services/state.service";
 import {Router} from "@angular/router";
 import {
     AbstractControl,
