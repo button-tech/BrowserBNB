@@ -27,10 +27,14 @@
                          [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}">
 
                         <app-amount-input-single-line *ngIf="true" formControlName="amount"
+                                                      [rate2usd]="3"
                                                       [coin]="selectedToken$ | async">
                         </app-amount-input-single-line>
 
-                        <app-amount-input-double-line *ngIf="false"></app-amount-input-double-line>
+                        <app-amount-input-double-line *ngIf="false"
+                                                      formControlName="amount"
+                                                      [coin]="selectedToken$ | async">
+                        </app-amount-input-double-line>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@ import {
 import {BehaviorSubject, combineLatest, Observable, of, Subscription} from "rxjs";
 import {filter, map, switchMap, take, tap} from "rxjs/operators";
 import {IMarketRates, StateService} from "../../../../../services/state.service";
+import {ControlValueAccessor} from "@angular/forms";
 
 interface IAmounts {
     baseSymbol: string;
@@ -26,7 +27,14 @@ interface IAmounts {
     styleUrls: ['./amount-input-double-line.component.css'],
     encapsulation: ViewEncapsulation.None
 })
-export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
+export class AmountInputDoubleLineComponent implements ControlValueAccessor, OnDestroy, OnChanges {
+
+    value: number;
+
+    onChange: (x: any) => void;
+    onTouched: () => void;
+    disabled: boolean;
+
 
     baseSymbol = 'BNB';
     secondarySymbol = 'USD';
@@ -35,9 +43,15 @@ export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
 
     userInput$: BehaviorSubject<string | number> = new BehaviorSubject(0);
     isInFiat$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    exchangeRateIsAvailable = false;
 
     selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
+
+    @Input()
+    exchangeRate: number;
+
+    hasExchangeRate() {
+        return isNaN(this.exchangeRate);
+    }
 
     // @ts-ignore
     @ViewChild('sum')
@@ -46,10 +60,13 @@ export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
     @Input()
     selectedToken: string;
 
+    @Input()
+    coin: string;
+
     @Output()
     amount: number;
 
-    baseAmount = 0;
+
 
     subscription: Subscription;
 
@@ -97,31 +114,31 @@ export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
         //     })
         // );
 
-        const calculatedAmount$ = combineLatest(sources$).pipe(
-            map((x: [string, boolean, string, number]) => {
-                const [selectedToken, priceInUsd, userInputIsInFiat, userInput] = x;
+        // const calculatedAmount$ = combineLatest(sources$).pipe(
+        //     map((x: [string, boolean, string, number]) => {
+        //         const [selectedToken, priceInUsd, userInputIsInFiat, userInput] = x;
+        //
+        //         // debugger
+        //         if (!userInput || (+userInput) < 0) {
+        //             this.baseAmount = 0;
+        //             return 0;
+        //         }
+        //
+        //         if (userInputIsInFiat) {
+        //             this.baseSymbol = 'USD';
+        //             this.secondarySymbol = selectedToken;
+        //             return +((1 / (+priceInUsd)) * (+userInput)).toFixed(4);
+        //         } else {
+        //             this.baseSymbol = '' + selectedToken;
+        //             this.secondarySymbol = 'USD';
+        //             return +((+priceInUsd) * (+userInput)).toFixed(2);
+        //         }
+        //     }),
+        // );
 
-                // debugger
-                if (!userInput || (+userInput) < 0) {
-                    this.baseAmount = 0;
-                    return 0;
-                }
-
-                if (userInputIsInFiat) {
-                    this.baseSymbol = 'USD';
-                    this.secondarySymbol = selectedToken;
-                    return +((1 / (+priceInUsd)) * (+userInput)).toFixed(4);
-                } else {
-                    this.baseSymbol = '' + selectedToken;
-                    this.secondarySymbol = 'USD';
-                    return +((+priceInUsd) * (+userInput)).toFixed(2);
-                }
-            }),
-        );
-
-        this.subscription = calculatedAmount$.subscribe((calculatedSum: number) => {
-            this.calculatedSum = calculatedSum;
-        });
+        // this.subscription = calculatedAmount$.subscribe((calculatedSum: number) => {
+        //     this.calculatedSum = calculatedSum;
+        // });
     }
 
     // reset2crypto() {
@@ -131,26 +148,42 @@ export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
     // }
 
     // Build on top of selectedToken
-    buildUsdPricePipeLine(selectedToken: string, bnb2fiatRate$, marketRates$): Observable<number> {
-        // Simple case for BNB
-        if (selectedToken === "BNB") {
-            debugger
-            return bnb2fiatRate$;
-        }
+    // buildUsdPricePipeLine(selectedToken: string, bnb2fiatRate$, marketRates$): Observable<number> {
+    //     // Simple case for BNB
+    //     if (selectedToken === "BNB") {
+    //         debugger
+    //         return bnb2fiatRate$;
+    //     }
+    //
+    //     // Complicated case for tokens
+    //     return combineLatest([marketRates$, bnb2fiatRate$]).pipe(
+    //         map((x: [IMarketRates[], number]) => {
+    //             const [tokenRates, bnb2usd] = x;
+    //             const ticker = tokenRates.find(o => o.baseAssetName === selectedToken);
+    //             if (!ticker) {
+    //                 return NaN;
+    //             }
+    //
+    //             const lastPrice = +(ticker && ticker.lastPrice) || 0;
+    //             return (+lastPrice) * bnb2usd;
+    //         })
+    //     );
+    // }
 
-        // Complicated case for tokens
-        return combineLatest([marketRates$, bnb2fiatRate$]).pipe(
-            map((x: [IMarketRates[], number]) => {
-                const [tokenRates, bnb2usd] = x;
-                const ticker = tokenRates.find(o => o.baseAssetName === selectedToken);
-                if (!ticker) {
-                    return NaN;
-                }
+    registerOnChange(fn: any): void {
+        this.onChange = fn;
+    }
 
-                const lastPrice = +(ticker && ticker.lastPrice) || 0;
-                return (+lastPrice) * bnb2usd;
-            })
-        );
+    registerOnTouched(fn: any): void {
+        this.onTouched = fn;
+    }
+
+    setDisabledState(isDisabled: boolean): void {
+        this.disabled = isDisabled;
+    }
+
+    writeValue(value: number): void {
+        this.value = value ? +value : 0;
     }
 
     ngOnDestroy() {
@@ -164,9 +197,9 @@ export class AmountInputDoubleLineComponent implements OnDestroy, OnChanges {
 
     changeInputMode() {
         // Allow input mode change only exchange rate is available
-        if (this.exchangeRateIsAvailable) {
-            const newMode = !this.isInFiat$.value;
-            this.isInFiat$.next(!newMode);
-        }
+        // if (this.exchangeRateIsAvailable) {
+        //     const newMode = !this.isInFiat$.value;
+        //     this.isInFiat$.next(!newMode);
+        // }
     }
 }

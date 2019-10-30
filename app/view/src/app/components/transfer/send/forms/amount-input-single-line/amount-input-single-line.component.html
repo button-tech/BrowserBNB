@@ -14,14 +14,20 @@
                (blur)="onTouched()"
         />
     </div>
-    <div class="overflow-ellipsis amount-field-currency-main">{{coin}}</div>
+    <div class="overflow-ellipsis amount-field-currency-main">
+        {{inputMode === 'onlyCrypto' || inputMode === 'crypto' ? coin : 'USD'}}
+    </div>
 
     <!-- disabled second line input -->
-    <div class="gray-out amount-field-secondary-sum overflow-ellipsis">N/A</div>
-    <div class="gray-out amount-field-currency-second">USD</div>
+    <div class="gray-out amount-field-secondary-sum overflow-ellipsis">
+        {{calculatedAmount}}
+    </div>
+    <div class="gray-out amount-field-currency-second">
+        {{inputMode === 'onlyCrypto' || inputMode === 'crypto' ? 'USD' : coin}}
+    </div>
 
     <!-- switch button -->
-    <div class="gray-out amount-field-switch">
+    <div class="gray-out amount-field-switch" (click)="switchInputMode()">
         <i class="fa fa-exchange fa-rotate-90"></i>
     </div>
 </div>
