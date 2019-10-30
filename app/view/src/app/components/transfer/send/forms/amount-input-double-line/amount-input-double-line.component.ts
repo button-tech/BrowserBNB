@@ -72,73 +72,73 @@ export class AmountInputDoubleLineComponent implements ControlValueAccessor, OnD
 
     constructor(stateService: StateService) {
 
-        const {marketRates$, bnb2fiatRate$} = stateService;
-
-        const rate2Usd$ = this.selectedToken$.pipe(
-            switchMap((selectedToken: string) => {
-                // TODO: check that marketRates$ are already available
-                return this.buildUsdPricePipeLine(selectedToken, bnb2fiatRate$, marketRates$);
-            }),
-            tap((rate: number) => {
-                debugger
-            })
-            // take(1) // take rate once on switch
-        );
-
-        // const hasRate2Usd$: Observable<boolean> = rate2Usd$.pipe(
-        //     map((rate2Usd: number) => {
-        //         return isNaN(rate2Usd);
-        //     }),
-        // );
-        // this.isInFiat$
-        // Show something in first or second line
-        // this.isInFiat$, this.userInput$
-
-        const sources$ = [
-            this.selectedToken$, rate2Usd$, this.isInFiat$, this.userInput$
-        ];
-
-        // const sideEffect$ = combineLatest([this.selectedToken$, rate2Usd$]).pipe(
-        //     tap((x: [string, number]) => {
-        //         const [selectedToken, priceInUsd] = x;
+        // const {marketRates$, bnb2fiatRate$} = stateService;
         //
-        //         if (isNaN(priceInUsd) || priceInUsd <= 0) {
-        //             this.exchangeRateIsAvailable = false;
-        //             this.baseSymbol = '' + selectedToken;
-        //             this.secondarySymbol = 'USD';
-        //             // switchMap --()-->
-        //         } else {
-        //             this.exchangeRateIsAvailable = true;
-        //             // switchMap --( allow switcher)-->
-        //         }
+        // const rate2Usd$ = this.selectedToken$.pipe(
+        //     switchMap((selectedToken: string) => {
+        //         // TODO: check that marketRates$ are already available
+        //         return this.buildUsdPricePipeLine(selectedToken, bnb2fiatRate$, marketRates$);
+        //     }),
+        //     tap((rate: number) => {
+        //         debugger
         //     })
+        //     // take(1) // take rate once on switch
         // );
-
-        // const calculatedAmount$ = combineLatest(sources$).pipe(
-        //     map((x: [string, boolean, string, number]) => {
-        //         const [selectedToken, priceInUsd, userInputIsInFiat, userInput] = x;
         //
-        //         // debugger
-        //         if (!userInput || (+userInput) < 0) {
-        //             this.baseAmount = 0;
-        //             return 0;
-        //         }
+        // // const hasRate2Usd$: Observable<boolean> = rate2Usd$.pipe(
+        // //     map((rate2Usd: number) => {
+        // //         return isNaN(rate2Usd);
+        // //     }),
+        // // );
+        // // this.isInFiat$
+        // // Show something in first or second line
+        // // this.isInFiat$, this.userInput$
         //
-        //         if (userInputIsInFiat) {
-        //             this.baseSymbol = 'USD';
-        //             this.secondarySymbol = selectedToken;
-        //             return +((1 / (+priceInUsd)) * (+userInput)).toFixed(4);
-        //         } else {
-        //             this.baseSymbol = '' + selectedToken;
-        //             this.secondarySymbol = 'USD';
-        //             return +((+priceInUsd) * (+userInput)).toFixed(2);
-        //         }
-        //     }),
-        // );
-
-        // this.subscription = calculatedAmount$.subscribe((calculatedSum: number) => {
-        //     this.calculatedSum = calculatedSum;
-        // });
+        // const sources$ = [
+        //     this.selectedToken$, rate2Usd$, this.isInFiat$, this.userInput$
+        // ];
+        //
+        // // const sideEffect$ = combineLatest([this.selectedToken$, rate2Usd$]).pipe(
+        // //     tap((x: [string, number]) => {
+        // //         const [selectedToken, priceInUsd] = x;
+        // //
+        // //         if (isNaN(priceInUsd) || priceInUsd <= 0) {
+        // //             this.exchangeRateIsAvailable = false;
+        // //             this.baseSymbol = '' + selectedToken;
+        // //             this.secondarySymbol = 'USD';
+        // //             // switchMap --()-->
+        // //         } else {
+        // //             this.exchangeRateIsAvailable = true;
+        // //             // switchMap --( allow switcher)-->
+        // //         }
+        // //     })
+        // // );
+        //
+        // // const calculatedAmount$ = combineLatest(sources$).pipe(
+        // //     map((x: [string, boolean, string, number]) => {
+        // //         const [selectedToken, priceInUsd, userInputIsInFiat, userInput] = x;
+        // //
+        // //         // debugger
+        // //         if (!userInput || (+userInput) < 0) {
+        // //             this.baseAmount = 0;
+        // //             return 0;
+        // //         }
+        // //
+        // //         if (userInputIsInFiat) {
+        // //             this.baseSymbol = 'USD';
+        // //             this.secondarySymbol = selectedToken;
+        // //             return +((1 / (+priceInUsd)) * (+userInput)).toFixed(4);
+        // //         } else {
+        // //             this.baseSymbol = '' + selectedToken;
+        // //             this.secondarySymbol = 'USD';
+        // //             return +((+priceInUsd) * (+userInput)).toFixed(2);
+        // //         }
+        // //     }),
+        // // );
+        //
+        // // this.subscription = calculatedAmount$.subscribe((calculatedSum: number) => {
+        // //     this.calculatedSum = calculatedSum;
+        // // });
     }
 
     // reset2crypto() {
@@ -171,6 +171,7 @@ export class AmountInputDoubleLineComponent implements ControlValueAccessor, OnD
     // }
 
     registerOnChange(fn: any): void {
+        debugger
         this.onChange = fn;
     }
 

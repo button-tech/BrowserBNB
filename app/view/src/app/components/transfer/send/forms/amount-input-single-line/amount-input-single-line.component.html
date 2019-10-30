@@ -9,8 +9,8 @@
                max="0"
                class="overflow-ellipsis"
                style="border: none"
-               (input)="onChange($event.target.value)"
-               [value]="value"
+               [(ngModel)]="value"
+               (ngModelChange)="convert();onChange($event)"
                (blur)="onTouched()"
         />
     </div>
@@ -20,7 +20,7 @@
 
     <!-- disabled second line input -->
     <div class="gray-out amount-field-secondary-sum overflow-ellipsis">
-        {{calculatedAmount}}
+        {{convertedAmount}}
     </div>
     <div class="gray-out amount-field-currency-second">
         {{inputMode === 'onlyCrypto' || inputMode === 'crypto' ? 'USD' : coin}}
