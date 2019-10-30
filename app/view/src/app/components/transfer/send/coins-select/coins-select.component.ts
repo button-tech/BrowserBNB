@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {IMenuItem, ITokenInfo, StateService} from '../../../../../services/state.service';
+import {IMenuItem, ITokenInfo, StateService} from '../../../../services/state.service';
 import {Observable, Subscription} from 'rxjs';
 
 @Component({

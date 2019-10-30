@@ -27,7 +27,7 @@ import {BinanceService} from './services/binance.service';
 import {SendComponent} from './components/transfer/send/send.component';
 import {MenuTopComponent} from './components/main/menu-top/menu-top.component';
 import {NgSelectModule} from '@ng-select/ng-select';
-import {CoinsSelectComponent} from './components/transfer/send/forms/coins-select/coins-select.component';
+import {CoinsSelectComponent} from './components/transfer/send/coins-select/coins-select.component';
 import {MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule} from '@angular/material';
 import {VerifySendComponent} from './components/transfer/verify-send/verify-send.component';
 import {AllBalancesComponent} from './components/main/all-balances/all-balances.component';
@@ -52,7 +52,7 @@ import {ChromeApiRealService} from "./services/chrome-api-real.service";
 import {WcCallRequestApproveComponent} from "./components/wc-call-request-approve/wc-call-request-approve.component";
 import {SeedComponent} from './components/main/menu-top/settings/security-privacy/seed/seed.component';
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
-import {AmountInputComponent} from "./components/transfer/send/forms/amount-input/amount-input.component";
+import {AmountInputComponent} from "./components/transfer/send/amount-input/amount-input.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
 
 
