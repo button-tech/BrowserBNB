@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {IMenuItem, ITokenInfo, StateService} from '../../../../services/state.service';
+import {INetworkMenuItem, ITokenInfo, StateService} from '../../../../services/state.service';
 import {Observable, Subscription} from 'rxjs';
 
 @Component({
@@ -15,7 +15,7 @@ export class CoinsSelectComponent {
     coinSelected = new EventEmitter<string>();
 
     tokens$: Observable<ITokenInfo[]> = this.stateService.tokens$;
-    selectedNetwork$: Observable<IMenuItem> = this.stateService.selectedNetwork$;
+    selectedNetwork$: Observable<INetworkMenuItem> = this.stateService.selectedNetwork$;
 
     constructor(public stateService: StateService) {
     }

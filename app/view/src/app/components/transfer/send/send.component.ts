@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {isAddressValid} from '../../../services/binance-crypto';
-import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge} from 'rxjs';
-import {IMarketRates, IMenuItem, ITokenInfo, StateService} from "../../../services/state.service";
+import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge, Subject} from 'rxjs';
+import {IMarketRates, INetworkMenuItem, ITokenInfo, ITransaction, StateService} from "../../../services/state.service";
 import {Router} from "@angular/router";
 import {
     AbstractControl,
@@ -12,7 +12,9 @@ import {
     ValidatorFn,
     Validators
 } from "@angular/forms";
-import {distinctUntilChanged, map, switchMap, take, tap} from "rxjs/operators";
+import {Location} from '@angular/common';
+import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
+
 
 @Component({
     selector: 'app-send',
@@ -20,11 +22,31 @@ import {distinctUntilChanged, map, switchMap, take, tap} from "rxjs/operators";
     styleUrls: ['./send.component.css']
 })
 export class SendComponent implements OnDestroy {
-
     selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
-    rate2usd$: Observable<number>;
 
-    get selectedToken() {
+    showVerifyForm = false;
+
+    // showVerifyForm(show: boolean) {
+    //     this.showVerifyForm = show;
+    // }
+
+    // rate2usd of token that is selected now
+    rate2usd = NaN;
+    bnbTransferFee: number;
+    bnbTransferFeeFiat: number;
+
+    get hasRate2usd(): boolean {
+        return isNaN(this.rate2usd);
+    }
+
+    balance = 0;
+    networkPrefix: string;
+
+    get IsBnb(): boolean {
+        return this.selectedToken === 'BNB';
+    }
+
+    get selectedToken(): string {
         return this.selectedToken$.value;
     }
 
@@ -32,12 +54,13 @@ export class SendComponent implements OnDestroy {
         this.selectedToken$.next(value);
     }
 
-    balance = 0;
-    networkPrefix: string;
+    get amount(): AbstractControl {
+        return this.formGroup.get('amount');
+    }
 
-    fee: Observable<number>;
-    subscription: Subscription;
-    formValidationSubscription: Subscription;
+    get address(): AbstractControl {
+        return this.formGroup.get('address');
+    }
 
     public formGroup: FormGroup = this.fb.group({
             amount: [0,
@@ -57,17 +80,17 @@ export class SendComponent implements OnDestroy {
         }
     );
 
-    get amount(): AbstractControl {
-        return this.formGroup.get('amount');
-    }
+    // TODO: checkout the subscriptions with *ngIg ang ng-content
+    subscriptions: Subscription;
 
-    get address(): AbstractControl {
-        return this.formGroup.get('address');
-    }
+    // Root subscription
 
-    constructor(private fb: FormBuilder, private router: Router, private stateService: StateService) {
+    constructor(private fb: FormBuilder,
+                private router: Router,
+                private stateService: StateService,
+                private location: Location) {
 
-        const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$} = this.stateService;
+        const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$} = this.stateService;
 
         const balance$ = combineLatest([this.selectedToken$, tokens$]).pipe(
             map((x: [string, ITokenInfo[]]) => {
@@ -85,27 +108,39 @@ export class SendComponent implements OnDestroy {
         );
 
         const network$ = selectedNetwork$.pipe(
-            tap((selectedNetwork: IMenuItem) => {
+            tap((selectedNetwork: INetworkMenuItem) => {
                 this.networkPrefix = selectedNetwork.networkPrefix;
                 this.address.updateValueAndValidity();
             })
         );
 
-        this.formValidationSubscription = merge(balance$, network$)
-            .subscribe();
+        this.subscriptions = merge(balance$, network$).subscribe();
 
-        this.rate2usd$ = combineLatest([bnb2fiatRate$, marketRates$]).pipe(
-            map(() => {
-                return 3;
-            })
+
+        // fees subscription
+        this.subscriptions.add(
+            combineLatest([simpleFee$, bnb2fiatRate$]).pipe(
+                tap((x: [number, number]) => {
+                    const [feeInBnb, bnb2fiatRate] = x;
+                    this.bnbTransferFee = feeInBnb;
+                    this.bnbTransferFeeFiat = feeInBnb * bnb2fiatRate;
+                })
+            ).subscribe()
         );
 
-        this.rate2usd$ = this.selectedToken$.pipe(
-            switchMap((selectedToken: string) => {
-                // TODO: check that marketRates$ are already available
-                return this.buildUsdPricePipeLine(selectedToken, bnb2fiatRate$, marketRates$);
-            }),
-            // take(1)
+        // fees rate2usd subscription
+        this.subscriptions.add(
+            this.selectedToken$.pipe(
+                switchMap((selectedToken: string) => {
+                    // TODO: check that marketRates$ are already available
+                    return this.buildUsdPricePipeLine(selectedToken, bnb2fiatRate$, marketRates$);
+                }),
+                tap(
+                    (rate2usd: number) => {
+                        this.rate2usd = rate2usd;
+                    }
+                )
+            ).subscribe()
         );
     }
 
@@ -124,7 +159,6 @@ export class SendComponent implements OnDestroy {
                 if (!ticker) {
                     return NaN;
                 }
-
                 const lastPrice = +(ticker && ticker.lastPrice) || 0;
                 return (+lastPrice) * bnb2usd;
             })
@@ -136,15 +170,28 @@ export class SendComponent implements OnDestroy {
         this.selectedToken = coin;
     }
 
-    goBack() {
-        this.router.navigate(['/main']);
+    goBack(): void {
+        this.location.back();
     }
 
     ngOnDestroy(): void {
-        this.formValidationSubscription.unsubscribe();
-        // this.subscription.unsubscribe();
+        this.subscriptions.unsubscribe();
     }
 
 
-}
+    verify() {
 
+    }
+
+    onNextBtnClick() {
+        this.showVerifyForm = true;
+    }
+
+    onVerify() {
+        this.showVerifyForm = false;
+    }
+
+    onReject() {
+        this.showVerifyForm = false;
+    }
+}

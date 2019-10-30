@@ -1,74 +1,69 @@
-<div class="container-fluid">
-    <app-menu-top></app-menu-top>
-</div>
-<div class="container-fluid">
-    <div class="verify-send-container mt-3">
+<div class="verify-send-container mt-3">
 
-        <div class="row justify-content-center">
-            <div class="col-10 mt-3">
-                <div class="row mb-3">
-                    <div class="col-3">
-                        <p class="verify-send-row-title">Sum:</p>
-                    </div>
-                    <div class="col-9">
-                        <p class="verify-send-row-sum">
-                            {{(txDetails | async)?.SumInCrypto || ''}} {{ (txDetails | async)?.CryptoName}}
-                        </p>
-                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
-                            ${{(txDetails | async)?.SumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
-                        </p>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-10 mt-3">
+            <div class="row mb-3">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Sum:</p>
                 </div>
-                <div class="row">
-                    <div class="col-3">
-                        <p class="verify-send-row-title">Fee:</p>
-                    </div>
-                    <div class="col-9">
-                        <p class="verify-send-row-sum">
-                            {{(txDetails | async)?.FeeInBNB || 'pending'}} BNB
-                        </p>
-                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
-                            ${{(txDetails | async)?.FeeInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
-                        </p>
-                    </div>
+                <div class="col-9">
+                    <p class="verify-send-row-sum">
+                        {{amount}} {{ selectedToken }}
+                    </p>
+                    <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
+                        ${{amount * rate2usd}} USD
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Fee:</p>
+                </div>
+                <div class="col-9">
+                    <p class="verify-send-row-sum">
+                        {{ bnbTransferFee || 'FeeInBNB'}} BNB
+                    </p>
+                    <p class="verify-send-row-sub-sum">
+                        ${{ bnbTransferFeeFiat || 'FeeInFiat' }} USD
+                    </p>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-12">
-                <hr class="w-100 mb-4">
-            </div>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-10">
-                <div class="row">
-                    <div class="col-3">
-                        <p class="verify-send-row-title">Total:</p>
-                    </div>
-                    <div class="col-9">
-                        <p class="verify-send-row-sum">
-                            {{(txDetails | async)?.TotalSumInToken || 'pending'}} BNB
-                        </p>
-                        <p class="verify-send-row-sub-sum" *ngIf="(txDetails | async)?.IsBnb">
-                            ${{(txDetails | async)?.TotalSumInFiat || 'pending'}} {{this.stateService.uiState.storageData.baseFiatCurrency.toString()}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-12 mt-3 mb-3 text-center">
-                <button routerLink="/main" class="btn btn-outline-danger btn-lg mr-1">
-                    Reject
-                </button>
-                <button routerLink="/main" (click)="verify()" class="btn btn-binance-outline btn-lg">
-                    Verify
-                </button>
-            </div>
-        </div>
-
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <hr class="w-100 mb-4">
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <div class="row">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Total:</p>
+                </div>
+                <div class="col-9">
+                    <p class="verify-send-row-sum">
+                        {{amount}} {{ selectedToken }}
+                    </p>
+                    <p class="verify-send-row-sub-sum">
+                        ${{amount * rate2usd}} USD
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mt-3 mb-3 text-center">
+            <button (click)="this.rejected.next(true);"
+                    class="btn btn-outline-danger btn-lg mr-1">Reject
+            </button>
+            <button (click)="this.verified.next(true);"
+                    class="btn btn-binance-outline btn-lg">Verify
+            </button>
+        </div>
+    </div>
+
 </div>

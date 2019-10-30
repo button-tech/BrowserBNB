@@ -33,7 +33,7 @@ export interface ITokenInfo {
 }
 
 // TODO: rename to network interface
-export interface IMenuItem {
+export interface INetworkMenuItem {
     label: string;
     val: string;
     networkPrefix: string;
@@ -66,7 +66,7 @@ const emptyState: IUiState = Object.freeze({
     storageData: null
 });
 
-const basicNetworkSttate: IMenuItem = Object.freeze({
+const basicNetworkState: INetworkMenuItem = Object.freeze({
     val: 'https://dex.binance.org/',
     networkPrefix: 'bnb',
     label: 'mainnet',
@@ -141,7 +141,7 @@ export class StateService {
     private password = '';
     baseCurrency$: Observable<CurrencySymbols>;
 
-    selectedNetwork$: BehaviorSubject<IMenuItem> = new BehaviorSubject(basicNetworkSttate);
+    selectedNetwork$: BehaviorSubject<INetworkMenuItem> = new BehaviorSubject(basicNetworkState);
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
     allBalances$: Observable<IBalance[]>;
@@ -160,13 +160,11 @@ export class StateService {
 
     history$: Observable<any>;
     historyDetails$: Observable<any>;
+    simpleFee$: Observable<number>;
 
-    transferFees$: Observable<any>;
-    simpleFee$: Observable<any>;
+    // disable since isn't used for now
+    // ws: WebSocket;
 
-    ws: WebSocket;
-
-    currentTransaction: BehaviorSubject<ITransaction> = new BehaviorSubject<ITransaction>(basicTransactionState);
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
 
     constructor(private storageService: StorageService,
@@ -241,10 +239,10 @@ export class StateService {
             shareReplay(1)
         );
 
-        const timerFees$ = timer(0, 120000);
-
-        this.transferFees$ = combineLatest([this.selectedNetwork$, timerFees$]).pipe(
-            switchMap((x: any[]) => {
+        // 2 minute
+        const timer2m$ = timer(0, 120000);
+        const transferFees$ = combineLatest([this.selectedNetwork$, timer2m$]).pipe(
+            switchMap((x: [INetworkMenuItem, number]) => {
                 const [networkMenuItem] = x;
                 const endpoint = networkMenuItem.val;
                 return this.http.get(`${endpoint}api/v1/fees`);
@@ -252,30 +250,17 @@ export class StateService {
             shareReplay(1)
         );
 
-        const pluckFee = (response: ITransferFees[]) => {
-            const item = response.find((x) => x.multi_transfer_fee >= 0);
-            return item.fixed_fee_params.fee / 100000000;
-        };
 
-        this.simpleFee$ = this.transferFees$.pipe(
+        this.simpleFee$ = transferFees$.pipe(
             map((response: ITransferFees[]) => {
-                return pluckFee(response);
+                const item = response.find((x) => x.multi_transfer_fee >= 0);
+                return item.fixed_fee_params.fee / 100000000;
             }),
             shareReplay(1)
         );
+
         // TODO: think about using it
         this.simpleFee$.subscribe();
-
-        //
-        // Rates that we get using poling
-        //
-
-        // if (this.uiState$.getValue().storageData === null) {
-        //     this.baseCurrency.next(CurrencySymbols.USD);
-        // } else {
-        //     this.baseCurrency.next(this.uiState$.getValue().storageData.baseFiatCurrency);
-        // }
-        //
 
         this.baseCurrency$ = this.uiState$.pipe(
             filter((uiState) => uiState.storageData !== null),
@@ -287,22 +272,21 @@ export class StateService {
         );
 
         // Think about, maybe start with NaN
-        this.bnb2fiatRate$ =
-            combineLatest([timerFees$, this.baseCurrency$])
-                .pipe(
-                    switchMap((x: any[]) => {
-                        const [_, baseCurrency] = x;
-                        return this.courses.getBinanceRate$(baseCurrency);
-                    }),
-                    catchError((err) => {
-                        console.log(err);
-                        return of(NaN);
-                    }),
-                    map((rawRate: string) => {
-                        return +rawRate;
-                    }),
-                    shareReplay(1),
-                );
+        this.bnb2fiatRate$ = combineLatest([timer2m$, this.baseCurrency$])
+            .pipe(
+                switchMap((x: any[]) => {
+                    const [_, baseCurrency] = x;
+                    return this.courses.getBinanceRate$(baseCurrency);
+                }),
+                catchError((err) => {
+                    console.log(err);
+                    return of(NaN);
+                }),
+                map((rawRate: string) => {
+                    return +rawRate;
+                }),
+                shareReplay(1),
+            );
 
         this.bnbBalanceInFiat$ = combineLatest([this.bnbBalance$, this.bnb2fiatRate$]).pipe(
             map((arr: any[]) => {
@@ -396,35 +380,6 @@ export class StateService {
         };
 
         return tokenInfo;
-
-        // if (tokenSymbol === 'BNB' || !tokensDetails) {
-        //     return tokenInfo;
-        // }
-
-        // ????
-
-        // if (hasName && hasAsset &&  isNotBnb) {
-        //     return {
-        //         ...preset,
-        //         'balance2usd': 0,
-        //     };
-        // }
-
-        // if (hasName && hasAsset) {
-        //     return {
-        //         ...preset,
-        //         'balance2usd': 0,
-        //         'name': ''
-        //     };
-        // }
-
-        // if (tokensDetails && tokensDetails.name !== undefined && tokensDetails.mappedAsset === undefined) {
-        //     return {
-        //         ...preset,
-        //         'balance2usd': 0,
-        //         'mappedName': '',
-        //     };
-        // }
     }
 
     // createObservableSocket(url: string): Observable<any> {
@@ -466,7 +421,7 @@ export class StateService {
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
-        const newSelectedNetwork: IMenuItem = {
+        const newSelectedNetwork: INetworkMenuItem = {
             networkPrefix,
             val,
             label
@@ -641,7 +596,7 @@ export class StateService {
         this.storageService.encryptAndSave(newStorageState, this.password);
 
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
-        const newSelectedNetwork: IMenuItem = {
+        const newSelectedNetwork: INetworkMenuItem = {
             networkPrefix,
             val,
             label
@@ -692,7 +647,7 @@ export class StateService {
             label = 'testnet';
         }
 
-        const newSelectedNetwork: IMenuItem = {
+        const newSelectedNetwork: INetworkMenuItem = {
             networkPrefix,
             val,
             label
