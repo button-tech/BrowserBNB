@@ -37,6 +37,10 @@ export class VerifySendComponent {
         return !isNaN(this.rate2usd);
     }
 
+    get IsBnb(): boolean {
+        return this.selectedToken === 'BNB';
+    }
+
     // ngOnInit() {
     //     const txSnapshot = this.stateService.currentTransaction.getValue();
     //     this.tx.next(txSnapshot);

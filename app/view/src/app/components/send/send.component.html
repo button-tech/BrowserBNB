@@ -1,23 +1,13 @@
 <div class="container-fluid" [formGroup]="formGroup">
     <app-menu-top></app-menu-top>
 
-    <div class="row">
+    <div class="row" *ngIf="!showVerifyForm">
         <div class="col-12 text-center mt-2 mb-4 ml-0">
             <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
                 <i class="fas fa-arrow-left"></i>
             </button>
         </div>
     </div>
-
-    <app-verify-send *ngIf="showVerifyForm"
-                     [amount]="amount.value"
-                     [selectedToken]="selectedToken"
-                     [bnbTransferFee]="bnbTransferFee"
-                     [bnbTransferFeeFiat]="bnbTransferFeeFiat"
-                     [rate2usd]="rate2usd"
-                     (verified)="onVerify()"
-                     (rejected)="onReject()">
-    </app-verify-send>
 
     <div class="row" *ngIf="!showVerifyForm">
         <div class="col-12">
@@ -73,5 +63,15 @@
             </button>
         </div>
     </div>
+
+    <app-verify-send *ngIf="showVerifyForm"
+                     [amount]="amount.value"
+                     [selectedToken]="selectedToken"
+                     [bnbTransferFee]="bnbTransferFee"
+                     [bnbTransferFeeFiat]="bnbTransferFeeFiat"
+                     [rate2usd]="rate2usd"
+                     (verified)="onVerify()"
+                     (rejected)="onReject()">
+    </app-verify-send>
 
 </div>

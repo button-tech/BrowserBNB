@@ -38,10 +38,6 @@ export class SendComponent implements OnDestroy {
     balance = 0;
     networkPrefix: string;
 
-    get IsBnb(): boolean {
-        return this.selectedToken === 'BNB';
-    }
-
     get selectedToken(): string {
         return this.selectedToken$.value;
     }
