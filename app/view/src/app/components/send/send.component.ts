@@ -14,6 +14,7 @@ import {
 } from "@angular/forms";
 import {Location} from '@angular/common';
 import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
+import {BinanceService} from "../../services/binance.service";
 
 
 @Component({
@@ -24,7 +25,8 @@ import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/o
 export class SendComponent implements OnDestroy {
     selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
     showVerifyForm = false;
-    // rate2usd of token that is selected now
+
+    // rate2usd is exchange rate of token that is currently selected with select control
     rate2usd = NaN;
     bnbTransferFee: number;
     bnbTransferFeeFiat: number;
@@ -56,6 +58,10 @@ export class SendComponent implements OnDestroy {
         return this.formGroup.get('address');
     }
 
+    get memo(): AbstractControl {
+        return this.formGroup.get('memo');
+    }
+
     public formGroup: FormGroup = this.fb.group({
             amount: [0,
                 [
@@ -82,7 +88,8 @@ export class SendComponent implements OnDestroy {
     constructor(private fb: FormBuilder,
                 private router: Router,
                 private stateService: StateService,
-                private location: Location) {
+                private location: Location,
+                private bncService: BinanceService) {
 
         const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$} = this.stateService;
 
@@ -172,16 +179,28 @@ export class SendComponent implements OnDestroy {
         this.subscriptions.unsubscribe();
     }
 
-
-    verify() {
-
-    }
-
     onNextBtnClick() {
         this.showVerifyForm = true;
     }
 
+    sendTx() {
+        const privateKey = this.stateService.uiState.currentAccount.privateKey;
+        const network = this.stateService.selectedNetwork$.getValue(); // TODO: Should be the that was verified
+
+        const p$ = this.bncService.sendTransaction(
+            +this.amount.value,
+            this.address.value,
+            network.label,
+            network.val,
+            network.networkPrefix,
+            this.selectedToken,
+            privateKey,
+            this.memo.value
+        );
+    }
+
     onVerify() {
+        this.sendTx();
         this.showVerifyForm = false;
     }
 
