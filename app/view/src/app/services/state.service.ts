@@ -342,7 +342,6 @@ export class StateService {
                             const freeBalance = token.free;
                             const marketTicker = marketRates.find(o => o.baseAssetName === tokenSymbol);
                             const lastPrice = +(marketTicker && marketTicker.lastPrice) || 0;
-                            // debugger
                             return this.getTokenInfo(freeBalance, tokenSymbol, lastPrice, bnb2usd);
                         })
                         .filter((item: any) => {
