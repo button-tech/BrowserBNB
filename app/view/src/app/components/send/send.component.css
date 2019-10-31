@@ -1,0 +1,55 @@
+.main-btn {
+    width: 9.5em !important;
+    margin-right: 0.25em;
+}
+
+.btn-back {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+}
+
+.btn-back:hover {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+}
+
+.btn-back:active {
+    background: none;
+    box-shadow: none;
+    color: rgb(33, 40, 51);
+}
+
+label {
+    color: rgb(60, 72, 88);
+    font-size: 1em;
+    margin: 0
+}
+
+input {
+    padding-left: 15px;
+    border-radius: 4px;
+    width: 100%;
+    line-height: 1.1;
+    height: 53px;
+    font-size: 13px;
+    border: 1px solid #cbcbcb;
+    text-overflow: ellipsis
+}
+
+input.ng-invalid.ng-touched {
+    border: 1px solid red;
+}
+
+.amount-container {
+    border: 1px solid #cbcbcb;
+    border-radius: 4px;
+    height: 55px;
+}
+
+.amount-container.invalid {
+    border: 1px solid red;
+}
+
+

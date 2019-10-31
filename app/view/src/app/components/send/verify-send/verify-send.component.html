@@ -1,0 +1,87 @@
+<div class="verify-send-container mt-3">
+
+    <div class="row justify-content-center">
+        <div class="col-10 mt-3">
+            <div class="row mb-3">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Sum:</p>
+                </div>
+                <div class="col-9">
+                    <p class="verify-send-row-sum">
+                        {{amount}} {{ selectedToken }}
+                    </p>
+                    <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
+                        ${{(amount * rate2usd).toFixed(2)}} USD
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Fee:</p>
+                </div>
+                <div class="col-9">
+                    <p class="verify-send-row-sum">
+                        {{ bnbTransferFee }} BNB
+                    </p>
+                    <p class="verify-send-row-sub-sum">
+                        ${{ bnbTransferFeeFiat.toFixed(2) }} USD
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <hr class="w-100 mb-4">
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <div class="row">
+                <div class="col-3">
+                    <p class="verify-send-row-title">Total:</p>
+                </div>
+                <div class="col-9">
+
+                    <ng-container *ngIf="IsBnb">
+                        <p class="verify-send-row-sum">
+                            {{ (+amount) + (+bnbTransferFee) }} {{ selectedToken }}
+                        </p>
+                        <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
+                            ${{
+                                (((+amount) + (+bnbTransferFee)) * rate2usd).toFixed(2)
+                            }} USD
+                        </p>
+                    </ng-container>
+
+                    <ng-container *ngIf="!IsBnb">
+                        <p class="verify-send-row-sum">
+                            {{(+amount).toFixed(4)}} {{ selectedToken }}
+                        </p>
+                        <p class="verify-send-row-sum">
+                            {{bnbTransferFee}} BNB
+                        </p>
+                    </ng-container>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12 mt-3 mb-3 text-center">
+            <button (click)="this.rejected.next(true);"
+                    class="btn btn-outline-danger btn-lg mr-1">Reject
+            </button>
+            <button (click)="this.verified.next(true);"
+                    class="btn btn-binance-outline btn-lg">Verify
+            </button>
+        </div>
+    </div>
+
+</div>
+

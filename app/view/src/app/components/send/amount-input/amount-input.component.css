@@ -3,8 +3,6 @@
 }
 
 .send-amount-row {
-    border: 1px solid #cbcbcb;
-    border-radius: 4px;
     height: 55px;
 }
 
@@ -14,6 +12,9 @@
     grid-template: 1fr 1fr / 120px 60px 20px;
     grid-column-gap: 0;
     width: 100%;
+    padding-left: 10px;
+    text-align: left;
+    grid-gap: 5px;
 }
 
 .amount-field-input {
@@ -65,25 +66,6 @@
     text-align: right;
 }
 
-.amount-field-block {
-    display: grid;
-    height: 55px;
-    grid-template: 1fr / 120px 60px 20px;
-    grid-column-gap: 0;
-    width: 100%;
-}
-
-.amount-field-block .amount-field-input {
-    height: 55px;
-}
-
-.amount-field-block input {
-    height: 55px;
-    margin-top: 0;
-}
-
-.amount-field-block .amount-field-currency-main {
-    height: 55px;
-    margin: 0;
-    line-height: 55px;
+.gray-out {
+    color: gray
 }

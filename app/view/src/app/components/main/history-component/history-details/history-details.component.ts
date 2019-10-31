@@ -4,8 +4,8 @@ import {ClipboardService} from "../../../../services/clipboard.service";
 import {map, take, takeUntil} from "rxjs/operators";
 import {Observable, timer} from "rxjs";
 import {ChromeApiService} from "../../../../services/chrome-api.service";
-import {rawTokensImg} from "../../../../constants";
 import {StateService} from "../../../../services/state.service";
+import {tokenDetailsList} from "../../../../constants";
 
 @Component({
     selector: 'app-history-details',
@@ -42,7 +42,7 @@ export class HistoryDetailsComponent implements OnInit {
         return symbol$.pipe(
             map((symbol: any) => {
                 if (symbol.txAsset) {
-                    const result = JSON.parse(rawTokensImg).find(o => o.symbol === symbol.txAsset);
+                    const result = tokenDetailsList.find(o => o.symbol === symbol.txAsset);
                     if (result) {
                         return result.mappedAsset;
                     } else {

@@ -23,3 +23,7 @@
 .coins-select-option-sum {
     font-size: 12px;
 }
+
+.send-input {
+    height: 55px;
+}

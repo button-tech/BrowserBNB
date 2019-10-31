@@ -9,8 +9,7 @@ import {MnemonicComponent} from './components/registration/mnemonic/mnemonic.com
 import {ImportMnemonicComponent} from './components/registration/import-mnemonic/import-mnemonic.component';
 import {PasswordComponent} from './components/registration/password/password.component';
 import {RepeatPasswordComponent} from './components/registration/repeat-password/repeat-password.component';
-import {SendComponent} from "./components/transfer/send/send.component";
-import {VerifySendComponent} from "./components/transfer/verify-send/verify-send.component";
+import {SendComponent} from "./components/send/send.component";
 import {AllBalancesComponent} from "./components/main/all-balances/all-balances.component";
 import {SettingsComponent} from "./components/main/menu-top/settings/settings.component";
 import {ReceiveComponent} from "./components/main/receive/receive.component";
@@ -78,11 +77,6 @@ const routes: Routes = [
     {
         path: 'approve/:operation',
         component: ApproveComponent
-    },
-    {
-        path: 'verify_send',
-        component: VerifySendComponent,
-        canActivate: [AuthGuard]
     },
     {
         path: 'general',
