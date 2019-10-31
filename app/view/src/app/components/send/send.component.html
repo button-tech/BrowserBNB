@@ -1,7 +1,7 @@
 <div class="container-fluid" [formGroup]="formGroup">
     <app-menu-top></app-menu-top>
 
-    <div class="row" *ngIf="!showVerifyForm">
+    <div class="row" [hidden]="showVerifyForm">
         <div class="col-12 text-center mt-2 mb-4 ml-0">
             <button (click)="goBack()" class="btn btn-just-icon btn-back btn-round">
                 <i class="fas fa-arrow-left"></i>
@@ -9,14 +9,15 @@
         </div>
     </div>
 
-    <div class="row" *ngIf="!showVerifyForm">
+    <div class="row" [hidden]="showVerifyForm">
         <div class="col-12">
             <div class="row mb-4">
                 <div class="col-3 d-flex align-items-center">
                     <label>Asset:</label>
                 </div>
                 <div class="col-9 coin-select-container">
-                    <app-coins-select (coinSelected)="onCoinSelected($event)"></app-coins-select>
+                    <app-coins-select [selectedToken]="selectedToken"
+                                      (coinSelected)="onCoinSelected($event)"></app-coins-select>
                 </div>
             </div>
 
@@ -27,7 +28,8 @@
                 <div class="col-9">
                     <div class="amount-container"
                          [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}">
-                        <app-amount-input formControlName="amount" [coin]="selectedToken"
+                        <app-amount-input formControlName="amount"
+                                          [coin]="selectedToken"
                                           [rate2usd]="rate2usd">
                         </app-amount-input>
                     </div>

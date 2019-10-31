@@ -10,7 +10,7 @@
                class="overflow-ellipsis"
                style="border: none"
                [(ngModel)]="value"
-               (ngModelChange)="convert();onChange($event)"
+               (ngModelChange)="updateConverted(); onChange()"
                (blur)="onTouched()"
         />
     </div>
@@ -27,7 +27,7 @@
     </div>
 
     <!-- switch button -->
-    <div class="gray-out amount-field-switch" (click)="switchInputMode()">
+    <div class="gray-out amount-field-switch" (click)="switchInputMode(); onChange()">
         <i class="fa fa-exchange fa-rotate-90"></i>
     </div>
 </div>

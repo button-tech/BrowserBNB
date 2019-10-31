@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {INetworkMenuItem, ITokenInfo, StateService} from '../../../services/state.service';
 import {Observable, Subscription} from 'rxjs';
 
@@ -9,6 +9,7 @@ import {Observable, Subscription} from 'rxjs';
 })
 export class CoinsSelectComponent {
 
+    @Input()
     selectedToken = 'BNB';
 
     @Output()

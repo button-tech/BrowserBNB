@@ -11,7 +11,7 @@
                         {{amount}} {{ selectedToken }}
                     </p>
                     <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
-                        ${{amount * rate2usd}} USD
+                        ${{(amount * rate2usd).toFixed(2)}} USD
                     </p>
                 </div>
             </div>
@@ -24,12 +24,13 @@
                         {{ bnbTransferFee }} BNB
                     </p>
                     <p class="verify-send-row-sub-sum">
-                        ${{ bnbTransferFeeFiat }} USD
+                        ${{ bnbTransferFeeFiat.toFixed(2) }} USD
                     </p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-12">
@@ -47,32 +48,29 @@
 
                     <ng-container *ngIf="IsBnb">
                         <p class="verify-send-row-sum">
-                            {{amount + bnbTransferFee}} {{ selectedToken }}
+                            {{ (+amount) + (+bnbTransferFee) }} {{ selectedToken }}
+                        </p>
+                        <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
+                            ${{
+                                (((+amount) + (+bnbTransferFee)) * rate2usd).toFixed(2)
+                            }} USD
                         </p>
                     </ng-container>
 
                     <ng-container *ngIf="!IsBnb">
                         <p class="verify-send-row-sum">
-                            {{amount}} {{ selectedToken }}
+                            {{(+amount).toFixed(4)}} {{ selectedToken }}
                         </p>
                         <p class="verify-send-row-sum">
                             {{bnbTransferFee}} BNB
                         </p>
                     </ng-container>
 
-                    <!-- Separate fees row show in case that is a token
-                    <p class="verify-send-row-sum" *ngIf="!IsBnb">
-                        {{amount}} {{ selectedToken }}
-                    </p>
-                    -->
-
-                    <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
-                        ${{amount * rate2usd}} USD
-                    </p>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="row">
         <div class="col-12 mt-3 mb-3 text-center">
@@ -86,3 +84,4 @@
     </div>
 
 </div>
+

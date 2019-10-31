@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
-type InputMode = 'fiat' | 'crypto' | 'onlyCrypto';
+export type InputMode = 'fiat' | 'crypto' | 'onlyCrypto';
 
 @Component({
     selector: 'app-amount-input',
@@ -28,13 +28,14 @@ export class AmountInputComponent implements ControlValueAccessor, OnChanges {
     @Input()
     rate2usd = NaN;
 
+    @Input()
+    inputMode: InputMode = 'onlyCrypto';
+
     value = 0;
-    onChange: (x: any) => void;
+    onChange: () => void;
     onTouched: () => void;
 
     // disabled: boolean;
-
-    inputMode: InputMode = 'onlyCrypto';
 
     convertedAmount: number | string = 0;
 
@@ -42,7 +43,10 @@ export class AmountInputComponent implements ControlValueAccessor, OnChanges {
     }
 
     registerOnChange(fn: any): void {
-        this.onChange = fn;
+        this.onChange = () => {
+            const valueInCrypto = this.inputMode === 'fiat' ? this.convertedAmount : this.value;
+            fn(valueInCrypto);
+        };
     }
 
     registerOnTouched(fn: any): void {
@@ -55,6 +59,7 @@ export class AmountInputComponent implements ControlValueAccessor, OnChanges {
 
     writeValue(value: number): void {
         this.value = value ? +value : 0;
+        this.updateConverted();
     }
 
     switchInputMode() {
@@ -63,7 +68,7 @@ export class AmountInputComponent implements ControlValueAccessor, OnChanges {
         }
 
         this.inputMode = (this.inputMode === 'crypto') ? 'fiat' : 'crypto';
-        this.convert();
+        this.updateConverted();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -80,10 +85,10 @@ export class AmountInputComponent implements ControlValueAccessor, OnChanges {
             // Let's stay in crypto but with ability to change input mode to fiat
             this.inputMode = 'crypto';
         }
-        this.convert();
+        this.updateConverted();
     }
 
-    convert(): void {
+    updateConverted(): void {
 
         const hasRate = !isNaN(this.rate2usd);
         if (hasRate) {
