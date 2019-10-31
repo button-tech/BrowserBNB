@@ -183,11 +183,11 @@ export class SendComponent implements OnDestroy {
         this.showVerifyForm = true;
     }
 
-    sendTx() {
+    sendTx(): void {
         const privateKey = this.stateService.uiState.currentAccount.privateKey;
         const network = this.stateService.selectedNetwork$.getValue(); // TODO: Should be the that was verified
 
-        const p$ = this.bncService.sendTransaction(
+        this.bncService.sendTransaction(
             +this.amount.value,
             this.address.value,
             network.label,
@@ -196,12 +196,17 @@ export class SendComponent implements OnDestroy {
             this.selectedToken,
             privateKey,
             this.memo.value
-        );
+        ).then((result) => {
+            console.log(result);
+        }, (err) => {
+            console.error(err);
+        });
     }
 
     onVerify() {
-        this.sendTx();
-        this.showVerifyForm = false;
+        this.sendTx(); // TODO: progress dialog during the send
+        this.router.navigate(['/main']);
+        // this.showVerifyForm = false;
     }
 
     onReject() {
