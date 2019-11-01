@@ -6,9 +6,11 @@ import {from, NEVER, Observable, Subject} from 'rxjs';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import { CurrencySymbols } from "../constants";
+import {CurrencySymbols} from "../constants";
+import {getNewWalletFromSeed} from "@lunie/cosmos-keys";
+import {Wallet} from "@lunie/cosmos-keys/lib/types";
 
-export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
+export type NetworkType = 'cosmos' | 'bnb' | 'tbnb' | 'custom' | null;
 
 export interface IStorageAccount {
     addressMainnet: string;
@@ -20,7 +22,10 @@ export interface IStorageAccount {
 
 export interface IStorageData {
     seedPhrase: string | null;
+
     accounts: IStorageAccount[];
+    cosmosAccounts: IStorageAccount[];
+
     selectedAddress: string | null;
     selectedNetwork: NetworkType;
     selectedNetworkEndpoint: string | null;
@@ -170,6 +175,9 @@ export class StorageService {
         // tslint:disable-next-line:max-line-length
         // const seedPhrase = 'offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin';
         const privateKey = getPrivateKeyFromMnemonic(seedPhrase, 0);
+        const cosmosWallet: Wallet = getNewWalletFromSeed(seedPhrase);
+
+        console.table(cosmosWallet);
 
 
         // tslint:disable-next-line:max-line-length
@@ -189,8 +197,17 @@ export class StorageService {
                     name: 'Account 1',
                 }
             ],
-            selectedAddress: addressMainnet,
-            selectedNetwork: 'bnb',
+            cosmosAccounts: [
+                {
+                    addressMainnet: cosmosWallet.cosmosAddress,
+                    addressTestnet: cosmosWallet.cosmosAddress,
+                    privateKey: cosmosWallet.privateKey,
+                    index: 0,
+                    name: 'Account 1',
+                }
+            ],
+            selectedAddress: cosmosWallet.cosmosAddress,
+            selectedNetwork: 'cosmos',
             selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
             baseFiatCurrency: CurrencySymbols.USD,
             customNetworkEndpoints: []

@@ -149,6 +149,7 @@ export class StateService {
     bnbBalanceInFiat$: Observable<number>;
     marketRates$: Observable<IMarketRates[]>;
     bnb2fiatRate$: Observable<number>;
+
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
@@ -176,7 +177,7 @@ export class StateService {
             map((uiState: IUiState) => {
                 const {currentAccount, storageData} = uiState;
 
-                return storageData.selectedNetwork === 'bnb'
+                return storageData.selectedNetwork === 'cosmos'
                     ? currentAccount.addressMainnet
                     : currentAccount.addressTestnet;
             }),
@@ -188,7 +189,7 @@ export class StateService {
 
         this.currentEndpoint$ = this.uiState$.pipe(
             map((uiState: IUiState) => {
-                return uiState.storageData.selectedNetwork === 'bnb'
+                return uiState.storageData.selectedNetwork === 'cosmos'
                     ? NETWORK_ENDPOINT_MAPPING.MAINNET
                     : NETWORK_ENDPOINT_MAPPING.TESTNET;
             }),
@@ -400,7 +401,7 @@ export class StateService {
 
     initState(data: IStorageData, password: string) {
 
-        const accounts = data.accounts.map((account) => {
+        const accounts = data.cosmosAccounts.map((account) => {
             const address = data.selectedNetwork === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
@@ -415,7 +416,7 @@ export class StateService {
         });
 
         const networkPrefix = data.selectedNetwork;
-        const val = networkPrefix === 'bnb'
+        const val = networkPrefix === 'cosmos'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
@@ -481,6 +482,7 @@ export class StateService {
         if (this.uiState.accounts.length > 0) {
             const newAccounts = this.uiState.storageData.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
             const newAccountsUI = this.uiState.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
+
             let accountToPick = 0;
             if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
                 accountToPick = 1;
@@ -492,6 +494,7 @@ export class StateService {
             const newStorageData: IStorageData = {
                 seedPhrase: this.uiState.storageData.seedPhrase,
                 accounts: newAccounts,
+                cosmosAccounts: this.uiState.storageData.cosmosAccounts,
                 selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
                 selectedNetwork: this.uiState.storageData.selectedNetwork,
                 selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,

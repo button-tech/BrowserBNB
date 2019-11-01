@@ -7,7 +7,6 @@ import {IUiState, StateService} from '../../services/state.service';
 import {IBalance} from "../../services/binance.service";
 import {ActivatedRoute} from "@angular/router";
 import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api-wc.service";
-
 import {getNewWalletFromSeed} from "@lunie/cosmos-keys";
 
 @Component({
@@ -57,16 +56,12 @@ export class MainComponent implements OnInit, OnDestroy {
                 private clipboardService: ClipboardService,
                 private wcApi: ChromeApiWalletConnectService
     ) {
-
-        const seed = "impact theory swim flame wild wife fragile bullet scatter spirit oak clever olive print bag pet spare horn west brass sight fortune axis march";
-        const {cosmosAddress, privateKey, publicKey} = getNewWalletFromSeed(seed);
-        debugger
-
         this.accountName$ = this.stateService.uiState$.pipe(
-          map((uiState: IUiState) => {
-              return uiState.currentAccount.name;
-          })
+            map((uiState: IUiState) => {
+                return uiState.currentAccount.name;
+            })
         );
+
         this.address$ = this.stateService.currentAddress$;
         this.shortAddress$ = this.stateService.currentAddressShort$;
         this.bnb$ = this.stateService.bnbBalance$;
