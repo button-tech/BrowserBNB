@@ -1,4 +1,4 @@
-// tslint:disable-next-line:max-line-length
+
 export const tokenDetailsList = [
     {
         "image": "http://static.binance.org/icon/7df5e4de406a4764971244909ae9fcbf",

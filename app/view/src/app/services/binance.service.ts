@@ -62,16 +62,6 @@ export class BinanceService {
 
 
         try {
-            console.log(`Sum ${sum}`);
-            console.log(`addressTo ${addressTo}`);
-            console.log(`networkType ${networkType}`);
-            console.log(`endpoint ${endpoint}`);
-            console.log(`networkPrefix ${networkPrefix}`);
-            console.log(`coin ${coin}`);
-            console.log(`privateKey ${privateKey}`);
-            console.log(`message ${message}`);
-
-
             const addressFrom = getAddressFromPrivateKey(privateKey, networkPrefix);
             const url = `${endpoint}api/v1/account/${addressFrom}`;
             const account = await this.http.get(url).toPromise<any>();

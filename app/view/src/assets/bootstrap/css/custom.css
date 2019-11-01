@@ -37,6 +37,24 @@ body {
     font-weight: bold !important;
     box-shadow: none !important;
 }
+
+.btn-binance-outline-three {
+    border: none;
+    color: rgb(240, 185, 11) !important;
+    background: rgba(33, 40, 51, 1) !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+    border-radius: 100% !important;
+}
+
+.btn-binance-outline-three:hover {
+    border: none;
+    color: rgb(240, 185, 11) !important;
+    background: rgba(33, 40, 51, 1) !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
+
 .btn-binance-outline[disabled] {
     box-shadow: none !important;
 }

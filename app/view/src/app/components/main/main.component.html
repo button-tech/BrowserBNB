@@ -18,9 +18,12 @@
 
     <div class="row text-center">
         <div class="col-2">
+<!--            <button style="font-size: 13px !important; margin-left: 0.7em" class="btn btn-just-icon btn-round btn-binance-outline-three">-->
+<!--                BNB-->
+<!--            </button>-->
         </div>
         <div class="col-6">
-            <button style="margin-top: 0.3em; margin-bottom: 1.2em; color: rgb(132, 142, 156);" [satPopoverAnchor]="p"
+            <button style="margin-top: 0.3em; margin-bottom: 1.2em; color: rgb(132, 142, 156); margin-left: 0.7em;" [satPopoverAnchor]="p"
                     (mouseenter)="p.open()"
                     (mouseleave)="p.close(); this.copyMessage='Copy to clipboard';" id="addressButton"
                     (click)="this.copyAddress();"
