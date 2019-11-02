@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Observable, Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map} from 'rxjs/operators';
+import {map, take, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {IUiState, StateService} from '../../services/state.service';
 import {IBalance} from "../../services/binance.service";
@@ -159,6 +159,27 @@ export class MainComponent implements OnInit, OnDestroy {
         // https://www.binance.org/en/unlock
         // this.wcApi.connect();
     }
+
+    switchBlockchain() {
+        this.stateService.uiState$.pipe(
+            map((vals) => {
+                console.log("WAS");
+                console.log(vals.storageData.selectedBlockchain);
+            })).subscribe().unsubscribe();
+
+        if (this.stateService.currentBlolckchain === 'Binance') {
+            this.stateService.switchBlockchain('Cosmos');
+        } else if (this.stateService.currentBlolckchain === 'Cosmos') {
+            this.stateService.switchBlockchain('Binance');
+        }
+
+        this.stateService.uiState$.pipe(
+            map((vals) => {
+                console.log("IS");
+                console.log(vals.storageData.selectedBlockchain);
+            })).subscribe().unsubscribe();
+    }
+
 
     disconnect() {
         this.wcApi.disconnect();

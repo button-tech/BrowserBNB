@@ -636,6 +636,22 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
+    switchBlockchain(blockchain: string) {
+
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData,
+            selectedBlockchain: blockchain
+        };
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        const newUiState = {
+            ...this.uiState,
+            selectedBlockchain: blockchain,
+            storageData: newStorageState
+        };
+        this.uiState$.next(newUiState);
+    }
+
     switchNetworkCustom(network: NetworkType, val: string): void {
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,

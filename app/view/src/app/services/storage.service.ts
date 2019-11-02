@@ -81,7 +81,7 @@ export class StorageService {
 
     hasAccountOnce$(): Observable<boolean> {
         return from(this.getFromStorageRaw()).pipe(
-            map((encryptedData) => {
+            map(( encryptedData ) => {
                 console.log('encryptedData=', encryptedData);
                 return !!encryptedData;
             })
@@ -114,11 +114,11 @@ export class StorageService {
     //     }
     // }
 
-    private saveToStorageRaw(value: string): Promise<void> {
+    private saveToStorageRaw( value: string ): Promise<void> {
 
         console.log('Save to storage:', value);
 
-        return new Promise<void>((resolve) => {
+        return new Promise<void>(( resolve ) => {
             if (environment.production) {
                 const cmd = {
                     [STORAGE_KEY]: value
@@ -134,9 +134,9 @@ export class StorageService {
     }
 
     private getFromStorageRaw(): Promise<string> {
-        return new Promise<any>((resolve) => {
+        return new Promise<any>(( resolve ) => {
             if (environment.production) {
-                chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
+                chrome.storage.local.get(STORAGE_KEY, ( result ) => resolve(result[STORAGE_KEY]));
             } else {
                 const result = localStorage.getItem(STORAGE_KEY);
                 resolve(result);
@@ -144,28 +144,28 @@ export class StorageService {
         });
     }
 
-    public getFromStorage(password: string): Observable<IStorageData> {
+    public getFromStorage( password: string ): Observable<IStorageData> {
         return from(this.getFromStorageRaw()).pipe(
-            catchError((err) => {
+            catchError(( err ) => {
                 console.log(err);
                 return NEVER;
             }),
-            switchMap((encrypted: any) => {
+            switchMap(( encrypted: any ) => {
                 return from(passworder.decrypt(password, encrypted));
             }),
-            map((dectypted: any) => {
+            map(( dectypted: any ) => {
                 console.log(JSON.stringify(dectypted));
                 return dectypted as IStorageData;
             })
         );
     }
 
-    async encryptAndSave(data: IStorageData, password: string): Promise<void> {
+    async encryptAndSave( data: IStorageData, password: string ): Promise<void> {
         const encrypted: any = await passworder.encrypt(password, data);
         return this.saveToStorageRaw(encrypted);
     }
 
-    registerAccount(seedPhrase: string, password: string): IStorageData {
+    registerAccount( seedPhrase: string, password: string ): IStorageData {
         // Prepare account
 
         // tslint:disable-next-line:max-line-length
