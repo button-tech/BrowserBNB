@@ -141,6 +141,7 @@ export class StateService {
     private password = '';
     baseCurrency$: Observable<CurrencySymbols>;
 
+    selectedBlockchain$: BehaviorSubject<string> = new BehaviorSubject('Binance');
     selectedNetwork$: BehaviorSubject<INetworkMenuItem> = new BehaviorSubject(basicNetworkState);
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
@@ -152,7 +153,8 @@ export class StateService {
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
-    currentBlolckchain: string;
+
+    // currentBlockchain: string;
 
     tokens$: Observable<ITokenInfo[]>;
 
@@ -186,7 +188,6 @@ export class StateService {
             }),
             shareReplay(1)
         );
-
 
 
         this.currentEndpoint$ = this.uiState$.pipe(
@@ -443,8 +444,7 @@ export class StateService {
         this.uiState$.next(uiState);
         this.password = password;
         this.selectedNetwork$.next(newSelectedNetwork);
-        this.currentBlolckchain = data.selectedBlockchain;
-
+        this.selectedBlockchain$.next(data.selectedBlockchain);
     }
 
     resetState() {
@@ -458,7 +458,7 @@ export class StateService {
             baseFiatCurrency
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
-        const newUiState = {
+        const newUiState: IUiState = {
             ...this.uiState,
             storageData: newStorageState
         };
@@ -474,7 +474,7 @@ export class StateService {
         this.storageService.encryptAndSave(newStorageState, this.password);
 
         this.uiState.accounts[accountIdx].name = newName;
-        const newUiState = {
+        const newUiState: IUiState = {
             ...this.uiState,
             storageData: newStorageState
         };
@@ -588,7 +588,7 @@ export class StateService {
     switchNetwork(network: NetworkType): void {
 
         const networkPrefix = network;
-        const val = networkPrefix === 'bnb'
+        const val = networkPrefix === 'bnb' || networkPrefix === 'cosmos'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
@@ -600,6 +600,7 @@ export class StateService {
 
         this.storageService.encryptAndSave(newStorageState, this.password);
 
+        // TODO: fix networks
         const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
         const newSelectedNetwork: INetworkMenuItem = {
             networkPrefix,
@@ -636,20 +637,32 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    switchBlockchain(blockchain: string) {
+    switchBlockchain() {
+        const currentBlockchain = this.selectedBlockchain$.value;
+        const newBlockchain = currentBlockchain === 'Binance' ? 'Cosmos' : 'Binance';
 
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
-            selectedBlockchain: blockchain
+            selectedBlockchain: newBlockchain
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
 
-        const newUiState = {
+        const newUiState: IUiState = {
             ...this.uiState,
-            selectedBlockchain: blockchain,
             storageData: newStorageState
         };
+
         this.uiState$.next(newUiState);
+
+        this.selectedBlockchain$.next(newBlockchain);
+
+        // Network switch after blockchain switch
+        if (newBlockchain === 'Binance') {
+            this.switchNetwork('bnb');
+        } else {
+            this.switchNetwork('cosmos');
+        }
+
     }
 
     switchNetworkCustom(network: NetworkType, val: string): void {
@@ -703,5 +716,5 @@ export class StateService {
         this.uiState$.next(newUiState);
     }
 
-    
+
 }

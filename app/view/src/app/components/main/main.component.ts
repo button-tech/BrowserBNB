@@ -39,6 +39,7 @@ export class MainComponent implements OnInit, OnDestroy {
     callRequest: any;
     showCallRequest: boolean;
 
+    // selectedBlockchain$: Observable<string>;
     //
     // sessionRequest: any = JSON.parse('{"id":1568231137072078,"jsonrpc":"2.0","method":"session_request","params":[{"peerId":"442662df-5f27-4555-9014-d6b4de5b027d","peerMeta":{"description":"","url":"https://www.binance.org","icons":["https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png","https://dex-bin.bnbstatic.com/0ec4e7a/favicon.png"],"name":"Binance | Dex Trading | Decentralized Exchange | Binance.org"},"chainId":null}]}');
     //
@@ -61,6 +62,13 @@ export class MainComponent implements OnInit, OnDestroy {
               return uiState.currentAccount.name;
           })
         );
+
+        // this.selectedBlockchain$ = this.stateService.uiState$.pipe(
+        //     map( (ui: IUiState) => {
+        //         return ui.storageData.selectedBlockchain;
+        //     }),
+        // );
+
         this.address$ = this.stateService.currentAddress$;
         this.shortAddress$ = this.stateService.currentAddressShort$;
         this.bnb$ = this.stateService.bnbBalance$;
@@ -161,23 +169,7 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     switchBlockchain() {
-        this.stateService.uiState$.pipe(
-            map((vals) => {
-                console.log("WAS");
-                console.log(vals.storageData.selectedBlockchain);
-            })).subscribe().unsubscribe();
-
-        if (this.stateService.currentBlolckchain === 'Binance') {
-            this.stateService.switchBlockchain('Cosmos');
-        } else if (this.stateService.currentBlolckchain === 'Cosmos') {
-            this.stateService.switchBlockchain('Binance');
-        }
-
-        this.stateService.uiState$.pipe(
-            map((vals) => {
-                console.log("IS");
-                console.log(vals.storageData.selectedBlockchain);
-            })).subscribe().unsubscribe();
+        this.stateService.switchBlockchain();
     }
 
 
