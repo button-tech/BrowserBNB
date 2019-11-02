@@ -6,8 +6,11 @@ import {from, NEVER, Observable, Subject} from 'rxjs';
 import * as passworder from 'browser-passworder';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
-import { CurrencySymbols } from "../constants";
+import {CurrencySymbols} from "../constants";
+import {getNewWalletFromSeed} from "@lunie/cosmos-keys";
+import {Wallet} from "@lunie/cosmos-keys/lib/types";
 
+export type BlockchainType = 'cosmos' | 'binance';
 export type NetworkType = 'cosmos' | 'bnb' | 'tbnb' | 'custom' | null;
 
 export interface IStorageAccount {
@@ -21,13 +24,14 @@ export interface IStorageAccount {
 export interface IStorageData {
     seedPhrase: string | null;
     accounts: IStorageAccount[];
+    cosmosAccounts: IStorageAccount[];
     selectedAddress: string | null;
     selectedNetwork: NetworkType;
     selectedNetworkEndpoint: string | null;
     baseFiatCurrency: CurrencySymbols;
     customNetworkEndpoints: string[];
 
-    selectedBlockchain: string;
+    selectedBlockchain: BlockchainType;
 }
 
 const STORAGE_KEY = 'all';
@@ -82,7 +86,7 @@ export class StorageService {
 
     hasAccountOnce$(): Observable<boolean> {
         return from(this.getFromStorageRaw()).pipe(
-            map(( encryptedData ) => {
+            map((encryptedData) => {
                 console.log('encryptedData=', encryptedData);
                 return !!encryptedData;
             })
@@ -115,11 +119,11 @@ export class StorageService {
     //     }
     // }
 
-    private saveToStorageRaw( value: string ): Promise<void> {
+    private saveToStorageRaw(value: string): Promise<void> {
 
         console.log('Save to storage:', value);
 
-        return new Promise<void>(( resolve ) => {
+        return new Promise<void>((resolve) => {
             if (environment.production) {
                 const cmd = {
                     [STORAGE_KEY]: value
@@ -135,9 +139,9 @@ export class StorageService {
     }
 
     private getFromStorageRaw(): Promise<string> {
-        return new Promise<any>(( resolve ) => {
+        return new Promise<any>((resolve) => {
             if (environment.production) {
-                chrome.storage.local.get(STORAGE_KEY, ( result ) => resolve(result[STORAGE_KEY]));
+                chrome.storage.local.get(STORAGE_KEY, (result) => resolve(result[STORAGE_KEY]));
             } else {
                 const result = localStorage.getItem(STORAGE_KEY);
                 resolve(result);
@@ -145,34 +149,35 @@ export class StorageService {
         });
     }
 
-    public getFromStorage( password: string ): Observable<IStorageData> {
+    public getFromStorage(password: string): Observable<IStorageData> {
         return from(this.getFromStorageRaw()).pipe(
-            catchError(( err ) => {
+            catchError((err) => {
                 console.log(err);
                 return NEVER;
             }),
-            switchMap(( encrypted: any ) => {
+            switchMap((encrypted: any) => {
                 return from(passworder.decrypt(password, encrypted));
             }),
-            map(( dectypted: any ) => {
+            map((dectypted: any) => {
                 console.log(JSON.stringify(dectypted));
                 return dectypted as IStorageData;
             })
         );
     }
 
-    async encryptAndSave( data: IStorageData, password: string ): Promise<void> {
+    async encryptAndSave(data: IStorageData, password: string): Promise<void> {
         const encrypted: any = await passworder.encrypt(password, data);
         return this.saveToStorageRaw(encrypted);
     }
 
-    registerAccount( seedPhrase: string, password: string ): IStorageData {
+    registerAccount(seedPhrase: string, password: string): IStorageData {
         // Prepare account
 
         // tslint:disable-next-line:max-line-length
         // const seedPhrase = 'offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin';
         const privateKey = getPrivateKeyFromMnemonic(seedPhrase, 0);
-
+        const cosmosWallet: Wallet = getNewWalletFromSeed(seedPhrase);
+        console.table(cosmosWallet);
 
         // tslint:disable-next-line:max-line-length
         // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
@@ -191,12 +196,21 @@ export class StorageService {
                     name: 'Account 1',
                 }
             ],
+            cosmosAccounts: [
+                {
+                    addressMainnet: cosmosWallet.cosmosAddress,
+                    addressTestnet: cosmosWallet.cosmosAddress,
+                    privateKey: cosmosWallet.privateKey,
+                    index: 0,
+                    name: 'Account 1',
+                }
+            ],
             selectedAddress: addressMainnet,
             selectedNetwork: 'bnb',
             selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
             baseFiatCurrency: CurrencySymbols.USD,
             customNetworkEndpoints: [],
-            selectedBlockchain: 'Binance' // Be careful
+            selectedBlockchain: 'binance'
         };
 
         // Promise result ignored by intend

@@ -5,5 +5,8 @@ export enum NETWORK_ENDPOINT_MAPPING {
     'MAINNET_EUROPE' = 'https://dex-european.binance.org/',
     'TESTNET' = 'https://testnet-dex.binance.org/',
     'TESTNET_ASIA' = 'https://testnet-dex-asiapacific.binance.org/',
-    'TESTNET_ATLANTIC' = 'https://testnet-dex-atlantic.binance.org/'
+    'TESTNET_ATLANTIC' = 'https://testnet-dex-atlantic.binance.org/',
+
+    // TODO: check this out
+    'MAINNET_COSMOS' = 'https://blockatlas.trustwalletapp.com/',
 }
