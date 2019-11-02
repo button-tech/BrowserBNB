@@ -10,7 +10,10 @@
                 <i class="fas fa-times"></i>
             </button>
             <div id="AccountsHeader">My Accounts</div>
-            <button (click)="logout()" id="logOutBtn" class="btn btn-binance-outline btn-sm">
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" (click)="logout()"  class="btn btn-binance-outline btn-sm">
+                Log out
+            </button>
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'" (click)="logout()"  class="btn btn-cosmos-outline btn-sm">
                 Log out
             </button>
         </div>
@@ -20,9 +23,13 @@
                  (click)="switchAccount(item);menuUsers.close()"
                  style="display: grid; grid-template-rows: 2fr 1fr; grid-template-columns: 1fr 2fr 1fr 1fr; height: 60px;">
 
-                <div style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
+                <div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
                     <button class="btn btn-just-icon btn-round btn-binance-outline-two"> #{{(1 + i)}}</button>
                 </div>
+                <div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'" style="grid-row: 1/2; grid-column: 1; align-self: center; align-content: center; align-items: center; margin-left: 0.5em; margin-top: 0.2em">
+                    <button class="btn btn-just-icon btn-round btn-cosmos-outline-two"> #{{(1 + i)}}</button>
+                </div>
+
 
                 <sat-popover #name openTransition="0ms ease-out" closeTransition="0ms ease-in"
                              hasBackdrop forceAlignment>

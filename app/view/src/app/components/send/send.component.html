@@ -42,7 +42,7 @@
                 </div>
                 <div class="col-9">
                     <input id="bnbAddress" formControlName="address"
-                           autocomplete="off" placeholder="BNB address" spellcheck="false">
+                           autocomplete="off" placeholder="{{(stateService.uiState$ | async).storageData.selectedBlockchain === 'Binance' ? 'BNB' : 'ATOM'  }} address" spellcheck="false">
                 </div>
             </div>
 
@@ -59,8 +59,12 @@
         </div>
 
         <div id="buttonsDiv" class="col-12 text-center mt-1">
-            <button routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
-            <button (click)="onNextBtnClick()" class="btn btn-binance-outline btn-lg main-btn"
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" routerLink="/main" class="btn btn-binance-outline btn-lg main-btn">Back</button>
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" (click)="onNextBtnClick()" class="btn btn-binance-outline btn-lg main-btn"
+                    [disabled]="formGroup.invalid">Next
+            </button>  
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'" routerLink="/main" class="btn btn-cosmos-outline btn-lg main-btn">Back</button>
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'" (click)="onNextBtnClick()" class="btn btn-cosmos-outline btn-lg main-btn"
                     [disabled]="formGroup.invalid">Next
             </button>
         </div>

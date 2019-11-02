@@ -48,21 +48,33 @@ export class ReceiveComponent implements OnInit, OnDestroy {
     }
 
     openTab(address$: any) {
-        let url;
-        switch (this.network) {
-            case 'mainnet':
-                url = 'https://explorer.binance.org/address/';
-                break;
-            case 'testnet':
-                url = 'https://testnet-explorer.binance.org/address/';
-                break;
-        }
-        address$.pipe(
-            map((address: any) => {
-                this.chrome.openNewTab(`${url}${address}`);
+        this.stateService.uiState$.pipe(
+            map((vals) => {
+                if (vals.storageData.selectedBlockchain === 'Binance') {
+                    let url;
+                    switch (this.network) {
+                        case 'mainnet':
+                            url = 'https://explorer.binance.org/address/';
+                            break;
+                        case 'testnet':
+                            url = 'https://testnet-explorer.binance.org/address/';
+                            break;
+
+                    }
+
+                } else if (vals.storageData.selectedBlockchain === 'Cosmos') {
+                    address$.pipe(
+                        map((address: any) => {
+                            this.chrome.openNewTab(`https://www.mintscan.io/account/${address}`);
+                        }),
+                        take(1)
+                    ).subscribe();
+
+                }
             }),
             take(1)
         ).subscribe();
+
     }
 
     goBack() {

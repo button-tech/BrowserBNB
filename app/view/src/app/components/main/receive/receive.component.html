@@ -11,7 +11,7 @@
 <div class="row">
     <div style="margin-top: -1em" class="col-12">
         <h4 align="center" style="font-weight: bold; color: rgb(33, 40, 51); font-size: 22px">Your address</h4>
-        <h6 style="color: rgb(132, 142, 156); font-weight: bold; padding-right: 3em; padding-left: 3em" align="center">Scan QR code or copy your address and send BNB to it</h6>
+        <h6 style="color: rgb(132, 142, 156); font-weight: bold; padding-right: 3em; padding-left: 3em" align="center">Scan QR code or copy your address and send {{(stateService.uiState$ | async).storageData.selectedBlockchain === 'Binance' ? 'BNB' : 'ATOM'  }} to it</h6>
     </div>
     <div class="col-12 text-center" style="margin-top: 10px; margin-left: 6.79em; margin-bottom: 1.3em !important">
         <qrcode [qrdata]="qrCode" [size]="130" [level]="'M'"></qrcode>
@@ -31,8 +31,12 @@
     </div>
     <div class="col-12 text-center">
         <div>
-            <button (click)="this.openTab(address$)"
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" (click)="this.openTab(address$)"
                     class="btn btn-binance btn-lg">
+                View on explorer
+            </button>
+            <button *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'" (click)="this.openTab(address$)"
+                    class="btn btn-cosmos-outline btn-lg">
                 View on explorer
             </button>
         </div>
