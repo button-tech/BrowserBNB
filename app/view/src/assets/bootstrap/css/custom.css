@@ -13,17 +13,34 @@ body {
 }
 
 .btn-binance-outline {
-    border: solid rgb(240, 185, 11) 1px !important;
+     border: solid rgb(240, 185, 11) 1px !important;
+     color: rgb(240, 185, 11) !important;
+     background: none !important;
+     font-weight: bold !important;
+     box-shadow: none !important;
+     border-radius: 6px !important;
+ }
+
+.btn-binance-outline-two {
+    border: none;
     color: rgb(240, 185, 11) !important;
     background: none !important;
     font-weight: bold !important;
     box-shadow: none !important;
     border-radius: 6px !important;
 }
+.btn-cosmos-outline {
+    border: solid rgb(80, 100, 251) 1px !important;
+    color: rgb(80, 100, 251) !important;
+    background: none !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+    border-radius: 6px !important;
+}
 
-.btn-binance-outline-two {
+.btn-cosmos-outline-two {
     border: none;
-    color: rgb(240, 185, 11) !important;
+    color: rgb(80, 100, 251) !important;
     background: none !important;
     font-weight: bold !important;
     box-shadow: none !important;
