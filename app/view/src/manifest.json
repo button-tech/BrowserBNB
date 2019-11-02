@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "BNB Browser",
   "description": "Online wallet for Binance Chain",
-  "version": "0.0.4",
+  "version": "0.1.2",
   "icons": {
     "16": "assets/icons/bnb_browser_16.png",
     "48": "assets/icons/bnb_browser_48.png",
