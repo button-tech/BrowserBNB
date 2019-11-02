@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {map, take, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
@@ -29,7 +29,7 @@ export class MainComponent implements OnInit, OnDestroy {
     alphaAlert: ElementRef;
 
     walletConnected = false;
-    walletConnectMessage = "Connect to Binance DEX";
+    walletConnectMessage$: Observable<string>;
 
     // wcPort: any; // Port
 
@@ -104,9 +104,9 @@ export class MainComponent implements OnInit, OnDestroy {
               this.showCallRequest = !!this.callRequest;
 
               this.walletConnected = wcState.walletConnected;
-              this.walletConnectMessage = this.walletConnected
-                ? 'Disconnect from DEX'
-                : 'Connect to Binance DEX';
+              this.walletConnectMessage$ =
+                  setInfoForWcButton(this.stateService.uiState$, this.walletConnected);
+
           });
 
         //
@@ -184,4 +184,22 @@ export class MainComponent implements OnInit, OnDestroy {
     approveOrder(isApproved: boolean) {
         this.wcApi.approveOrder(isApproved);
     }
+}
+
+  function setInfoForWcButton(blockchain: BehaviorSubject<IUiState>, isConnected: boolean): Observable<string> {
+
+     return blockchain.pipe(
+          map((state) => {
+              if (isConnected && state.storageData.selectedBlockchain === 'Binance') {
+                  return 'Disconnect from DEX' ;
+              }   else if (!isConnected && state.storageData.selectedBlockchain === 'Binance') {
+                  return 'Connect to Binance DEX';
+              }     else if (isConnected && state.storageData.selectedBlockchain === 'Cosmos') {
+                  return 'Disconnect from Platform' ;
+              }       else if (!isConnected && state.storageData.selectedBlockchain === 'Cosmos') {
+                  return 'Connect to Platform' ;
+              }
+          })
+      );
+
 }
