@@ -81,16 +81,21 @@
             <img *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'" id="imageBNB" draggable="false" width="68" src="../../../assets/icons/BNB Diamond Yellow 128.png">
             <img *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain  === 'Cosmos'" id="imageCosmos" draggable="false" width="68" src="../../../assets/icons/atom.png">
 
-            <h3 class="bold">{{(bnb$ | async) | fmtPipe : 'BNB'}}</h3>
+            <h3 *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'"  class="bold">{{(coin$ | async) | fmtPipe : 'BNB'}}</h3>
+            <h3 *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain  === 'Cosmos'" class="bold">{{(coin$ | async) | fmtPipe : 'ATOM'}}</h3>
             <h4 id="fiat">
-                {{(bnbInUsd$  | async) | fmtPipe : (this.stateService.baseCurrency$ | async) }}
+                {{(coinInUsd$  | async) | fmtPipe : (this.stateService.baseCurrency$ | async) }}
             </h4>
             <a *ngIf="(allBalances$ | async)" routerLink="/balances" class="more">More balances</a>
         </div>
 
-        <div id="buttonsDiv" class="col-12">
+        <div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Binance'"  class="col-12 buttonsDiv">
             <button routerLink="/receive" class="btn btn-binance-outline btn-lg main-btn">RECEIVE</button>
             <button routerLink="/send" class="btn btn-binance-outline btn-lg main-btn">SEND</button>
+        </div>
+        <div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain ==='Cosmos'"  class="col-12 buttonsDiv">
+            <button routerLink="/receive" class="btn btn-cosmos-outline btn-lg main-btn">RECEIVE</button>
+            <button routerLink="/send" class="btn  btn-cosmos-outline btn-lg main-btn">SEND</button>
         </div>
     </div>
 

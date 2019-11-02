@@ -179,7 +179,10 @@
     margin-right: 0.25em;
 }
 
-#historyDiv, #buttonsDiv {
+#historyDiv {
+    margin-top: 1.5em
+}
+.buttonsDiv {
     margin-top: 1.5em
 }
 

@@ -16,8 +16,8 @@ import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api
 export class MainComponent implements OnInit, OnDestroy {
 
 
-    bnb$: Observable<number>;
-    bnbInUsd$: Observable<number>;
+    coin$: Observable<number>;
+    coinInUsd$: Observable<number>;
     address$: Observable<string>;
     shortAddress$: Observable<string>;
     accountName$: Observable<string>;
@@ -63,8 +63,8 @@ export class MainComponent implements OnInit, OnDestroy {
         );
         this.address$ = this.stateService.currentAddress$;
         this.shortAddress$ = this.stateService.currentAddressShort$;
-        this.bnb$ = this.stateService.bnbBalance$;
-        this.bnbInUsd$ = this.stateService.bnbBalanceInFiat$;
+        this.coin$ = this.stateService.bnbBalance$;
+        this.coinInUsd$ = this.stateService.bnbBalanceInFiat$;
 
         this.allBalances$ = this.stateService.allBalances$.pipe(
           map((balances: IBalance[]) => {
