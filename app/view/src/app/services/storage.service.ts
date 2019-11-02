@@ -8,7 +8,7 @@ import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-cry
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import { CurrencySymbols } from "../constants";
 
-export type NetworkType = 'bnb' | 'tbnb' | 'custom' | null;
+export type NetworkType = 'cosmos' | 'bnb' | 'tbnb' | 'custom' | null;
 
 export interface IStorageAccount {
     addressMainnet: string;
@@ -26,6 +26,7 @@ export interface IStorageData {
     selectedNetworkEndpoint: string | null;
     baseFiatCurrency: CurrencySymbols;
     customNetworkEndpoints: string[];
+
     selectedBlockchain: string;
 }
 
@@ -195,7 +196,7 @@ export class StorageService {
             selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
             baseFiatCurrency: CurrencySymbols.USD,
             customNetworkEndpoints: [],
-            selectedBlockchain: 'Binance'
+            selectedBlockchain: 'Binance' // Be careful
         };
 
         // Promise result ignored by intend

@@ -16,6 +16,7 @@
 <div class="container-fluid" *ngIf="!showApprove && !showCallRequest">
     <app-menu-top></app-menu-top>
 
+    selectedBlockchain: {{stateService.selectedBlockchain$ | async}}
     <div class="row text-center">
         <div class="col-2">
             <i style="margin-top: 1.2em; margin-left: 1.3em" (click)="switchBlockchain()" class="fas fa-random"></i>
