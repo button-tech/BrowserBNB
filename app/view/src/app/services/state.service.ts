@@ -152,6 +152,7 @@ export class StateService {
     currentAddress$: Observable<string>;
     currentAddress: string;
     currentAddressShort$: Observable<string>;
+    currentBlolckchain: string;
 
     tokens$: Observable<ITokenInfo[]>;
 
@@ -185,6 +186,8 @@ export class StateService {
             }),
             shareReplay(1)
         );
+
+
 
         this.currentEndpoint$ = this.uiState$.pipe(
             map((uiState: IUiState) => {
@@ -414,6 +417,7 @@ export class StateService {
             };
         });
 
+
         const networkPrefix = data.selectedNetwork;
         const val = networkPrefix === 'bnb'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
@@ -439,6 +443,7 @@ export class StateService {
         this.uiState$.next(uiState);
         this.password = password;
         this.selectedNetwork$.next(newSelectedNetwork);
+        this.currentBlolckchain = data.selectedBlockchain;
 
     }
 
@@ -496,7 +501,8 @@ export class StateService {
                 selectedNetwork: this.uiState.storageData.selectedNetwork,
                 selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,
                 baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
-                customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints
+                customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints,
+                selectedBlockchain: this.uiState.storageData.selectedBlockchain
             };
 
             const newUiState: IUiState = {
@@ -680,4 +686,6 @@ export class StateService {
 
         this.uiState$.next(newUiState);
     }
+
+    
 }

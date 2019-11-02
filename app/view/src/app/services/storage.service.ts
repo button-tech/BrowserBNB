@@ -26,6 +26,7 @@ export interface IStorageData {
     selectedNetworkEndpoint: string | null;
     baseFiatCurrency: CurrencySymbols;
     customNetworkEndpoints: string[];
+    selectedBlockchain: string;
 }
 
 const STORAGE_KEY = 'all';
@@ -193,7 +194,8 @@ export class StorageService {
             selectedNetwork: 'bnb',
             selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
             baseFiatCurrency: CurrencySymbols.USD,
-            customNetworkEndpoints: []
+            customNetworkEndpoints: [],
+            selectedBlockchain: 'Binance'
         };
 
         // Promise result ignored by intend
