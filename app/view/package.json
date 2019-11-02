@@ -25,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^8.2.7",
     "@angular/router": "^8.2.7",
     "@binance-chain/javascript-sdk": "^2.15.0",
+    "@lunie/cosmos-keys": "0.0.11",
     "@ncstate/sat-popover": "^4.0.0",
     "@ng-select/ng-select": "^3.0.7",
     "@uiowa/digit-only": "^1.2.1",

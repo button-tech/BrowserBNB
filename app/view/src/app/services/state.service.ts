@@ -179,7 +179,7 @@ export class StateService {
             map((uiState: IUiState) => {
                 const {currentAccount, storageData} = uiState;
 
-                return storageData.selectedNetwork === 'bnb'
+                return storageData.selectedNetwork === 'bnb' || storageData.selectedNetwork === 'cosmos'
                     ? currentAccount.addressMainnet
                     : currentAccount.addressTestnet;
             }),
@@ -192,6 +192,10 @@ export class StateService {
 
         this.currentEndpoint$ = this.uiState$.pipe(
             map((uiState: IUiState) => {
+                if (uiState.storageData.selectedNetwork === 'cosmos') {
+                    return NETWORK_ENDPOINT_MAPPING.MAINNET_COSMOS;
+                }
+
                 return uiState.storageData.selectedNetwork === 'bnb'
                     ? NETWORK_ENDPOINT_MAPPING.MAINNET
                     : NETWORK_ENDPOINT_MAPPING.TESTNET;
@@ -403,9 +407,13 @@ export class StateService {
     }
 
     initState(data: IStorageData, password: string) {
+        const selectedNetwork = data.selectedNetwork;
+        const accountList = data.selectedBlockchain === 'binance'
+            ? data.accounts
+            : data.cosmosAccounts;
 
         const accounts = data.accounts.map((account) => {
-            const address = data.selectedNetwork === 'bnb'
+            const address = selectedNetwork === 'bnb'
                 ? account.addressMainnet
                 : account.addressTestnet;
 
@@ -483,39 +491,51 @@ export class StateService {
 
     removeAccount(account: IUiAccount): void {
 
-        if (this.uiState.accounts.length > 0) {
-            const newAccounts = this.uiState.storageData.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
-            const newAccountsUI = this.uiState.accounts.filter((accountToRemove) => accountToRemove.index !== account.index);
-            let accountToPick = 0;
-            if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
-                accountToPick = 1;
-            } else if (this.uiState.storageData.accounts.length <= 1) {
-                this.storageService.reset();
-                return;
-            }
-
-            const newStorageData: IStorageData = {
-                seedPhrase: this.uiState.storageData.seedPhrase,
-                accounts: newAccounts,
-                selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
-                selectedNetwork: this.uiState.storageData.selectedNetwork,
-                selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,
-                baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
-                customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints,
-                selectedBlockchain: this.uiState.storageData.selectedBlockchain
-            };
-
-            const newUiState: IUiState = {
-                accounts: newAccountsUI,
-                currentAccount: this.uiState.accounts[accountToPick],
-                storageData: newStorageData
-            };
-
-            this.storageService.encryptAndSave(newStorageData, this.password);
-            this.uiState$.next(newUiState);
-        } else {
-            this.storageService.reset();
+        if (this.uiState.accounts.length <= 0) {
+            this.storageService.reset(); // Not sure that we need to reset in that case
+            return; // But that return is definitely required
         }
+
+        // Binance accounts
+        const newAccounts = this.uiState.storageData.accounts
+            .filter((accountToRemove) => accountToRemove.index !== account.index);
+
+        // Cosmos accounts
+        const newCosmosAccounts = this.uiState.storageData.cosmosAccounts
+            .filter((accountToRemove) => accountToRemove.index !== account.index);
+
+        const newAccountsUI = this.uiState.accounts
+            .filter((accountToRemove) => accountToRemove.index !== account.index);
+
+
+        let accountToPick = 0;
+        if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
+            accountToPick = 1;
+        } else if (this.uiState.storageData.accounts.length <= 1) {
+            this.storageService.reset();
+            return;
+        }
+
+        const newStorageData: IStorageData = {
+            seedPhrase: this.uiState.storageData.seedPhrase,
+            accounts: newAccounts,
+            cosmosAccounts: newCosmosAccounts,
+            selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
+            selectedNetwork: this.uiState.storageData.selectedNetwork,
+            selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,
+            baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
+            customNetworkEndpoints: this.uiState.storageData.customNetworkEndpoints,
+            selectedBlockchain: this.uiState.storageData.selectedBlockchain
+        };
+
+        const newUiState: IUiState = {
+            accounts: newAccountsUI,
+            currentAccount: this.uiState.accounts[accountToPick],
+            storageData: newStorageData
+        };
+
+        this.storageService.encryptAndSave(newStorageData, this.password);
+        this.uiState$.next(newUiState);
     }
 
     addAccount(): void {
@@ -639,7 +659,7 @@ export class StateService {
 
     switchBlockchain() {
         const currentBlockchain = this.selectedBlockchain$.value;
-        const newBlockchain = currentBlockchain === 'Binance' ? 'Cosmos' : 'Binance';
+        const newBlockchain = currentBlockchain === 'binance' ? 'cosmos' : 'binance';
 
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
@@ -656,13 +676,9 @@ export class StateService {
 
         this.selectedBlockchain$.next(newBlockchain);
 
-        // Network switch after blockchain switch
-        if (newBlockchain === 'Binance') {
-            this.switchNetwork('bnb');
-        } else {
-            this.switchNetwork('cosmos');
-        }
 
+        // Switch to mainnet when switch blockchain
+        this.switchNetwork(newBlockchain === 'binance' ? 'bnb' : 'cosmos');
     }
 
     switchNetworkCustom(network: NetworkType, val: string): void {
@@ -675,7 +691,7 @@ export class StateService {
 
         const networkPrefix = network;
         let label;
-        if (network === 'bnb') {
+        if (network === 'bnb' || network === 'cosmos') {
             label = 'mainnet';
         } else if (network === 'tbnb') {
             label = 'testnet';
