@@ -58,9 +58,9 @@ export class MainComponent implements OnInit, OnDestroy {
     ) {
 
         this.accountName$ = this.stateService.uiState$.pipe(
-          map((uiState: IUiState) => {
-              return uiState.currentAccount.name;
-          })
+            map((uiState: IUiState) => {
+                return uiState.currentAccount.name;
+            })
         );
 
         // this.selectedBlockchain$ = this.stateService.uiState$.pipe(
@@ -89,25 +89,25 @@ export class MainComponent implements OnInit, OnDestroy {
 
         this.wcApiSubscription = this.wcApi.walletConnectState$
 
-          .subscribe((wcState: IWcState) => {
+            .subscribe((wcState: IWcState) => {
 
-              console.warn(wcState);
-              if (!wcState) {
-                  console.error('!wcState');
-                  return;
-              }
+                console.warn(wcState);
+                if (!wcState) {
+                    console.error('!wcState');
+                    return;
+                }
 
-              this.sessionRequest = wcState.sessionRequest;
-              this.showApprove = !!this.sessionRequest;
+                this.sessionRequest = wcState.sessionRequest;
+                this.showApprove = !!this.sessionRequest;
 
-              this.callRequest = wcState.callRequest;
-              this.showCallRequest = !!this.callRequest;
+                this.callRequest = wcState.callRequest;
+                this.showCallRequest = !!this.callRequest;
 
-              this.walletConnected = wcState.walletConnected;
-              this.walletConnectMessage$ =
-                  setInfoForWcButton(this.stateService.uiState$, this.walletConnected);
+                this.walletConnected = wcState.walletConnected;
+                this.walletConnectMessage$ =
+                    setInfoForWcButton(this.stateService.uiState$, this.walletConnected);
 
-          });
+            });
 
         //
         // this.wcApiSubscription = this.wcApi.connectedPort$.subscribe((port: Port) => {
@@ -186,20 +186,20 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 }
 
-  function setInfoForWcButton(blockchain: BehaviorSubject<IUiState>, isConnected: boolean): Observable<string> {
+function setInfoForWcButton(blockchain: BehaviorSubject<IUiState>, isConnected: boolean): Observable<string> {
 
-     return blockchain.pipe(
-          map((state) => {
-              if (isConnected && state.storageData.selectedBlockchain === 'Binance') {
-                  return 'Disconnect from DEX' ;
-              }   else if (!isConnected && state.storageData.selectedBlockchain === 'Binance') {
-                  return 'Connect to Binance DEX';
-              }     else if (isConnected && state.storageData.selectedBlockchain === 'Cosmos') {
-                  return 'Disconnect from Platform' ;
-              }       else if (!isConnected && state.storageData.selectedBlockchain === 'Cosmos') {
-                  return 'Connect to Platform' ;
-              }
-          })
-      );
+    return blockchain.pipe(
+        map((state) => {
+            const selectedBlockchain = state.storageData.selectedBlockchain;
+
+            if (selectedBlockchain === 'binance') {
+                return isConnected ? 'Disconnect from DEX' : 'Connect to Binance DEX';
+            }
+
+            if (selectedBlockchain === 'cosmos') {
+                return isConnected ? 'Disconnect from Platform' : 'Connect to Platform';
+            }
+        })
+    );
 
 }

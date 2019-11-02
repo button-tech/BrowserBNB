@@ -4,7 +4,8 @@ import {map, take, takeUntil} from "rxjs/operators";
 import {Observable, Subscription, timer} from "rxjs";
 import {ClipboardService} from "../../../services/clipboard.service";
 import {ChromeApiService} from "../../../services/chrome-api.service";
-import {StateService} from "../../../services/state.service";
+import {IUiState, StateService} from "../../../services/state.service";
+import {BlockchainType} from "../../../services/storage.service";
 
 @Component({
     selector: 'app-receive',
@@ -22,9 +23,9 @@ export class ReceiveComponent implements OnInit, OnDestroy {
                 private clipboardService: ClipboardService,
                 private  chrome: ChromeApiService,
                 private stateService: StateService) {
-        this.address$ = this.stateService.currentAddress$;
-        this.subscription = this.address$.pipe(
-            map((address) => {
+
+        this.subscription = this.stateService.currentAddress$.pipe(
+            map((address: string) => {
                 this.network = this.stateService.selectedNetwork$.getValue().label.toLocaleLowerCase();
                 this.qrCode = address;
             })).subscribe();
@@ -37,44 +38,20 @@ export class ReceiveComponent implements OnInit, OnDestroy {
         this.subscription.unsubscribe();
     }
 
-    copyAddress() {
-        this.address$.pipe(
-            takeUntil(timer(100)),
-            take(1),
-        ).subscribe((address) => {
-            this.clipboardService.copyToClipboard(address);
-            this.copyMessage = 'Copied ✔';
-        });
+    copyAddress(address: string) {
+        this.clipboardService.copyToClipboard(address);
+        this.copyMessage = 'Copied ✔';
     }
 
-    openTab(address$: any) {
-        this.stateService.uiState$.pipe(
-            map((vals) => {
-                if (vals.storageData.selectedBlockchain === 'Binance') {
-                    let url;
-                    switch (this.network) {
-                        case 'mainnet':
-                            url = 'https://explorer.binance.org/address/';
-                            break;
-                        case 'testnet':
-                            url = 'https://testnet-explorer.binance.org/address/';
-                            break;
-
-                    }
-
-                } else if (vals.storageData.selectedBlockchain === 'Cosmos') {
-                    address$.pipe(
-                        map((address: any) => {
-                            this.chrome.openNewTab(`https://www.mintscan.io/account/${address}`);
-                        }),
-                        take(1)
-                    ).subscribe();
-
-                }
-            }),
-            take(1)
-        ).subscribe();
-
+    openTab(address: string, blockchain: BlockchainType) {
+        let url;
+        if (blockchain === 'binance') {
+            const prefix = this.network === 'testnet' ? 'testnet-' : '';
+            url = `https://${prefix}explorer.binance.org/address/${address}`;
+        } else {
+            url = `https://www.mintscan.io/account/${address}`;
+        }
+        this.chrome.openNewTab(url);
     }
 
     goBack() {
