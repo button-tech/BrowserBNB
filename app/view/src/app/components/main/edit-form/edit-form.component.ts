@@ -15,7 +15,7 @@ export class EditFormComponent {
     @Output()
     update = new EventEmitter<string>();
 
-    constructor(@Optional() @Host() public popover: SatPopover, private localStorageService: LocalStorageService) {
+    constructor(@Optional() @Host() public popover: SatPopover, public localStorageService: LocalStorageService) {
     }
 
     onSubmit() {

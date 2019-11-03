@@ -23,7 +23,7 @@ export class ApproveComponent implements OnInit {
               private activatedRoute: ActivatedRoute,
               private state: StateService,
               private storage: StorageService,
-              private localStorageService: LocalStorageService) { }
+              public localStorageService: LocalStorageService) { }
 
   ngOnInit() {
     const operation = this.activatedRoute.snapshot.params.operation;

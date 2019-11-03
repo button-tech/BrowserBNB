@@ -37,7 +37,7 @@
                     </button>
                 </p>
             </div>
-            <div class="col-12 text-center">
+            <div class="col-12 text-center" style="margin-top: -1em">
                 <div>
                     <button *ngIf="blockchain === 'binance'" (click)="this.openTab(address, blockchain)"
                             class="btn btn-binance btn-lg">View on explorer
@@ -45,7 +45,12 @@
                     <button *ngIf="blockchain === 'cosmos'" (click)="this.openTab(address, blockchain)"
                             class="btn btn-cosmos-outline btn-lg">View on explorer
                     </button>
+                    <br>
+                    <button *ngIf="blockchain === 'binance'" routerLink="/moonPay" class="btn btn-binance btn-lg main-btn">BUY CRYPTO</button>
+                    <button *ngIf="blockchain === 'cosmos'" routerLink="/moonPay" class="btn btn-cosmos btn-lg main-btn">BUY CRYPTO</button>
                 </div>
+
+
             </div>
             <sat-popover #p horizontalAlign="center" openTransition="100ms ease-out" closeTransition="150ms ease-in"
                          verticalAlign="below">
