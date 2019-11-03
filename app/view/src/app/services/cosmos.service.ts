@@ -79,7 +79,6 @@ export class CosmosService {
 
     getBalance$( address: string, endpoint: string ): Observable<IBalance[]> {
         // return this.http.get(`${endpoint}/auth/account/${address}`).pipe(
-        console.log('tetetettette');
         return this.http.get(`${endpoint}${address}`).pipe(
             map(( response ) => {
                 // @ts-ignore
