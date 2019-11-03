@@ -1,7 +1,25 @@
 import {Component, OnDestroy} from '@angular/core';
 import {isAddressValid} from '../../services/binance-crypto';
-import {BehaviorSubject, combineLatest, interval, Observable, of, Subscription, timer, merge, Subject} from 'rxjs';
-import {IMarketRates, INetworkMenuItem, ITokenInfo, ITransaction, StateService} from "../../services/state.service";
+import {
+    BehaviorSubject,
+    combineLatest,
+    interval,
+    Observable,
+    of,
+    Subscription,
+    timer,
+    merge,
+    Subject,
+    from
+} from 'rxjs';
+import {
+    IMarketRates,
+    INetworkMenuItem,
+    ITokenInfo,
+    ITransaction,
+    IUiState,
+    StateService
+} from "../../services/state.service";
 import {Router} from "@angular/router";
 import {
     AbstractControl,
@@ -13,8 +31,9 @@ import {
     Validators
 } from "@angular/forms";
 import {Location} from '@angular/common';
-import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
+import {catchError, distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import {BinanceService} from "../../services/binance.service";
+import {CosmosService} from "../../services/cosmos.service";
 
 @Component({
     selector: 'app-send',
@@ -58,14 +77,14 @@ export class SendComponent implements OnDestroy {
     }
 
     public formGroup: FormGroup = this.fb.group({
-            amount: [0,
+            amount: [0.1,
                 [
                     Validators.required,
                     (c: FormControl) => c.value <= 0 ? {min: true} : null,
                     (c: FormControl) => Number(c.value) >= this.balance ? {max: true} : null,
                 ]
             ],
-            address: ['',
+            address: ['cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz',
                 [
                     Validators.required,
                     (c: FormControl) => isAddressValid(c.value, this.networkPrefix) ? null : {min: true},
@@ -84,7 +103,8 @@ export class SendComponent implements OnDestroy {
                 public router: Router,
                 public stateService: StateService,
                 public location: Location,
-                public bncService: BinanceService) {
+                public bncService: BinanceService,
+                public cosmosService: CosmosService) {
 
         const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$, isCosmos$} = this.stateService;
 
@@ -196,11 +216,8 @@ export class SendComponent implements OnDestroy {
         this.showVerifyForm = true;
     }
 
-    sendTx(): void {
-        const privateKey = this.stateService.uiState.currentAccount.privateKey;
-        const network = this.stateService.selectedNetwork$.getValue(); // TODO: Should be the that was verified
-
-        this.bncService.sendTransaction(
+    sendBnb(privateKey: string, network: INetworkMenuItem): Promise<any> {
+        return this.bncService.sendTransaction(
             +this.amount.value,
             this.address.value,
             network.label,
@@ -209,17 +226,42 @@ export class SendComponent implements OnDestroy {
             this.selectedToken,
             privateKey,
             this.memo.value
-        ).then((result) => {
-            console.log(result);
-        }, (err) => {
-            console.error(err);
+        );
+    }
+
+    sendTx(): void {
+        const privateKey = this.stateService.uiState.currentAccount.privateKey;
+        const network = this.stateService.selectedNetwork$.getValue(); // TODO: Should be the that was verified
+
+        this.stateService.isCosmos$.pipe(
+            switchMap((isCosmos: boolean) => {
+                if (!isCosmos) {
+                    return from(this.sendBnb(privateKey, network));
+                }
+
+                // Send cosmos
+                return combineLatest([this.stateService.currentAddress$, this.stateService.uiState$]).pipe(
+                    map((x: [string, IUiState]) => {
+                        const [myAddress, state] = x;
+                        const seedPhrase = state.storageData.seedPhrase;
+                        const sum = +this.amount * 1000000;
+                        return this.cosmosService.sendTransaction(sum, this.address.value, myAddress, seedPhrase, 0);
+                    })
+                );
+            }),
+            catchError((err: any) => {
+                console.log(err);
+                debugger
+                return of(false);
+            })
+        ).subscribe((x: any) => {
+            debugger
         });
     }
 
     onVerify() {
         this.sendTx(); // TODO: progress dialog during the send
         this.router.navigate(['/main']);
-        // this.showVerifyForm = false;
     }
 
     onReject() {

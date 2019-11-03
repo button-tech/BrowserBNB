@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as Cosmos from '../../assets/cosmos/cosmosSDK.js';
-import {Observable, of} from "rxjs";
-import {catchError, map} from "rxjs/operators";
+import {from, Observable, of} from "rxjs";
+import {catchError, map, switchMap} from "rxjs/operators";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 
 export interface IBalance {
@@ -51,15 +51,15 @@ export class CosmosService {
     constructor( private http: HttpClient ) {
     }
 
-    async sendTransaction(sum: number,
+    sendTransaction(sum: number,
                           addressTo: string,
                           addressFrom: string,
                           mnemonic: string,
                           accountIndex: number,
-                          message?: string) {
+                          message?: string): Observable<any> {
 
-        this.getAccountSequence$(addressFrom).pipe(
-            map((resp) => {
+        return this.getAccountSequence$(addressFrom).pipe(
+            switchMap((resp) => {
 
                 const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
@@ -76,15 +76,13 @@ export class CosmosService {
                     fee: 5000,
                     gas: 200000,
                     memo: message || '',
-                    account_number: resp.accountNumber.toString(),
-                    sequence: resp.seq.toString()
+                    ...resp
                 });
-                
 
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
-                cosmos.broadcast(signedTx).then(response => console.log(response));
+                return from(cosmos.broadcast(signedTx));
             })
-        ).subscribe();
+        );
 
     }
 
@@ -133,18 +131,17 @@ export class CosmosService {
 
     getAccountSequence$(address: string): Observable<any> {
         return this.http.get(`https://lcd-do-not-abuse.cosmostation.io/auth/accounts/${address}`).pipe(
-            map(( response ) => {
-                 // @ts-ignore
-                const x = response.value;
+            map(( response: any ) => {
+                const {account_number, sequence} = response.value;
                 return {
-                    accountNumber:  (Number(x.account_number)),
-                    seq:  (Number(x.sequence))
+                    account_number,
+                    sequence
                 };
             }),
             catchError(( error: HttpErrorResponse ) => {
                 // TODO: properly handle binance 404 response
                 // const errResp:  AccountInfo;
-                return of ({accountNumber: 0, seq:  0});
+                return of ({account_number: 0, sequence:  0});
             })
         );
     }

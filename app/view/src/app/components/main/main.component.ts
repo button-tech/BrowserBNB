@@ -60,7 +60,7 @@ export class MainComponent implements OnInit, OnDestroy {
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private wcApi: ChromeApiWalletConnectService,
-                private cosmos: CosmosService
+                private cosmosService: CosmosService
     ) {
         // this.isCosmos$ = stateService.selectedBlockchain$.pipe(
         //     map((blockchain: BlockchainType) => {
@@ -185,14 +185,14 @@ export class MainComponent implements OnInit, OnDestroy {
         this.stateService.switchBlockchain();
     }
 
-    send() {
-        combineLatest([   this.stateService.currentAddress$, this.stateService.uiState$]).pipe(
-            map( (x: any[]) => {
-                const [addr, state] = x;
-                console.log(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0)
-                this.cosmos.sendTransaction(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0);
-            })
-        ).subscribe();
+    send(): void {
+        // combineLatest([   this.stateService.currentAddress$, this.stateService.uiState$]).pipe(
+        //     map( (x: any[]) => {
+        //         const [addr, state] = x;
+        //         console.log(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0)
+        //         this.cosmosService.sendTransaction(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0);
+        //     })
+        // ).subscribe();
     }
 
 
