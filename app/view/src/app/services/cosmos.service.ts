@@ -51,25 +51,26 @@ export class CosmosService {
     constructor( private http: HttpClient ) {
     }
 
-    async sendTransaction() {
-        const chainId = "cosmoshub-2";
+    async sendTransaction(sum: number,
+                          addressTo: string,
+                          mnemonic: string,
+                          accountIndex: number,
+                          message?: string) {
         const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
-        const mnemonic = '';
         cosmos.setBech32MainPrefix("cosmos");
-        cosmos.setPath("m/44'/118'/0'/0/0");
-
+        cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
         const ecpairPriv = cosmos.getECPairPriv(mnemonic);
 
         const stdSignMsg = cosmos.NewStdMsg({
             type: "cosmos-sdk/MsgSend",
             from_address: 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz',
-            to_address: "cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa",
+            to_address: addressTo,
             amountDenom: "uatom",
-            amount: 100000,
+            amount: sum * 1000000,
             feeDenom: "uatom",
             fee: 5000,
             gas: 200000,
-            memo: "",
+            memo: message,
             account_number: 22418,
             sequence: 1
         });
@@ -108,7 +109,6 @@ export class CosmosService {
     }
 
     getHistory$(address: string, endpoint: string): Observable<IHistoryTx[]> {
-        console.log('FYBHIPIAFHBFA')
         return this.http.get(`https://a381ae3c.ngrok.io/blockatlas/v1/cosmos/${address}`)
             .pipe(
                 map((response) => {
@@ -120,6 +120,21 @@ export class CosmosService {
                 })
             );
     }
+
+    getAccountSequence$(address: string): Observable<number> {
+        return this.http.get(`https://a381ae3c.ngrok.io/cosmos/auth/accounts/${address}`).pipe(
+            map(( response ) => {
+                // @ts-ignore
+                return (Number(response.value.sequence));
+            }),
+            catchError(( error: HttpErrorResponse ) => {
+                // TODO: properly handle binance 404 response
+                // const errResp:  AccountInfo;
+                return of (0);
+            })
+        );
+    }
+
 }
 
 
