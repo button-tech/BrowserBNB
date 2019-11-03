@@ -59,7 +59,8 @@ export class CosmosService {
                           message?: string) {
 
         this.getAccountSequence$(addressFrom).pipe(
-            map((seq) => {
+            map((resp) => {
+
                 const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
                 cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
@@ -67,17 +68,19 @@ export class CosmosService {
 
                 const stdSignMsg = cosmos.NewStdMsg({
                     type: "cosmos-sdk/MsgSend",
-                    from_address: 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz',
+                    from_address: addressFrom,
                     to_address: addressTo,
                     amountDenom: "uatom",
-                    amount: sum * 1000000,
+                    amount: sum,
                     feeDenom: "uatom",
                     fee: 5000,
                     gas: 200000,
-                    memo: message,
-                    account_number: 22418,
-                    sequence: seq
+                    memo: message || '',
+                    account_number: resp.accountNumber.toString(),
+                    sequence: resp.seq.toString()
                 });
+                
+
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
                 cosmos.broadcast(signedTx).then(response => console.log(response));
             })
@@ -128,16 +131,20 @@ export class CosmosService {
             );
     }
 
-    getAccountSequence$(address: string): Observable<number> {
+    getAccountSequence$(address: string): Observable<any> {
         return this.http.get(`https://lcd-do-not-abuse.cosmostation.io/auth/accounts/${address}`).pipe(
             map(( response ) => {
-                // @ts-ignore
-                return (Number(response.value.sequence));
+                 // @ts-ignore
+                const x = response.value;
+                return {
+                    accountNumber:  (Number(x.account_number)),
+                    seq:  (Number(x.sequence))
+                };
             }),
             catchError(( error: HttpErrorResponse ) => {
                 // TODO: properly handle binance 404 response
                 // const errResp:  AccountInfo;
-                return of (0);
+                return of ({accountNumber: 0, seq:  0});
             })
         );
     }

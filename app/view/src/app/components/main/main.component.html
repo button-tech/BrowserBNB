@@ -85,7 +85,7 @@
 
                 <img id="imageBNB" *ngIf="blockchain === 'binance'"
                      draggable="false" width="68" src="../../../assets/icons/BNB Diamond Yellow 128.png">
-                <img id="imageCosmos" *ngIf="blockchain  === 'cosmos'"
+                <img (click)="send()" id="imageCosmos" *ngIf="blockchain  === 'cosmos'"
                      draggable="false" width="68" src="../../../assets/icons/atom.png">
 
                 <h3 *ngIf="blockchain ==='binance'" class="bold">{{(coin$ | async) | fmtPipe : 'BNB'}}</h3>

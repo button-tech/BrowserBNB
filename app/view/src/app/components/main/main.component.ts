@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, pipe, Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {map, take, tap} from 'rxjs/operators';
+import {map, switchMap, take, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {IUiState, StateService} from '../../services/state.service';
 import {IBalance} from "../../services/binance.service";
@@ -183,6 +183,16 @@ export class MainComponent implements OnInit, OnDestroy {
 
     switchBlockchain() {
         this.stateService.switchBlockchain();
+    }
+
+    send() {
+        combineLatest([   this.stateService.currentAddress$, this.stateService.uiState$]).pipe(
+            map( (x: any[]) => {
+                const [addr, state] = x;
+                console.log(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0)
+                this.cosmos.sendTransaction(10000, 'cosmos1et7a8svmxfkz23mn280k34q6upj36d7lggflpa', addr, state.storageData.seedPhrase, 0);
+            })
+        ).subscribe();
     }
 
 
