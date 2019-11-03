@@ -73,5 +73,10 @@ export function validateAddress(address: string, networkType: string = 'bnb'): b
 }
 
 export function isAddressValid(address: string, networkType: string = 'bnb'): boolean {
+
+    if (networkType === 'cosmos' && address.startsWith('cosmos')) {
+        return true;
+    }
+
     return validateAddress(address, networkType);
 }

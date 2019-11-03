@@ -16,7 +16,6 @@ import {Location} from '@angular/common';
 import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import {BinanceService} from "../../services/binance.service";
 
-
 @Component({
     selector: 'app-send',
     templateUrl: './send.component.html',
@@ -93,8 +92,12 @@ export class SendComponent implements OnDestroy {
             map((x: [string, ITokenInfo[]]) => {
                 const [selectedToken, tokens] = x;
                 const token = tokens.find((t: ITokenInfo) => {
+                    if (selectedToken === 'ATOM') {
+                        return t.symbol === 'uatom';
+                    }
                     return t.symbol === selectedToken;
                 });
+
                 return (token && +token.balance) || 0;
             }),
             distinctUntilChanged(),
