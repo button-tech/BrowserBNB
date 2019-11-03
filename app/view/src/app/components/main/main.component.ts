@@ -50,7 +50,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     // isCosmos = false;
     // isCosmosSubscription: Subscription;
-    isCosmos$: Observable<boolean>;
+    // isCosmos$: Observable<boolean>;
     wcApiSubscription: Subscription;
 
     // wcMessagesSubscription: Subscription;
@@ -62,12 +62,11 @@ export class MainComponent implements OnInit, OnDestroy {
                 private wcApi: ChromeApiWalletConnectService,
                 private cosmos: CosmosService
     ) {
-
-        this.isCosmos$ = stateService.selectedBlockchain$.pipe(
-            map((blockchain: BlockchainType) => {
-                return blockchain === 'cosmos';
-            })
-        );
+        // this.isCosmos$ = stateService.selectedBlockchain$.pipe(
+        //     map((blockchain: BlockchainType) => {
+        //         return blockchain === 'cosmos';
+        //     })
+        // );
         // .subscribe((isCosmos: boolean) => {
         //     this.isCosmos = isCosmos;
         // });

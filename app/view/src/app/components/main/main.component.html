@@ -39,7 +39,7 @@
         </div>
 
         <div class="col-3">
-            <ng-container *ngIf="!(isCosmos$| async)">
+            <ng-container *ngIf="!(stateService.isCosmos$| async)">
                 <button *ngIf="!walletConnected" [satPopoverAnchor]="wc"
                         (mouseenter)="wc.open();"
                         (mouseleave)="wc.close();"
