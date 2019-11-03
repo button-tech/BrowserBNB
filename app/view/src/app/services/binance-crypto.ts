@@ -1,4 +1,5 @@
 import * as Binance from '../../assets/binance/bnbSDK.js';
+import * as Cosmos from '../../assets/cosmos/cosmosSDK.js';
 
 const isNotEmptyString = (str: string | any): boolean => {
     return !!str && (typeof str === 'string' || str instanceof String);
@@ -16,9 +17,14 @@ export function isValidMnemonic(mnemonic: string): boolean {
     return crypto.validateMnemonic(mnemonic);
 }
 
-export function getPrivateKeyFromMnemonic(mnemonic: string, index: number = 0): string {
+export function getPrivateKeyFromMnemonic(mnemonic: string, blockchain: string = "binance", index: number = 0): string {
     console.assert(isNotEmptyString(mnemonic));
-    return crypto.getPrivateKeyFromMnemonic(mnemonic, true, index);
+    switch (blockchain) {
+        case "binance":
+            return crypto.getPrivateKeyFromMnemonic(mnemonic, true, index);
+        case "cosmos":
+            return Cosmos.getPrivateKeyFromSeed(mnemonic, index);
+    }
 }
 
 export function getKeystoreFromMnemonic(mnemonic: string, password: string): any {
@@ -48,10 +54,18 @@ export function getSHA3hashSum(value: string): string {
 //     return BinanceCrypto.returnAddressFromPrivateKey(privateKey, networkType);
 // }
 
-export function getAddressFromPrivateKey(privateKey: string, networkType: string = 'bnb'): string {
+export function getAddressFromPrivateKey(privateKey: string, blockchain: string = "binance", networkType: string = 'bnb',
+                                         hdWalletIndex?: number): string {
     console.assert(isNotEmptyString(privateKey));
-    const publicKey = crypto.getPublicKeyFromPrivateKey(privateKey);
-    return crypto.getAddressFromPublicKey(publicKey, networkType);
+
+    switch (blockchain) {
+        case "binance":
+            const publicKey = crypto.getPublicKeyFromPrivateKey(privateKey);
+            return crypto.getAddressFromPublicKey(publicKey, networkType);
+        case "cosmos":
+            // todo: switch to networkType
+            return Cosmos.getAddressFromPrivateKey(privateKey, hdWalletIndex, "cosmos");
+    }
 }
 
 export function getPublicKeyFromPrivateKey(privateKey: string): string {

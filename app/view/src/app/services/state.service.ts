@@ -584,36 +584,44 @@ export class StateService {
 
     addAccount(): void {
         const seedPhrase = this.uiState.storageData.seedPhrase;
-        this.addAccountFromSeed(seedPhrase);
+        const blockchain = this.localStorageService.currentBlockchain;
+        this.addAccountFromSeed(seedPhrase, blockchain);
     }
 
     // UI, index and logical index...
-    addAccountFromSeed(seedPhrase: string, hdWalletIndex?: number): void {
+    addAccountFromSeed(seedPhrase: string, blockchain: string = "binance", hdWalletIndex?: number): void {
+        // todo: make switch case for blockchains with returned account property name
+        const accs = blockchain === "binance"
+            ? this.uiState.storageData.accounts
+            : this.uiState.storageData.cosmosAccounts;
 
         if (hdWalletIndex === undefined) {
-            const indexes = this.uiState.storageData.accounts.map(a => a.index);
+            const indexes = accs.map(a => a.index);
             hdWalletIndex = Math.max(...indexes) + 1;
         }
 
         // Prepare account
-        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, hdWalletIndex);
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, blockchain, hdWalletIndex);
 
-        const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
-        const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
+        const addressMainnet = getAddressFromPrivateKey(privateKey, blockchain, 'bnb', hdWalletIndex);
+        const addressTestnet = getAddressFromPrivateKey(privateKey, blockchain, 'tbnb', hdWalletIndex);
 
-        const maxUiIndex = this.uiState.storageData.accounts.length;
+        const maxUiIndex = accs.length;
         const name = `Account ${maxUiIndex + 1}`;
 
         const newStorageState: IStorageData = {
-            ...this.uiState.storageData,
-            accounts: [...this.uiState.storageData.accounts, {
-                addressMainnet,
-                addressTestnet,
-                privateKey,
-                index: hdWalletIndex,
-                name
-            }]
+            ...this.uiState.storageData
         };
+
+
+        // @ts-ignore
+        newStorageState[blockchain === "binance" ? "accounts" : "cosmosAccounts"] = [...accs, {
+            addressMainnet,
+            addressTestnet,
+            privateKey,
+            index: hdWalletIndex,
+            name
+        }];
 
         this.storageService.encryptAndSave(newStorageState, this.password);
 

@@ -41,7 +41,8 @@ export class ImportMnemonicComponent {
         }
 
         if (this.importSingleKey) {
-            this.stateService.addAccountFromSeed(mnemonic, 0);
+            this.stateService.addAccountFromSeed(mnemonic, "binance", 0);
+            this.stateService.addAccountFromSeed(mnemonic, "cosmos", 0);
             this.router.navigate(['/main']);
             return;
         }
