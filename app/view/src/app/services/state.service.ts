@@ -553,7 +553,7 @@ export class StateService {
         const newCosmosAccounts = this.uiState.storageData.cosmosAccounts
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
-        const newAccountsUI = this.uiState[accountListName]
+        const newAccountsUI = this.uiState.accounts
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
 
