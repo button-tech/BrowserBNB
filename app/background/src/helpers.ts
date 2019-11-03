@@ -13,7 +13,7 @@ export function fromWcEvent(eventName: string, wc: WalletConnect): Subject<any> 
     const subject$ = new Subject<any>();
     wc.on(eventName, (error, payload) => {
         if (eventName === 'call_request' || eventName === 'connect' || eventName === 'disconnect') {
-            debugger
+            // debugger
         }
 
         console.log(error, payload);
@@ -42,7 +42,7 @@ export function openWidget(): void {
     const url = `index.html?state="registration/import"`;
 
     // chrome.tabs.create({url:"index.html?#/registration/import"});
-    debugger
+    // debugger
     window.open(url, "extension_popup", "width=350,height=590,status=no,scrollbars=yes,resizable=no");
 }
 
