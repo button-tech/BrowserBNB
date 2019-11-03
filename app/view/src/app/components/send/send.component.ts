@@ -81,11 +81,11 @@ export class SendComponent implements OnDestroy {
 
     // Root subscription
 
-    constructor(private fb: FormBuilder,
-                private router: Router,
-                private stateService: StateService,
-                private location: Location,
-                private bncService: BinanceService) {
+    constructor(public fb: FormBuilder,
+                public router: Router,
+                public stateService: StateService,
+                public location: Location,
+                public bncService: BinanceService) {
 
         const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$} = this.stateService;
 
