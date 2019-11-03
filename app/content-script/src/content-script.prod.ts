@@ -12,7 +12,7 @@ if (binanceHrefRe.test(href) || trustHrefRe.test(href) || true) {
         const script = document.createElement('script');
         script.type = "text/javascript";
         // TODO: fix that on binance DOM side
-        script.innerHTML = consoleListener;
+        script.innerHTML = consoleListener.default;
         document.body.appendChild(script);
     }
 
