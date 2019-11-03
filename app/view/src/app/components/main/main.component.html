@@ -59,12 +59,31 @@
                     <i style="font-size: 20px; margin-top: -3em" class="fas fa-unlink"></i>
                 </button>
             </ng-container>
+
+            <ng-container  *ngIf="(stateService.isCosmos$| async)">
+                <button [satPopoverAnchor]="st"
+                                   (mouseenter)="st.open();"
+                                   (mouseleave)="st.close();"
+                                   style="margin-left: 2.3em; margin-top: 0.5em;"
+                                   class="btn btn-binance-outline-two btn-sm btn-just-icon btn-round">
+                <img width="20" height="20" style="margin-bottom: 15px" class="grayscale" alt="wc"
+                     src="../../../assets/icons/steak.jpg"/></button>
+            </ng-container>
         </div>
 
         <sat-popover #wc horizontalAlign="before" openTransition="150ms ease-out" closeTransition="150ms ease-in"
+                                         verticalAlign="below">
+        <div id="popup2" class="tooltip-wrapper">
+            {{this.walletConnectMessage$ | async }}
+        </div>
+        <div class="arrow">
+        </div>
+    </sat-popover>
+
+        <sat-popover #st horizontalAlign="before" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                      verticalAlign="below">
-            <div id="popup2" class="tooltip-wrapper">
-                {{this.walletConnectMessage$ | async }}
+            <div id="popup3" class="tooltip-wrapper">
+                {{ 'Stake' }}
             </div>
             <div class="arrow">
             </div>
