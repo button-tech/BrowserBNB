@@ -15,9 +15,11 @@
                 Networks
             </h4>
             <h4>
-                <ng-select [clearable]="false" [searchable]="false" [items]="networksList"
+                <ng-select *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'binance' " [clearable]="false" [searchable]="false" [items]="networksList"
                            [(ngModel)]="selectedNetwork" (change)="selectNetwork()">
                 </ng-select>
+
+                <strong *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'cosmos'">{{'Networks are not supported yet for Cosmos'}} </strong>
             </h4>
         </div>
     </div>
