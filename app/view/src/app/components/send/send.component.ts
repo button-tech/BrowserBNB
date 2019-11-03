@@ -16,7 +16,6 @@ import {Location} from '@angular/common';
 import {distinctUntilChanged, map, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import {BinanceService} from "../../services/binance.service";
 
-
 @Component({
     selector: 'app-send',
     templateUrl: './send.component.html',
@@ -87,14 +86,18 @@ export class SendComponent implements OnDestroy {
                 public location: Location,
                 public bncService: BinanceService) {
 
-        const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$} = this.stateService;
+        const {tokens$, bnb2fiatRate$, marketRates$, selectedNetwork$, simpleFee$, isCosmos$} = this.stateService;
 
         const balance$ = combineLatest([this.selectedToken$, tokens$]).pipe(
             map((x: [string, ITokenInfo[]]) => {
                 const [selectedToken, tokens] = x;
                 const token = tokens.find((t: ITokenInfo) => {
+                    if (selectedToken === 'ATOM') {
+                        return t.symbol === 'uatom';
+                    }
                     return t.symbol === selectedToken;
                 });
+
                 return (token && +token.balance) || 0;
             }),
             distinctUntilChanged(),
@@ -116,11 +119,16 @@ export class SendComponent implements OnDestroy {
 
         // fees subscription
         this.subscriptions.add(
-            combineLatest([simpleFee$, bnb2fiatRate$]).pipe(
-                tap((x: [number, number]) => {
-                    const [feeInBnb, bnb2fiatRate] = x;
-                    this.bnbTransferFee = feeInBnb;
-                    this.bnbTransferFeeFiat = feeInBnb * bnb2fiatRate;
+            combineLatest([simpleFee$, isCosmos$, bnb2fiatRate$]).pipe(
+                tap((x: [number, boolean, number]) => {
+                    const [feeInBnb, isCosmos, bnb2fiatRate] = x;
+                    if (isCosmos) {
+                        this.bnbTransferFee = 5000 / 1000000;
+                    } else {
+                        this.bnbTransferFee = feeInBnb;
+                    }
+
+                    this.bnbTransferFeeFiat = this.bnbTransferFee * bnb2fiatRate;
                 })
             ).subscribe()
         );
