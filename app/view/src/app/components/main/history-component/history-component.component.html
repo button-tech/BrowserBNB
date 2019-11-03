@@ -9,14 +9,18 @@
             </div>
             <div style="grid-column: 1; grid-row: 1/3 !important; align-self: center;
             align-content: center; align-items: center; margin-bottom: -1.5em; color: rgb(132, 142, 156);">
-                <img src="{{findMappedImage(tx.txAsset)}}" alt="info" width="25" height="25">
+                <img *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'"  src="{{findMappedImage(tx.txAsset)}}" alt="info" width="25" height="25">
+                <img *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'cosmos'" src="../../../../assets/icons/atom.png" alt="info" width="25" height="25">
             </div>
             <div style="font-size: 15px; font-weight: bold" class="type">
                 {{checkType(tx)}}
             </div>
             <div class="overflow-ellipsis" style="grid-column: 2/3; grid-row: 3; margin-top: -0.5em; color: rgb(132, 142, 156)">
-                <small style="font-size: 14px" class="sums">
+                <small *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'"  style="font-size: 14px" class="sums">
                     {{tx.value || ''}} {{this.findMappedName(tx.txAsset) || ''}}
+                </small>
+                <small *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'cosmos'"  style="font-size: 14px" class="sums">
+                    {{tx.value / 1000000 || ''}} {{this.findMappedName(tx.txAsset) || ''}}
                 </small>
             </div>
 
@@ -26,20 +30,20 @@
 
             <div class="text-center"
                  style="grid-column: 4; grid-row: 3; margin-top: -0.4em; margin-right: 0; margin-bottom: 0.2em">
-                    <i  [satPopoverAnchor]="details"
+                    <i   [satPopoverAnchor]="details"
                            (mouseenter)="details.open();"
                            (mouseleave)="details.close();" (click)="goToDetails(tx)"  style="color: rgb(33, 40, 51);" class="fas fa-info-circle custom-info" aria-hidden="true"></i>
             </div>
-            <sat-popover #details horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
+            <sat-popover  #details horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                          verticalAlign="below">
-                <div  *ngIf="tx.txAsset == 'BNB'"  class="tooltip-wrapper">
+                <div  *ngIf="tx.txAsset == 'BNB' && (stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'"  class="tooltip-wrapper">
                     It is about
                     <br>
                     {{(calculateSumInFiat(+tx.value) | async) || 'pending' }}
                     <br>
                     {{this.stateService.uiState$.getValue().storageData.baseFiatCurrency}}
                 </div>
-                <div  *ngIf="tx.txAsset != 'BNB'" class="tooltip-wrapper">
+                <div  *ngIf="tx.txAsset != 'BNB' && (stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'" class="tooltip-wrapper">
                     Transaction Fee
                     <br>
                     {{(calculateSumInFiat(+tx.txFee) | async) || 'pending' }}

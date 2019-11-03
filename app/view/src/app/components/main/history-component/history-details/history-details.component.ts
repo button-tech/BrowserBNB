@@ -55,6 +55,18 @@ export class HistoryDetailsComponent implements OnInit {
         );
     }
 
+    checkIfAtom(value): Observable<string> {
+        return  this.stateService.uiState$.pipe(
+            map((s) => {
+                if (s.storageData.selectedBlockchain === 'cosmos') {
+                    return value / 1000000;
+                } else {
+                    return value;
+                }
+            })
+        );
+    }
+
 
     ngOnInit() {
 

@@ -33,7 +33,7 @@
             <div style="grid-column: 1" *ngIf="(this.stateService.historyDetails$ | async).txFee > 0">Fee
             </div>
             <div style="grid-column: 2" *ngIf="(this.stateService.historyDetails$ | async).txFee > 0">
-                {{ (this.stateService.historyDetails$ | async).txFee + ' BNB'}}
+                {{ (this.stateService.historyDetails$ | async).txFee}} {{ (this.stateService.uiState$| async).storageData.selectedBlockchain === 'binance' ? 'BNB' : 'UATOM' }}
             </div>
             <div style="grid-column: 1; font-weight: bolder;"
                  *ngIf="(this.stateService.historyDetails$ | async).txFee > 0 && (this.stateService.historyDetails$ | async).txAsset && (this.stateService.historyDetails$ | async).value">
