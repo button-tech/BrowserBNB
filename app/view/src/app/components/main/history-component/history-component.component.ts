@@ -16,7 +16,7 @@ export class HistoryComponentComponent implements OnDestroy {
 
     loader: LoadersCSS = 'line-scale';
     bgColor = 'white';
-    color = 'rgb(239, 184, 11) ';
+    color = 'rgb(239, 184, 11) '; // rgb(80, 100, 251)
 
     isLoaded = false;
     history: IHistoryTx[] = [];

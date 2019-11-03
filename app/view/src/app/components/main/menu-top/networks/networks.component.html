@@ -1,6 +1,8 @@
 <sat-popover #menuNetwork horizontalAlign="center" verticalAlign="center" hasBackdrop>
     <div class="menu-wrapper" tabIndex="0">
-        <button *ngFor="let item of (networkMenu$ | async)" class="menu-item" style="cursor:pointer"
+        <button *ngFor="let item of (networkMenu$ | async)"
+                class="menu-item" style="cursor:pointer"
+                [ngClass]="{'cosmos':isCosmos| async}"
                 (click)="selectNetwork(item.networkPrefix); menuNetwork.toggle()">
             {{ item.label }}
         </button>
@@ -8,7 +10,7 @@
 </sat-popover>
 
 <button [satPopoverAnchor]="menuNetwork" (click)="menuNetwork.toggle()"
-        class="btn btn-link btn-outline btn-sm" id="networkBtn">
+        class="btn btn-link btn-outline btn-sm" id="networkBtn" [ngClass]="{'cosmos':isCosmos| async}">
     <strong id="NetworkWord">Network:</strong> {{ (this.stateService.selectedNetwork$ | async)?.label?.toUpperCase()}}
     <i class="fas fa-caret-down"></i>
 </button>
