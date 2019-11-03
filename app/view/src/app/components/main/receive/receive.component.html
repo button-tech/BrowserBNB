@@ -26,7 +26,7 @@
             </div>
             <div class="col-12 text-center"
                  style="padding-bottom: 1.5em; padding-right: 0; padding-left: 0em; margin-left: 0; margin-right: 0">
-                <p style="font-weight: bolder; color: rgb(33, 40, 51)">{{this.address$ | async}}
+                <p style="font-weight: bolder; color: rgb(33, 40, 51);font-size: 9px">{{(this.stateService.uiState$ | async ).storageData.selectedAddress}}
                     <button style="padding: 8px; background: rgba(132, 142, 156, 0.15); color: rgb(72, 81, 93);
          font-size: 10px; box-shadow: none;"
                             [satPopoverAnchor]="p"

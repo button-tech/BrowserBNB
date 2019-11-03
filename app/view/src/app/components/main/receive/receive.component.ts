@@ -26,8 +26,14 @@ export class ReceiveComponent implements OnInit, OnDestroy {
 
         this.subscription = this.stateService.currentAddress$.pipe(
             map((address: string) => {
-                this.network = this.stateService.selectedNetwork$.getValue().label.toLocaleLowerCase();
-                this.qrCode = address;
+                console.log('address')
+                console.log(address)
+
+                    this.network = this.stateService.selectedNetwork$.getValue().label.toLocaleLowerCase();
+                    this.qrCode = address;
+
+                
+
             })).subscribe();
     }
 
