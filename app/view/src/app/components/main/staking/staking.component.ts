@@ -40,7 +40,7 @@ export class StakingComponent implements OnInit {
 
     }
 
-    calculateStakedAmount(address): Observable<number> {
+    calculateStakedAmount(address: string): Observable<number> {
         const sub = this.http.get(`https://lcd-do-not-abuse.cosmostation.io/staking/delegators/${address}/delegations`).pipe(
             map((delegations: CosmosDelegation[]) => {
                 const shares = delegations && delegations.map((d: CosmosDelegation) => d.shares) || [];

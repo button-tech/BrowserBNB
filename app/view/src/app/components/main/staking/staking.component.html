@@ -13,20 +13,6 @@
     </div>
 
 
-    <div class="row mb-4">
-        <div class="col-3 d-flex align-items-center">
-            <label>Amount:</label>
-        </div>
-        <div class="col-9">
-            <!-- [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}" -->
-            <div class="amount-container">
-                <app-amount-input [(ngModel)]="abc" [coin]="'ATOM'" [rate2usd]="rate2usd">
-                </app-amount-input>
-            </div>
-        </div>
-    </div>
-
-
     <div class="text-center">
 
         <img width="70" height="70" src="../../../../assets/icons/barbeque.png">
@@ -36,28 +22,28 @@
             class="card-title">{{ fiatStaked | async}} {{stateService.uiState.storageData.baseFiatCurrency}}</h3>
         <p style="font-weight: bold; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">TOTALY DELEGATED</p>
     </div>
-    <div class="pr-4 pl-4 pt-4">
+
+    <div class="pr-4 pl-4">
         <hr class="unusualHr">
     </div>
 
+    <div class="row text-center" style="padding: 0 75px;margin-top: -5px; margin-bottom: 10px;">
+        <div class="col-12">
+            <!-- [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}" -->
+            <div class="amount-container">
+                <app-amount-input [(ngModel)]="abc" [coin]="'ATOM'" [rate2usd]="rate2usd">
+                </app-amount-input>
+            </div>
+        </div>
+    </div>
 
-    <!--    <div class="col-12">-->
-    <!--        <div class="amount-container"-->
-    <!--             [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}">-->
-    <!--            <app-amount-input formControlName="amount"-->
-    <!--                              [coin]="selectedToken"-->
-    <!--                              [rate2usd]="rate2usd">-->
-    <!--            </app-amount-input>-->
-    <!--        </div>-->
-    <!--    </div>-->
-
-    <div class="col-12 text-center">
+    <div class="col-12 text-center d-flex">
         <button (click)="cosmos.stakeFast(1000, stateService.uiState.currentAccount.address, stateService.uiState.currentAccount.privateKey)"
-                class="btn-lg btn-cosmos main-btn">STAKE
+                class="btn-lg btn-cosmos main-btn">STAKE</button>
+
+        <button (click)="calculateStakedAmount(stateService.uiState.currentAccount.address)"
+                class="btn-lg btn-outline-cosmos main-btn">UNSTAKE
         </button>
-        <br>
-        <br>
-        <button (click)="calculateStakedAmount('d')" class="btn-lg btn-outline-cosmos main-btn">UNSTAKE</button>
     </div>
 
 </div>
