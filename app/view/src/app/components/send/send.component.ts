@@ -83,7 +83,7 @@ export class SendComponent implements OnDestroy {
 
     constructor(private fb: FormBuilder,
                 private router: Router,
-                private stateService: StateService,
+                public stateService: StateService,
                 private location: Location,
                 private bncService: BinanceService) {
 

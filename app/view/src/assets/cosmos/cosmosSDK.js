@@ -49936,3 +49936,7 @@ exports.createContext = Script.createContext = function (context) {
 
 },{}]},{},[1])(1)
 });
+
+export function returnInstance(url, chainId) {
+    return  Cosmos.Cosmos.network(url, chainId);
+}
