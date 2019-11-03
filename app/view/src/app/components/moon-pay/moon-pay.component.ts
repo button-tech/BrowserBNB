@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
-import {Route, Router} from "@angular/router";
-import {StorageService} from "../../services/storage.service";
+import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {Router} from "@angular/router";
 import {StateService} from "../../services/state.service";
 import {LocalStorageService} from "../../services/local-storage.service";
 

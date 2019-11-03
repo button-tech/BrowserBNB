@@ -18,7 +18,7 @@ export class AccountsComponent {
     constructor(public stateService: StateService, private authService: AuthService, private router: Router,
                 private localStorageService: LocalStorageService) {
         this.accounts$ = stateService.uiState$.pipe(
-            pluck('accounts')
+            pluck("accounts")
         );
     }
 
