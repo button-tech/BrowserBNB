@@ -694,7 +694,7 @@ export class StateService {
     }
 
     switchBlockchain() {
-        const currentBlockchain = this.localStorageService.currentBlockchain;
+        const currentBlockchain = this.selectedBlockchain$.value;
         const newBlockchain = currentBlockchain === 'binance' ? 'cosmos' : 'binance';
 
         const selectedAddress = newBlockchain === 'binance'
