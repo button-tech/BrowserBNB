@@ -175,37 +175,39 @@ export class StorageService {
 
         // tslint:disable-next-line:max-line-length
         // const seedPhrase = 'offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousin';
-        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, 0);
-        const cosmosWallet: Wallet = getNewWalletFromSeed(seedPhrase);
-        console.table(cosmosWallet);
-
+        const binancePrivateKey = getPrivateKeyFromMnemonic(seedPhrase, "binance", 0);
+        const cosmosPrivateKey = getPrivateKeyFromMnemonic(seedPhrase, "cosmos", 0);
         // tslint:disable-next-line:max-line-length
         // offer caution gift cross surge pretty orange during eye soldier popular holiday mention east eight office fashion ill parrot vault rent devote earth cousins
-        const addressMainnet = getAddressFromPrivateKey(privateKey, 'bnb');
-        const addressTestnet = getAddressFromPrivateKey(privateKey, 'tbnb');
+        const binanceAddressMainnet = getAddressFromPrivateKey(binancePrivateKey, "binance", "bnb");
+        const binanceAddressTestnet = getAddressFromPrivateKey(binancePrivateKey, "binance", 'tbnb');
+
+        const cosmosAddressMainnet = getAddressFromPrivateKey(cosmosPrivateKey, "cosmos", "cosmos");
+        // todo: not cosmos
+        const cosmosAddressTestnet = getAddressFromPrivateKey(cosmosPrivateKey, "cosmos", 'cosmos');
 
         //
         const data: IStorageData = {
             seedPhrase,
             accounts: [
                 {
-                    addressMainnet,
-                    addressTestnet,
-                    privateKey,
+                    addressMainnet: binanceAddressMainnet,
+                    addressTestnet: binanceAddressTestnet,
+                    privateKey: binancePrivateKey,
                     index: 0,
                     name: 'Account 1',
                 }
             ],
             cosmosAccounts: [
                 {
-                    addressMainnet: cosmosWallet.cosmosAddress,
-                    addressTestnet: cosmosWallet.cosmosAddress,
-                    privateKey: cosmosWallet.privateKey,
+                    addressMainnet: cosmosAddressMainnet,
+                    addressTestnet: cosmosAddressTestnet,
+                    privateKey: cosmosPrivateKey,
                     index: 0,
                     name: 'Account 1',
                 }
             ],
-            selectedAddress: addressMainnet,
+            selectedAddress: binanceAddressMainnet,
             selectedNetwork: 'bnb',
             selectedNetworkEndpoint: NETWORK_ENDPOINT_MAPPING.MAINNET,
             baseFiatCurrency: CurrencySymbols.USD,
