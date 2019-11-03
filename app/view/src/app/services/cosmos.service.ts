@@ -60,7 +60,7 @@ export class CosmosService {
 
         return this.getAccountSequence$(addressFrom).pipe(
             switchMap((resp) => {
-                const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
                 cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
                 const ecpairPriv = cosmos.getECPairPriv(mnemonic);
