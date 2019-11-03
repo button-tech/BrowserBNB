@@ -9,5 +9,5 @@ export enum NETWORK_ENDPOINT_MAPPING {
 
     // TODO: check this out
     //'MAINNET_COSMOS' = 'https://blockatlas.trustwalletapp.com/',
-    'MAINNET_COSMOS' = 'https://lcd-do-not-abuse.cosmostation.io/txs',
+    'MAINNET_COSMOS' = 'http://node01.ip.sx:1317',
 }

@@ -8,6 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-crypto';
 import {CurrencySymbols, tokenDetailsList} from '../constants';
 import {CoursesService} from "./courses.service";
+import {CosmosService} from "./cosmos.service";
 
 export interface ITransaction {
     Amount: number;
@@ -185,7 +186,8 @@ export class StateService {
     constructor(private storageService: StorageService,
                 private bncService: BinanceService,
                 private http: HttpClient,
-                private courses: CoursesService) {
+                private courses: CoursesService,
+                private cosmosService: CosmosService) {
 
         this.currentAddress$ = this.uiState$.pipe(
             map((uiState: IUiState) => {
@@ -242,7 +244,14 @@ export class StateService {
 
                 return timer(0, 10000).pipe(
                     switchMap(() => {
-                        return this.bncService.getBalance$(address, endpoint);
+
+                        if (storageData.selectedBlockchain === 'binance') {
+
+                            return this.bncService.getBalance$(address, endpoint);
+                        }  else if (storageData.selectedBlockchain === 'cosmos') {
+                         
+                             return this.cosmosService.getBalance$(address, 'https://a381ae3c.ngrok.io/cosmos/auth/accounts/');
+                        }
                     })
                 );
             }),
@@ -255,7 +264,15 @@ export class StateService {
         };
 
         this.bnbBalance$ = this.allBalances$.pipe(
-            map((response) => pluckBalance(response, 'BNB')),
+            map((response) => {
+
+                if (this.uiState.storageData.selectedBlockchain === 'binance')   {
+                    return  pluckBalance(response, 'BNB');
+                }  else {
+                    return Number(response[0].free);
+                }
+
+            }),
             shareReplay(1)
         );
 

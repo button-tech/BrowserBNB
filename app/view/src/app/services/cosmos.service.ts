@@ -1,12 +1,55 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as Cosmos from '../../assets/cosmos/cosmosSDK.js';
+import {Observable, of} from "rxjs";
+import {catchError, map} from "rxjs/operators";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+
+export interface IBalance {
+    free: string;
+    frozen: string;
+    locked: string;
+    symbol: string;
+}
+
+export interface IGetBalanceResponse {
+    account_number: number;
+    address: string;
+    balances: IBalance[];
+    public_key: number[];
+    sequence: number;
+}
+
+export interface IHistoryTx {
+    txHash: string;
+    blockHeight: number;
+    txType: string;
+    timeStamp: Date;
+    fromAddr: string;
+    toAddr: string;
+    value: string;
+    txAsset: string;
+    txFee: string;
+    txAge: number;
+    orderId: string;
+    code: number;
+    data: string;
+    confirmBlocks: number;
+    memo: string;
+}
+
+export interface IGetHistoryResponse {
+    tx: IHistoryTx[];
+    total: number;
+}
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class CosmosService {
 
-    constructor() { }
+    constructor( private http: HttpClient ) {
+    }
 
     async sendTransaction() {
         const chainId = "cosmoshub-2";
@@ -16,7 +59,6 @@ export class CosmosService {
         cosmos.setPath("m/44'/118'/0'/0/0");
 
         const ecpairPriv = cosmos.getECPairPriv(mnemonic);
-
 
         const stdSignMsg = cosmos.NewStdMsg({
             type: "cosmos-sdk/MsgSend",
@@ -33,6 +75,30 @@ export class CosmosService {
         });
         const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
         cosmos.broadcast(signedTx).then(response => console.log(response));
+    }
+
+    getBalance$( address: string, endpoint: string ): Observable<IBalance[]> {
+        // return this.http.get(`${endpoint}/auth/account/${address}`).pipe(
+        console.log('tetetettette');
+        return this.http.get(`${endpoint}${address}`).pipe(
+            map(( response ) => {
+                // @ts-ignore
+                const sum = (Number(response.value.coins[0].amount) / 1000000).toString();
+                const bal = {
+                    free: sum,
+                    frozen: '0',
+                    locked: '0',
+                    symbol: 'uatom'
+                };
+
+                return [bal];
+            }),
+            catchError(( error: HttpErrorResponse ) => {
+                // TODO: properly handle binance 404 response
+                // const errResp:  AccountInfo;
+                return of([]);
+            })
+        );
     }
 }
 

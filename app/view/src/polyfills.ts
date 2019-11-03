@@ -81,7 +81,7 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
 
 // tslint:disable-next-line:no-var-keyword
 // var global = global || window;
-global.Buffer = global.Buffer || require('buffer').Buffer;
+// global.Buffer = global.Buffer || require('buffer').Buffer;
 
 /***************************************************************************************************
  * APPLICATION IMPORTS
