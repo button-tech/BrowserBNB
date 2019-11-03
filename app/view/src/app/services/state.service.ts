@@ -534,42 +534,26 @@ export class StateService {
     }
 
     removeAccount(account: IUiAccount): void {
-        const accountListName = this.localStorageService.currentBlockchain === "binance"
-            ? "accounts"
-            : "cosmosAccounts";
+        const isBinance = this.localStorageService.currentBlockchain === "binance";
+        const accountListName = isBinance ? "accounts" : "cosmosAccounts";
+        const chainAccountsCount = this.uiState.storageData[accountListName].length;
 
-        if (this.uiState.accounts.length <= 0) {
-            this.storageService.reset(); // Not sure that we need to reset in that case
-            return; // But that return is definitely required
+        if (chainAccountsCount === 1) {
+            // todo: you cannot delete last account
+            return;
         }
 
-        // todo: do not delete account from other chain
-
-        // Binance accounts
-        const newAccounts = this.uiState.storageData.accounts
-            .filter((accountToRemove) => accountToRemove.index !== account.index);
-
-        // Cosmos accounts
-        const newCosmosAccounts = this.uiState.storageData.cosmosAccounts
+        const newAccounts = this.uiState.storageData[accountListName]
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
         const newAccountsUI = this.uiState.accounts
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
-
-        let accountToPick = 0;
-        if (account.address === this.uiState.accounts[0].address && this.uiState.storageData.accounts.length > 1) {
-            accountToPick = 1;
-        } else if (this.uiState.storageData.accounts.length <= 1) {
-            this.storageService.reset();
-            return;
-        }
-
         const newStorageData: IStorageData = {
             seedPhrase: this.uiState.storageData.seedPhrase,
-            accounts: newAccounts,
-            cosmosAccounts: newCosmosAccounts,
-            selectedAddress: this.uiState.storageData.accounts[accountToPick].addressMainnet,
+            accounts: accountListName === "accounts" ? newAccounts : this.uiState.storageData.accounts,
+            cosmosAccounts: accountListName === "cosmosAccounts" ? newAccounts : this.uiState.storageData.cosmosAccounts,
+            selectedAddress: this.uiState.storageData[accountListName][0].addressMainnet,
             selectedNetwork: this.uiState.storageData.selectedNetwork,
             selectedNetworkEndpoint: this.uiState.storageData.selectedNetworkEndpoint,
             baseFiatCurrency: this.uiState.storageData.baseFiatCurrency,
@@ -579,7 +563,7 @@ export class StateService {
 
         const newUiState: IUiState = {
             accounts: newAccountsUI,
-            currentAccount: this.uiState.accounts[accountToPick],
+            currentAccount: this.uiState.accounts[0],
             storageData: newStorageData
         };
 
