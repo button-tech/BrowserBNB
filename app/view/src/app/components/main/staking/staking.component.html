@@ -15,11 +15,14 @@
 
     <div class="text-center">
         <img width="70" height="70" src="../../../../assets/icons/barbeque.png">
+
         <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 22px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
             class="card-title">{{ staked | async}} ATOM</h3>
+
         <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 18px; font-weight: 600; color: rgb(170,181,197);margin-top: -1em;"
             class="card-title">{{ fiatStaked | async}} {{stateService.uiState.storageData.baseFiatCurrency}}</h3>
-        <p style="font-weight: bold; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">TOTALY DELEGATED</p>
+
+        <p style="font-weight: bold; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">TOTALLY DELEGATED NOW</p>
     </div>
 
     <div class="pr-4 pl-4">
@@ -30,18 +33,20 @@
         <div class="col-12">
             <!-- [ngClass]="{'invalid': (amount.dirty || amount.touched) && amount.invalid}" -->
             <div class="amount-container">
-                <app-amount-input [(ngModel)]="abc" [coin]="'ATOM'" [rate2usd]="rate2usd">
+                <app-amount-input [(ngModel)]="amount" [coin]="'ATOM'"
+                                  [rate2usd]="this.stateService.bnb2fiatRate$ | async">
                 </app-amount-input>
             </div>
         </div>
     </div>
 
-    <div class="col-12 text-center d-flex">
-        <button (click)="cosmos.stakeFast(1000, stateService.uiState.currentAccount.address, stateService.uiState.currentAccount.privateKey)"
-                class="btn-lg btn-cosmos main-btn">STAKE</button>
+    <div class="d-flex  justify-content-center">
+        <button (click)="doStake()"
+                class="btn btn-cosmos-outline btn-lg main-btn mr-1">STAKE
+        </button>
 
-        <button (click)="calculateStakedAmount(stateService.uiState.currentAccount.address)"
-                class="btn-lg btn-outline-cosmos main-btn">UNSTAKE
+        <button (click)="doUnStake()"
+                class="btn btn-cosmos-outline btn-lg main-btn ml-1">UNSTAKE
         </button>
     </div>
 

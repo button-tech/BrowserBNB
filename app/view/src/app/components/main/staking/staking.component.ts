@@ -7,6 +7,7 @@ import BigNumber from 'bignumber.js';
 import {HttpClient} from "@angular/common/http";
 import {CosmosDelegation} from '@trustwallet/rpc/src/cosmos/models/CosmosDelegation';
 import {CosmosService} from "../../../services/cosmos.service";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-staking',
@@ -15,12 +16,18 @@ import {CosmosService} from "../../../services/cosmos.service";
 })
 export class StakingComponent implements OnInit {
     subscriptions: Subscription;
-    rate2usd: any;
     fiatStaked: Observable<string>;
     staked: Observable<string>;
-    abc = 0;
 
-    constructor(private location: Location, public stateService: StateService, private http: HttpClient, private cosmos: CosmosService) {
+    amount = 0;
+
+    constructor(private location: Location,
+                private router: Router,
+                public stateService: StateService,
+                private http: HttpClient,
+                private cosmos: CosmosService) {
+
+
         this.staked = this.calculateStakedAmount(this.stateService.uiState.currentAccount.address).pipe(
             map((resp) => {
                 return resp.toString();
@@ -41,7 +48,7 @@ export class StakingComponent implements OnInit {
     }
 
     calculateStakedAmount(address: string): Observable<number> {
-        const sub = this.http.get(`https://lcd-do-not-abuse.cosmostation.io/staking/delegators/${address}/delegations`).pipe(
+        return this.http.get(`https://lcd-do-not-abuse.cosmostation.io/staking/delegators/${address}/delegations`).pipe(
             map((delegations: CosmosDelegation[]) => {
                 const shares = delegations && delegations.map((d: CosmosDelegation) => d.shares) || [];
                 console.log(address);
@@ -49,7 +56,6 @@ export class StakingComponent implements OnInit {
                 return Number(BigNumber.sum(...shares)) / 1000000;
             })
         );
-        return sub;
     }
 
 
@@ -60,4 +66,19 @@ export class StakingComponent implements OnInit {
         this.location.back();
     }
 
+    get rawAmount(): number {
+        return +this.amount * 1000000;
+    }
+
+    doStake() {
+        const {address, privateKey} = this.stateService.uiState.currentAccount;
+        this.cosmos.stakeFast(this.rawAmount, address, privateKey);
+        this.router.navigate(['/main']);
+    }
+
+    doUnStake() {
+        const {address, privateKey} = this.stateService.uiState.currentAccount;
+        this.cosmos.unStakeFast(this.rawAmount, address, privateKey);
+        this.router.navigate(['/main']);
+    }
 }
