@@ -35,7 +35,7 @@ export class CustomNetworksComponent implements OnInit {
     selectedNetworkLabel$: Observable<string>;
     selectedNetwork = null;
 
-    constructor(private location: Location, private stateService: StateService) {
+    constructor(private location: Location, public stateService: StateService) {
 
     }
 

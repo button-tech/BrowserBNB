@@ -14,7 +14,7 @@ import {LocalStorageService} from "../../services/local-storage.service";
 export class UnlockComponent {
     keystore: any;
 
-    constructor(private localStorageService: LocalStorageService,
+    constructor(public localStorageService: LocalStorageService,
                 private authService: AuthService,
                 private router: Router,
                 private storage: StorageService,

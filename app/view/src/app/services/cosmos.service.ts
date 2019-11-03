@@ -79,13 +79,49 @@ export class CosmosService {
                     account_number: resp.accountNumber.toString(),
                     sequence: resp.seq.toString()
                 });
-                
 
-                const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
+
+                const signedTx = cosmos.sign(stdSignMsg, 'hex');
+
                 cosmos.broadcast(signedTx).then(response => console.log(response));
             })
         ).subscribe();
 
+    }
+
+    async sendTransactionWithPk(sum: number,
+                          addressTo: string,
+                          addressFrom: string,
+                          privateKey: string,
+                          message?: string) {
+
+        this.getAccountSequence$(addressFrom).pipe(
+            map(( resp ) => {
+
+                const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                cosmos.setBech32MainPrefix("cosmos");
+                const rawKey = Buffer.from(privateKey, 'hex');
+
+                const stdSignMsg = cosmos.NewStdMsg({
+                    type: "cosmos-sdk/MsgSend",
+                    from_address: addressFrom,
+                    to_address: addressTo,
+                    amountDenom: "uatom",
+                    amount: sum,
+                    feeDenom: "uatom",
+                    fee: 5000,
+                    gas: 200000,
+                    memo: message || '',
+                    account_number: resp.accountNumber.toString(),
+                    sequence: resp.seq.toString()
+                });
+
+
+                const signedTx = cosmos.sign(stdSignMsg, rawKey);
+
+                cosmos.broadcast(signedTx).then(response => console.log(response));
+            })
+        ).subscribe();
     }
 
     getBalance$( address: string, endpoint: string ): Observable<IBalance[]> {
@@ -147,6 +183,14 @@ export class CosmosService {
                 return of ({accountNumber: 0, seq:  0});
             })
         );
+    }
+
+    signRawMessage(mnemonic: string, rawMsg: any, accountIndex) {
+        const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+        cosmos.setBech32MainPrefix("cosmos");
+        cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
+        const ecpairPriv = cosmos.getECPairPriv(mnemonic);
+        cosmos.sign(rawMsg, ecpairPriv);
     }
 
 }
