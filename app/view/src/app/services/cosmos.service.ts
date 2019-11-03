@@ -96,7 +96,14 @@ export class CosmosService {
             catchError(( error: HttpErrorResponse ) => {
                 // TODO: properly handle binance 404 response
                 // const errResp:  AccountInfo;
-                return of([]);
+                const bal = {
+                    free: '0',
+                    frozen: '0',
+                    locked: '0',
+                    symbol: 'uatom'
+                };
+
+                return of ([bal]);
             })
         );
     }
