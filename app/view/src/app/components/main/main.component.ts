@@ -8,6 +8,7 @@ import {IBalance} from "../../services/binance.service";
 import {ActivatedRoute} from "@angular/router";
 import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api-wc.service";
 import {CosmosService} from "../../services/cosmos.service";
+import {BlockchainType} from "../../services/storage.service";
 
 @Component({
     selector: 'app-main',
@@ -47,6 +48,9 @@ export class MainComponent implements OnInit, OnDestroy {
     // callRequest: any = JSON.parse('{"id":1,"jsonrpc":"2.0","method":"bnb_sign","params":[{"account_number":"260658", "chain_id":"Binance-Chain-Tigris","data":null,"memo":"","msgs":[{"id":"8BCB4071024E9B57F8F79ACB81E4195BB1F6066A-2","ordertype":2,"price":169607,"quantity":5800000000,"sender":"bnb13095qugzf6d4078hnt9creqetwclvpn2htdccj","side":1,"symbol":"PYN-C37_BNB","timeinforce":1}],"sequence":"1","source":"0"}]}');
     //
 
+    // isCosmos = false;
+    // isCosmosSubscription: Subscription;
+    isCosmos$: Observable<boolean>;
     wcApiSubscription: Subscription;
 
     // wcMessagesSubscription: Subscription;
@@ -58,6 +62,15 @@ export class MainComponent implements OnInit, OnDestroy {
                 private wcApi: ChromeApiWalletConnectService,
                 private cosmos: CosmosService
     ) {
+
+        this.isCosmos$ = stateService.selectedBlockchain$.pipe(
+            map((blockchain: BlockchainType) => {
+                return blockchain === 'cosmos';
+            })
+        );
+        // .subscribe((isCosmos: boolean) => {
+        //     this.isCosmos = isCosmos;
+        // });
 
         this.accountName$ = this.stateService.uiState$.pipe(
             map((uiState: IUiState) => {
@@ -90,7 +103,6 @@ export class MainComponent implements OnInit, OnDestroy {
         // });
 
         this.wcApiSubscription = this.wcApi.walletConnectState$
-
             .subscribe((wcState: IWcState) => {
 
                 console.warn(wcState);
