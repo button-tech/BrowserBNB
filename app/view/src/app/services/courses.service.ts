@@ -45,5 +45,25 @@ export class CoursesService {
             shareReplay(1)
         );
     }
+    getCosmosRate$( baseCurrency: CurrencySymbols ): Observable<string> {
+        const url = 'https://node.buttonwallet.tech/courses/v1/prices';
+        const body = {
+            "tokens": [
+                "0x0000000000000000000000000000000000000076"
+            ],
+            "currencies": [
+                baseCurrency
+            ],
+            "change": "0",
+            "api": "cmc"
+        };
+
+        return this.http.post(url, body).pipe(
+            map(( response: ResponseFromCoursesApi ) => {
+                return Number((response.data[0].rates[0]["0x0000000000000000000000000000000000000076"])).toFixed(2);
+            }),
+            shareReplay(1)
+        );
+    }
 }
 

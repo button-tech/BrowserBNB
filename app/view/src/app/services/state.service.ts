@@ -313,7 +313,11 @@ export class StateService {
             .pipe(
                 switchMap((x: any[]) => {
                     const [_, baseCurrency] = x;
-                    return this.courses.getBinanceRate$(baseCurrency);
+                    if (this.uiState.storageData.selectedBlockchain === 'binance') {
+                        return this.courses.getBinanceRate$(baseCurrency);
+                    } else if (this.uiState.storageData.selectedBlockchain === 'cosmos') {
+                        return this.courses.getCosmosRate$(baseCurrency);
+                    }
                 }),
                 catchError((err) => {
                     console.log(err);
