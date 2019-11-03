@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as Cosmos from '../../assets/cosmos/cosmosSDK.js';
 import {from, Observable, of} from "rxjs";
-import {catchError, map, switchMap} from "rxjs/operators";
+import {catchError, map, switchMap, tap} from "rxjs/operators";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 
 export interface IBalance {
@@ -51,16 +51,15 @@ export class CosmosService {
     constructor( private http: HttpClient ) {
     }
 
-    async sendTransaction(sum: number,
+    sendTransaction(sum: number,
                           addressTo: string,
                           addressFrom: string,
                           mnemonic: string,
                           accountIndex: number,
-                          message?: string) {
+                          message?: string): Observable<any> {
 
-        this.getAccountSequence$(addressFrom).pipe(
-            map((resp) => {
-
+        return this.getAccountSequence$(addressFrom).pipe(
+            switchMap((resp) => {
                 const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
                 cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
@@ -76,15 +75,14 @@ export class CosmosService {
                     fee: 5000,
                     gas: 200000,
                     memo: message || '',
-                    account_number: resp.accountNumber.toString(),
-                    sequence: resp.seq.toString()
+                    ...resp
                 });
 
-
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
-
-                // cosmos.broadcast(signedTx).then(response => console.log(response));
                 return from(cosmos.broadcast(signedTx));
+            }),
+            tap( (x) => {
+                // debugger
             })
         );
 

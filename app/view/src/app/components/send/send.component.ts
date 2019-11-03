@@ -241,10 +241,10 @@ export class SendComponent implements OnDestroy {
 
                 // Send cosmos
                 return combineLatest([this.stateService.currentAddress$, this.stateService.uiState$]).pipe(
-                    map((x: [string, IUiState]) => {
+                    switchMap((x: [string, IUiState]) => {
                         const [myAddress, state] = x;
                         const seedPhrase = state.storageData.seedPhrase;
-                        const sum = +this.amount * 1000000;
+                        const sum = +this.amount.value * 1000000;
                         return this.cosmosService
                             .sendTransaction(sum, this.address.value, myAddress, seedPhrase, 0);
                     })
@@ -252,11 +252,9 @@ export class SendComponent implements OnDestroy {
             }),
             catchError((err: any) => {
                 console.log(err);
-                debugger
                 return of(false);
             })
         ).subscribe((x: any) => {
-            debugger
         });
     }
 
