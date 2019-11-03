@@ -4,6 +4,7 @@ import {RegistrationService} from '../../../services/registration.service';
 import {AlertsService} from '../../../services/alerts.service';
 import {isValidMnemonic} from '../../../services/binance-crypto';
 import {StateService} from "../../../services/state.service";
+import {LocalStorageService} from "../../../services/local-storage.service";
 
 @Component({
     selector: 'app-import-mnemonic',
@@ -18,7 +19,8 @@ export class ImportMnemonicComponent {
 
     private importSingleKey: boolean;
 
-    constructor(private stateService: StateService,
+    constructor(private localStorageService: LocalStorageService,
+                private stateService: StateService,
                 private regSvc: RegistrationService,
                 private router: Router,
                 private alert: AlertsService,
@@ -41,8 +43,14 @@ export class ImportMnemonicComponent {
         }
 
         if (this.importSingleKey) {
-            this.stateService.addAccountFromSeed(mnemonic, "binance", 0);
-            this.stateService.addAccountFromSeed(mnemonic, "cosmos", 0);
+            if (this.localStorageService.currentBlockchain === 'binance') {
+                this.stateService.addAccountFromSeedNoRender(mnemonic, "cosmos");
+                this.stateService.addAccountFromSeed(mnemonic, "binance");
+            } else if (this.localStorageService.currentBlockchain === 'cosmos') {
+                this.stateService.addAccountFromSeedNoRender(mnemonic, "binance");
+                this.stateService.addAccountFromSeed(mnemonic, "cosmos");
+            }
+
             this.router.navigate(['/main']);
             return;
         }

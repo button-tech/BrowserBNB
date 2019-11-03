@@ -602,7 +602,6 @@ export class StateService {
             ...this.uiState.storageData
         };
 
-
         // @ts-ignore
         newStorageState[blockchain === "binance" ? "accounts" : "cosmosAccounts"] = [...accs, {
             addressMainnet,
@@ -626,6 +625,47 @@ export class StateService {
             privateKey,
             index: hdWalletIndex,
         });
+
+        this.uiState$.next(this.uiState);
+    }
+
+    // TODO: copypast....
+    addAccountFromSeedNoRender(seedPhrase: string, blockchain: string = "binance", hdWalletIndex?: number): void {
+        // todo: make switch case for blockchains with returned account property name
+        const accs = blockchain === "binance"
+            ? this.uiState.storageData.accounts
+            : this.uiState.storageData.cosmosAccounts;
+
+        if (hdWalletIndex === undefined) {
+            const indexes = accs.map(a => a.index);
+            hdWalletIndex = Math.max(...indexes) + 1;
+        }
+
+        // Prepare account
+        const privateKey = getPrivateKeyFromMnemonic(seedPhrase, blockchain, hdWalletIndex);
+
+        const addressMainnet = getAddressFromPrivateKey(privateKey, blockchain, 'bnb', hdWalletIndex);
+        const addressTestnet = getAddressFromPrivateKey(privateKey, blockchain, 'tbnb', hdWalletIndex);
+
+        const maxUiIndex = accs.length;
+        const name = `Account ${maxUiIndex + 1}`;
+
+        const newStorageState: IStorageData = {
+            ...this.uiState.storageData
+        };
+
+        // @ts-ignore
+        newStorageState[blockchain === "binance" ? "accounts" : "cosmosAccounts"] = [...accs, {
+            addressMainnet,
+            addressTestnet,
+            privateKey,
+            index: hdWalletIndex,
+            name
+        }];
+
+        this.storageService.encryptAndSave(newStorageState, this.password);
+
+        this.uiState.storageData = newStorageState;
 
         this.uiState$.next(this.uiState);
     }
