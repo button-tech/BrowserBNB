@@ -1,5 +1,5 @@
 import {BehaviorSubject, combineLatest, from, merge, NEVER, Observable, Subject} from "rxjs";
-import {filter, map, shareReplay, switchMap, take, takeUntil, tap} from "rxjs/operators";
+import {debounceTime, filter, map, shareReplay, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
 import {signTransaction} from "./binancecrypto";
 import Port = chrome.runtime.Port;
@@ -40,7 +40,7 @@ const wcPort$ = wcPortSubject$.asObservable();
 const wcLinkFromContentScript$ = new Subject<string>();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const {wcLink} = request;
-    debugger
+    // debugger
     console.log(request, sender, sendResponse);
     if (request.wcLink) {
         sendResponse("Ok");
@@ -60,6 +60,7 @@ const manualReconnectToLastWcLink$ = manualReconnect$.pipe(
 );
 
 const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manualReconnectToLastWcLink$).pipe(
+    debounceTime(300),
     switchMap((wcLink: string) => {
         console.log(wcLink);
 
@@ -130,6 +131,7 @@ const privateKey$ = reactiveWc$.pipe(
             take(1),
             filter((responseFromUi: PortAndMessage) => {
                 const {message} = responseFromUi;
+                // debugger
                 return message.isApproved;
             }),
             map((responseFromUi: PortAndMessage) => {
@@ -181,18 +183,39 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
 
         return combineLatest([reactiveWc.callRequest$, wcPort$]).pipe(
             tap((x: any[]) => {
+                // debugger
                 console.log(x);
             }),
 
             takeUntil(reactiveWc.disconnect$),
             filter((x: any[]) => {
                 const [callRequest] = x;
-                return callRequest.method === 'bnb_sign'; // bnb_tx_confirmation
+                return callRequest.method === 'bnb_sign' || callRequest.method === 'get_accounts';
+                // bnb_tx_confirmation
             }),
-
             switchMap((x: any[]) => {
                 // Send to UI
                 const [callRequest, port] = x;
+
+                if (callRequest.method === 'get_accounts') {
+                    // debugger
+                    reactiveWc.instance.approveRequest({
+                        id: callRequest.id,
+                        result: [{
+                            "address": "cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz",
+                            "network": 118,
+                            "imageURL": 'icon_walletconnect.svg'
+                        }],
+                        // result: JSON.stringify([{
+                        //     displayName: 'Account 1',
+                        //     id: 'ac1',
+                        //     // imageURL?: undefined;
+                        //     // name?: string;
+                        //     rpDisplayName: 'Account 1 RP',
+                        // }]),
+                    });
+                    return NEVER;
+                }
 
                 if (!port) {
                     console.log('!port');
@@ -228,7 +251,6 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
                         }
                     })
                 );
-
             }),
         );
     })

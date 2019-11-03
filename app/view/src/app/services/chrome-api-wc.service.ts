@@ -132,6 +132,7 @@ export class ChromeApiWalletConnectService {
 
         const prevState = this._walletConnectState$.getValue();
 
+        // debugger
         prevState.wcPort.postMessage({
             isApproved,
             privateKey: this.stateService.uiState.currentAccount.privateKey,
