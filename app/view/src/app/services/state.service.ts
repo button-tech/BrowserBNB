@@ -257,10 +257,8 @@ export class StateService {
                     switchMap(() => {
 
                         if (storageData.selectedBlockchain === 'binance') {
-
                             return this.bncService.getBalance$(address, endpoint);
                         } else if (storageData.selectedBlockchain === 'cosmos') {
-
                             return this.cosmosService.getBalance$(address, 'https://lcd-do-not-abuse.cosmostation.io/auth/accounts/');
                         }
                     })

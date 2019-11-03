@@ -207,6 +207,10 @@ export class MainComponent implements OnInit, OnDestroy {
     approveOrder(isApproved: boolean) {
         this.wcApi.approveOrder(isApproved);
     }
+
+    connectTrustPlatform() {
+        window.open('http://localhost:4201', '_blank');
+    }
 }
 
 function setInfoForWcButton(blockchain: BehaviorSubject<IUiState>, isConnected: boolean): Observable<string> {
