@@ -26,6 +26,8 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
     chain_id: string;
     side: number;
 
+    transaction: any;
+
     constructor(public stateService: StateService, private cosmosService: CosmosService) {
     }
 
@@ -33,7 +35,20 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
         //
     }
 
+
     approve(value: boolean) {
+
+        if (this.transaction) {
+            if (value) {
+                const {privateKey} = this.stateService.uiState.currentAccount;
+                const signed = this.cosmosService.signRawMessage(privateKey, this.transaction);
+                this.singedCosmosTx.next(signed);
+            }
+
+            this.transaction = null;
+            return;
+        }
+
         this.isApproved.next(value);
     }
 
@@ -46,11 +61,11 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
         const jsonRpc = changes.callRequest.currentValue;
 
         console.log("WC-CALL-REQUEST-APPROVE", jsonRpc.params);
+        console.log("jsonRpc.params[0]:", jsonRpc.params[0]);
+        console.log("sonRpc.params[0].network:", jsonRpc.params[0] && jsonRpc.params[0].network);
 
-        if (jsonRpc.params.network === 118) {
-            const {privateKey} = this.stateService.uiState.currentAccount;
-            const signed = this.cosmosService.signRawMessage(privateKey, jsonRpc.params.transaction);
-            this.singedCosmosTx.next(signed);
+        if (jsonRpc.params[0] && jsonRpc.params[0].network === 118) {
+            this.transaction = jsonRpc.params[0].transaction;
             return;
         }
         //

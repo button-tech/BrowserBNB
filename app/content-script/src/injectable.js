@@ -44,6 +44,12 @@ console.log = function () {
         return;
     }
 
+    if (arguments[0] && arguments[0].startsWith && arguments[0].startsWith("wc:")) {
+        window.postMessage({type: "FROM_PAGE", text: arguments[0]}, "*");
+        window.wasShown = true;
+        return;
+    }
+
     if (arguments[0] === 'WalletConnect URI') {
         window.postMessage({type: "FROM_PAGE", text: arguments[1]}, "*");
         window.wasShown = true;
