@@ -245,7 +245,8 @@ export class SendComponent implements OnDestroy {
                         const [myAddress, state] = x;
                         const seedPhrase = state.storageData.seedPhrase;
                         const sum = +this.amount * 1000000;
-                        return this.cosmosService.sendTransaction(sum, this.address.value, myAddress, seedPhrase, 0);
+                        return this.cosmosService
+                            .sendTransaction(sum, this.address.value, myAddress, seedPhrase, 0);
                     })
                 );
             }),

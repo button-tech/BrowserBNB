@@ -8,6 +8,6 @@ export enum NETWORK_ENDPOINT_MAPPING {
     'TESTNET_ATLANTIC' = 'https://testnet-dex-atlantic.binance.org/',
 
     // TODO: check this out
-    //'MAINNET_COSMOS' = 'https://blockatlas.trustwalletapp.com/',
+    // 'MAINNET_COSMOS' = 'https://blockatlas.trustwalletapp.com/',
     'MAINNET_COSMOS' = 'http://node01.ip.sx:1317',
 }

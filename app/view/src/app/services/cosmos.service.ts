@@ -51,15 +51,15 @@ export class CosmosService {
     constructor( private http: HttpClient ) {
     }
 
-    sendTransaction(sum: number,
+    async sendTransaction(sum: number,
                           addressTo: string,
                           addressFrom: string,
                           mnemonic: string,
                           accountIndex: number,
-                          message?: string): Observable<any> {
+                          message?: string) {
 
-        return this.getAccountSequence$(addressFrom).pipe(
-            switchMap((resp) => {
+        this.getAccountSequence$(addressFrom).pipe(
+            map((resp) => {
 
                 const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
@@ -76,14 +76,53 @@ export class CosmosService {
                     fee: 5000,
                     gas: 200000,
                     memo: message || '',
-                    ...resp
+                    account_number: resp.accountNumber.toString(),
+                    sequence: resp.seq.toString()
                 });
 
+
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
+
+                // cosmos.broadcast(signedTx).then(response => console.log(response));
                 return from(cosmos.broadcast(signedTx));
             })
         );
 
+    }
+
+    async sendTransactionWithPk(sum: number,
+                          addressTo: string,
+                          addressFrom: string,
+                          privateKey: string,
+                          message?: string) {
+
+        this.getAccountSequence$(addressFrom).pipe(
+            map(( resp ) => {
+
+                const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                cosmos.setBech32MainPrefix("cosmos");
+                const rawKey = Buffer.from(privateKey, 'hex');
+
+                const stdSignMsg = cosmos.NewStdMsg({
+                    type: "cosmos-sdk/MsgSend",
+                    from_address: addressFrom,
+                    to_address: addressTo,
+                    amountDenom: "uatom",
+                    amount: sum,
+                    feeDenom: "uatom",
+                    fee: 5000,
+                    gas: 200000,
+                    memo: message || '',
+                    account_number: resp.accountNumber.toString(),
+                    sequence: resp.seq.toString()
+                });
+
+
+                const signedTx = cosmos.sign(stdSignMsg, rawKey);
+
+                cosmos.broadcast(signedTx).then(response => console.log(response));
+            })
+        ).subscribe();
     }
 
     getBalance$( address: string, endpoint: string ): Observable<IBalance[]> {
@@ -144,6 +183,13 @@ export class CosmosService {
                 return of ({account_number: 0, sequence:  0});
             })
         );
+    }
+
+    signRawMessage(pk: string, rawMsg: any): any {
+        const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+        cosmos.setBech32MainPrefix("cosmos");
+        const ecpairPriv = Buffer.from(pk, 'hex');
+        return cosmos.sign(rawMsg, ecpairPriv);
     }
 
 }

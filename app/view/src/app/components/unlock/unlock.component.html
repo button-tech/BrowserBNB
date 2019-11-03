@@ -1,38 +1,45 @@
-<div (keydown)="onKeydown($event)" class="container">
-    <div class="row text-center">
-        <div style="margin-top: 4.5em; margin-left: 0.8em" align="center" class="col-12 text-center">
-            <img src="../../../assets/svg/computer.svg">
-        </div>
+<ng-container *ngIf="localStorageService.currentBlockchain as blockchain">
+    <div (keydown)="onKeydown($event)" class="container">
+        <div class="row text-center">
+            <div style="margin-top: 4.5em; margin-left: 0.8em" align="center" class="col-12 text-center">
+                <img src="../../../assets/svg/computer.svg">
+            </div>
 
-<!--        <div *ngIf="messageFromServer" style="display: inline-flex;  justify-content: center; margin-top: 1em" class="col-12 text-center">-->
-<!--            <div>-->
-<!--                <img width="20" height="20" src="../../../assets/icons/icon128.png" alt="BNB">-->
-<!--            </div>-->
-<!--            <div style="margin-left: 0.4em">-->
-<!--                <p style="font-family: 'Montserrat', sans-serif !important;  font-size: 18px; font-weight: 500;  color: rgb(72, 81, 93);"-->
-<!--                   class="card-title">{{(messageFromServer + ' USD')}}</p>-->
-<!--            </div>-->
-<!--        </div>-->
+            <!--        <div *ngIf="messageFromServer" style="display: inline-flex;  justify-content: center; margin-top: 1em" class="col-12 text-center">-->
+            <!--            <div>-->
+            <!--                <img width="20" height="20" src="../../../assets/icons/icon128.png" alt="BNB">-->
+            <!--            </div>-->
+            <!--            <div style="margin-left: 0.4em">-->
+            <!--                <p style="font-family: 'Montserrat', sans-serif !important;  font-size: 18px; font-weight: 500;  color: rgb(72, 81, 93);"-->
+            <!--                   class="card-title">{{(messageFromServer + ' USD')}}</p>-->
+            <!--            </div>-->
+            <!--        </div>-->
 
-        <div class="col-12">
-            <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
-                class="card-title">Welcome back!</h3>
-            <p style="font-weight: bolder; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">Enter your
-                password to continue</p>
-        </div>
-        <div style="margin-top: 2em; padding-left:1.5em; padding-right: 1.5em !important" class="col-12 text-center">
-            <div class="form-group">
-                <input type="password" class="form-control input-text" id="password" placeholder="Password">
+            <div class="col-12">
+                <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
+                    class="card-title">Welcome back!</h3>
+                <p style="font-weight: bolder; font-size: 16px; margin-top: -0.5em; color: rgb(72, 81, 93);">Enter your
+                    password to continue</p>
+            </div>
+            <div style="margin-top: 2em; padding-left:1.5em; padding-right: 1.5em !important" class="col-12 text-center">
+                <div class="form-group">
+                    <input type="password" class="form-control input-text" id="password" placeholder="Password">
+                </div>
+            </div>
+            <div style="margin-top: 0.75em;" class="col-12 text-center">
+
+                <button *ngIf="blockchain === 'binance'" (click)="unlock();" class="btn btn-binance btn-lg">Continue
+                </button>
+
+                <button *ngIf="blockchain === 'cosmos'" (click)="unlock();" class="btn btn-cosmos btn-lg">Continue
+                </button>
+
+                <br>
+                <button class="btn btn-sm btn-link" (click)="navigateToApproval('removeall')"
+                        style="font-weight: bold; color: rgb(132, 142, 156); margin-top: 1em; text-decoration: underline; font-size: 13px">
+                    Reset all
+                </button>
             </div>
         </div>
-        <div style="margin-top: 0.75em;" class="col-12 text-center">
-            <button (click)="unlock();" class="btn btn-binance btn-lg">Continue
-            </button>
-            <br>
-            <button class="btn btn-sm btn-link" (click)="navigateToApproval('removeall')"
-                    style="font-weight: bold; color: rgb(132, 142, 156); margin-top: 1em; text-decoration: underline; font-size: 13px">
-                Reset all
-            </button>
-        </div>
     </div>
-</div>
+</ng-container>

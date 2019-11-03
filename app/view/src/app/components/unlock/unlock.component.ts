@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {StorageService} from '../../services/storage.service';
 import {AuthService} from '../../services/auth.service';
 import {AlertsService} from '../../services/alerts.service';
+import {LocalStorageService} from "../../services/local-storage.service";
 
 
 @Component({
@@ -13,7 +14,8 @@ import {AlertsService} from '../../services/alerts.service';
 export class UnlockComponent {
     keystore: any;
 
-    constructor(private authService: AuthService,
+    constructor(public localStorageService: LocalStorageService,
+                private authService: AuthService,
                 private router: Router,
                 private storage: StorageService,
                 public alert: AlertsService,

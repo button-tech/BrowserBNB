@@ -26,7 +26,7 @@ export class HistoryComponentComponent implements OnDestroy {
 
     constructor(private stateService: StateService, private router: Router) {
 
-        const isCosmos = stateService.selectedBlockchain$.pipe(
+        const isCosmos = this.stateService.selectedBlockchain$.pipe(
             tap((blockchain: BlockchainType) => {
                 this.color = blockchain === 'cosmos'
                     ? "rgb(80, 100, 251)"

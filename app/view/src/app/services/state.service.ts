@@ -9,6 +9,7 @@ import {getAddressFromPrivateKey, getPrivateKeyFromMnemonic} from './binance-cry
 import {CurrencySymbols, tokenDetailsList} from '../constants';
 import {CoursesService} from "./courses.service";
 import {CosmosService} from "./cosmos.service";
+import {LocalStorageService} from "./local-storage.service";
 
 export interface ITransaction {
     Amount: number;
@@ -184,7 +185,8 @@ export class StateService {
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
     isCosmos$: Observable<boolean>;
 
-    constructor(private storageService: StorageService,
+    constructor(private localStorageService: LocalStorageService,
+                private storageService: StorageService,
                 private bncService: BinanceService,
                 private http: HttpClient,
                 private courses: CoursesService,
@@ -719,6 +721,8 @@ export class StateService {
             ...this.uiState,
             storageData: newStorageState
         };
+
+        this.localStorageService.currentBlockchain = newBlockchain;
 
         this.uiState$.next(newUiState);
 

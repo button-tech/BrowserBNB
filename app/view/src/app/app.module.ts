@@ -16,6 +16,7 @@ import {UnlockComponent} from './components/unlock/unlock.component';
 import {EditFormComponent} from './components/main/edit-form/edit-form.component';
 import {AuthService} from './services/auth.service';
 import {RegistrationService} from './services/registration.service';
+import {LocalStorageService} from './services/local-storage.service';
 import {AuthGuardService} from './services/auth-guard.service';
 import {RegistrationComponent} from './components/registration/registration.component';
 import {ClipboardService} from './services/clipboard.service';
@@ -54,10 +55,13 @@ import {SeedComponent} from './components/main/menu-top/settings/security-privac
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
 import {AmountInputComponent} from "./components/send/amount-input/amount-input.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
+import { ValidatorsListComponent } from './components/main/staking/validators-list/validators-list.component';
+import { StakingComponent } from './components/main/staking/staking.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        StakingComponent,
         FirstPageComponent,
         MnemonicComponent,
         PasswordComponent,
@@ -89,7 +93,8 @@ import {DigitOnlyModule} from "@uiowa/digit-only";
         WcSessionApproveComponent,
         AboutComponent,
         ApproveComponent,
-        SeedComponent
+        SeedComponent,
+        ValidatorsListComponent
     ],
     imports: [
         BrowserModule,
@@ -116,6 +121,7 @@ import {DigitOnlyModule} from "@uiowa/digit-only";
     ],
     providers: [
         RegistrationService,
+        LocalStorageService,
         AuthService,
         AuthGuardService,
         StateService,
