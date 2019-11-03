@@ -7,6 +7,7 @@ import {IUiState, StateService} from '../../services/state.service';
 import {IBalance} from "../../services/binance.service";
 import {ActivatedRoute} from "@angular/router";
 import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api-wc.service";
+import {CosmosService} from "../../services/cosmos.service";
 
 @Component({
     selector: 'app-main',
@@ -54,7 +55,8 @@ export class MainComponent implements OnInit, OnDestroy {
                 public stateService: StateService,
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
-                private wcApi: ChromeApiWalletConnectService
+                private wcApi: ChromeApiWalletConnectService,
+                private cosmos: CosmosService
     ) {
 
         this.accountName$ = this.stateService.uiState$.pipe(

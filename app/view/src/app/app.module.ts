@@ -54,6 +54,7 @@ import {SeedComponent} from './components/main/menu-top/settings/security-privac
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
 import {AmountInputComponent} from "./components/send/amount-input/amount-input.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
+import { CosmosComponent } from './components/cosmos/cosmos.component';
 
 
 @NgModule({
@@ -90,7 +91,8 @@ import {DigitOnlyModule} from "@uiowa/digit-only";
         WcSessionApproveComponent,
         AboutComponent,
         ApproveComponent,
-        SeedComponent
+        SeedComponent,
+        CosmosComponent
     ],
     imports: [
         BrowserModule,
