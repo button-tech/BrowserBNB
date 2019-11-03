@@ -425,7 +425,6 @@ export class StateService {
             : data.cosmosAccounts;
 
         const uiAccounts = storageAccounts2uiAccounts(accountList, selectedNetwork);
-        debugger
         const selectedAccount = uiAccounts.find((account: IUiAccount) => {
             return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
         });
@@ -442,7 +441,6 @@ export class StateService {
             label
         };
 
-        debugger
         const uiState: IUiState = {
             accounts: uiAccounts,
             currentAccount: selectedAccount,
@@ -617,7 +615,6 @@ export class StateService {
         const newStorageState: IStorageData = {
             ...data,
             selectedNetwork: network,
-            selectedNetwork: network,
             selectedNetworkEndpoint: endpoint
         };
 
@@ -638,7 +635,6 @@ export class StateService {
 
         const newUiAccounts = storageAccounts2uiAccounts(accountList, network);
 
-        // Проблема тут
         let selectedAccount = newUiAccounts.find((account) => {
             return account.addressMainnet === data.selectedAddress ||
                 account.addressTestnet === data.selectedAddress;
@@ -646,7 +642,6 @@ export class StateService {
 
         if (!selectedAccount) {
             selectedAccount = newUiAccounts[0];
-            data.selectedAddress
         }
 
         const newUiState: IUiState = {
@@ -663,8 +658,13 @@ export class StateService {
         const currentBlockchain = this.selectedBlockchain$.value;
         const newBlockchain = currentBlockchain === 'binance' ? 'cosmos' : 'binance';
 
+        const selectedAddress = newBlockchain === 'binance'
+            ? this.uiState.storageData.accounts[0].addressMainnet
+            : this.uiState.storageData.cosmosAccounts[0].addressMainnet;
+
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
+            selectedAddress,
             selectedBlockchain: newBlockchain
         };
         this.storageService.encryptAndSave(newStorageState, this.password);
@@ -678,8 +678,8 @@ export class StateService {
 
         this.selectedBlockchain$.next(newBlockchain);
 
-
         // Switch to mainnet when switch blockchain
+        // setTimeout()
         this.switchNetwork(newBlockchain === 'binance' ? 'bnb' : 'cosmos');
     }
 
