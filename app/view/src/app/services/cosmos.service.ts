@@ -81,7 +81,7 @@ export class CosmosService {
                 });
 
 
-                const signedTx = cosmos.sign(stdSignMsg, 'hex');
+                const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
 
                 cosmos.broadcast(signedTx).then(response => console.log(response));
             })
@@ -185,12 +185,11 @@ export class CosmosService {
         );
     }
 
-    signRawMessage(mnemonic: string, rawMsg: any, accountIndex) {
+    signRawMessage(pk: string, rawMsg: any): any {
         const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
         cosmos.setBech32MainPrefix("cosmos");
-        cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
-        const ecpairPriv = cosmos.getECPairPriv(mnemonic);
-        cosmos.sign(rawMsg, ecpairPriv);
+        const ecpairPriv = Buffer.from(pk, 'hex');
+        return cosmos.sign(rawMsg, ecpairPriv);
     }
 
 }
