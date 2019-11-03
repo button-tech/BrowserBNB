@@ -51,15 +51,15 @@ export class CosmosService {
     constructor( private http: HttpClient ) {
     }
 
-    sendTransaction(sum: number,
-                          addressTo: string,
-                          addressFrom: string,
-                          mnemonic: string,
-                          accountIndex: number,
-                          message?: string): Observable<any> {
+    sendTransaction( sum: number,
+                     addressTo: string,
+                     addressFrom: string,
+                     mnemonic: string,
+                     accountIndex: number,
+                     message?: string ): Observable<any> {
 
         return this.getAccountSequence$(addressFrom).pipe(
-            switchMap((resp) => {
+            switchMap(( resp ) => {
                 const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
                 cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
@@ -81,23 +81,23 @@ export class CosmosService {
                 const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
                 return from(cosmos.broadcast(signedTx));
             }),
-            tap( (x) => {
+            tap(( x ) => {
                 // debugger
             })
         );
 
     }
 
-    async sendTransactionWithPk(sum: number,
-                          addressTo: string,
-                          addressFrom: string,
-                          privateKey: string,
-                          message?: string) {
+    async sendTransactionWithPk( sum: number,
+                                 addressTo: string,
+                                 addressFrom: string,
+                                 privateKey: string,
+                                 message?: string ) {
 
         this.getAccountSequence$(addressFrom).pipe(
             map(( resp ) => {
 
-                const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
                 cosmos.setBech32MainPrefix("cosmos");
                 const rawKey = Buffer.from(privateKey, 'hex');
 
@@ -148,25 +148,25 @@ export class CosmosService {
                     symbol: 'uatom'
                 };
 
-                return of ([bal]);
+                return of([bal]);
             })
         );
     }
 
-    getHistory$(address: string, endpoint: string): Observable<IHistoryTx[]> {
+    getHistory$( address: string, endpoint: string ): Observable<IHistoryTx[]> {
         return this.http.get(`http://78.47.86.168:31228/blockatlas/v1/cosmos/${address}`)
             .pipe(
-                map((response) => {
+                map(( response ) => {
                     return reMap(response).tx;
                 }),
-                catchError((error: HttpErrorResponse) => {
+                catchError(( error: HttpErrorResponse ) => {
                     // TODO: properly handle binance 404 response
                     return of([]);
                 })
             );
     }
 
-    getAccountSequence$(address: string): Observable<any> {
+    getAccountSequence$( address: string ): Observable<any> {
         return this.http.get(`https://lcd-do-not-abuse.cosmostation.io/auth/accounts/${address}`).pipe(
             map(( response: any ) => {
                 const {account_number, sequence} = response.value;
@@ -178,47 +178,114 @@ export class CosmosService {
             catchError(( error: HttpErrorResponse ) => {
                 // TODO: properly handle binance 404 response
                 // const errResp:  AccountInfo;
-                return of ({account_number: 0, sequence:  0});
+                return of({account_number: 0, sequence: 0});
             })
         );
     }
 
-    signRawMessage(pk: string, rawMsg: any): any {
-        const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+    signRawMessage( pk: string, rawMsg: any ): any {
+        const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
         cosmos.setBech32MainPrefix("cosmos");
         const ecpairPriv = Buffer.from(pk, 'hex');
         return cosmos.sign(rawMsg, ecpairPriv);
     }
 
+    stakeFast( sum: number,
+               addressFrom: string,
+               privateKey: string,
+    ) {
+
+        this.getAccountSequence$(addressFrom).pipe(
+            map(( resp ) => {
+
+                const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                cosmos.setBech32MainPrefix("cosmos");
+                const rawKey = Buffer.from(privateKey, 'hex');
+
+                const stdSignMsg = cosmos.NewStdMsg({
+                    type: "cosmos-sdk/MsgDelegate",
+                    delegator_address: addressFrom,
+                    validator_address: "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5",
+                    amountDenom: "uatom",
+                    amount: sum,
+                    feeDenom: "uatom",
+                    fee: 5000,
+                    gas: 200000,
+                    memo: "",
+                    account_number: resp.account_number.toString(),
+                    sequence: resp.sequence.toString()
+                });
+
+                const signedTx = cosmos.sign(stdSignMsg, rawKey);
+
+                cosmos.broadcast(signedTx).then(response => console.log(response));
+            })
+        ).subscribe();
+    }
+
+    unStakeFast( sum: number,
+               addressFrom: string,
+               privateKey: string,
+    ) {
+
+        this.getAccountSequence$(addressFrom).pipe(
+            map(( resp ) => {
+
+                const cosmos = Cosmos.network('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                cosmos.setBech32MainPrefix("cosmos");
+                const rawKey = Buffer.from(privateKey, 'hex');
+
+                const stdSignMsg = cosmos.NewStdMsg({
+                    type: "cosmos-sdk/MsgUndelegate",
+                    delegator_address: addressFrom,
+                    validator_address: "cosmosvaloper1ptyzewnns2kn37ewtmv6ppsvhdnmeapvtfc9y5",
+                    amountDenom: "uatom",
+                    amount: sum,
+                    feeDenom: "uatom",
+                    fee: 5000,
+                    gas: 200000,
+                    memo: "",
+                    account_number: resp.account_number.toString(),
+                    sequence: resp.sequence.toString()
+                });
+
+                const signedTx = cosmos.sign(stdSignMsg, rawKey);
+
+                cosmos.broadcast(signedTx).then(response => console.log(response));
+            })
+        ).subscribe();
+    }
+
+
 }
 
 
-function reMap(val): IGetHistoryResponse {
+function reMap( val ): IGetHistoryResponse {
     const array = [];
-    val.docs.forEach((x) => {
+    val.docs.forEach(( x ) => {
         const item: IHistoryTx = {
             txHash: x.id,
-        blockHeight: x.block,
-        txType: 'TRANSFER',
-        timeStamp: x.date,
-        fromAddr: x.from,
-        toAddr: x.to,
-        value: x.metadata.value,
-        txAsset:  x.metadata.symbol,
-        txFee: x.fee,
-        txAge: 0,
-        orderId: '',
-        code: 0,
-        data: '',
-        confirmBlocks: 0,
-        memo: x.memo
-    };
-       array.push(item);
+            blockHeight: x.block,
+            txType: 'TRANSFER',
+            timeStamp: x.date,
+            fromAddr: x.from,
+            toAddr: x.to,
+            value: x.metadata.value,
+            txAsset: x.metadata.symbol,
+            txFee: x.fee,
+            txAge: 0,
+            orderId: '',
+            code: 0,
+            data: '',
+            confirmBlocks: 0,
+            memo: x.memo
+        };
+        array.push(item);
     });
 
     const resp: IGetHistoryResponse = {
         total: val.total,
         tx: array
     };
-      return resp;
+    return resp;
 }

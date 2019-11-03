@@ -23,6 +23,7 @@ import {WcSessionApproveComponent} from "./components/wc-session-approve/wc-sess
 import {ApproveComponent} from "./components/approve/approve.component";
 import {SeedComponent} from "./components/main/menu-top/settings/security-privacy/seed/seed.component";
 import {MoonPayComponent} from "./components/moon-pay/moon-pay.component";
+import {StakingComponent} from "./components/main/staking/staking.component";
 
 const routes: Routes = [
     {
@@ -53,6 +54,11 @@ const routes: Routes = [
     {
         path: 'details',
         component: HistoryDetailsComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'staking',
+        component: StakingComponent,
         canActivate: [AuthGuard]
     },
     {

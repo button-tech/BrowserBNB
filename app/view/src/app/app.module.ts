@@ -55,7 +55,7 @@ import {SeedComponent} from './components/main/menu-top/settings/security-privac
 import {ChromeApiWalletConnectService} from './services/chrome-api-wc.service';
 import {AmountInputComponent} from "./components/send/amount-input/amount-input.component";
 import {DigitOnlyModule} from "@uiowa/digit-only";
-import { ValidatorsListComponent } from './components/main/staking/validators-list/validators-list.component';
+
 import { StakingComponent } from './components/main/staking/staking.component';
 import { MoonPayComponent } from './components/moon-pay/moon-pay.component';
 
@@ -95,7 +95,6 @@ import { MoonPayComponent } from './components/moon-pay/moon-pay.component';
         AboutComponent,
         ApproveComponent,
         SeedComponent,
-        ValidatorsListComponent,
         MoonPayComponent
     ],
     imports: [

@@ -49960,3 +49960,4 @@ module.exports = {
 }).call(this,require("buffer").Buffer)
 },{"bech32":157,"bip32":159,"bip39":160,"bitcoinjs-lib":178,"buffer":47,"crypto":55,"node-fetch":261,"secp256k1":271}]},{},[294])(294)
 });
+
