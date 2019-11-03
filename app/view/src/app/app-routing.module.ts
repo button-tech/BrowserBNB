@@ -22,6 +22,7 @@ import {AboutComponent} from "./components/main/menu-top/settings/about/about.co
 import {WcSessionApproveComponent} from "./components/wc-session-approve/wc-session-approve.component";
 import {ApproveComponent} from "./components/approve/approve.component";
 import {SeedComponent} from "./components/main/menu-top/settings/security-privacy/seed/seed.component";
+import {MoonPayComponent} from "./components/moon-pay/moon-pay.component";
 
 const routes: Routes = [
     {
@@ -32,6 +33,11 @@ const routes: Routes = [
     {
         path: 'main',
         component: MainComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'moonPay',
+        component: MoonPayComponent,
         canActivate: [AuthGuard]
     },
     {

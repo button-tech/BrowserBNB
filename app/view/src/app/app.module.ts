@@ -57,6 +57,7 @@ import {AmountInputComponent} from "./components/send/amount-input/amount-input.
 import {DigitOnlyModule} from "@uiowa/digit-only";
 import { ValidatorsListComponent } from './components/main/staking/validators-list/validators-list.component';
 import { StakingComponent } from './components/main/staking/staking.component';
+import { MoonPayComponent } from './components/moon-pay/moon-pay.component';
 
 @NgModule({
     declarations: [
@@ -94,7 +95,8 @@ import { StakingComponent } from './components/main/staking/staking.component';
         AboutComponent,
         ApproveComponent,
         SeedComponent,
-        ValidatorsListComponent
+        ValidatorsListComponent,
+        MoonPayComponent
     ],
     imports: [
         BrowserModule,
