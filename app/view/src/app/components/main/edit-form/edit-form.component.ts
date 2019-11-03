@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Host, Input, Optional, Output} from '@angular/core';
 import {SatPopover} from '@ncstate/sat-popover';
+import {LocalStorageService} from "../../../services/local-storage.service";
 
 @Component({
     selector: 'app-edit-form',
@@ -14,7 +15,7 @@ export class EditFormComponent {
     @Output()
     update = new EventEmitter<string>();
 
-    constructor(@Optional() @Host() public popover: SatPopover) {
+    constructor(@Optional() @Host() public popover: SatPopover, private localStorageService: LocalStorageService) {
     }
 
     onSubmit() {
