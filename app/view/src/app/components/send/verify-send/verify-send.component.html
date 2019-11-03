@@ -77,8 +77,11 @@
             <button (click)="this.rejected.next(true);"
                     class="btn btn-outline-danger btn-lg mr-1">Reject
             </button>
-            <button (click)="this.verified.next(true);"
+            <button *ngIf="IsBnb"  (click)="this.verified.next(true);"
                     class="btn btn-binance-outline btn-lg">Verify
+            </button>
+            <button *ngIf="!IsBnb" (click)="this.verified.next(true);"
+                    class="btn btn-cosmos-outline btn-lg">Verify
             </button>
         </div>
     </div>

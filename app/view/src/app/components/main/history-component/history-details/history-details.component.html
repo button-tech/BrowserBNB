@@ -14,6 +14,8 @@
             <p style="font-weight: bolder; font-size: 20px">{{((this.stateService.historyDetails$ | async).txType).replace('_', ' ')}}</p>
             <p style="font-size: 12px; color: rgb(73,77,88); margin-top: -1.35em;"
                *ngIf="(this.stateService.historyDetails$ | async).timeStamp &&  (this.stateService.uiState$| async).storageData.selectedBlockchain === 'binance'"> {{((this.stateService.historyDetails$ | async).timeStamp | date :'medium')}} </p>
+            <p style="font-size: 12px; color: rgb(73,77,88); margin-top: -1.35em;"
+               *ngIf="(this.stateService.historyDetails$ | async).timeStamp &&  (this.stateService.uiState$| async).storageData.selectedBlockchain === 'cosmos'"> {{((this.stateService.historyDetails$ | async).timeStamp * 1000 | date :'medium')}} </p>
         </div>
         <div style="margin-top: -0.9em"
              *ngIf="(this.stateService.historyDetails$ | async).txAsset||(this.stateService.historyDetails$ | async).value"
