@@ -250,7 +250,7 @@ export class StateService {
                             return this.bncService.getBalance$(address, endpoint);
                         }  else if (storageData.selectedBlockchain === 'cosmos') {
                          
-                             return this.cosmosService.getBalance$(address, 'https://a381ae3c.ngrok.io/cosmos/auth/accounts/');
+                             return this.cosmosService.getBalance$(address, 'https://lcd-do-not-abuse.cosmostation.io/auth/accounts/');
                         }
                     })
                 );

@@ -53,29 +53,36 @@ export class CosmosService {
 
     async sendTransaction(sum: number,
                           addressTo: string,
+                          addressFrom: string,
                           mnemonic: string,
                           accountIndex: number,
                           message?: string) {
-        const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
-        cosmos.setBech32MainPrefix("cosmos");
-        cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
-        const ecpairPriv = cosmos.getECPairPriv(mnemonic);
 
-        const stdSignMsg = cosmos.NewStdMsg({
-            type: "cosmos-sdk/MsgSend",
-            from_address: 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz',
-            to_address: addressTo,
-            amountDenom: "uatom",
-            amount: sum * 1000000,
-            feeDenom: "uatom",
-            fee: 5000,
-            gas: 200000,
-            memo: message,
-            account_number: 22418,
-            sequence: 1
-        });
-        const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
-        cosmos.broadcast(signedTx).then(response => console.log(response));
+        this.getAccountSequence$(addressFrom).pipe(
+            map((seq) => {
+                const cosmos = Cosmos.returnInstance('https://lcd-do-not-abuse.cosmostation.io', 'cosmoshub-2');
+                cosmos.setBech32MainPrefix("cosmos");
+                cosmos.setPath("m/44'/118'/0'/0/" + accountIndex.toString());    // maybe error
+                const ecpairPriv = cosmos.getECPairPriv(mnemonic);
+
+                const stdSignMsg = cosmos.NewStdMsg({
+                    type: "cosmos-sdk/MsgSend",
+                    from_address: 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz',
+                    to_address: addressTo,
+                    amountDenom: "uatom",
+                    amount: sum * 1000000,
+                    feeDenom: "uatom",
+                    fee: 5000,
+                    gas: 200000,
+                    memo: message,
+                    account_number: 22418,
+                    sequence: seq
+                });
+                const signedTx = cosmos.sign(stdSignMsg, ecpairPriv);
+                cosmos.broadcast(signedTx).then(response => console.log(response));
+            })
+        ).subscribe();
+
     }
 
     getBalance$( address: string, endpoint: string ): Observable<IBalance[]> {
