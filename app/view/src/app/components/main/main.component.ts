@@ -216,6 +216,10 @@ export class MainComponent implements OnInit, OnDestroy {
     connectTrustPlatform() {
         window.open('http://localhost:4201', '_blank');
     }
+
+    sendSignedTx(signedTx: any) {
+        this.wcApi.sendSignedTx(signedTx);
+    }
 }
 
 function setInfoForWcButton(blockchain: BehaviorSubject<IUiState>, isConnected: boolean): Observable<string> {

@@ -36,6 +36,9 @@ export class WcSessionApproveComponent implements OnInit, OnChanges {
         }
 
         const jsonRpc = changes.sessionRequest.currentValue;
+
+        console.log("WC-SESSION-APPROVE", jsonRpc.params);
+
         const {url, icons, name} = jsonRpc.params[0].peerMeta;
 
         this.url = url;

@@ -92,6 +92,7 @@ export class ChromeApiWalletConnectService {
                 if (sessionRequest) {
                     update = {sessionRequest};
                 } else if (callRequest) {
+                    debugger
                     update = {callRequest};
                 } else if (isWcConnected !== undefined) {
                     // TODO: align naming
@@ -151,6 +152,22 @@ export class ChromeApiWalletConnectService {
             orderApproveResponse: true,
             isOrderApproved: isApproved
         });
+
+        this._walletConnectState$.next({
+            ...prevState,
+            callRequest: null
+        });
+    }
+
+    sendSignedTx(signedTx: any): void {
+        const prevState = this._walletConnectState$.getValue();
+        prevState.wcPort.postMessage({
+            orderApproveResponse: true,
+            isOrderApproved: true,
+            signedTx
+        });
+
+        console.log(`SIGNED TX: + ${signedTx}`);
 
         this._walletConnectState$.next({
             ...prevState,

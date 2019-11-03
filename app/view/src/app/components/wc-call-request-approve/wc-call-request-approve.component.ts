@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {StateService} from "../../services/state.service";
+import {CosmosService} from "../../services/cosmos.service";
 
 // TODO: move to wallet-connect module folder & module
 @Component({
@@ -12,6 +13,9 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
     @Output()
     isApproved = new EventEmitter<boolean>();
 
+    @Output()
+    singedCosmosTx = new EventEmitter<any>();
+
     @Input()
     callRequest: any;
 
@@ -22,7 +26,7 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
     chain_id: string;
     side: number;
 
-    constructor(public stateService: StateService) {
+    constructor(public stateService: StateService, private cosmosService: CosmosService) {
     }
 
     ngOnInit() {
@@ -40,6 +44,20 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
         }
 
         const jsonRpc = changes.callRequest.currentValue;
+
+        console.log("WC-CALL-REQUEST-APPROVE", jsonRpc.params);
+
+        if (jsonRpc.params.network === 118) {
+            const {privateKey} = this.stateService.uiState.currentAccount;
+            const signed = this.cosmosService.signRawMessage(privateKey, jsonRpc.params.transaction);
+            this.singedCosmosTx.next(signed);
+            return;
+        }
+        //
+        // network: 118
+        //
+        //
+        //
 
         if (!jsonRpc.params[0]) {
             this.price = '';

@@ -190,7 +190,9 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
             takeUntil(reactiveWc.disconnect$),
             filter((x: any[]) => {
                 const [callRequest] = x;
-                return callRequest.method === 'bnb_sign' || callRequest.method === 'get_accounts';
+                return callRequest.method === 'bnb_sign'
+                    || callRequest.method === 'get_accounts'
+                    || callRequest.method === 'trust_signTransaction';
                 // bnb_tx_confirmation
             }),
             switchMap((x: any[]) => {
@@ -214,6 +216,7 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
                     return NEVER; // Do nothing, or better wait
                 }
 
+                console.log("SEND TO PORT:", callRequest);
                 logAndSendToPort(port, {callRequest}, '_walletConnectPort$.subscribe(236)');
                 // port.postMessage({
                 //     callRequest
@@ -222,13 +225,20 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
                 return fromMessages(port).pipe(
                     take(1),
                     filter((responseFromUi: PortAndMessage) => {
+                        console.log("RESPONSE FROM UI:", responseFromUi);
                         const {message} = responseFromUi;
                         return message.orderApproveResponse;
                     }),
                     tap((responseFromUi: PortAndMessage) => {
                         const {message} = responseFromUi;
 
-                        if (message.isOrderApproved) {
+                        if (message.isOrderApproved && message.signedTx) {
+                            console.log("GOT SIGNED TX:", message.signedTx);
+                            reactiveWc.instance.approveRequest({
+                                id: callRequest.id,
+                                result: JSON.stringify(message.signedTx),
+                            });
+                        } else if (message.isOrderApproved) {
                             const [rawTransaction] = callRequest.params;
                             const txSign = signTransaction(privateKey, rawTransaction);
                             reactiveWc.instance.approveRequest({

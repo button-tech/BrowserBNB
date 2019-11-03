@@ -10,7 +10,8 @@
 </app-wc-session-approve>
 
 <app-wc-call-request-approve *ngIf="showCallRequest" [callRequest]="callRequest"
-                             (isApproved)="approveOrder($event)">
+                             (isApproved)="approveOrder($event)"
+                             (singedCosmosTx)="sendSignedTx($event)">
 </app-wc-call-request-approve>
 
 <div class="container-fluid" *ngIf="!showApprove && !showCallRequest">
@@ -116,17 +117,20 @@
                 </h4>
 
 
-                 <div *ngIf="blockchain  === 'cosmos'" class="pt-2">
-                <button [satPopoverAnchor]="stk"
-                        (mouseenter)="stk.open();"
-                        (mouseleave)="stk.close();" routerLink="/staking" style="font-size: 14px !important;" class="btn btn-cosmos-outline btn-sm main-btn">🔥🥩 BEST</button>
-                <sat-popover #stk horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
-                             verticalAlign="below">
-                    <div id="popup4" class="tooltip-wrapper">
-                        {{'Fast staking with the hottest APR on the market 🔥'}}
-                    </div>
-                </sat-popover>
-                 </div>
+                <div *ngIf="blockchain  === 'cosmos'" class="pt-2">
+                    <button [satPopoverAnchor]="stk"
+                            (mouseenter)="stk.open();"
+                            (mouseleave)="stk.close();" routerLink="/staking" style="font-size: 14px !important;"
+                            class="btn btn-cosmos-outline btn-sm main-btn">🔥🥩 BEST
+                    </button>
+                    <sat-popover #stk horizontalAlign="center" openTransition="150ms ease-out"
+                                 closeTransition="150ms ease-in"
+                                 verticalAlign="below">
+                        <div id="popup4" class="tooltip-wrapper">
+                            {{'Fast staking with the hottest APR on the market 🔥'}}
+                        </div>
+                    </sat-popover>
+                </div>
                 <a *ngIf="(allBalances$ | async)" routerLink="/balances" class="more">More balances</a>
             </div>
 
