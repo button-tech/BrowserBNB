@@ -7,8 +7,16 @@
 <div style="margin-top: -2.2em;
     background: black;
     border-radius: 10px;" class="div">
-    <button (click)="onSubmit()" style="white-space: nowrap!important" class="btn-basic">
-        <i class="fas fa-save"></i>
-        Save
-    </button>
+    <ng-container *ngIf="localStorageService.currentBlockchain === 'binance'">
+        <button (click)="onSubmit()" style="white-space: nowrap!important" class="btn-bnb">
+            <i class="fas fa-save"></i>
+            Save
+        </button>
+    </ng-container>
+    <ng-container *ngIf="localStorageService.currentBlockchain === 'cosmos'">
+        <button (click)="onSubmit()" style="white-space: nowrap!important" class="btn-csm">
+            <i class="fas fa-save"></i>
+            Save
+        </button>
+    </ng-container>
 </div>

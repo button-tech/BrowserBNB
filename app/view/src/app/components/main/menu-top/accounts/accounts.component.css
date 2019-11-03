@@ -197,16 +197,31 @@
     border: none;
 }
 
-
-.btn-basic {
+/* todo: make it inheritable*/
+.btn-bnb {
     background: none;
     border: none;
     color: white;
     font-size: 13px;
 }
 
-.btn-basic:hover {
+.btn-bnb:hover {
     background: rgb(239, 184, 11);
+    border: none;
+    color: rgb(11, 14, 17);
+    font-size: 13px;
+    border-radius: 10px;
+}
+
+.btn-csm {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 13px;
+}
+
+.btn-csm:hover {
+    background: linear-gradient(90deg, rgb(80, 100, 251) 0%, rgb(63, 56, 255) 100%) !important;
     border: none;
     color: rgb(11, 14, 17);
     font-size: 13px;

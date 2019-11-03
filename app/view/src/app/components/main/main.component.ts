@@ -5,7 +5,7 @@ import {map, switchMap, take, tap} from 'rxjs/operators';
 import {ClipboardService} from '../../services/clipboard.service';
 import {IUiState, StateService} from '../../services/state.service';
 import {IBalance} from "../../services/binance.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ChromeApiWalletConnectService, IWcState} from "../../services/chrome-api-wc.service";
 import {CosmosService} from "../../services/cosmos.service";
 import {BlockchainType} from "../../services/storage.service";
@@ -60,7 +60,8 @@ export class MainComponent implements OnInit, OnDestroy {
                 private http: HttpClient,
                 private clipboardService: ClipboardService,
                 private wcApi: ChromeApiWalletConnectService,
-                private cosmosService: CosmosService
+                private cosmosService: CosmosService,
+                private router: Router
     ) {
         // this.isCosmos$ = stateService.selectedBlockchain$.pipe(
         //     map((blockchain: BlockchainType) => {
@@ -183,6 +184,10 @@ export class MainComponent implements OnInit, OnDestroy {
 
     switchBlockchain() {
         this.stateService.switchBlockchain();
+    }
+
+    openMoonPay() {
+        this.router.navigate(['/moonPay']);
     }
 
     send(): void {

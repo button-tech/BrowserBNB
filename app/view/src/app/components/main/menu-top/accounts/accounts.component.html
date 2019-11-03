@@ -45,10 +45,18 @@
 
                 <div [satPopoverAnchor]="name" (click)="name.open(); stopEvent($event)"
                      style="margin-top: -2.5em; margin-right: 0.3em; margin-bottom: 0.2em; grid-row: 2; grid-column: 4;">
-                    <button class="btn-basic">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </button>
+                    <ng-container *ngIf="localStorageService.currentBlockchain === 'binance'">
+                        <button class="btn-bnb">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="localStorageService.currentBlockchain === 'cosmos'">
+                        <button class="btn-csm">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </button>
+                    </ng-container>
                 </div>
             </div>
         </div>

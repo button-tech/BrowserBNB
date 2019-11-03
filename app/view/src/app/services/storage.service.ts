@@ -9,6 +9,7 @@ import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
 import {CurrencySymbols} from "../constants";
 import {getNewWalletFromSeed} from "@lunie/cosmos-keys";
 import {Wallet} from "@lunie/cosmos-keys/lib/types";
+import {LocalStorageService} from "./local-storage.service";
 
 export type BlockchainType = 'cosmos' | 'binance';
 export type NetworkType = 'cosmos' | 'bnb' | 'tbnb' | 'custom' | null;
@@ -45,7 +46,7 @@ export class StorageService {
     // Local storage setter, used in dev environment
     private lsSetter$: Subject<string> = new Subject<string>();
 
-    constructor() {
+    constructor(private localStorageService: LocalStorageService) {
 
         if (environment.production) {
 
@@ -231,5 +232,7 @@ export class StorageService {
         } else {
             localStorage.removeItem(STORAGE_KEY);
         }
+
+        this.localStorageService.resetBlockchain();
     }
 }

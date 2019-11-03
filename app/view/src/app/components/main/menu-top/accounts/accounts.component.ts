@@ -4,6 +4,7 @@ import {AuthService} from '../../../../services/auth.service';
 import {IUiAccount, StateService} from '../../../../services/state.service';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
+import {LocalStorageService} from "../../../../services/local-storage.service";
 
 @Component({
     selector: 'app-accounts',
@@ -14,7 +15,8 @@ export class AccountsComponent {
 
     accounts$: Observable<IUiAccount[]>;
 
-    constructor(public stateService: StateService, private authService: AuthService, private router: Router) {
+    constructor(public stateService: StateService, private authService: AuthService, private router: Router,
+                private localStorageService: LocalStorageService) {
         this.accounts$ = stateService.uiState$.pipe(
             pluck('accounts')
         );

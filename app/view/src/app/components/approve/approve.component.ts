@@ -3,6 +3,7 @@ import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateService} from "../../services/state.service";
 import {StorageService} from "../../services/storage.service";
+import {LocalStorageService} from "../../services/local-storage.service";
 
 const removeAccountText = 'You will loose access to account. The only one option to restore access is to have mnemonic';
 const seedRevealText = 'Do not show mnemonic to anybody and keep it safe';
@@ -21,7 +22,8 @@ export class ApproveComponent implements OnInit {
               private router: Router,
               private activatedRoute: ActivatedRoute,
               private state: StateService,
-              private storage: StorageService) { }
+              private storage: StorageService,
+              private localStorageService: LocalStorageService) { }
 
   ngOnInit() {
     const operation = this.activatedRoute.snapshot.params.operation;
