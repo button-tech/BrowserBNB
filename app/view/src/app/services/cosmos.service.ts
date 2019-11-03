@@ -116,7 +116,7 @@ export class CosmosService {
     }
 
     getHistory$(address: string, endpoint: string): Observable<IHistoryTx[]> {
-        return this.http.get(`https://a381ae3c.ngrok.io/blockatlas/v1/cosmos/${address}`)
+        return this.http.get(`http://78.47.86.168:31228/blockatlas/v1/cosmos/${address}`)
             .pipe(
                 map((response) => {
                     return reMap(response).tx;
@@ -129,7 +129,7 @@ export class CosmosService {
     }
 
     getAccountSequence$(address: string): Observable<number> {
-        return this.http.get(`https://a381ae3c.ngrok.io/cosmos/auth/accounts/${address}`).pipe(
+        return this.http.get(`https://lcd-do-not-abuse.cosmostation.io/auth/accounts/${address}`).pipe(
             map(( response ) => {
                 // @ts-ignore
                 return (Number(response.value.sequence));

@@ -29,6 +29,10 @@ export class HistoryDetailsComponent implements OnInit {
                 break;
             case 'testnet':
                 url = 'https://testnet-explorer.binance.org/tx/';
+                break;
+            case 'cosmos':
+                url = 'https://www.mintscan.io/txs/';
+                break;
         }
         txHash$.pipe(
             map((transaction: any) => {
@@ -107,7 +111,7 @@ export class HistoryDetailsComponent implements OnInit {
     }
 
     sum(a, b): string {
-        return String((Number(a) + Number(b)).toFixed(8));
+        return String((Number(a.toString()) + Number(b.toString())).toFixed(8));
     }
 
 }
