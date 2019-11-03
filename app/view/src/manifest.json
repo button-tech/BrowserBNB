@@ -27,7 +27,9 @@
     {
       "matches": [
         "https://www.binance.org/*/*",
-        "http://localhost:4200/*"
+        "https://platform.trustwallet.com/*/*",
+        "http://localhost:4200/*",
+        "http://localhost:4201/*"
       ],
       "js": [
         "assets/content-script.js"

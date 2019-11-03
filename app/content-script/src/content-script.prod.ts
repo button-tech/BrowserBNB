@@ -1,14 +1,20 @@
 // @ts-ignore
 import * as consoleListener from './injectable.js';
 
-const hrefRe = /https:\/\/www\.binance.org\/..\/unlock/;
-if (hrefRe.test(window.location.href)) {
+// // https://platform.trustwallet.com/
+const binanceHrefRe = /https:\/\/www\.binance.org\/..\/unlock/;
+const trustHrefRe = /https:\/\/platform\.trustwallet.org/;
+const href = window.location.href;
 
-    const script = document.createElement('script');
-    script.type = "text/javascript";
-    // TODO: fix that on binance DOM side
-    script.innerHTML = consoleListener;
-    document.body.appendChild(script);
+if (binanceHrefRe.test(href) || trustHrefRe.test(href) || true) {
+
+    {
+        const script = document.createElement('script');
+        script.type = "text/javascript";
+        // TODO: fix that on binance DOM side
+        script.innerHTML = consoleListener.default;
+        document.body.appendChild(script);
+    }
 
     window.addEventListener("message", (event) => {
         console.log('received in contenet script:', event);

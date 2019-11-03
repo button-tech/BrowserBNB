@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {StateService} from "../../../services/state.service";
 
 @Component({
     selector: 'app-verify-send',
@@ -7,6 +8,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 })
 export class VerifySendComponent {
 
+    constructor(public stateService: StateService) {}
     @Output()
     verified = new EventEmitter<boolean>();
 

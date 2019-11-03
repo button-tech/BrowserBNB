@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {StateService} from "../../services/state.service";
 
 // TODO: move to wallet-connect module folder & module
 @Component({
@@ -21,7 +22,7 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
     chain_id: string;
     side: number;
 
-    constructor() {
+    constructor(public stateService: StateService) {
     }
 
     ngOnInit() {
