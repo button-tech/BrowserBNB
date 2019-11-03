@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {map, switchMap, tap} from "rxjs/operators";
-import {combineLatest, Observable, Subscription} from "rxjs";
+import {combineLatest, interval, Observable, Subscription, timer} from "rxjs";
 import {StateService} from "../../../services/state.service";
 import BigNumber from 'bignumber.js';
 import {HttpClient} from "@angular/common/http";
@@ -28,12 +28,15 @@ export class StakingComponent implements OnInit {
                 private cosmos: CosmosService) {
 
 
-        this.staked = this.calculateStakedAmount(this.stateService.uiState.currentAccount.address).pipe(
-            map((resp) => {
-                return resp.toString();
+        this.staked = timer(0, 2000).pipe(
+            switchMap(() => {
+                return this.calculateStakedAmount(this.stateService.uiState.currentAccount.address).pipe(
+                    map((resp) => {
+                        return resp.toString();
+                    })
+                );
             })
         );
-
 
         this.fiatStaked = combineLatest([this.stateService.bnb2fiatRate$, this.staked]).pipe(
             map((x: any[]) => {
@@ -73,12 +76,12 @@ export class StakingComponent implements OnInit {
     doStake() {
         const {address, privateKey} = this.stateService.uiState.currentAccount;
         this.cosmos.stakeFast(this.rawAmount, address, privateKey);
-        this.router.navigate(['/main']);
+        // this.router.navigate(['/main']);
     }
 
     doUnStake() {
         const {address, privateKey} = this.stateService.uiState.currentAccount;
         this.cosmos.unStakeFast(this.rawAmount, address, privateKey);
-        this.router.navigate(['/main']);
+        // this.router.navigate(['/main']);
     }
 }
