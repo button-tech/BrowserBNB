@@ -2,8 +2,8 @@
     <div (keydown)="onKeydown($event)" class="container">
         <div class="row text-center">
             <div style="margin-top: 4.5em; margin-left: 0.8em" align="center" class="col-12 text-center">
-<!--                <img src="../../../assets/svg/computer.svg">-->
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="136px" height="152px" viewBox="0 0 636 702" version="1.1">
+                <img *ngIf="blockchain === 'binance'" src="../../../assets/svg/computer.svg">
+                <svg *ngIf="blockchain === 'cosmos'" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="136px" height="152px" viewBox="0 0 636 702" version="1.1">
                     <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
                     <title>mainchain</title>
                     <desc>Created with Sketch.</desc>
