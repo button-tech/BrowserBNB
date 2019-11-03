@@ -1,5 +1,4 @@
-<div class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
-
+<div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'" class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
 
      <img style="height:48px;width:48px" src="../../../assets/icons/icon128.png" alt="">
     <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
@@ -23,3 +22,25 @@
         </div>
     </div>
 </div>
+
+<div *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'cosmos'" class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
+
+    <img style="height:48px;width:48px" src="../../../assets/icons/atom.png" alt="">
+    <h3 style="font-family: 'Montserrat', sans-serif !important;  font-size: 26px; font-weight: 600; color: rgb(33, 40, 51);margin-top: 1.5em;"
+        class="card-title">Approve action?</h3>
+    <br>
+    <div>
+        <div class="col-12 text-center mt-1" id="buttonsDiv2">
+
+            <button (click)="approve(false)"
+                    class="btn btn-outline-danger btn-lg mr-1 reject-btn">REJECT
+            </button>
+
+            <button (click)="approve(true)"
+                    class="btn btn-cosmos-outline btn-lg ">APPROVE
+            </button>
+
+        </div>
+    </div>
+</div>
+
