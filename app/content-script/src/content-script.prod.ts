@@ -2,11 +2,10 @@
 import * as consoleListener from './injectable.js';
 
 // // https://platform.trustwallet.com/
-const binanceHrefRe = /https:\/\/www\.binance.org\/..\/unlock/;
-const trustHrefRe = /https:\/\/platform\.trustwallet.org/;
-const href = window.location.href;
-
-if (binanceHrefRe.test(href) || trustHrefRe.test(href) || true) {
+// const binanceHrefRe = /https:\/\/www\.binance.org\/..\/unlock/;
+// const trustHrefRe = /https:\/\/platform\.trustwallet.org/;
+// const href = window.location.href;
+// if (true) {
 
     {
         const script = document.createElement('script');
@@ -30,5 +29,5 @@ if (binanceHrefRe.test(href) || trustHrefRe.test(href) || true) {
             });
         }
     }, false);
-}
+// }
 

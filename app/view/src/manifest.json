@@ -27,7 +27,7 @@
     {
       "matches": [
         "https://www.binance.org/*/*",
-        "https://platform.trustwallet.com/*/*",
+        "https://platform.trustwallet.com/*",
         "http://localhost:4200/*",
         "http://localhost:4201/*"
       ],
