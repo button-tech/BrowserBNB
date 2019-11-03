@@ -168,8 +168,6 @@ export class StateService {
     currentAddress: string;
     currentAddressShort$: Observable<string>;
 
-    // currentBlockchain: string;
-
     tokens$: Observable<ITokenInfo[]>;
 
     currentEndpoint$: Observable<NETWORK_ENDPOINT_MAPPING>;
@@ -205,7 +203,6 @@ export class StateService {
             }),
             shareReplay(1)
         );
-
 
         this.isCosmos$ = this.selectedBlockchain$.pipe(
             map((blockchain: BlockchainType) => {
@@ -518,8 +515,11 @@ export class StateService {
     }
 
     renameAccount(accountIdx: number, newName: string): void {
+        const accountListName = this.localStorageService.currentBlockchain === "binance"
+            ? "accounts"
+            : "cosmosAccounts";
 
-        this.uiState.storageData.accounts[accountIdx].name = newName;
+        this.uiState.storageData[accountListName][accountIdx].name = newName;
         const newStorageState: IStorageData = {
             ...this.uiState.storageData,
         };
@@ -534,11 +534,16 @@ export class StateService {
     }
 
     removeAccount(account: IUiAccount): void {
+        const accountListName = this.localStorageService.currentBlockchain === "binance"
+            ? "accounts"
+            : "cosmosAccounts";
 
         if (this.uiState.accounts.length <= 0) {
             this.storageService.reset(); // Not sure that we need to reset in that case
             return; // But that return is definitely required
         }
+
+        // todo: do not delete account from other chain
 
         // Binance accounts
         const newAccounts = this.uiState.storageData.accounts
@@ -548,7 +553,7 @@ export class StateService {
         const newCosmosAccounts = this.uiState.storageData.cosmosAccounts
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
-        const newAccountsUI = this.uiState.accounts
+        const newAccountsUI = this.uiState[accountListName]
             .filter((accountToRemove) => accountToRemove.index !== account.index);
 
 
