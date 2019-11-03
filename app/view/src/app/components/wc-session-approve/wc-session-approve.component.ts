@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {StateService} from "../../services/state.service";
 
 @Component({
     selector: 'app-wc-session-approve',
@@ -17,7 +18,7 @@ export class WcSessionApproveComponent implements OnInit, OnChanges {
     url: string;
     icon: string;
 
-    constructor() {
+    constructor(public stateService: StateService) {
     }
 
     ngOnInit() {

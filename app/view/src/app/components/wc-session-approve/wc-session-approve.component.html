@@ -1,4 +1,4 @@
-<div class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
+<div  *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'binance'" class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
 
     <img style="height:48px;width:48px" src="{{icon}}" alt="">
     <br>
@@ -14,6 +14,28 @@
 
             <button (click)="approve(true)"
                     class="btn btn-binance-outline btn-lg ">APPROVE</button>
+
+        </div>
+    </div>
+</div>
+
+
+<div  *ngIf="(stateService.uiState$ | async).storageData.selectedBlockchain === 'cosmos'" class="d-flex flex-column h-100" style="align-items: center; justify-content:center">
+
+    <img style="height:48px;width:48px" src="{{icon}}}" alt="">
+    <br>
+    <b style="text-align: center">{{name}}</b>
+    <a class="text-center" href="{{url}}">{{url}}</a>
+
+    <br>
+    <div>
+        <div class="col-12 text-center mt-1" id="buttonsDiv2">
+
+            <button (click)="approve(false)"
+                    class="btn btn-outline-danger btn-lg mr-1 reject-btn">REJECT</button>
+
+            <button (click)="approve(true)"
+                    class="btn btn-cosmos-outline btn-lg ">APPROVE</button>
 
         </div>
     </div>
