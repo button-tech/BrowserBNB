@@ -32,7 +32,6 @@
                  *ngIf="(this.stateService.uiState$| async).storageData.selectedBlockchain === 'binance' && ((this.stateService.historyDetails$ | async).txAsset || (this.stateService.historyDetails$ | async).value) ">
                 {{(this.stateService.historyDetails$ | async).value}} {{this.findMappedName(this.stateService.historyDetails$) | async}}
             </div>
-
             <div style="grid-column: 2"
                  *ngIf="(this.stateService.uiState$| async).storageData.selectedBlockchain === 'cosmos'">
                 {{(this.stateService.historyDetails$ | async).value}} {{'UATOM'}}
@@ -50,9 +49,6 @@
                  *ngIf="(this.stateService.historyDetails$ | async).txFee > 0 && (this.stateService.historyDetails$ | async).txAsset && (this.stateService.historyDetails$ | async).value && (this.stateService.uiState$| async).storageData.selectedBlockchain === 'binance' ">
                 {{ this.sum((this.stateService.historyDetails$ | async).txFee, (this.stateService.historyDetails$ | async).value) + " " + (this.stateService.historyDetails$ | async).txAsset}}
             </div>
-
-
-
         </div>
         <div class="col-8 offset-2">
             <hr class="unusualHr">
@@ -107,7 +103,6 @@
                 </sat-popover>
             </div>
         </div>
-
         <div sclass="col-8 offset-2">
             <hr class="unusualHr">
         </div>
