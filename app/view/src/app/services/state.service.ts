@@ -584,7 +584,7 @@ export class StateService {
 
     addAccount(): void {
         const seedPhrase = this.uiState.storageData.seedPhrase;
-        const blockchain = this.localStorageService.currentBlockchain;
+        const blockchain = this.uiState.storageData.selectedBlockchain;
         this.addAccountFromSeed(seedPhrase, blockchain);
     }
 

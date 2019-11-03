@@ -14,6 +14,10 @@ export class LocalStorageService {
         this.setData("blockchain", value);
     }
 
+    public resetBlockchain() {
+        localStorage.removeItem("blockchain");
+    }
+
     private getData(key: string): string {
         return (window as any).localStorage.getItem(key);
     }
