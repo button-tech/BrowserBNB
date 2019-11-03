@@ -18,7 +18,7 @@ export class NetworksComponent {
     networkMenu$: Observable<any[]>;
     selectedNetworkLabel$: Observable<string>;
 
-    constructor(private stateService: StateService) {
+    constructor(public stateService: StateService) {
         this.networkMenu$ = this.stateService.selectedBlockchain$.pipe(
             map((blockchain: BlockchainType) => {
                 if (blockchain === 'cosmos') {

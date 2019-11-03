@@ -19,10 +19,10 @@ export class ReceiveComponent implements OnInit, OnDestroy {
     qrCode: string;
     network: string;
 
-    constructor(private location: Location,
-                private clipboardService: ClipboardService,
-                private  chrome: ChromeApiService,
-                private stateService: StateService) {
+    constructor(public location: Location,
+                public clipboardService: ClipboardService,
+                public chrome: ChromeApiService,
+                public stateService: StateService) {
 
         this.subscription = this.stateService.currentAddress$.pipe(
             map((address: string) => {
