@@ -116,17 +116,17 @@
                 </h4>
 
 
-
+                 <div class="pt-2">
                 <button [satPopoverAnchor]="stk"
                         (mouseenter)="stk.open();"
-                        (mouseleave)="stk.close();" routerLink="/staking" class="btn btn-cosmos-outline btn-sm main-btn">⚡ 🥩</button>
+                        (mouseleave)="stk.close();" routerLink="/staking" style="font-size: 17px !important;" class="btn btn-cosmos-outline btn-sm main-btn">🍖 BEST</button>
                 <sat-popover #stk horizontalAlign="center" openTransition="150ms ease-out" closeTransition="150ms ease-in"
                              verticalAlign="below">
                     <div id="popup4" class="tooltip-wrapper">
-                        {{'Fast staking with the best APR on the market'}}
+                        {{'Fast staking with the hottest APR on the market 🔥'}}
                     </div>
                 </sat-popover>
-
+                 </div>
                 <a *ngIf="(allBalances$ | async)" routerLink="/balances" class="more">More balances</a>
             </div>
 
