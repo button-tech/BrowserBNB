@@ -13,11 +13,11 @@ export class CosmosService {
 
     async sendTransaction() {
         // ArrayBuffer
-        const privateKey = Buffer.from('...', 'hex');
+        const privateKey = Buffer.from('', 'hex');
         const publicKey = Buffer.from('02bceac71ab99b5d95118e8b173a99abc601c20219f951c6c36cdcd7cd300d55c3', 'hex');
 
         // init cosmos sender
-        const cosmos = new Cosmos('https://cosmos-rpc.trustwalletapp.com/', 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz');
+        const cosmos = new Cosmos('https://lcd-do-not-abuse.cosmostation.io', 'cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz');
 
         // create message
         const msg = cosmos
@@ -28,7 +28,7 @@ export class CosmosService {
 
         // create a signer from this local js signer library
         const localSigner = (signMessage) => {
-            debugger
+
             try {
                 const signature = signWithPrivateKey(signMessage, privateKey);
                 return {
@@ -36,12 +36,12 @@ export class CosmosService {
                     publicKey
                 };
             } catch (e) {
-                debugger
+
             }
         };
 
         // send the transaction
-        debugger
+
         const {included} = await msg.send({gas: 200000}, localSigner);
 
         // await tx to be included in a block
