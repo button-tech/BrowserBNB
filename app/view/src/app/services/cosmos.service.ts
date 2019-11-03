@@ -106,6 +106,49 @@ export class CosmosService {
             })
         );
     }
+
+    getHistory$(address: string, endpoint: string): Observable<IHistoryTx[]> {
+        console.log('FYBHIPIAFHBFA')
+        return this.http.get(`https://a381ae3c.ngrok.io/blockatlas/v1/cosmos/${address}`)
+            .pipe(
+                map((response) => {
+                    return reMap(response).tx;
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    // TODO: properly handle binance 404 response
+                    return of([]);
+                })
+            );
+    }
 }
 
 
+function reMap(val): IGetHistoryResponse {
+    const array = [];
+    val.docs.forEach((x) => {
+        const item: IHistoryTx = {
+            txHash: x.id,
+        blockHeight: x.block,
+        txType: 'TRANSFER',
+        timeStamp: x.date,
+        fromAddr: x.from,
+        toAddr: x.to,
+        value: x.metadata.value,
+        txAsset:  x.metadata.symbol,
+        txFee: x.fee,
+        txAge: 0,
+        orderId: '',
+        code: 0,
+        data: '',
+        confirmBlocks: 0,
+        memo: x.memo
+    };
+       array.push(item);
+    });
+
+    const resp: IGetHistoryResponse = {
+        total: val.total,
+        tx: array
+    };
+      return resp;
+}

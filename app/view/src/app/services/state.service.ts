@@ -357,18 +357,34 @@ export class StateService {
             }),
             switchMap((x) => {
                 const [address, endpoint] = x;
-                return concat(
-                    bncService.getHistory$(address, endpoint).pipe(
-                        tap(() => {
-                            this.showHistoryLoadingIndicator$.next(false);
-                        })
-                    ),
-                    timer(0, 10000).pipe(
-                        switchMap(() => {
-                            return bncService.getHistory$(address, endpoint);
-                        })
-                    )
-                );
+                if (this.uiState.storageData.selectedBlockchain === 'binance') {
+                    return concat(
+                        bncService.getHistory$(address, endpoint).pipe(
+                            tap(() => {
+                                this.showHistoryLoadingIndicator$.next(false);
+                            })
+                        ),
+                        timer(0, 10000).pipe(
+                            switchMap(() => {
+                                return bncService.getHistory$(address, endpoint);
+                            })
+                        )
+                    );
+                }  else if (this.uiState.storageData.selectedBlockchain === 'cosmos') {
+                    return concat(
+                        cosmosService.getHistory$(address, endpoint).pipe(
+                            tap(() => {
+                                this.showHistoryLoadingIndicator$.next(false);
+                            })
+                        ),
+                        timer(0, 10000).pipe(
+                            switchMap(() => {
+                                return cosmosService.getHistory$(address, endpoint);
+                            })
+                        )
+                    );
+                }
+
             }),
             shareReplay(1)
         );
