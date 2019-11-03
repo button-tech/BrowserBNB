@@ -203,16 +203,8 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
                         id: callRequest.id,
                         result: [{
                             "address": "cosmos1phzk96xke3wf9esuys7hkllpltx57sjrhdqymz",
-                            "network": 118,
-                            "imageURL": 'icon_walletconnect.svg'
+                            "network": 118
                         }],
-                        // result: JSON.stringify([{
-                        //     displayName: 'Account 1',
-                        //     id: 'ac1',
-                        //     // imageURL?: undefined;
-                        //     // name?: string;
-                        //     rpDisplayName: 'Account 1 RP',
-                        // }]),
                     });
                     return NEVER;
                 }
