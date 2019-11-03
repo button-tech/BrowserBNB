@@ -17,6 +17,9 @@ export class VerifySendComponent {
     amount: number;
 
     @Input()
+    isCosmos = false;
+
+    @Input()
     selectedToken: string;
 
     @Input()

@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-9">
                     <p class="verify-send-row-sum">
-                        {{ bnbTransferFee }} BNB
+                        {{ bnbTransferFee }} {{isCosmos ? 'ATOM' : 'BNB' }}
                     </p>
                     <p class="verify-send-row-sub-sum">
                         ${{ bnbTransferFeeFiat.toFixed(2) }} USD
@@ -52,7 +52,7 @@
                         </p>
                         <p class="verify-send-row-sub-sum" *ngIf="hasRate2usd">
                             ${{
-                                (((+amount) + (+bnbTransferFee)) * rate2usd).toFixed(2)
+                            (((+amount) + (+bnbTransferFee)) * rate2usd).toFixed(2)
                             }} USD
                         </p>
                     </ng-container>
@@ -62,7 +62,7 @@
                             {{(+amount).toFixed(4)}} {{ selectedToken }}
                         </p>
                         <p class="verify-send-row-sum">
-                            {{bnbTransferFee}} BNB
+                            {{bnbTransferFee}} {{isCosmos ? 'ATOM' : 'BNB' }}
                         </p>
                     </ng-container>
 
