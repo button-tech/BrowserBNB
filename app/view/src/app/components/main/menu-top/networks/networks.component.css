@@ -70,7 +70,7 @@
     border-bottom-right-radius: 100px;
 }
 
-.menu-item-cosmos {
+#networkBtn.menu-item-cosmos {
     background:  linear-gradient(90deg, rgb(80, 100, 251) 0%, rgb(63, 56, 255) 100%) !important;
     border-bottom: 1.47px solid rgb(80, 100, 251) !important;
     border-top: none;
