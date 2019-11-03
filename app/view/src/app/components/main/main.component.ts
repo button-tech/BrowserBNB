@@ -214,7 +214,7 @@ export class MainComponent implements OnInit, OnDestroy {
     }
 
     connectTrustPlatform() {
-        window.open('http://localhost:4201', '_blank');
+        window.open('http://localhost:4200', '_blank');
     }
 
     sendSignedTx(signedTx: any) {

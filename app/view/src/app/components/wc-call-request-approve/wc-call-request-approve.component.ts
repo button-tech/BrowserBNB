@@ -81,6 +81,7 @@ export class WcCallRequestApproveComponent implements OnInit, OnChanges {
             this.symbol = '';
             this.chain_id = '';
             this.side = 0;
+            return;
         }
 
         const {chain_id} = jsonRpc.params[0];
