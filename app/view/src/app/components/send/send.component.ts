@@ -23,7 +23,7 @@ import {BinanceService} from "../../services/binance.service";
     styleUrls: ['./send.component.css']
 })
 export class SendComponent implements OnDestroy {
-    selectedToken$: BehaviorSubject<string> = new BehaviorSubject('BNB');
+    selectedToken$: BehaviorSubject<string> = new BehaviorSubject('ATOM');
     showVerifyForm = false;
 
     // rate2usd is exchange rate of token that is currently selected with select control
@@ -139,12 +139,21 @@ export class SendComponent implements OnDestroy {
                 )
             ).subscribe()
         );
+
+        // isCosmos
+        this.subscriptions.add(
+            this.stateService.isCosmos$.pipe()
+                .subscribe((isCosmos) => {
+                    this.selectedToken = isCosmos ? 'ATOM' : 'BNB';
+                })
+        );
     }
 
     // Build on top of selectedToken
     buildUsdPricePipeLine(selectedToken: string, bnb2fiatRate$, marketRates$): Observable<number> {
         // Simple case for BNB
-        if (selectedToken === "BNB") {
+        // debugger
+        if (selectedToken === "BNB" || selectedToken === "ATOM") {
             return bnb2fiatRate$;
         }
 

@@ -182,6 +182,7 @@ export class StateService {
     // ws: WebSocket;
 
     showHistoryLoadingIndicator$ = new BehaviorSubject(true);
+    isCosmos$: Observable<boolean>;
 
     constructor(private storageService: StorageService,
                 private bncService: BinanceService,
@@ -199,6 +200,14 @@ export class StateService {
             }),
             tap((value) => {
                 this.currentAddress = value;
+            }),
+            shareReplay(1)
+        );
+
+
+        this.isCosmos$ = this.selectedBlockchain$.pipe(
+            map((blockchain: BlockchainType) => {
+                return blockchain === 'cosmos';
             }),
             shareReplay(1)
         );
@@ -248,9 +257,9 @@ export class StateService {
                         if (storageData.selectedBlockchain === 'binance') {
 
                             return this.bncService.getBalance$(address, endpoint);
-                        }  else if (storageData.selectedBlockchain === 'cosmos') {
-                         
-                             return this.cosmosService.getBalance$(address, 'https://lcd-do-not-abuse.cosmostation.io/auth/accounts/');
+                        } else if (storageData.selectedBlockchain === 'cosmos') {
+
+                            return this.cosmosService.getBalance$(address, 'https://lcd-do-not-abuse.cosmostation.io/auth/accounts/');
                         }
                     })
                 );
@@ -266,9 +275,9 @@ export class StateService {
         this.bnbBalance$ = this.allBalances$.pipe(
             map((response) => {
 
-                if (this.uiState.storageData.selectedBlockchain === 'binance')   {
-                    return  pluckBalance(response, 'BNB');
-                }  else {
+                if (this.uiState.storageData.selectedBlockchain === 'binance') {
+                    return pluckBalance(response, 'BNB');
+                } else {
                     return Number(response[0].free);
                 }
 
@@ -370,7 +379,7 @@ export class StateService {
                             })
                         )
                     );
-                }  else if (this.uiState.storageData.selectedBlockchain === 'cosmos') {
+                } else if (this.uiState.storageData.selectedBlockchain === 'cosmos') {
                     return concat(
                         cosmosService.getHistory$(address, endpoint).pipe(
                             tap(() => {
