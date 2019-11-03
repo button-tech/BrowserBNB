@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
+import {BlockchainType, IStorageAccount, IStorageData, NetworkType, StorageService} from './storage.service';
 import {BehaviorSubject, combineLatest, concat, NEVER, Observable, of, timer} from 'rxjs';
 import {BinanceService, IBalance} from './binance.service';
 import {NETWORK_ENDPOINT_MAPPING} from './network_endpoint_mapping';
@@ -36,7 +36,7 @@ export interface ITokenInfo {
 export interface INetworkMenuItem {
     label: string;
     val: string;
-    networkPrefix: string;
+    networkPrefix: NetworkType;
 }
 
 export interface IUiAccount extends IStorageAccount {
@@ -131,6 +131,18 @@ export interface ITransferFees {
     dex_fee_fields: IDexFeeField[];
 }
 
+function storageAccounts2uiAccounts(storageAccounts: IStorageAccount[], network: NetworkType): IUiAccount[] {
+    return storageAccounts.map((account) => {
+        const address = network === 'bnb' ? account.addressMainnet : account.addressTestnet;
+        const shortAddress = toShortAddress(address);
+        return {
+            ...account,
+            address,
+            shortAddress
+        };
+    });
+}
+
 export function toShortAddress(address: string): string {
     return address.substring(0, 8) + '...' + address.substring(address.length - 8, address.length);
 }
@@ -141,7 +153,7 @@ export class StateService {
     private password = '';
     baseCurrency$: Observable<CurrencySymbols>;
 
-    selectedBlockchain$: BehaviorSubject<string> = new BehaviorSubject('Binance');
+    selectedBlockchain$: BehaviorSubject<BlockchainType> = new BehaviorSubject('binance');
     selectedNetwork$: BehaviorSubject<INetworkMenuItem> = new BehaviorSubject(basicNetworkState);
     uiState$: BehaviorSubject<IUiState> = new BehaviorSubject(emptyState);
 
@@ -412,40 +424,28 @@ export class StateService {
             ? data.accounts
             : data.cosmosAccounts;
 
-        const accounts = data.accounts.map((account) => {
-            const address = selectedNetwork === 'bnb'
-                ? account.addressMainnet
-                : account.addressTestnet;
-
-            const shortAddress = toShortAddress(address);
-
-            return {
-                ...account,
-                address,
-                shortAddress
-            };
+        const uiAccounts = storageAccounts2uiAccounts(accountList, selectedNetwork);
+        debugger
+        const selectedAccount = uiAccounts.find((account: IUiAccount) => {
+            return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
         });
 
-
         const networkPrefix = data.selectedNetwork;
-        const val = networkPrefix === 'bnb'
+        const val = (networkPrefix === 'bnb' || networkPrefix === 'cosmos')
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
-        const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
+        const label = (networkPrefix === 'bnb' || networkPrefix === 'cosmos') ? 'mainnet' : 'testnet';
         const newSelectedNetwork: INetworkMenuItem = {
             networkPrefix,
             val,
             label
         };
 
-        const currentAccount = accounts.find((account) => {
-            return account.addressMainnet === data.selectedAddress || account.addressTestnet === data.selectedAddress;
-        });
-
+        debugger
         const uiState: IUiState = {
-            accounts,
-            currentAccount,
+            accounts: uiAccounts,
+            currentAccount: selectedAccount,
             storageData: data
         };
 
@@ -607,50 +607,52 @@ export class StateService {
 
     switchNetwork(network: NetworkType): void {
 
-        const networkPrefix = network;
-        const val = networkPrefix === 'bnb' || networkPrefix === 'cosmos'
+        const data = this.uiState.storageData;
+
+        // const networkPrefix = network;
+        const endpoint = network === 'bnb' || network === 'cosmos'
             ? NETWORK_ENDPOINT_MAPPING.MAINNET
             : NETWORK_ENDPOINT_MAPPING.TESTNET;
 
         const newStorageState: IStorageData = {
-            ...this.uiState.storageData,
+            ...data,
             selectedNetwork: network,
-            selectedNetworkEndpoint: val
+            selectedNetwork: network,
+            selectedNetworkEndpoint: endpoint
         };
 
         this.storageService.encryptAndSave(newStorageState, this.password);
 
-        // TODO: fix networks
-        const label = networkPrefix === 'bnb' ? 'mainnet' : 'testnet';
+        const label = (network === 'bnb' || network === 'cosmos') ? 'mainnet' : 'testnet';
         const newSelectedNetwork: INetworkMenuItem = {
-            networkPrefix,
-            val,
+            networkPrefix: network,
+            val: endpoint,
             label
         };
 
         this.selectedNetwork$.next(newSelectedNetwork);
 
-        const newAccounts = this.uiState.accounts.map((account) => {
-            const newAddress = network === 'bnb'
-                ? account.addressMainnet
-                : account.addressTestnet;
+        const accountList = network === 'cosmos'
+            ? data.cosmosAccounts
+            : data.accounts;
 
-            return {
-                ...account,
-                address: newAddress,
-                shortAddress: toShortAddress(newAddress)
-            };
+        const newUiAccounts = storageAccounts2uiAccounts(accountList, network);
+
+        // Проблема тут
+        let selectedAccount = newUiAccounts.find((account) => {
+            return account.addressMainnet === data.selectedAddress ||
+                account.addressTestnet === data.selectedAddress;
         });
 
-        const currentAccount = newAccounts.find((account) => {
-            return account.addressMainnet === this.uiState.storageData.selectedAddress ||
-                account.addressTestnet === this.uiState.storageData.selectedAddress;
-        });
+        if (!selectedAccount) {
+            selectedAccount = newUiAccounts[0];
+            data.selectedAddress
+        }
 
         const newUiState: IUiState = {
             ...this.uiState,
-            accounts: newAccounts,
-            currentAccount,
+            accounts: newUiAccounts,
+            currentAccount: selectedAccount,
             storageData: newStorageState
         };
 

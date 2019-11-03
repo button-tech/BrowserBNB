@@ -1,9 +1,9 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
-import {NetworkType} from '../../../../services/storage.service';
+import {BlockchainType, NetworkType} from '../../../../services/storage.service';
 import {NETWORK_ENDPOINT_MAPPING} from '../../../../services/network_endpoint_mapping';
-import {IUiState, StateService} from '../../../../services/state.service';
-import {map} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {INetworkMenuItem, IUiState, StateService} from '../../../../services/state.service';
+import {map, startWith} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Component({
     selector: 'app-networks',
@@ -15,36 +15,40 @@ export class NetworksComponent {
     // @ts-ignore
     @ViewChild('menuNetwork')
     menuNetwork: ElementRef;
-
-    networkMenu = [
-        {
-            label: 'MAINNET',
-            networkPrefix: 'bnb',
-            val: NETWORK_ENDPOINT_MAPPING.MAINNET
-        },
-        {
-            label: 'TESTNET',
-            networkPrefix: 'tbnb',
-            val: NETWORK_ENDPOINT_MAPPING.TESTNET
-        },
-    ];
-
+    networkMenu$: Observable<any[]>;
     selectedNetworkLabel$: Observable<string>;
 
     constructor(private stateService: StateService) {
-
-        this.selectedNetworkLabel$ = stateService.uiState$.pipe(
-            map((uiState: IUiState) => {
-                const network = uiState.storageData.selectedNetwork;
-                switch (network) {
-                    case 'bnb':
-                        return 'MAINNET';
-                    case 'tbnb':
-                        return 'TESTNET';
-                    default:
-                        return 'MAINNET';
+        this.networkMenu$ = this.stateService.selectedBlockchain$.pipe(
+            map((blockchain: BlockchainType) => {
+                if (blockchain === 'cosmos') {
+                    return [
+                        {
+                            label: 'MAINNET',
+                            networkPrefix: 'bnb',
+                            val: ''
+                        }
+                    ];
                 }
-            })
+
+                if (blockchain === 'binance') {
+                    return [
+                        {
+                            label: 'MAINNET',
+                            networkPrefix: 'bnb',
+                            val: ''
+                        },
+                        {
+                            label: 'TESTNET',
+                            networkPrefix: 'tbnb',
+                            val: ''
+                        },
+                    ];
+                }
+
+                return [];
+            }),
+            startWith([])
         );
     }
 

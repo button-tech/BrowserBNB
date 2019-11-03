@@ -75,9 +75,9 @@ export class MainComponent implements OnInit, OnDestroy {
         this.coinInUsd$ = this.stateService.bnbBalanceInFiat$;
 
         this.allBalances$ = this.stateService.allBalances$.pipe(
-          map((balances: IBalance[]) => {
-              return balances.length > 1;
-          })
+            map((balances: IBalance[]) => {
+                return balances.length > 1;
+            })
         );
 
         // const stub: Observable<IWcState> = of({
