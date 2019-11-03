@@ -42,6 +42,36 @@
     color: white;
 }
 
+.menu-item.cosmos:first-child {
+    padding-top: 5px;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+}
+
+.menu-item.cosmos:last-child {
+    border-bottom-left-radius: 100px;
+    border-bottom-right-radius: 100px;
+}
+
+.menu-item.cosmos {
+    background:  linear-gradient(90deg, rgb(80, 100, 251) 0%, rgb(63, 56, 255) 100%) !important;
+    border-bottom: 1.47px solid rgb(80, 100, 251) !important;
+    border-top: none;
+    border-left: 1.47px solid rgb(80, 100, 251) !important;
+    border-right: 1.47px solid rgb(80, 100, 251) !important;
+    display: block;
+    padding: 5px;
+    width: 100%;
+    font-size: .6875rem;
+    font-weight: bold;
+    color: white;
+}
+
+.menu-item.cosmos:hover {
+    background: rgb(132, 142, 156);
+    color: white;
+}
+
 #networkBtn {
     color: white;
     width: 170px !important;
@@ -58,38 +88,7 @@
     color: rgb(33, 40, 51);
 }
 
-
-.menu-item-cosmos:first-child {
-    padding-top: 5px;
-    border-top-left-radius: 100px;
-    border-top-right-radius: 100px;
-}
-
-.menu-item-cosmos:last-child {
-    border-bottom-left-radius: 100px;
-    border-bottom-right-radius: 100px;
-}
-
-.menu-item-cosmos {
-    background:  linear-gradient(90deg, rgb(80, 100, 251) 0%, rgb(63, 56, 255) 100%) !important;
-    border-bottom: 1.47px solid rgb(80, 100, 251) !important;
-    border-top: none;
-    border-left: 1.47px solid rgb(80, 100, 251) !important;
-    border-right: 1.47px solid rgb(80, 100, 251) !important;
-    display: block;
-    padding: 5px;
-    width: 100%;
-    font-size: .6875rem;
-    font-weight: bold;
-    color: white;
-}
-
-.menu-item-cosmos:hover {
-    background: rgb(132, 142, 156);
-    color: white;
-}
-
-#networkBtn-cosmos {
+#networkBtn.cosmos {
     color: white;
     width: 170px !important;
     max-width: 170px !important;

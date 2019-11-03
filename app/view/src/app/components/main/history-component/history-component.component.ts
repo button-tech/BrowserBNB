@@ -1,11 +1,12 @@
 import {Component, OnDestroy} from '@angular/core';
-import {Observable, of, Subscription} from 'rxjs';
+import {merge, Observable, of, Subscription} from 'rxjs';
 import {map, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {LoadersCSS} from 'ngx-loaders-css';
 import {IHistoryTx} from '../../../services/binance.service';
 import {StateService} from '../../../services/state.service';
 import {tokenDetailsList} from "../../../constants";
+import {BlockchainType} from "../../../services/storage.service";
 
 @Component({
     selector: 'app-history-component',
@@ -16,7 +17,7 @@ export class HistoryComponentComponent implements OnDestroy {
 
     loader: LoadersCSS = 'line-scale';
     bgColor = 'white';
-    color = 'rgb(239, 184, 11) ';
+    color = 'rgb(239, 184, 11)'; // rgb(80, 100, 251)
 
     isLoaded = false;
     history: IHistoryTx[] = [];
@@ -25,17 +26,29 @@ export class HistoryComponentComponent implements OnDestroy {
 
     constructor(private stateService: StateService, private router: Router) {
 
-        this.subscription = this.stateService.history$.pipe(
+        const isCosmos = stateService.selectedBlockchain$.pipe(
+            tap((blockchain: BlockchainType) => {
+                this.color = blockchain === 'cosmos'
+                    ? "rgb(80, 100, 251)"
+                    : "rgb(239, 184, 11)";
+            })
+        );
+
+        const history$ = this.stateService.history$.pipe(
             tap((history: IHistoryTx[]) => {
                 this.history = history;
                 this.isEmpty = !this.history.length;
                 this.isLoaded = true;
             })
-        ).subscribe();
+        );
 
-        this.stateService.showHistoryLoadingIndicator$.subscribe((x) => {
-            this.isLoaded = !x;
-        });
+        const loadingIndicator$ = this.stateService.showHistoryLoadingIndicator$.pipe(
+            tap((x) => {
+                this.isLoaded = !x;
+            })
+        );
+
+        this.subscription = merge(isCosmos, history$, loadingIndicator$).subscribe();
     }
 
     checkType(tx: IHistoryTx): string {
