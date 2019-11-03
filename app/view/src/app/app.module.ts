@@ -16,6 +16,7 @@ import {UnlockComponent} from './components/unlock/unlock.component';
 import {EditFormComponent} from './components/main/edit-form/edit-form.component';
 import {AuthService} from './services/auth.service';
 import {RegistrationService} from './services/registration.service';
+import {LocalStorageService} from './services/local-storage.service';
 import {AuthGuardService} from './services/auth-guard.service';
 import {RegistrationComponent} from './components/registration/registration.component';
 import {ClipboardService} from './services/clipboard.service';
@@ -116,6 +117,7 @@ import {DigitOnlyModule} from "@uiowa/digit-only";
     ],
     providers: [
         RegistrationService,
+        LocalStorageService,
         AuthService,
         AuthGuardService,
         StateService,
