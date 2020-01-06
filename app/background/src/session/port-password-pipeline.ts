@@ -8,7 +8,7 @@ import {FromPage2BackgroundMsg} from "../../../view/src/app/services/chrome-api-
 const session = new Session();
 const passwordPort$: Observable<any> = portConnections$.pipe(
     filter((port: Port) => {
-        console.log('port connected:', port.name, port);
+        // console.log('port connected:', port.name, port);
         return port.name === 'port-password';
     }),
     tap((port: Port) => {

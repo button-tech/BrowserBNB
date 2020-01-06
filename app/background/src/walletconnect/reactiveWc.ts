@@ -1,7 +1,25 @@
 import {merge, Observable, Subject} from "rxjs";
 import WalletConnect from "@walletconnect/browser/lib";
 import {map} from "rxjs/operators";
-import {fromWcEvent} from "../helpers";
+
+// TODO: Think about: implement decorator out of this function
+function fromWalletConnectEvent(eventName: string, wc: WalletConnect): Subject<unknown> {
+    const subject$ = new Subject<any>();
+    wc.on(eventName, (error, payload) => {
+        if (eventName === 'call_request' || eventName === 'connect' || eventName === 'disconnect') {
+            // debugger
+        }
+
+        console.log(error, payload);
+        if (error) {
+            subject$.error(error);
+        }
+
+        console.log('next:', eventName, payload);
+        subject$.next(payload);
+    });
+    return subject$;
+}
 
 export class ReactiveWc {
 
@@ -21,16 +39,16 @@ export class ReactiveWc {
 
     constructor(public instance: WalletConnect) {
 
-        this._sessionRequest$ = fromWcEvent("session_request", this.instance);
+        this._sessionRequest$ = fromWalletConnectEvent("session_request", this.instance);
         this.sessionRequest$ = this._sessionRequest$.asObservable();
 
-        this._callRequest$ = fromWcEvent("call_request", this.instance);
+        this._callRequest$ = fromWalletConnectEvent("call_request", this.instance);
         this.callRequest$ = this._callRequest$.asObservable();
 
-        this._connect$ = fromWcEvent("connect", this.instance);
+        this._connect$ = fromWalletConnectEvent("connect", this.instance);
         this.connect$ = this._connect$.asObservable();
 
-        this._disconnect$ = fromWcEvent("disconnect", this.instance);
+        this._disconnect$ = fromWalletConnectEvent("disconnect", this.instance);
         this.disconnect$ = this._disconnect$.asObservable();
 
         this.isConnected$ = merge(

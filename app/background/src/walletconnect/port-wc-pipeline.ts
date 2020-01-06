@@ -1,74 +1,51 @@
-import {BehaviorSubject, combineLatest, from, merge, NEVER, Observable, Subject} from "rxjs";
+import {combineLatest, from, merge, NEVER, Observable} from "rxjs";
 import {filter, map, shareReplay, switchMap, take, takeUntil, tap} from "rxjs/operators";
 import WalletConnect from "@walletconnect/browser/lib";
 import {signTransaction} from "./binancecrypto";
 import Port = chrome.runtime.Port;
 import {ReactiveWc} from "./reactiveWc";
-import {fromMessages, logAndSendToPort, openWidget, PortAndMessage, portConnections$} from "../helpers";
+import {fromMessages, openWidget, PortAndMessage} from "../helpers";
+import {walletConnectLinkFromContentScript$} from "../inter-extension-messaging";
 
-let isWcConnected = false;
-let lastWcUri = '';
+// let latestWalletConnectUri = '';
+// const manualReconnect$ = new Subject<any>();
+// const manualReconnectToLastWcLink$ = manualReconnect$.pipe(
+//     map(() => latestWalletConnectUri),
+//     filter((x: string) => !!x)
+// );
+//
+// walletConnectLinkFromContentScript$
+//
+//
 
-type NullablePort = Port | null;
+// Должны модифицировать UI на Binance (добавля кнопку connect)
 
-function getWcPort(): BehaviorSubject<NullablePort> {
-    const wcPortSubject$ = new BehaviorSubject<Port | null>(null);
+// Добавить кнопку Connect with BrowserBNB
 
-    const _walletConnectPort$: Observable<any> = portConnections$.pipe(
-        filter((port: Port) => {
-            return port.name === 'port-wallet-connect';
-        }),
-        tap(() => {
-            console.log('port-wallet-connect !!!');
-        }),
-    );
+// ContentScript -- Send Link --> Background Script --> Wallet Connect
+// UI <--Connection request details-- Background Script <-- Connection Request -- Wallet Connect
+// User -- Ok --> UI --> Background Script -- approve request -->  Wallet Connect
+//         UI(Подсвечивается как подключенный) <--connected-- Background Script -- connected <-- Wallet Connect
+//
+//         UI --disconnect--> background --> WalletConnect
+//         UI --connect--> background --> WalletConnect
+//
+//         Open UI <-- background <--call_request--WalletConnect
+//
+//         UI -- open chrome port -->
+//         UI <-- background <--call_request--WalletConnect
+//
+// walletConnectLinkFromUi$ (should remember )
 
-    _walletConnectPort$.subscribe((port: any) => {
-        port.onDisconnect.addListener(() => {
-            wcPortSubject$.next(null);
-        });
+// Streams of reactive wrapped wallet connect
+const reactiveWc$: Observable<ReactiveWc> = merge(walletConnectLinkFromContentScript$, walletConnectLinkFromUi$).pipe(
+    switchMap((uri: string) => {
 
-        port.postMessage({isWcConnected});
-        wcPortSubject$.next(port);
-    });
-    return wcPortSubject$;
-}
+        // console.log(wcLink);
+        // latestWalletConnectUri = uri; // HERE we have reconnect pipeline
+        // console.log(`new WalletConnect to uri ${wcLink}`);
 
-const wcPortSubject$ = getWcPort();
-const wcPort$ = wcPortSubject$.asObservable();
-
-const wcLinkFromContentScript$ = new Subject<string>();
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const {wcLink} = request;
-    debugger
-    console.log(request, sender, sendResponse);
-    if (request.wcLink) {
-        sendResponse("Ok");
-        wcLinkFromContentScript$.next(wcLink);
-    }
-});
-
-const manualReconnect$ = new Subject<any>();
-const manualReconnectToLastWcLink$ = manualReconnect$.pipe(
-    map(() => {
-            return lastWcUri;
-        }
-    ),
-    filter((x: string) => {
-        return !!x;
-    })
-);
-
-const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manualReconnectToLastWcLink$).pipe(
-    switchMap((wcLink: string) => {
-        console.log(wcLink);
-
-        lastWcUri = wcLink;
-
-        console.log(`new WalletConnect to uri ${wcLink}`);
-        const instance = new WalletConnect({
-            uri: wcLink
-        });
+        const instance = new WalletConnect({uri});
 
         return from(instance.createSession()).pipe(
             map(() => {
@@ -77,7 +54,7 @@ const reactiveWc$: Observable<ReactiveWc> = merge(wcLinkFromContentScript$, manu
         );
     }),
     map((instance: WalletConnect) => {
-        console.log('new ReactiveWc(instance)');
+        // console.log('new ReactiveWc(instance)');
         return new ReactiveWc(instance);
     }),
     shareReplay(1),
@@ -91,12 +68,42 @@ const wcState$ = reactiveWc$.pipe(
     tap((isWcConnectedNewState: boolean) => {
         console.log('isWcConnectedNewState:', isWcConnectedNewState);
         isWcConnected = isWcConnectedNewState;
-        const port = wcPortSubject$.getValue();
-        if (port) {
-            logAndSendToPort(port, {isWcConnected}, 'wcState$(99)');
+        const uiPort = wcPortSubject$.getValue(); // Port should be wrapped, so we have logging
+        if (uiPort) {
+            logAndSendToPort(uiPort, {isWcConnected}, ''); // Notify UI that we are connected
         }
     })
 );
+
+const actionsFromUi$ = wcPort$.pipe(
+    switchMap((port: Port | null) => {
+        console.log('wcConnectManagementFromUi$ port:', port);
+        if (!port)
+            return NEVER;
+
+        return fromMessages(port); // Странный порт который включен только тогда, когда
+    }),
+    filter((x: PortAndMessage) => {
+        const {message} = x;
+        // console.log('wcConnectManagementFromUi$ filter msg:', message);
+        return message.updateConnectionState; // TODO: rename to connect and disconnect
+    }),
+    switchMap((x: PortAndMessage) => {
+        const {message} = x;
+        // console.log('wcConnectManagementFromUi$ switchMap:', message);
+        return reactiveWc$.pipe(
+            tap((reactiveWc: ReactiveWc) => {
+                // console.log('wcConnectManagementFromUi$ reactiveWc:', reactiveWc);
+                // console.log('wcConnectManagementFromUi$ msg.newState:', message.newState);
+
+                message.newState
+                    ? manualReconnect$.next(true) // Here is reconnect to the same URL
+                    : reactiveWc.instance.killSession();
+            })
+        );
+    })
+);
+
 
 const privateKey$ = reactiveWc$.pipe(
     switchMap((reactiveWc: ReactiveWc) => {
@@ -105,13 +112,14 @@ const privateKey$ = reactiveWc$.pipe(
             switchMap((sessionRequest: any) => {
                 openWidget();
 
+                // Latest port wcPort$()
                 return wcPort$.pipe(
-                    filter((port: Port | null) => {
-                        return port !== null;
-                    }),
-                    map((port) => {
-                        return port as Port;
-                    }),
+                    // filter((port: Port | null) => {
+                    //     return port !== null;
+                    // }),
+                    // map((port) => {
+                    //     return port as Port;
+                    // }),
                     tap((port: Port) => {
                         console.log('send sessionRequest:', sessionRequest);
                         // Port, could be disconnected (track - onDisconnect handler, probably is need take until upstream)
@@ -144,35 +152,6 @@ const privateKey$ = reactiveWc$.pipe(
             })
         )
     }),
-);
-
-const wcConnectActionsFromUi$ = wcPort$.pipe(
-    switchMap((port: Port | null) => {
-        console.log('wcConnectManagementFromUi$ port:', port);
-        if (!port)
-            return NEVER;
-
-        return fromMessages(port);
-    }),
-    filter((x: PortAndMessage) => {
-        const {message} = x;
-        console.log('wcConnectManagementFromUi$ filter msg:', message);
-        return message.updateConnectionState;
-    }),
-    switchMap((x: PortAndMessage) => {
-        const {message} = x;
-        console.log('wcConnectManagementFromUi$ switchMap:', message);
-        return reactiveWc$.pipe(
-            tap((reactiveWc: ReactiveWc) => {
-                console.log('wcConnectManagementFromUi$ reactiveWc:', reactiveWc);
-                console.log('wcConnectManagementFromUi$ msg.newState:', message.newState);
-
-                message.newState
-                    ? manualReconnect$.next(true)
-                    : reactiveWc.instance.killSession();
-            })
-        );
-    })
 );
 
 const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
@@ -236,16 +215,28 @@ const walletConnectMessageProcessingPipeline$ = privateKey$.pipe(
 
 // Pipelines activation
 export function handleWalletConnectConnections() {
+    merge(
+        wcState$,
+        actionsFromUi$,
 
-    wcState$.subscribe(() => {
-    });
+        // Just some logs here
+        walletConnectMessageProcessingPipeline$.pipe(
+            tap((data: any) => {
+                const {port, message} = data;
+                console.log(port, message);
+            })
+        )
+    ).subscribe();
 
-    // TODO: implement as a single pipeline
-    wcConnectActionsFromUi$.subscribe(() => {
-    });
-
-    walletConnectMessageProcessingPipeline$.subscribe((data: any) => {
-        const {port, message} = data;
-        console.log(port, message);
-    });
+    // wcState$.subscribe(() => {
+    // });
+    //
+    // // TODO: implement as a single pipeline
+    // wcConnectActionsFromUi$.subscribe(() => {
+    // });
+    //
+    // walletConnectMessageProcessingPipeline$.subscribe((data: any) => {
+    //     const {port, message} = data;
+    //     console.log(port, message);
+    // });
 }
