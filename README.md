@@ -63,9 +63,8 @@ Navigation
 
 ### Fixes:
 - [ ] Refactor all forms in SEND
-- [ ] Fix Connect Icon (Никита)
+- [x] Fix Connect Icon 
 - [x] Fix bug: whenever WC connected or not, UI should show display  correct status. Play around on reconnect flow on seprate web page first (**CHECK**)
-- [ ] Polish UI в размных приделах
 - [ ] Make isolated demo that will illustrate bug related to communication with background (Artem)
 - [ ] Put build instructions into README.md
 
@@ -73,7 +72,7 @@ Navigation
 - [ ] Share files common `ts` files between background and UI builds
 - [ ] Cleanup(delete) some files in background
 - [ ] Content Script that serves as proxy (dev build for chrome exension)
-- [ ] BnbSDK сборка с rollup и TreeShaking, может быть сообирать вообще все из под Angular(ранее была проблема с Zone)
+- [ ] BnbSDK with rollup & TreeShaking
 - [ ] Enable `Ivy` compiler, maybe we can avoid work arounds on communication with background.(**Check `npm run build:watch`**)
 - [ ] Sample with hot reloading of chrome extension, check is it possible with our complex build
 - [ ] Post build step in `angular.json` to rebuild background
