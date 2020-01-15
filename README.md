@@ -1,5 +1,7 @@
 # BrowserBNB 
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/648aaec139fa4e868397722c1921e470)](https://www.codacy.com/gh/button-tech/BrowserBNB?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=button-tech/BrowserBNB&amp;utm_campaign=Badge_Grade)
+
 [![Build Status](https://travis-ci.org/button-tech/BrowserBNB.svg?branch=master)](https://travis-ci.org/button-tech/BrowserBNB)
 
 MetaMask like widget for Binance Chain ❤️
