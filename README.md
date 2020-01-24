@@ -8,7 +8,7 @@ MetaMask like widget for Binance Chain ❤️
 Currently is on public [BETA](https://chrome.google.com/webstore/detail/bnb-browser/eeflaanifildahldmpahjmgmgippmgne) 
 Please, rate us there!
 
-### Fixes:
+## New Features:
 - [x] Refactor all forms in SEND
 - [x] Fix Connect Icon 
 - [x] Fix bug: whenever WC connected or not, UI should show display  correct status. Play around on reconnect flow on seprate web page first (**CHECK**)
@@ -29,3 +29,6 @@ Please, rate us there!
 - [ ] Wallet Connect Update 
 - [ ] Azure pipelines and tests coverage 
 
+## Donation && Support
+
+Contact Nick Kozlov: @enorage by Telegram (@enormousrage) or mail (enormousrage@gmail.com) if you want to help
