@@ -31,4 +31,4 @@ Please, rate us there!
 
 ## Donation && Support
 
-Contact Nick Kozlov: @enorage by Telegram (@enormousrage) or mail (enormousrage@gmail.com) if you want to help
+Contact Nick Kozlov: by Telegram (@enormousrage) or mail (enormousrage@gmail.com) if you want to help
