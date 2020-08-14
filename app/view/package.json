@@ -23,7 +23,7 @@
     "@angular/material": "^8.2.0",
     "@angular/platform-browser": "^8.2.7",
     "@angular/platform-browser-dynamic": "^8.2.7",
-    "@angular/router": "^8.2.7",
+    "@angular/router": "^10.0.9",
     "@binance-chain/javascript-sdk": "^4.1.0",
     "@ncstate/sat-popover": "^4.0.0",
     "@ng-select/ng-select": "^3.0.7",
