@@ -1571,12 +1571,12 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@uiowa/digit-only@^1.2.1":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@uiowa/digit-only/-/digit-only-1.2.3.tgz#7d53a1e0d529cfdeedab50dd1927bb3c09f107b0"
-  integrity sha512-xpgMPD+Fpfn+LZI7+lQ0NFfBE75RteC+kmbxZKKR4Tl/QZQ6BH3Py3YwBanark41SnAuMa3T7mE27rCiSngczA==
+"@uiowa/digit-only@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@uiowa/digit-only/-/digit-only-2.0.0.tgz#5131292c813c910e34e6b8823c3692312177b176"
+  integrity sha512-YibHGge1NXWnABffsoorqOARiL99rK7KxQuGApppn8KSsHpMy915vqTxalakfE31sooT4gozvqqffPwMIfyTSg==
   dependencies:
-    tslib "^1.9.0"
+    tslib "^2.0.0"
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
