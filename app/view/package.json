@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.29",
-    "@angular/cli": "^11.1.0",
+    "@angular/cli": "^11.2.1",
     "@angular/compiler-cli": "^8.2.7",
     "@angular/language-service": "^11.1.0",
     "@types/chrome": "0.0.122",
