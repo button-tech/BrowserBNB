@@ -6129,12 +6129,12 @@ ng6-toastr-notifications@^1.0.4:
   dependencies:
     tslib "^1.9.0"
 
-ngx-loaders-css@^1.0.2:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/ngx-loaders-css/-/ngx-loaders-css-1.0.3.tgz#6e2c6670df09e6b7524d4445df50f8772d0312d4"
-  integrity sha512-DjLECzsYiNhWHDBzzlcqB5N9iajw11wsGb2ZKaESeQ8N9xSvrV/HvonuLRGi8IWBAPnxq31nZUL6H+Dn2ZsUBQ==
+ngx-loaders-css@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-loaders-css/-/ngx-loaders-css-2.0.0.tgz#31e407df72b20ba8fe24698224ea495eb6275b09"
+  integrity sha512-lkKSEIqMY5J/FU5AaZXpcUzGEfvswj2xS7OmtIUhKTc8Di6ZLUPRaAHiJQEmh0VbFtphyKWyYRF46oSE42ppKQ==
   dependencies:
-    tslib "^1.9.0"
+    tslib "^2.0.0"
 
 ngx-toastr@^11.3.3:
   version "11.3.3"
