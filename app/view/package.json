@@ -41,7 +41,7 @@
     "hash-base": "^3.1.0",
     "ndjson": "^1.5.0",
     "ng6-toastr-notifications": "^1.0.4",
-    "ngx-loaders-css": "^1.0.2",
+    "ngx-loaders-css": "^2.0.0",
     "ngx-toastr": "^11.3.3",
     "node-hid": "^0.7.9",
     "rxjs": "^6.6.2",
