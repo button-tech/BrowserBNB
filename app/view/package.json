@@ -26,7 +26,7 @@
     "@angular/router": "^10.0.10",
     "@binance-chain/javascript-sdk": "^4.1.0",
     "@ncstate/sat-popover": "^4.0.0",
-    "@ng-select/ng-select": "^3.0.7",
+    "@ng-select/ng-select": "^3.7.3",
     "@uiowa/digit-only": "^2.0.0",
     "ajv": "^6.10.2",
     "angular-font-awesome": "^3.1.2",
