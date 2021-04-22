@@ -30,7 +30,7 @@
     "@uiowa/digit-only": "^2.0.0",
     "ajv": "^6.10.2",
     "angular-font-awesome": "^3.1.2",
-    "angularx-qrcode": "^1.6.4",
+    "angularx-qrcode": "^2.1.4",
     "bindings": "^1.5.0",
     "browser-passworder": "^2.0.3",
     "browserify-sign": "^4.2.1",
